@@ -1,6 +1,6 @@
 import { useControls } from "leva";
 import * as React from "react";
-import Noise, { NOISE_STYLES } from "./Noise";
+import Noise, { NoiseParams, NOISE_STYLES } from "./Noise";
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,
@@ -10,11 +10,15 @@ export const DEFAULT_NOISE_PARAMS = {
   height: 300.0,
   scale: 1100.0,
   seed: 1,
+  noiseType: NOISE_STYLES.simplex,
 };
 
-export const useNoiseController = () => {
-  const noiseParams = useControls("noise", {
-    ...DEFAULT_NOISE_PARAMS,
+export const useNoiseController = (
+  name: string = "noise",
+  noiseParams: NoiseParams = DEFAULT_NOISE_PARAMS
+) => {
+  const controllerValues = useControls(name, {
+    ...noiseParams,
     noiseType: {
       value: NOISE_STYLES.simplex,
       options: [NOISE_STYLES.perlin, NOISE_STYLES.simplex],
@@ -24,11 +28,11 @@ export const useNoiseController = () => {
   const noise = React.useMemo(
     () =>
       new Noise({
-        ...noiseParams,
+        ...controllerValues,
         // @ts-ignore
-        noiseType: noiseParams.noiseType,
+        noiseType: controllerValues.noiseType,
       }),
-    [noiseParams]
+    [controllerValues]
   );
 
   return noise;

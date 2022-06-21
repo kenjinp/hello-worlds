@@ -10,7 +10,7 @@ export interface NoiseParams {
   seed: string | number;
   scale: number;
   height: number;
-  noiseType: NOISE_STYLES.simplex;
+  noiseType: NOISE_STYLES;
   octaves: number;
   persistence: number;
   lacunarity: number;
