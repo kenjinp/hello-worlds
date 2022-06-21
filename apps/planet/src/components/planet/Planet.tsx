@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useColorController } from "../generators/ColorController";
+import { useHeightController } from "../generators/HeightController";
 import { NOISE_STYLES } from "../noise/Noise";
 import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
@@ -16,6 +18,10 @@ const Planet: React.FC = () => {
     height: 1,
   });
   const terrain = useTerrainController();
+
+  const colors = useColorController();
+
+  const heights = useHeightController(noise);
   return null;
 };
 
