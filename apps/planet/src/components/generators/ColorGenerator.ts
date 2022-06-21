@@ -14,15 +14,15 @@ const colorLerp: Lerp<THREE.Color> = (
 
 export interface ColorGeneratorParams {
   biomeGenerator: Noise;
-  seaDeep: THREE.Color;
-  seaMid: THREE.Color;
-  seaShallow: THREE.Color;
-  tempHot: THREE.Color;
-  tempMid: THREE.Color;
-  tempCold: THREE.Color;
-  humidLow: THREE.Color;
-  humidMid: THREE.Color;
-  humidHigh: THREE.Color;
+  seaDeep: string;
+  seaMid: string;
+  seaShallow: string;
+  tempHot: string;
+  tempMid: string;
+  tempCold: string;
+  humidLow: string;
+  humidMid: string;
+  humidHigh: string;
   seaLevel: number; // 0.05
   seaLevelDividend: number; // 100.0
 }
@@ -35,19 +35,19 @@ export class ColorGenerator implements Generator3<THREE.Color> {
   ];
   constructor(private params: ColorGeneratorParams) {
     // Temp / Aridity
-    this.splines[0].addPoint(0.0, this.params.tempHot);
-    this.splines[0].addPoint(0.5, this.params.tempMid);
-    this.splines[0].addPoint(1.0, this.params.tempCold);
+    this.splines[0].addPoint(0.0, new THREE.Color(this.params.tempHot));
+    this.splines[0].addPoint(0.5, new THREE.Color(this.params.tempMid));
+    this.splines[0].addPoint(1.0, new THREE.Color(this.params.tempCold));
 
     // Humid
-    this.splines[1].addPoint(0.0, this.params.humidLow);
-    this.splines[1].addPoint(0.5, this.params.humidMid);
-    this.splines[1].addPoint(1.0, this.params.humidHigh);
+    this.splines[1].addPoint(0.0, new THREE.Color(this.params.humidLow));
+    this.splines[1].addPoint(0.5, new THREE.Color(this.params.humidMid));
+    this.splines[1].addPoint(1.0, new THREE.Color(this.params.humidHigh));
 
     // sea
-    this.splines[2].addPoint(0, this.params.seaDeep);
-    this.splines[2].addPoint(0.03, this.params.seaMid);
-    this.splines[2].addPoint(0.05, this.params.seaShallow);
+    this.splines[2].addPoint(0, new THREE.Color(this.params.seaDeep));
+    this.splines[2].addPoint(0.03, new THREE.Color(this.params.seaMid));
+    this.splines[2].addPoint(0.05, new THREE.Color(this.params.seaShallow));
   }
 
   get(x: number, y: number, z: number) {

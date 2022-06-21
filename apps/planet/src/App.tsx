@@ -7,8 +7,9 @@ function App() {
   return (
     <div className="App">
       <Leva collapsed />
-      <Planet />
-      <BasicScene />
+      <BasicScene>
+        <Planet />
+      </BasicScene>
     </div>
   );
 }
