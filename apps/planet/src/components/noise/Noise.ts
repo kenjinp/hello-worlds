@@ -1,31 +1,60 @@
+// import { perlinNoise3d } from "perlin-noise-3d";
 import SimplexNoise from "simplex-noise";
 
+export enum NOISE_STYLES {
+  simplex = "simplex",
+  perlin = "perlin",
+}
+
+export interface NoiseParams {
+  seed: string | number;
+  scale: number;
+  height: number;
+  noiseType: NOISE_STYLES.simplex;
+  octaves: number;
+  persistence: number;
+  lacunarity: number;
+  exponentiation: number;
+}
+
 export default class Noise {
-  private noise: SimplexNoise;
-  constructor(
-    private seed: number,
-    private scale: number,
-    private octaves: number,
-    private lacunarity: number,
-    private exponentiation: number,
-    private height: number,
-    private persistence: number
-  ) {
-    this.noise = new SimplexNoise(this.seed);
+  private noiseFunctions: {
+    [key: string]: {
+      noise3D: (x: number, y: number, z: number) => number;
+    };
+    // perlin: {
+    //   noise3D: (x: number, y: number, z: number) => number;
+    // };
+  };
+  constructor(private params: NoiseParams) {
+    // const perlinNoiseObject = () => {
+    //   const perlin = new perlinNoise3d();
+    //   perlin.noiseSeed(this.params.seed);
+    //   return {
+    //     noise3D: (x: number, y: number, z: number): number =>
+    //       perlin.get(x, y, z),
+    //   };
+    // };
+
+    this.noiseFunctions = {
+      // support more noise types?
+      simplex: new SimplexNoise(params.seed),
+      // perlin: perlinNoiseObject(),
+    };
   }
 
   get(x: number, y: number, z: number) {
-    const G = 2.0 ** -this.persistence;
-    const xs = x / this.scale;
-    const ys = y / this.scale;
-    const zs = z / this.scale;
-    const noiseFunc = this.noise;
+    const G = 2.0 ** -this.params.persistence;
+    const xs = x / this.params.scale;
+    const ys = y / this.params.scale;
+    const zs = z / this.params.scale;
+    const noiseFunc = this.noiseFunctions[this.params.noiseType];
 
     let amplitude = 1.0;
     let frequency = 1.0;
     let normalization = 0;
     let total = 0;
-    for (let o = 0; o < this.octaves; o++) {
+    for (let o = 0; o < this.params.octaves; o++) {
       const noiseValue =
         noiseFunc.noise3D(xs * frequency, ys * frequency, zs * frequency) *
           0.5 +
@@ -33,9 +62,9 @@ export default class Noise {
       total += noiseValue * amplitude;
       normalization += amplitude;
       amplitude *= G;
-      frequency *= this.lacunarity;
+      frequency *= this.params.lacunarity;
     }
     total /= normalization;
-    return Math.pow(total, this.exponentiation) * this.height;
+    return Math.pow(total, this.params.exponentiation) * this.params.height;
   }
 }

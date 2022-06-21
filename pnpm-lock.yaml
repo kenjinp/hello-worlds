@@ -14,6 +14,7 @@ importers:
       '@types/three': ^0.141.0
       '@vitejs/plugin-react': ^1.3.0
       leva: ^0.9.27
+      perlin-noise-3d: ^0.5.4
       react: ^18.0.0
       react-dom: ^18.0.0
       simplex-noise: ^3.0.1
@@ -25,6 +26,7 @@ importers:
       '@react-three/fiber': 8.0.27_4d691bb45437bb83eb52ebf8f818082f
       '@types/three': 0.141.0
       leva: 0.9.27_react-dom@18.2.0+react@18.2.0
+      perlin-noise-3d: 0.5.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       simplex-noise: 3.0.1
@@ -1387,6 +1389,10 @@ packages:
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
+
+  /perlin-noise-3d/0.5.4:
+    resolution: {integrity: sha512-4BbwqQ/e8HjumsaiWSemu9FggqbbX4NeEtLaWvK3554YcnqmK6APtOAAqZ9xT8lFdKCGYgpUPAhaPOHCJuvEyw==}
+    dev: false
 
   /picocolors/1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
