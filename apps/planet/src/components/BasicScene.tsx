@@ -1,5 +1,6 @@
 import { OrbitControls, Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Perf } from "r3f-perf";
 import * as React from "react";
 import { Color, Vector3 } from "three";
 import { SpaceBox } from "./SpaceBox";
@@ -27,15 +28,21 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
   return (
-    <Canvas>
+    <Canvas
+      gl={{ logarithmicDepthBuffer: true }}
+      camera={{ far: 100_000_000, position: new Vector3(0, 800, 800) }}
+    >
       <React.Suspense fallback={null}>
+        <Perf position="top-left" />
         <color attach="background" args={["lightblue"]} />
         <gridHelper args={[500, 500]} position={[0, -0.2, 0]} />
         <fog near={500} far={1000}></fog>
         <SpaceBox />
         <LightRig />
         <OrbitControls />
-        <Stars />
+        <group scale={new Vector3(5, 5, 5)}>
+          <Stars />
+        </group>
         {children}
       </React.Suspense>
     </Canvas>

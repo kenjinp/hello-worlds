@@ -15,9 +15,10 @@ export const DEFAULT_NOISE_PARAMS = {
 
 export const useNoiseController = (
   name: string = "noise",
-  noiseParams: NoiseParams = DEFAULT_NOISE_PARAMS
+  noiseParams: Partial<NoiseParams> = {}
 ) => {
   const controllerValues = useControls(name, {
+    ...DEFAULT_NOISE_PARAMS,
     ...noiseParams,
     noiseType: {
       value: NOISE_STYLES.simplex,
@@ -29,7 +30,6 @@ export const useNoiseController = (
     () =>
       new Noise({
         ...controllerValues,
-        // @ts-ignore
         noiseType: controllerValues.noiseType,
       }),
     [controllerValues]

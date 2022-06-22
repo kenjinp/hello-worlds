@@ -15,6 +15,7 @@ importers:
       '@vitejs/plugin-react': ^1.3.0
       leva: ^0.9.27
       perlin-noise-3d: ^0.5.4
+      r3f-perf: ^6.4.1
       react: ^18.0.0
       react-dom: ^18.0.0
       simplex-noise: ^3.0.1
@@ -27,6 +28,7 @@ importers:
       '@types/three': 0.141.0
       leva: 0.9.27_react-dom@18.2.0+react@18.2.0
       perlin-noise-3d: 0.5.4
+      r3f-perf: 6.4.1_57585c20a47501f84e6607159678d256
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       simplex-noise: 3.0.1
@@ -405,6 +407,14 @@ packages:
       react: ^16.8 || ^17.0
     dependencies:
       '@babel/runtime': 7.18.3
+      react: 18.2.0
+    dev: false
+
+  /@radix-ui/react-icons/1.1.1_react@18.2.0:
+    resolution: {integrity: sha512-xc3wQC59rsFylVbSusQCrrM+6695ppF730Q6yqzhRdqDcRNWIm2R6ngpzBoSOQMcwnq4p805F+Gr7xo4fmtN1A==}
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+    dependencies:
       react: 18.2.0
     dev: false
 
@@ -1422,6 +1432,26 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       react-is: 16.13.1
+    dev: false
+
+  /r3f-perf/6.4.1_57585c20a47501f84e6607159678d256:
+    resolution: {integrity: sha512-LkShA/TByUhBdFe+Z4kV3AUBRq1HOAyA2uTNuhlRAionjEGZQ+Z/kjcRCaKdJmgOcPk88YWvtf7VkRRyAztlZA==}
+    peerDependencies:
+      '@react-three/drei': '*'
+      '@react-three/fiber': '*'
+      react: '>=18.0'
+      react-dom: '>=18.0'
+      three: '*'
+      three-stdlib: '*'
+    dependencies:
+      '@radix-ui/react-icons': 1.1.1_react@18.2.0
+      '@react-three/drei': 9.13.2_72d375f37a437d0ec2e96344a2593f8c
+      '@react-three/fiber': 8.0.27_4d691bb45437bb83eb52ebf8f818082f
+      '@stitches/react': 1.2.8_react@18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      three: 0.141.0
+      zustand: 3.7.2_react@18.2.0
     dev: false
 
   /react-colorful/5.5.1_react-dom@18.2.0+react@18.2.0:
