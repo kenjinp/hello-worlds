@@ -2,12 +2,11 @@ import { useControls } from "leva";
 
 export const DEFAULT_TERRAIN_PARAMS = {
   wireframe: false,
-  inverted: false,
   scale: 1_000,
   width: 1_000,
   chunkSize: 500,
   visible: true,
-  subdivisions: 128
+  subdivisions: 128,
 };
 
 export const useTerrainController = () => {

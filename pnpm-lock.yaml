@@ -20,8 +20,10 @@ importers:
       react-dom: ^18.0.0
       simplex-noise: ^3.0.1
       three: ^0.141.0
+      three-mesh-bvh: ^0.5.14
       typescript: ^4.6.3
       vite: ^2.9.9
+      zustand: ^4.0.0-rc.1
     dependencies:
       '@react-three/drei': 9.13.2_72d375f37a437d0ec2e96344a2593f8c
       '@react-three/fiber': 8.0.27_4d691bb45437bb83eb52ebf8f818082f
@@ -33,6 +35,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       simplex-noise: 3.0.1
       three: 0.141.0
+      three-mesh-bvh: 0.5.14_three@0.141.0
+      zustand: 4.0.0-rc.1_react@18.2.0
     devDependencies:
       '@types/react': 18.0.14
       '@types/react-dom': 18.0.5
@@ -1726,6 +1730,14 @@ packages:
       picocolors: 1.0.0
     dev: true
 
+  /use-sync-external-store/1.1.0_react@18.2.0:
+    resolution: {integrity: sha512-SEnieB2FPKEVne66NpXPd1Np4R1lTNKfjuy3XdIoPQKYBAFdzbzSZlSn1KJZUiihQLQC5Znot4SBz1EOTBwQAQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /utility-types/3.10.0:
     resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
     engines: {node: '>= 4'}
@@ -1781,4 +1793,20 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /zustand/4.0.0-rc.1_react@18.2.0:
+    resolution: {integrity: sha512-qgcs7zLqBdHu0PuT3GW4WCIY5SgXdsv30GQMu9Qpp1BA2aS+sNS8l4x0hWuyEhjXkN+701aGWawhKDv6oWJAcw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.1.0_react@18.2.0
     dev: false

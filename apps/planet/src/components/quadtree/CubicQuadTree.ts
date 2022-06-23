@@ -79,7 +79,7 @@ export default class CubicQuadTree {
     return children;
   }
 
-  // create all possible children up to a minimum value
+  // create all possible children up to a minimum value 
   // measuring from this position
   insert(pos: THREE.Vector3) {
     for (let s of this.sides) {

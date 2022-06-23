@@ -11,10 +11,10 @@ export const DEFAULT_COLOR_PARAMS = {
   seaShallow: new THREE.Color(0x40e2ff).getStyle(),
   tempHot: new THREE.Color(0xb7a67d).getStyle(),
   tempMid: new THREE.Color(0xf1e1bc).getStyle(),
-  tempCold: new THREE.Color(0xfff).getStyle(),
+  tempCold: new THREE.Color(0xffffff).getStyle(),
   humidLow: new THREE.Color(0x29c100).getStyle(),
   humidMid: new THREE.Color(0xcee59c).getStyle(),
-  humidHigh: new THREE.Color(0xfff).getStyle(),
+  humidHigh: new THREE.Color(0xfffff).getStyle(),
   seaLevel: 0.05,
   seaLevelDividend: 100,
 };

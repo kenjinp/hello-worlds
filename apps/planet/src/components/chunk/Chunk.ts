@@ -1,7 +1,17 @@
 import * as THREE from "three";
+import {
+  acceleratedRaycast,
+  computeBoundsTree,
+  disposeBoundsTree,
+} from "three-mesh-bvh";
 import { Generator3 } from "../generators/Generator3";
 
+THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
 export interface ChunkProps {
+  invert: boolean;
   name: string;
   width: number;
   scale: number;
@@ -15,14 +25,14 @@ export interface ChunkProps {
   visible: boolean;
   group: THREE.Object3D;
   material: THREE.Material;
-  // chunk: Chunk;
 }
 
 export default class Chunk {
-  public plane: THREE.Object3D;
+  public plane: THREE.Mesh;
   public geometry: THREE.BufferGeometry;
   constructor(public params: ChunkProps) {
     this.geometry = new THREE.BufferGeometry();
+    this.params.group.frustumCulled = false;
     this.plane = new THREE.Mesh(this.geometry, params.material);
     this.plane.castShadow = false;
     this.plane.receiveShadow = true;
@@ -50,9 +60,9 @@ export default class Chunk {
     const _D = new THREE.Vector3();
     const _D1 = new THREE.Vector3();
     const _D2 = new THREE.Vector3();
-    const _P = new THREE.Vector3();
+    const localPosition = new THREE.Vector3();
     const _H = new THREE.Vector3();
-    const _W = new THREE.Vector3();
+    const worldPosition = new THREE.Vector3();
     const _N = new THREE.Vector3();
     const _N1 = new THREE.Vector3();
     const _N2 = new THREE.Vector3();
@@ -79,30 +89,39 @@ export default class Chunk {
         const yp = (width * y) / resolution;
 
         // Compute position
-        _P.set(xp - half, yp - half, radius);
-        _P.add(offset);
-        _P.normalize();
-        _D.copy(_P);
-        _P.multiplyScalar(radius);
-        _P.z -= radius;
+        localPosition.set(xp - half, yp - half, radius);
+        localPosition.add(offset);
+        localPosition.normalize();
+        _D.copy(localPosition);
+        localPosition.multiplyScalar(radius);
+        localPosition.z -= radius;
 
         // Compute a world space position to sample noise
-        _W.copy(_P);
-        _W.applyMatrix4(localToWorld);
+        worldPosition.copy(localPosition);
+        worldPosition.applyMatrix4(localToWorld);
 
-        const height = this.generateHeight(_W);
-        const color = this.params.colourGenerator.get(_W.x, _W.y, height);
+        const height = this.generateHeight(worldPosition.clone());
+        worldPosition.normalize(); // VERY IMPORTANT!
+        const color = this.params.colourGenerator.get(
+          worldPosition.x,
+          worldPosition.y,
+          height
+        );
 
         // Purturb height along z-vector
         _H.copy(_D);
-        _H.multiplyScalar(height);
-        _P.add(_H);
+        _H.multiplyScalar(height * (this.params.invert ? -1 : 1));
+        localPosition.add(_H);
 
-        positions.push(_P.x, _P.y, _P.z);
+        positions.push(localPosition.x, localPosition.y, localPosition.z);
+        // localPosition.normalize();
+
         colors.push(color.r, color.g, color.b);
+
+        // colors.push(localPosition.x, localPosition.y, localPosition.z);
         normals.push(_D.x, _D.y, _D.z);
         tangents.push(1, 0, 0, 1);
-        uvs.push(_P.x / 10, _P.y / 10);
+        uvs.push(localPosition.x / 10, localPosition.y / 10);
       }
     }
     yield;
@@ -179,5 +198,9 @@ export default class Chunk {
     this.geometry.setIndex(
       new THREE.BufferAttribute(new Uint32Array(indices), 1)
     );
+
+    yield;
+
+    this.geometry.computeBoundsTree();
   }
 }

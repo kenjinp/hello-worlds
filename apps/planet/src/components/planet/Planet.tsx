@@ -47,26 +47,30 @@ const makeChunkKey = (child: ChunkChild | RootChunk) => {
 };
 
 const Planet: React.FC = () => {
+  const chunkDebug = useControls({ chunkDebugColors: false });
+
   const chunks = React.useRef<ChunkMap>({});
+  const [updater, setUpdater] = React.useState(0);
   const [builder] = React.useState(new ChunkBuilder());
   const [material] = React.useState(
     new THREE.MeshStandardMaterial({
       wireframe: false,
       wireframeLinewidth: 1,
       color: 0xffffff,
-      side: THREE.FrontSide,
-      // vertexColors: THREE.VertexColors,
+      side: THREE.DoubleSide,
+      vertexColors: true,
     })
   );
 
-  const { camera } = useThree();
+  const { camera, scene } = useThree();
 
   const rootGroupRef = React.useRef<THREE.Group>(null);
   const planet = useControls("planet", {
+    invert: true,
     planetRadius: {
       min: -10_000_000,
       max: 10_000_000,
-      value: 500,
+      value: 4_000,
       step: 10,
     },
     minCellSize: {
@@ -89,7 +93,7 @@ const Planet: React.FC = () => {
     octaves: 2,
     persistence: 0.5,
     lacunarity: 2.0,
-    exponentiation: 3.9,
+    exponentiation: 1,
     scale: 2048.0,
     noiseType: NOISE_STYLES.simplex,
     seed: 2,
@@ -105,22 +109,51 @@ const Planet: React.FC = () => {
     builder.rebuild(chunks.current);
   }, [planet, terrain, noise, biomes, colors, heights]);
 
+  React.useEffect(() => {
+    material.wireframe = terrain.wireframe;
+    for (let k in chunks.current) {
+      if (chunks.current[k].chunk) {
+        chunks.current[k].chunk!.plane.material.wireframe = terrain.wireframe;
+      }
+    }
+  }, [terrain.wireframe]);
+
+  // React.useEffect(() => {
+  // const side = planet.invert ? THREE.BackSide : THREE.FrontSide;
+  // material.side = side;
+  // for (let k in chunks.current) {
+  //   if (chunks.current[k].chunk) {
+  //     chunks.current[k].chunk!.plane.material.side = side;
+  //   }
+  // }
+  // }, [planet.invert]);
+
+  // React.useEffect(() => {
+  //   for (let k in chunks.current) {
+  //     console.log(k);
+  //     if (chunks.current[k].chunk) {
+  //       (chunks.current[k].chunk as Chunk).plane.material.color =
+  //         new THREE.Color(Math.random() * 0xffffff);
+  //       (chunks.current[k].chunk as Chunk).plane.material.vertexColors = false;
+  //     }
+
+  //     material.color = new THREE.Color(Math.random() * 0xffffff);
+  //     material.vertexColors = false;
+  //   }
+  // }, [chunkDebug.chunkDebugColors]);
+
   useFrame(() => {
     if (!rootGroupRef.current) {
       return;
     }
+
+    scene.traverse((object) => (object.frustumCulled = false));
 
     builder.update();
 
     if (builder.busy) {
       return;
     }
-
-    // update builder
-    // then if builder is not busy
-    // do the rest here
-
-    console.log("hi", rootGroupRef.current);
 
     const q = new CubicQuadTree({
       radius: planet.planetRadius,
@@ -130,8 +163,6 @@ const Planet: React.FC = () => {
     q.insert(camera.position);
 
     const sides = q.getChildren();
-
-    console.log({ sides });
 
     let newTerrainChunks: ChunkMap = {};
     const center = new THREE.Vector3();
@@ -177,6 +208,7 @@ const Planet: React.FC = () => {
       resolution: number
     ) => {
       return builder.allocateChunk({
+        invert: planet.invert,
         name: "hi",
         material,
         offset,
@@ -210,29 +242,22 @@ const Planet: React.FC = () => {
     }
 
     chunks.current = newTerrainChunks;
+    setUpdater(updater + 1);
   });
 
   return (
     <group ref={rootGroupRef}>
       {[...new Array(6)].fill(0).map((val, index) => {
-        console.log("hello", index);
         return (
-          <group key={`group.${index}`}>
-            {/* <TerrainChunkCube
-              {...{
-                offset: new THREE.Vector3(),
-                name: `mainChunk.${index}`,
-                width: terrain.width,
-                scale: terrain.scale,
-                radius: planet.planetRadius,
-                visible: terrain.visible,
-                subdivisions: terrain.subdivisions,
-                wireframe: terrain.wireframe,
-                resolution: planet.minCellResolution,
-                colourGenerator: colors,
-                heightGenerators: [heights],
-              }}
-            /> */}
+          <group key={`group.${index}`} frustumCulled={false}>
+            {/* {Object.values(chunks.current).map((entry, chunkIndex) => {
+              return (
+                <primitive
+                  key={`group.${index}.${chunkIndex}`}
+                  object={entry.chunk.plane}
+                />
+              );
+            })} */}
           </group>
         );
       })}

@@ -19,12 +19,12 @@ export interface RootChunk {
   size: number;
 }
 
-export interface AllocateChunkBuilderParams {
-  group: THREE.Object3D;
-  offset: THREE.Vector3;
-  width: number;
-  resolution: number;
-}
+// export interface AllocateChunkBuilderParams {
+//   group: THREE.Object3D;
+//   offset: THREE.Vector3;
+//   width: number;
+//   resolution: number;
+// }
 
 export type ChunkMap = Record<string, ChunkChild | RootChunk>;
 
