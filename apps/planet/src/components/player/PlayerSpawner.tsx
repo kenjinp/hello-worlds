@@ -13,7 +13,7 @@ export const PlayerSpawner: React.FC = () => {
 
   const handleSpawnPlayer = (): void => {
     const randomVec = new Vector3(
-      MathUtils.randInt(100, 100),
+      MathUtils.randInt(-100, 100),
       MathUtils.randInt(-100, 100),
       MathUtils.randInt(-100, 100)
     );
@@ -29,9 +29,9 @@ export const PlayerSpawner: React.FC = () => {
 
     for (let i = 0; i < intersects.length; i++) {
       const intersection = intersects[i];
-      console.log(intersection);
-
-      state.addPlayerSpawnPosition(intersection.point.sub(randomVec));
+      state.addPlayerSpawnPosition(
+        intersection.point.sub(randomVec.clone().multiplyScalar(10))
+      );
     }
   };
 

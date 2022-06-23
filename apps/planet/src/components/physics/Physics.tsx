@@ -41,18 +41,14 @@ export const PlayerPhysicsSystem: React.FC<
 
     for (let i = 0; i < intersects.length; i++) {
       const intersection = intersects[i];
-      if (intersection.distance <= 100) {
+      if (intersection.distance <= 2) {
         playerVelocity.set(0, 0, 0);
       }
     }
 
     playerRef.current.position.add(playerVelocity);
     controlsRef.current?.target.copy(playerRef.current.position);
-
-    playerRef.current.quaternion.setFromUnitVectors(
-      gravityVector.clone().normalize(),
-      axis
-    );
+    playerRef.current.lookAt(gravityVector.clone().normalize());
   };
 
   useFrame((_, delta) => {

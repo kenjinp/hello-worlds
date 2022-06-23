@@ -10,7 +10,7 @@ const Player = React.forwardRef<
   return (
     <mesh ref={ref} position={position}>
       <capsuleGeometry args={[0.5, 1, 4, 8]} />
-      <meshStandardMaterial color="pink" />
+      <meshStandardMaterial color="white" />
       {children}
     </mesh>
   );
