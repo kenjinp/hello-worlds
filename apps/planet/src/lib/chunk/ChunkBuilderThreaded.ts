@@ -9,7 +9,7 @@ import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded from "./ChinkThreaded";
 import chunkBuilderThreadedWorker from "./ChunkBuilderThreadedWorker?worker";
 
-const DEFAULT_NUM_WORKERS = 8;
+const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
 
 export enum ChunkBuilderThreadedMessageTypes {
   BUILD_CHUNK_RESULT = "BUILD_CHUNK_RESULT",
@@ -44,6 +44,8 @@ export interface AllocateChunkProps {
   };
   group: THREE.Object3D;
   offset: THREE.Vector3;
+  origin: THREE.Vector3;
+  transform: THREE.Matrix4;
   material: THREE.Material;
   width: number;
   radius: number;
@@ -61,6 +63,10 @@ export default class ChunkBuilderThreaded {
       numWorkers,
       chunkBuilderThreadedWorker
     );
+  }
+
+  get old() {
+    return this.#old;
   }
 
   get busyLength() {
@@ -104,8 +110,9 @@ export default class ChunkBuilderThreaded {
       width: params.width,
       offset: [params.offset.x, params.offset.y, params.offset.z],
       radius: params.radius,
+      origin: params.origin,
       resolution: params.resolution,
-      worldMatrix: params.group.matrix,
+      worldMatrix: params.transform,
       invert: params.invert,
     };
 
@@ -134,10 +141,8 @@ export default class ChunkBuilderThreaded {
     for (let chunk of oldChunks) {
       if (chunk.type === ChunkTypes.ROOT) {
         // we never get rid of roots!
-        console.log("goodbye", chunk);
         return;
       }
-      // we know that the type is a child now...
       const childChunk = chunk as unknown as CubeFaceChildChunkProps;
       if (!(childChunk.chunk.params.width in this.#pool)) {
         this.#pool[childChunk.chunk.params.width] = [];
@@ -150,16 +155,11 @@ export default class ChunkBuilderThreaded {
     return this.#workerPool.busy;
   }
 
-  // is this necessary?
   rebuild(chunkMap: ChunkMap) {
-    console.log("rebuild", chunkMap);
     for (let key in chunkMap) {
       const chunk = chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
-        const { group, material, ...params } = chunk.chunk.params;
-        // this.#workerPool.enqueue(params, () => {
-        //   // why? I don't understand this.
-        // });
+        const { material, ...params } = chunk.chunk.params;
 
         const msg = {
           subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK,

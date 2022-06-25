@@ -9,12 +9,11 @@ import { useHeightController } from "../generators/HeightController";
 import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
 import Planet from "./Planet";
-
 const PlanetConfigurator: React.FC = () => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
   const planetEngine = React.useRef<PlanetEngine | null>(null);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (workerDebugRef.current) {
       workerDebugRef.current.innerHTML = `
         busy: ${planetEngine.current?.busyInfo.busy}
@@ -22,26 +21,29 @@ const PlanetConfigurator: React.FC = () => {
         queueLength: ${planetEngine.current?.busyInfo.queueLength}
       `;
     }
+    // if (planetEngine.current) {
+    //   planetEngine.current.rootGroup.rotation.y += delta * 0.2;
+    // }
   });
 
   const planet = useControls("planet", {
-    invert: false,
+    invert: true,
     planetRadius: {
       min: -10_000_000,
       max: 10_000_000,
-      value: 4_000,
+      value: 6_357 * 1_000,
       step: 10,
     },
     minCellSize: {
       min: 0,
       max: 10_000_000,
-      value: 250,
+      value: 25,
       step: 10,
     },
     minCellResolution: {
       min: 0,
       max: 10_000_000,
-      value: 128,
+      value: 48,
       step: 10,
     },
   });
@@ -86,7 +88,7 @@ const PlanetConfigurator: React.FC = () => {
           biomeParams,
           colorGeneratorParams: colorParams,
         }}
-        anchorPoint={camera.position}
+        origin={camera.position}
       />
     </>
   );

@@ -15,8 +15,11 @@ class ChunkBuilderThreadedWorker {
 
   constructor(private params: ThreadedChunkProps) {
     this.params = params;
-    this.#offset = new THREE.Vector3(...params.offset);
-    console.log({ workerParams: params, offset: this.#offset });
+    this.#offset = new THREE.Vector3(
+      params.offset[0],
+      params.offset[1],
+      params.offset[2]
+    );
     this.#noise = new Noise(params.noiseParams);
     this.#heightGenerators = [
       new HeightGenerator({
@@ -26,7 +29,6 @@ class ChunkBuilderThreadedWorker {
         maxRadius: params.heightGeneratorParams.max,
       }),
     ];
-
     this.#biomeGenerator = new Noise(params.biomeParams);
     this.#colorGenerator = new ColorGenerator({
       ...this.params.colorGeneratorParams,
@@ -58,6 +60,7 @@ class ChunkBuilderThreadedWorker {
     const indices = [];
 
     const localToWorld = this.params.worldMatrix;
+    const origin = this.params.origin;
     const resolution = this.params.resolution;
     const radius = this.params.radius;
     const offset = this.#offset;
@@ -74,15 +77,20 @@ class ChunkBuilderThreadedWorker {
         localPosition.add(offset);
         localPosition.normalize();
         _D.copy(localPosition);
+        _D.transformDirection(localToWorld);
+
         localPosition.multiplyScalar(radius);
         localPosition.z -= radius;
+        localPosition.applyMatrix4(localToWorld);
 
-        // Compute a world space position to sample noise
+        // Keep the absolute world space position to sample noise
         worldPosition.copy(localPosition);
-        worldPosition.applyMatrix4(localToWorld);
+
+        // Move the position relative to the origin
+        localPosition.sub(origin);
 
         const height = this.generateHeight(worldPosition.clone());
-        worldPosition.normalize(); // VERY IMPORTANT!
+        // worldPosition.normalize(); // VERY IMPORTANT!
         const color = this.#colorGenerator.get(
           worldPosition.x,
           worldPosition.y,
@@ -121,7 +129,7 @@ class ChunkBuilderThreadedWorker {
       }
     }
 
-    const up = [...normals];
+    // const up = [...normals];
 
     for (let i = 0, n = indices.length; i < n; i += 3) {
       const i1 = indices[i] * 3;

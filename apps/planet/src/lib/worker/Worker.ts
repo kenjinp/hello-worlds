@@ -23,7 +23,6 @@ export default class WorkerThread<T> {
 
   postMessage(s: any, resolve: (data: T) => void) {
     this.#resolve = resolve;
-    console.log("postMessage", s);
     this.#worker.postMessage(s);
   }
 }

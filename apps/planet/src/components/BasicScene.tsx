@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { Perf } from "r3f-perf";
 import * as React from "react";
 import { Color, Vector3 } from "three";
+import FlyCamera from "./cameras/FlyCamera";
 import { SpaceBox } from "./SpaceBox";
 
 export const LightRig: React.FC = ({}) => {
@@ -76,7 +77,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
       camera={{
         near: 0.01,
         far: 100_000_000,
-        position: new Vector3(0, 4000, 4000),
+        position: new Vector3(0, 6_357 * 1_000, 6_357 * 1_000),
       }}
       shadows
     >
@@ -91,6 +92,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         <group scale={new Vector3(5, 5, 5)}>
           <Stars />
         </group>
+        <FlyCamera />
         {children}
       </React.Suspense>
     </Canvas>

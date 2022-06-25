@@ -1,13 +1,16 @@
-import { Vector3 } from "three";
+import { Camera } from "three";
 import create from "zustand";
 
-export const useStore = create<{
-  playerSpawnPositions: Vector3[];
-  addPlayerSpawnPosition: (position: Vector3) => void;
-}>((set) => ({
-  playerSpawnPositions: [],
-  addPlayerSpawnPosition: (position: Vector3) =>
+export interface Store {
+  activeCamera: Camera | null;
+  setActiveCamera: (camera: Camera) => void;
+}
+
+export const useStore = create<Store>((set) => ({
+  activeCamera: null,
+  setActiveCamera: (activeCamera: Camera) =>
     set((state) => ({
-      playerSpawnPositions: [...state.playerSpawnPositions, position],
+      ...state,
+      activeCamera,
     })),
 }));

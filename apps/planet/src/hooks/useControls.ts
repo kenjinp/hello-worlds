@@ -7,7 +7,6 @@ export const useControls = () => {
     gl: { domElement: canvas },
   } = useThree();
 
-  const [pointerLock, setPointerLock] = React.useState(false);
   const [mouse] = React.useState(new Mouse({ canvas }));
   const [keyboard] = React.useState(new Keyboard());
   const [gamepad] = React.useState(new Gamepad());
@@ -43,16 +42,12 @@ export const useControls = () => {
     }
   };
 
-  React.useEffect(() => {
-    if (pointerLock) {
-      canvas.onclick = requestPointerLock;
-    } else {
-      canvas.onclick = null;
-    }
-    return () => {
-      canvas.onclick = null;
-    };
-  }, [canvas, pointerLock]);
+  // React.useEffect(() => {
+  //   canvas.onclick = requestPointerLock;
+  //   return () => {
+  //     canvas.onclick = null;
+  //   };
+  // }, [canvas]);
 
   return {
     up: or(gamepad.button("Up"), keyboard.key("W")),
@@ -69,8 +64,6 @@ export const useControls = () => {
     stickLeft: gamepad.stick("left"),
     stickRight: gamepad.stick("right"),
     mouse,
-    setPointerLock: () => {
-      setPointerLock(true);
-    },
+    isPointerLocked: mouse.isPointerLocked,
   };
 };

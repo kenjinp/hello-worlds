@@ -31,37 +31,33 @@ export const FollowCameraSystem: React.FC = () => {
     ) {
       const pitchObject = pitchObjectRef.current;
       const yawObject = yawObjectRef.current;
-      const cameraTranslationRigObject = cameraTranslationRigRef.current;
 
-      if (!controls.mouse.button("left").query()) {
-        return;
-      }
+      // if (!controls.mouse.button("left").query()) {
+      //   return;
+      // }
 
       const getLook = () => {
         const { x: mouseX, y: mouseY } = controls.mouse.pointer().query();
         return tempVec2.set(mouseX, mouseY);
       };
 
-      const { x, y } = getLook();
+      if (controls.isPointerLocked()) {
+        const { x, y } = getLook();
 
-      // Pitch
-      const maxAngleRads = MathUtils.degToRad(maxPitchAngle);
-      const minAngleRads = MathUtils.degToRad(minPitchAngle);
-      pitchObject.rotation.x -= y / (1000 / sensitivity.y);
+        // Pitch
+        const maxAngleRads = MathUtils.degToRad(maxPitchAngle);
+        const minAngleRads = MathUtils.degToRad(minPitchAngle);
+        pitchObject.rotation.x -= y / (1000 / sensitivity.y);
 
-      if (pitchObject.rotation.x > maxAngleRads) {
-        pitchObject.rotation.x = maxAngleRads;
-      } else if (pitchObject.rotation.x < minAngleRads) {
-        pitchObject.rotation.x = minAngleRads;
+        if (pitchObject.rotation.x > maxAngleRads) {
+          pitchObject.rotation.x = maxAngleRads;
+        } else if (pitchObject.rotation.x < minAngleRads) {
+          pitchObject.rotation.x = minAngleRads;
+        }
+
+        // Yaw
+        yawObject.rotation.y -= x / (1000 / sensitivity.x);
       }
-
-      // Yaw
-      yawObject.rotation.y -= x / (1000 / sensitivity.x);
-
-      // cameraTranslationRigObject.position.lerp(
-      //   target.position,
-      //   TRANSLATION_LERP
-      // );
     }
   });
 

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { dictDifference, dictIntersection } from "../../utils";
 import ChunkThreaded from "../chunk/ChinkThreaded";
 import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
-import { NoiseParams } from "../noise/Noise";
+import { NoiseParams, NOISE_STYLES } from "../noise/Noise";
 import CubicQuadTree from "../quadtree/CubicQuadTree";
 
 export interface ThreadedChunkProps {
@@ -26,6 +26,7 @@ export interface ThreadedChunkProps {
     min: number;
     max: number;
   };
+  origin: THREE.Vector3;
   width: number;
   offset: [number, number, number];
   radius: number;
@@ -46,6 +47,7 @@ export interface CubeFaceRootChunkProps {
   size: number;
   group: THREE.Object3D;
   position: THREE.Vector3;
+  transform: THREE.Matrix4;
   bounds: THREE.Box3;
 }
 
@@ -73,6 +75,8 @@ const makeRootChunkKey = (child: CubeFaceRootChunkProps) => {
     "]"
   );
 };
+
+const seed = (Math.random() + 1).toString(36).substring(7);
 
 export interface PlanetEngineProps {
   numWorkers?: number;
@@ -104,13 +108,91 @@ export interface PlanetProps {
   minCellResolution: number;
 }
 
+export const DEFAULT_COLOR_PARAMS = {
+  seaDeep: new THREE.Color(0x20020ff).getStyle(),
+  seaMid: new THREE.Color(0x40e2ff).getStyle(),
+  seaShallow: new THREE.Color(0x40e2ff).getStyle(),
+  tempHot: new THREE.Color(0xb7a67d).getStyle(),
+  tempMid: new THREE.Color(0xf1e1bc).getStyle(),
+  tempCold: new THREE.Color(0xffffff).getStyle(),
+  humidLow: new THREE.Color(0x29c100).getStyle(),
+  humidMid: new THREE.Color(0xcee59c).getStyle(),
+  humidHigh: new THREE.Color(0xffffff).getStyle(),
+  seaLevel: 0.05,
+  seaLevelDividend: 100,
+};
+
+export const DEFAULT_HEIGHT_PARAMS = {
+  minRadius: 100_000,
+  maxRadius: 100_000 + 1,
+};
+
+export const DEFAULT_NOISE_PARAMS = {
+  octaves: 13,
+  persistence: 0.707,
+  lacunarity: 1.8,
+  exponentiation: 4.5,
+  height: 300.0,
+  scale: 1100.0,
+  seed,
+  noiseType: NOISE_STYLES.simplex,
+};
+
+export const DEFAULT_TERRAIN_PARAMS = {
+  wireframe: false,
+  scale: 1_000,
+  width: 1_000,
+  chunkSize: 500,
+  visible: true,
+  subdivisions: 128,
+};
+
+export const DEFAULT_PLANET_PARAMS = {
+  invert: false,
+  radius: 1_000,
+  minCellSize: 128 * 2,
+  minCellResolution: 128,
+};
+
+export const DEFAULT_PLANET_PROPS = {
+  noiseParams: DEFAULT_NOISE_PARAMS,
+  colorNoiseParams: {
+    octaves: 10,
+    persistence: 0.5,
+    lacunarity: 2.0,
+    exponentiation: 3.9,
+    height: 64,
+    scale: 256.0,
+    noiseType: NOISE_STYLES.simplex,
+    seed,
+  },
+  biomeParams: {
+    octaves: 2,
+    persistence: 0.5,
+    lacunarity: 2.0,
+    exponentiation: 1,
+    scale: 2048.0,
+    noiseType: NOISE_STYLES.simplex,
+    seed,
+    height: 1,
+  },
+  colorGeneratorParams: DEFAULT_COLOR_PARAMS,
+  minRadius: DEFAULT_HEIGHT_PARAMS.minRadius,
+  maxRadius: DEFAULT_HEIGHT_PARAMS.maxRadius,
+  width: DEFAULT_TERRAIN_PARAMS.width,
+  radius: DEFAULT_PLANET_PARAMS.radius,
+  invert: DEFAULT_PLANET_PARAMS.invert,
+  minCellSize: DEFAULT_PLANET_PARAMS.minCellSize,
+  minCellResolution: DEFAULT_PLANET_PARAMS.minCellResolution,
+};
+
 export default class PlanetEngine {
   rootGroup = new THREE.Group();
   cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
   #builder: ChunkBuilderThreaded;
   material: THREE.Material;
   #chunkMap: ChunkMap = {};
-  planetProps: PlanetProps | null = null;
+  planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
 
   constructor(private params: PlanetEngineProps) {
     this.#builder = new ChunkBuilderThreaded(this.params.numWorkers);
@@ -139,7 +221,9 @@ export default class PlanetEngine {
     this.#builder.rebuild(this.#chunkMap);
   }
 
-  update(anchorPoint: THREE.Vector3) {
+  update(origin: THREE.Vector3) {
+    const floatingOrigin = origin.clone();
+
     if (!this.planetProps) {
       throw new Error("must set planetProps before updating");
     }
@@ -156,7 +240,7 @@ export default class PlanetEngine {
     });
 
     // collapse the quadtree recursively at this position
-    q.insert(anchorPoint);
+    q.insert(floatingOrigin);
 
     const sides = q.getChildren();
 
@@ -165,8 +249,8 @@ export default class PlanetEngine {
     const dimensions = new THREE.Vector3();
     for (let i = 0; i < sides.length; i++) {
       const cubeFaceRootGroup = this.cubeFaceGroups[i];
-      cubeFaceRootGroup.matrix = sides[i].transform;
-      cubeFaceRootGroup.matrixAutoUpdate = false;
+      // cubeFaceRootGroup.matrix = sides[i].transform; // removed for floating origin
+      // cubeFaceRootGroup.matrixAutoUpdate = false;
       for (let cubeFaceChildChunk of sides[i].children) {
         cubeFaceChildChunk.bounds.getCenter(center);
         cubeFaceChildChunk.bounds.getSize(dimensions);
@@ -175,6 +259,7 @@ export default class PlanetEngine {
           type: ChunkTypes.ROOT,
           index: i,
           group: cubeFaceRootGroup,
+          transform: sides[i].transform,
           position: center.clone(),
           bounds: cubeFaceChildChunk.bounds.clone(),
           size: dimensions.x,
@@ -188,8 +273,6 @@ export default class PlanetEngine {
     const intersection = dictIntersection(this.#chunkMap, newChunkMap);
     const difference = dictDifference(newChunkMap, this.#chunkMap);
     const recycle = Object.values(dictDifference(this.#chunkMap, newChunkMap));
-
-    recycle.length && console.log({ recycle });
 
     this.#builder.retireChunks(recycle);
 
@@ -207,6 +290,7 @@ export default class PlanetEngine {
         position: new THREE.Vector2(offset.x, offset.z),
         chunk: this.#builder.allocateChunk({
           group: parentChunkProps.group,
+          transform: parentChunkProps.transform,
           material: this.material,
           offset,
           noiseParams: this.planetProps.noiseParams,
@@ -217,6 +301,7 @@ export default class PlanetEngine {
             min: this.planetProps.minRadius,
             max: this.planetProps.maxRadius,
           },
+          origin: floatingOrigin,
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,
@@ -226,5 +311,17 @@ export default class PlanetEngine {
     }
 
     this.#chunkMap = newChunkMap;
+
+    for (let key in this.#chunkMap) {
+      const chunk = this.#chunkMap[key];
+      if (chunk.type === ChunkTypes.CHILD) {
+        chunk.chunk.update(floatingOrigin);
+      }
+    }
+    for (let chunk of this.#builder.old) {
+      if (chunk.type === ChunkTypes.CHILD) {
+        chunk.chunk.update(floatingOrigin);
+      }
+    }
   }
 }
