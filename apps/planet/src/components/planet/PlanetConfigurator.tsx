@@ -1,3 +1,4 @@
+import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
@@ -24,17 +25,17 @@ const PlanetConfigurator: React.FC = () => {
   });
 
   const planet = useControls("planet", {
-    invert: true,
+    invert: false,
     planetRadius: {
       min: -10_000_000,
       max: 10_000_000,
-      value: 1_000,
+      value: 4_000,
       step: 10,
     },
     minCellSize: {
       min: 0,
       max: 10_000_000,
-      value: 500,
+      value: 250,
       step: 10,
     },
     minCellResolution: {
@@ -66,23 +67,28 @@ const PlanetConfigurator: React.FC = () => {
   const { camera } = useThree();
 
   return (
-    <Planet
-      ref={planetEngine}
-      {...{
-        width: terrain.width,
-        radius: planet.planetRadius,
-        minRadius: heightParams.minRadius,
-        maxRadius: heightParams.maxRadius,
-        minCellSize: planet.minCellSize,
-        minCellResolution: planet.minCellResolution,
-        invert: planet.invert,
-        noiseParams,
-        colorNoiseParams,
-        biomeParams,
-        colorGeneratorParams: colorParams,
-      }}
-      anchorPoint={camera.position}
-    />
+    <>
+      <Html>
+        <div ref={workerDebugRef}></div>
+      </Html>
+      <Planet
+        ref={planetEngine}
+        {...{
+          width: terrain.width,
+          radius: planet.planetRadius,
+          minRadius: heightParams.minRadius,
+          maxRadius: heightParams.maxRadius,
+          minCellSize: planet.minCellSize,
+          minCellResolution: planet.minCellResolution,
+          invert: planet.invert,
+          noiseParams,
+          colorNoiseParams,
+          biomeParams,
+          colorGeneratorParams: colorParams,
+        }}
+        anchorPoint={camera.position}
+      />
+    </>
   );
 };
 

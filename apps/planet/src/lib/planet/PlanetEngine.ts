@@ -189,6 +189,8 @@ export default class PlanetEngine {
     const difference = dictDifference(newChunkMap, this.#chunkMap);
     const recycle = Object.values(dictDifference(this.#chunkMap, newChunkMap));
 
+    recycle.length && console.log({ recycle });
+
     this.#builder.retireChunks(recycle);
 
     newChunkMap = intersection;

@@ -3,10 +3,10 @@ import WorkerThread from "./Worker";
 export default class WorkerThreadPool<T> {
   #freeWorkers: WorkerThread<T>[] = [];
   #busyWorkers: Record<string, WorkerThread<T>> = {};
-  #queue: [any, ((data: T) => void) | undefined][] = [];
+  #queue: [any, (data: T) => void][] = [];
   #workers: WorkerThread<T>[] = [];
-  constructor(size: number, worker: Worker) {
-    this.#workers = [...Array(size)].map((_) => new WorkerThread(worker));
+  constructor(size: number, worker: new () => Worker) {
+    this.#workers = [...Array(size)].map((_) => new WorkerThread(new worker()));
     this.#freeWorkers = [...this.#workers];
   }
 
@@ -26,7 +26,7 @@ export default class WorkerThreadPool<T> {
     return this.#queue.length > 0 || this.busyLength > 0;
   }
 
-  enqueue(workItem: any, resolve?: (data: T) => void) {
+  enqueue(workItem: any, resolve: (data: T) => void) {
     this.#queue.push([workItem, resolve]);
     this.#pumpQueue();
   }
@@ -40,7 +40,7 @@ export default class WorkerThreadPool<T> {
       worker.postMessage(workItem, (data) => {
         delete this.#busyWorkers[worker.id];
         this.#freeWorkers.push(worker);
-        workResolve!(data);
+        workResolve(data);
         this.#pumpQueue();
       });
     }

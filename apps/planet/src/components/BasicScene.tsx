@@ -76,7 +76,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
       camera={{
         near: 0.01,
         far: 100_000_000,
-        position: new Vector3(0, 800, 800),
+        position: new Vector3(0, 4000, 4000),
       }}
       shadows
     >
@@ -85,7 +85,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         {/* <color attach="background" args={["lightblue"]} /> */}
         {/* <gridHelper args={[500, 500]} position={[0, -0.2, 0]} /> */}
         {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}
-        <fogExp2 attach="fog" color={0x40e2ff} density={0.000125} />
+        {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.000125} /> */}
         <SpaceBox />
         <InvertedLightRig />
         <group scale={new Vector3(5, 5, 5)}>

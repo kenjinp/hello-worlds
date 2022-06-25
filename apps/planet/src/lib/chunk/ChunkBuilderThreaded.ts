@@ -1,5 +1,10 @@
 import { NoiseParams } from "../noise/Noise";
-import { ChunkMap, ChunkTypes } from "../planet/PlanetEngine";
+import {
+  ChunkMap,
+  ChunkTypes,
+  CubeFaceChildChunkProps,
+  CubeFaceRootChunkProps,
+} from "../planet/PlanetEngine";
 import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded from "./ChinkThreaded";
 import chunkBuilderThreadedWorker from "./ChunkBuilderThreadedWorker?worker";
@@ -47,14 +52,14 @@ export interface AllocateChunkProps {
 }
 
 export default class ChunkBuilderThreaded {
-  #old: ChunkThreaded[] = [];
+  #old: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[] = [];
   #pool: Record<number, ChunkThreaded[]> = {};
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>;
 
   constructor(numWorkers: number = DEFAULT_NUM_WORKERS) {
     this.#workerPool = new WorkerThreadPool(
       numWorkers,
-      new chunkBuilderThreadedWorker()
+      chunkBuilderThreadedWorker
     );
   }
 
@@ -119,16 +124,25 @@ export default class ChunkBuilderThreaded {
     return c;
   }
 
-  retireChunks(chunks: any) {
-    this.#old.push(...chunks);
+  retireChunks(recycle: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[]) {
+    this.#old.push(...recycle);
   }
 
-  #recycleChunks(oldChunks: ChunkThreaded[]) {
+  #recycleChunks(
+    oldChunks: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[]
+  ) {
     for (let chunk of oldChunks) {
-      if (!(chunk.params.width in this.#pool)) {
-        this.#pool[chunk.params.width] = [];
+      if (chunk.type === ChunkTypes.ROOT) {
+        // we never get rid of roots!
+        console.log("goodbye", chunk);
+        return;
       }
-      chunk.destroy();
+      // we know that the type is a child now...
+      const childChunk = chunk as unknown as CubeFaceChildChunkProps;
+      if (!(childChunk.chunk.params.width in this.#pool)) {
+        this.#pool[childChunk.chunk.params.width] = [];
+      }
+      childChunk.chunk.destroy();
     }
   }
 
@@ -143,8 +157,20 @@ export default class ChunkBuilderThreaded {
       const chunk = chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
         const { group, material, ...params } = chunk.chunk.params;
-        this.#workerPool.enqueue(params, () => {
-          // why? I don't understand this.
+        // this.#workerPool.enqueue(params, () => {
+        //   // why? I don't understand this.
+        // });
+
+        const msg = {
+          subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK,
+          params,
+        };
+
+        this.#workerPool.enqueue(msg, (m) => {
+          if (chunk) {
+            return void this.#onResult(chunk.chunk, m);
+          }
+          console.warn("no chunk found on enqueuement: ", m);
         });
       }
     }

@@ -217,9 +217,7 @@ class ChunkBuilderThreadedWorker {
 
 self.onmessage = (msg) => {
   if (msg.data.subject == ChunkBuilderThreadedMessageTypes.BUILD_CHUNK) {
-    const chunk = new ChunkBuilderThreadedWorker(msg.data.params);
-
-    const data = chunk.rebuild();
+    const data = new ChunkBuilderThreadedWorker(msg.data.params).rebuild();
     self.postMessage({
       subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT,
       data,
