@@ -25,7 +25,7 @@ export const useHeightController = (noise: Noise) => {
     }
   );
 
-  const heightValues = React.useMemo(
+  const heightGenerator = React.useMemo(
     () =>
       new HeightGenerator({
         ...controllerValues,
@@ -39,5 +39,5 @@ export const useHeightController = (noise: Noise) => {
     [controllerValues, noise]
   );
 
-  return heightValues;
+  return { heightGenerator, heightParams: controllerValues };
 };

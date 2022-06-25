@@ -14,7 +14,7 @@ export const DEFAULT_COLOR_PARAMS = {
   tempCold: new THREE.Color(0xffffff).getStyle(),
   humidLow: new THREE.Color(0x29c100).getStyle(),
   humidMid: new THREE.Color(0xcee59c).getStyle(),
-  humidHigh: new THREE.Color(0xfffff).getStyle(),
+  humidHigh: new THREE.Color(0xffffff).getStyle(),
   seaLevel: 0.05,
   seaLevelDividend: 100,
 };
@@ -38,7 +38,7 @@ export const useColorController = (seed: number | string = 1) => {
     }
   );
 
-  const noise = useNoiseController("biome noise", {
+  const { noise, noiseParams } = useNoiseController("biome noise", {
     octaves: 10,
     persistence: 0.5,
     lacunarity: 2.0,
@@ -49,7 +49,7 @@ export const useColorController = (seed: number | string = 1) => {
     seed,
   });
 
-  const colorValues = React.useMemo(
+  const colorGenerator = React.useMemo(
     () =>
       new ColorGenerator({
         ...(controllerValues as unknown as ColorGeneratorParams),
@@ -58,5 +58,9 @@ export const useColorController = (seed: number | string = 1) => {
     [controllerValues, noise]
   );
 
-  return colorValues;
+  return {
+    colorGenerator,
+    colorParams: controllerValues,
+    colorNoiseParams: noiseParams,
+  };
 };

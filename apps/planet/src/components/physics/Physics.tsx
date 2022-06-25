@@ -1,7 +1,9 @@
-import { OrbitControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
+import { Color, Vector3 } from "three";
+import { useControls } from "../../hooks/useControls";
+import { FollowCameraSystem } from "../cameras/FollowCamera";
 import Player from "../player/Player";
 
 export interface PhysicsProps {
@@ -10,14 +12,25 @@ export interface PhysicsProps {
   startingPosition: THREE.Vector3;
 }
 
+const playerSpeed = 2.5;
+
 const playerVelocity = new THREE.Vector3();
 const collisionCast = new THREE.Raycaster();
-const axis = new THREE.Vector3(0, 1, 0);
+const axis = new THREE.Vector3(1, 0, 0);
+const upVector = new THREE.Vector3(0, 1, 0);
+let tempVector = new THREE.Vector3();
+let tempVector2 = new THREE.Vector3();
 
 export const PlayerPhysicsSystem: React.FC<
   React.PropsWithChildren<PhysicsProps>
 > = ({ gravity = 9.8, startingPosition }) => {
-  const { scene } = useThree();
+  const {
+    scene,
+    camera,
+    gl: { domElement },
+  } = useThree();
+
+  const controls = useControls();
 
   const playerRef = React.useRef<THREE.Mesh>(null);
   const controlsRef = React.useRef<any>(null);
@@ -26,6 +39,10 @@ export const PlayerPhysicsSystem: React.FC<
     if (!playerRef.current) {
       return;
     }
+
+    // controlsRef.current.maxPolarAngle = Math.PI / 2;
+    // controlsRef.current.minDistance = 1;
+    // controlsRef.current.maxDistance = 20;
 
     const gravityVector = playerRef.current.position
       .clone()
@@ -41,14 +58,62 @@ export const PlayerPhysicsSystem: React.FC<
 
     for (let i = 0; i < intersects.length; i++) {
       const intersection = intersects[i];
-      if (intersection.distance <= 2) {
+      if (intersection.distance <= 5) {
         playerVelocity.set(0, 0, 0);
       }
     }
 
     playerRef.current.position.add(playerVelocity);
-    controlsRef.current?.target.copy(playerRef.current.position);
-    playerRef.current.lookAt(gravityVector.clone().normalize());
+    playerRef.current.lookAt(new Vector3(0, 0, 0));
+    playerRef.current.rotateOnAxis(new Vector3(1, 0, 0), (Math.PI / 180) * 90);
+
+    // const viewVector = controls.mouse.pointer();
+
+    // move player
+    // const angle = playerRef.current.
+    // const angle = controlsRef.current.getAzimuthalAngle();
+    // console.log(angle);
+    // if (controls.up.query()) {
+    //   tempVector.set(0, -1, 0).applyAxisAngle(upVector, angle);
+    //   playerRef.current.position.addScaledVector(
+    //     tempVector,
+    //     playerSpeed * delta
+    //   );
+    // }
+
+    // if (controls.down.query()) {
+    //   tempVector.set(0, 1, 0).applyAxisAngle(upVector, angle);
+    //   playerRef.current.position.addScaledVector(
+    //     tempVector,
+    //     playerSpeed * delta
+    //   );
+    // }
+
+    // if (controls.left.query()) {
+    //   tempVector.set(-1, 0, 0).applyAxisAngle(upVector, angle);
+    //   playerRef.current.position.addScaledVector(
+    //     tempVector,
+    //     playerSpeed * delta
+    //   );
+    // }
+
+    // if (controls.right.query()) {
+    //   tempVector.set(1, 0, 0).applyAxisAngle(upVector, angle);
+    //   playerRef.current.position.addScaledVector(
+    //     tempVector,
+    //     playerSpeed * delta
+    //   );
+    // }
+
+    // playerRef.current.updateMatrixWorld();
+
+    // camera.quaternion.copy(playerRef.current.quaternion);
+
+    // camera.position.sub(controlsRef.current.target);
+    // controlsRef.current.target.copy(playerRef.current.position);
+    // camera.position.add(playerRef.current.position);
+
+    // controlsRef.current.update();
   };
 
   useFrame((_, delta) => {
@@ -56,8 +121,13 @@ export const PlayerPhysicsSystem: React.FC<
   });
 
   return (
-    <Player ref={playerRef} position={startingPosition}>
-      <OrbitControls makeDefault maxDistance={10} ref={controlsRef} />
-    </Player>
+    <>
+      <Player ref={playerRef} position={startingPosition}>
+        <FollowCameraSystem />
+        <mesh>
+          <pointLight intensity={0.5} color={new Color(0xffbc3d)} decay={2} />
+        </mesh>
+      </Player>
+    </>
   );
 };

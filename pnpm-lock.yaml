@@ -13,7 +13,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@types/three': ^0.141.0
       '@vitejs/plugin-react': ^1.3.0
+      contro: ^2.2.0
       leva: ^0.9.27
+      miniplex: ^0.10.1
+      miniplex-react: ^0.4.1
       perlin-noise-3d: ^0.5.4
       r3f-perf: ^6.4.1
       react: ^18.0.0
@@ -23,12 +26,16 @@ importers:
       three-mesh-bvh: ^0.5.14
       typescript: ^4.6.3
       vite: ^2.9.9
+      vite-plugin-cross-origin-isolation: ^0.1.6
       zustand: ^4.0.0-rc.1
     dependencies:
       '@react-three/drei': 9.13.2_72d375f37a437d0ec2e96344a2593f8c
       '@react-three/fiber': 8.0.27_4d691bb45437bb83eb52ebf8f818082f
       '@types/three': 0.141.0
+      contro: 2.2.0
       leva: 0.9.27_react-dom@18.2.0+react@18.2.0
+      miniplex: 0.10.1
+      miniplex-react: 0.4.1_miniplex@0.10.1+react@18.2.0
       perlin-noise-3d: 0.5.4
       r3f-perf: 6.4.1_57585c20a47501f84e6607159678d256
       react: 18.2.0
@@ -43,6 +50,7 @@ importers:
       '@vitejs/plugin-react': 1.3.2
       typescript: 4.7.4
       vite: 2.9.12
+      vite-plugin-cross-origin-isolation: 0.1.6
 
 packages:
 
@@ -333,6 +341,18 @@ packages:
 
   /@chevrotain/utils/10.1.2:
     resolution: {integrity: sha512-bbZIpW6fdyf7FMaeDmw3cBbkTqsecxEkwlVKgVfqqXWBPLH6azxhPA2V9F7OhoZSVrsnMYw7QuyK6qutXPjEew==}
+    dev: false
+
+  /@hmans/react-toolbox/0.1.4_react@18.2.0:
+    resolution: {integrity: sha512-PmhaalZ70hSfIX7AUgWO9gVhKkWH8cbZXxGzmjgJ+46sw6cJUlnawkc/WlIxtUro+TTW61YG1i+18QD0zsvF+Q==}
+    peerDependencies:
+      react: '>=16.8'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /@hmans/signal/0.2.2:
+    resolution: {integrity: sha512-4KlR6FiqICOY9J8V483Atk7bfMqoGM/hdYd/6ab+HB+CJfiOBPzY6PtYz3O6bBsNkIZpimnTMSw2AqOz1WDlrA==}
     dev: false
 
   /@jridgewell/gen-mapping/0.1.1:
@@ -912,6 +932,10 @@ packages:
     resolution: {integrity: sha512-Uqbg+J445nc1TKn4FoDPS6ZZqAvEDnwrH42yo8B40JSOgSLxMZ/gt3h4nmCtPLQeXhjJJkqBx7SCY35WnIixaQ==}
     dev: false
 
+  /contro/2.2.0:
+    resolution: {integrity: sha512-gIjXC7t3J8q5r61jOid0CsbcOPIOuUYG3eL+45P5SgKlpW427sukZ2aPhfPVVNuM4Tkw1iipGv8JvT2ax1E6wQ==}
+    dev: false
+
   /convert-source-map/1.8.0:
     resolution: {integrity: sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==}
     dependencies:
@@ -1360,6 +1384,24 @@ packages:
       three: 0.141.0
     dev: false
 
+  /miniplex-react/0.4.1_miniplex@0.10.1+react@18.2.0:
+    resolution: {integrity: sha512-J00jvgLapKSZxiYNykGUXViAQBCPmnr2gEMeI0lJhDCliaC/G6T7vnZ4Q/guHFyb0NNUjeLe4ANRTjNHn76o+w==}
+    peerDependencies:
+      miniplex: '>=0.9.0'
+      react: '>=16.8'
+    dependencies:
+      '@hmans/react-toolbox': 0.1.4_react@18.2.0
+      miniplex: 0.10.1
+      react: 18.2.0
+      react-merge-refs: 1.1.0
+    dev: false
+
+  /miniplex/0.10.1:
+    resolution: {integrity: sha512-3ahZ0/k7qJqI7NAYJnEqbbV/1haua1YLPdBtFxMDbSA0ZYXc6YyGuXP57u34dzm14+9IxXWDw1PliGQdZIZYoQ==}
+    dependencies:
+      '@hmans/signal': 0.2.2
+    dev: false
+
   /mixin-deep/1.3.2:
     resolution: {integrity: sha512-WRoDn//mXBiJ1H40rqa3vH0toePwSsGb45iInWlTySa+Uu4k3tYUSxa2v1KqAiLtvlrSzaExqS1gtk96A9zvEA==}
     engines: {node: '>=0.10.0'}
@@ -1746,6 +1788,10 @@ packages:
   /v8n/1.4.0:
     resolution: {integrity: sha512-LzBuh0AYyuTdfsaSG7iabfPQPTggbd/G19fxgcq/QFkdvznB4bYICfbDYBrzqaobASNt0hK/ti4ykwLksvZEbA==}
     dev: false
+
+  /vite-plugin-cross-origin-isolation/0.1.6:
+    resolution: {integrity: sha512-OY0naW9nPUDrKTffYnY7FRYXOgZdHoNwMGpPxUmj/n32mGZi01fcq+J536jkmwGWX7DLT95XBQVHHbrAJzTvrw==}
+    dev: true
 
   /vite/2.9.12:
     resolution: {integrity: sha512-suxC36dQo9Rq1qMB2qiRorNJtJAdxguu5TMvBHOc/F370KvqAe9t48vYp+/TbPKRNrMh/J55tOUmkuIqstZaew==}

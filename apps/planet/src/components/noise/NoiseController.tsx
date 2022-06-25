@@ -35,5 +35,5 @@ export const useNoiseController = (
     [controllerValues]
   );
 
-  return noise;
+  return { noise, noiseParams: controllerValues };
 };

@@ -1,10 +1,12 @@
+import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
 import * as THREE from "three";
 import { dictDifference, dictIntersection } from "../../utils";
 import Chunk from "../chunk/Chunk";
-import ChunkBuilder from "../chunk/ChunkBuilder";
+import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
+import { Clouds } from "../clouds/Clouds";
 import { useColorController } from "../generators/ColorController";
 import { useHeightController } from "../generators/HeightController";
 import { NOISE_STYLES } from "../noise/Noise";
@@ -34,9 +36,9 @@ export type ChunkMap = Record<string, ChunkChild | RootChunk>;
 
 const makeChunkKey = (child: ChunkChild | RootChunk) => {
   return (
-    child.position.x +
+    child.position[0] +
     "/" +
-    child.position.y +
+    child.position[1] +
     " [" +
     child.size +
     "]" +
@@ -51,7 +53,7 @@ const Planet: React.FC = () => {
 
   const chunks = React.useRef<ChunkMap>({});
   const [updater, setUpdater] = React.useState(0);
-  const [builder] = React.useState(new ChunkBuilder());
+  const [builder] = React.useState(new ChunkBuilderThreaded());
   const [material] = React.useState(
     new THREE.MeshStandardMaterial({
       wireframe: false,
@@ -62,7 +64,19 @@ const Planet: React.FC = () => {
     })
   );
 
+  const workerDebugRef = React.useRef<HTMLDivElement>(null);
+
   const { camera, scene } = useThree();
+
+  useFrame(() => {
+    if (workerDebugRef.current) {
+      workerDebugRef.current.innerHTML = `
+        busy: ${builder.busy}
+        busyLength: ${builder.busyLength}
+        queueLength: ${builder.queueLength}
+      `;
+    }
+  });
 
   const rootGroupRef = React.useRef<THREE.Group>(null);
   const planet = useControls("planet", {
@@ -70,7 +84,7 @@ const Planet: React.FC = () => {
     planetRadius: {
       min: -10_000_000,
       max: 10_000_000,
-      value: 4_000,
+      value: 1_000,
       step: 10,
     },
     minCellSize: {
@@ -86,28 +100,31 @@ const Planet: React.FC = () => {
       step: 10,
     },
   });
-  const noise = useNoiseController("noise", {
+  const { noise, noiseParams } = useNoiseController("noise", {
     seed: (Math.random() + 1).toString(36).substring(7),
   });
-  const biomes = useNoiseController("biomes", {
-    octaves: 2,
-    persistence: 0.5,
-    lacunarity: 2.0,
-    exponentiation: 1,
-    scale: 2048.0,
-    noiseType: NOISE_STYLES.simplex,
-    seed: 2,
-    height: 1,
-  });
+  const { noise: biomesGenerator, noiseParams: biomeParams } =
+    useNoiseController("biomes", {
+      octaves: 2,
+      persistence: 0.5,
+      lacunarity: 2.0,
+      exponentiation: 1,
+      scale: 2048.0,
+      noiseType: NOISE_STYLES.simplex,
+      seed: 2,
+      height: 1,
+    });
   const terrain = useTerrainController();
 
-  const colors = useColorController();
+  const { colorGenerator, colorParams, colorNoiseParams } =
+    useColorController();
 
-  const heights = useHeightController(noise);
+  const { heightGenerator, heightParams } = useHeightController(noise);
 
   React.useEffect(() => {
+    console.log("rebuild");
     builder.rebuild(chunks.current);
-  }, [planet, terrain, noise, biomes, colors, heights]);
+  }, [planet, terrain, heightParams, colorParams, noiseParams]);
 
   React.useEffect(() => {
     material.wireframe = terrain.wireframe;
@@ -118,29 +135,15 @@ const Planet: React.FC = () => {
     }
   }, [terrain.wireframe]);
 
-  // React.useEffect(() => {
-  // const side = planet.invert ? THREE.BackSide : THREE.FrontSide;
-  // material.side = side;
-  // for (let k in chunks.current) {
-  //   if (chunks.current[k].chunk) {
-  //     chunks.current[k].chunk!.plane.material.side = side;
-  //   }
-  // }
-  // }, [planet.invert]);
-
-  // React.useEffect(() => {
-  //   for (let k in chunks.current) {
-  //     console.log(k);
-  //     if (chunks.current[k].chunk) {
-  //       (chunks.current[k].chunk as Chunk).plane.material.color =
-  //         new THREE.Color(Math.random() * 0xffffff);
-  //       (chunks.current[k].chunk as Chunk).plane.material.vertexColors = false;
-  //     }
-
-  //     material.color = new THREE.Color(Math.random() * 0xffffff);
-  //     material.vertexColors = false;
-  //   }
-  // }, [chunkDebug.chunkDebugColors]);
+  React.useEffect(() => {
+    const side = planet.invert ? THREE.BackSide : THREE.FrontSide;
+    material.side = side;
+    for (let k in chunks.current) {
+      if (chunks.current[k].chunk) {
+        chunks.current[k].chunk!.plane.material.side = side;
+      }
+    }
+  }, [planet.invert]);
 
   useFrame(() => {
     if (!rootGroupRef.current) {
@@ -176,16 +179,22 @@ const Planet: React.FC = () => {
       for (let c of sides[i].children) {
         c.bounds.getCenter(center);
         c.bounds.getSize(dimensions);
+        console.log("SideGenerationStuff", {
+          c,
+          sideIndex: i,
+          side: sides[i],
+        });
 
         const rootChildChunk: RootChunk = {
           index: i,
           group: group,
-          position: new THREE.Vector3(center.x, center.y, center.z),
+          position: [center.x, center.y, center.z],
           bounds: c.bounds,
           size: dimensions.x,
         };
 
         const k = makeChunkKey(rootChildChunk);
+
         newTerrainChunks[k] = rootChildChunk;
       }
     }
@@ -196,8 +205,7 @@ const Planet: React.FC = () => {
       dictDifference(chunks.current, newTerrainChunks)
     );
 
-    // @ts-ignore
-    builder.insertOld(oldChunks);
+    builder.retireChunks(oldChunks);
 
     newTerrainChunks = intersection;
 
@@ -208,30 +216,35 @@ const Planet: React.FC = () => {
       resolution: number
     ) => {
       return builder.allocateChunk({
-        invert: planet.invert,
-        name: "hi",
+        group: group,
         material,
         offset,
+        noiseParams,
+        colorNoiseParams,
+        biomesParams: biomeParams,
+        colorGeneratorParams: {
+          ...colorParams,
+        },
+        heightGeneratorParams: {
+          min: heightParams.minRadius,
+          max: heightParams.maxRadius,
+        },
         width,
-        group,
-        scale: terrain.scale,
         radius: planet.planetRadius,
-        visible: terrain.visible,
-        subdivisions: terrain.subdivisions,
-        wireframe: terrain.wireframe,
-        colourGenerator: colors,
-        heightGenerators: [heights],
         resolution,
+        worldMatrix: group.matrix,
+        invert: planet.invert,
       });
     };
 
     for (let key in difference) {
-      const { x, y, z } = difference[key].position as THREE.Vector3;
+      const [x, y, z] = difference[key].position;
+      console.log({ x, y, z });
 
       const offset = new THREE.Vector3(x, y, z);
 
       newTerrainChunks[key] = {
-        position: new THREE.Vector3(x, z),
+        position: [x, z],
         chunk: createTerrainChunk(
           difference[key].group,
           offset,
@@ -246,11 +259,15 @@ const Planet: React.FC = () => {
   });
 
   return (
-    <group ref={rootGroupRef}>
-      {[...new Array(6)].fill(0).map((val, index) => {
-        return (
-          <group key={`group.${index}`} frustumCulled={false}>
-            {/* {Object.values(chunks.current).map((entry, chunkIndex) => {
+    <>
+      <Html>
+        <div ref={workerDebugRef}>Worker Info</div>
+      </Html>
+      <group ref={rootGroupRef}>
+        {[...new Array(6)].fill(0).map((val, index) => {
+          return (
+            <group key={`group.${index}`} frustumCulled={false}>
+              {/* {Object.values(chunks.current).map((entry, chunkIndex) => {
               return (
                 <primitive
                   key={`group.${index}.${chunkIndex}`}
@@ -258,10 +275,12 @@ const Planet: React.FC = () => {
                 />
               );
             })} */}
-          </group>
-        );
-      })}
-    </group>
+            </group>
+          );
+        })}
+        <Clouds radius={planet.planetRadius * 0.95} />
+      </group>
+    </>
   );
 };
 

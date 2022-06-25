@@ -85,15 +85,13 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         {/* <color attach="background" args={["lightblue"]} /> */}
         {/* <gridHelper args={[500, 500]} position={[0, -0.2, 0]} /> */}
         {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}
-        <fog attach="fog" color={0xdfe9f3} near={100} far={100_000} />
+        <fogExp2 attach="fog" color={0x40e2ff} density={0.000125} />
         <SpaceBox />
         <InvertedLightRig />
-        {/* <OrbitControls /> */}
         <group scale={new Vector3(5, 5, 5)}>
           <Stars />
         </group>
         {children}
-        {/* <fog attach="fog" args={[0xdfe9f3, 0.005]} /> */}
       </React.Suspense>
     </Canvas>
   );

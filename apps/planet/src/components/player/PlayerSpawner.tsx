@@ -9,6 +9,7 @@ const spawnCast = new THREE.Raycaster();
 const origin = new THREE.Vector3();
 export const PlayerSpawner: React.FC = () => {
   const { scene } = useThree();
+  const portal = React.useRef<HTMLElement>(null);
   const state = useStore();
 
   const handleSpawnPlayer = (): void => {
@@ -34,6 +35,10 @@ export const PlayerSpawner: React.FC = () => {
       );
     }
   };
+
+  React.useLayoutEffect(() => {
+    // portal.current = document.body.querySelector("#spawner");
+  }, []);
 
   return (
     <Html transform={false}>

@@ -12,6 +12,7 @@ const Player = React.forwardRef<
       <capsuleGeometry args={[0.5, 1, 4, 8]} />
       <meshStandardMaterial color="white" />
       {children}
+      <axesHelper scale={new THREE.Vector3(4, 4, 4)} />
     </mesh>
   );
 });
