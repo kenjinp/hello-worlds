@@ -1,6 +1,6 @@
 import { useControls } from "leva";
 import * as React from "react";
-import Noise, { NoiseParams, NOISE_STYLES } from "./Noise";
+import Noise, { NoiseParams, NOISE_STYLES } from "../../lib/noise/Noise";
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,

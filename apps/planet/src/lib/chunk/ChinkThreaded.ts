@@ -58,7 +58,6 @@ export default class ChunkThreaded {
       "uv",
       new THREE.Float32BufferAttribute(data.uvs, 2)
     );
-    this.geometry.computeBoundsTree();
   }
 
   // *rebuild() {

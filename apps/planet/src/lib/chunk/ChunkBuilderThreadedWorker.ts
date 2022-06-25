@@ -3,8 +3,8 @@ import { ColorGenerator } from "../generators/ColorGenerator";
 import { Generator3 } from "../generators/Generator3";
 import { HeightGenerator } from "../generators/HeightGenerator";
 import Noise from "../noise/Noise";
+import { ThreadedChunkProps } from "../planet/PlanetEngine";
 import { ChunkBuilderThreadedMessageTypes } from "./ChunkBuilderThreaded";
-import { ThreadedChunkProps } from "./PlanetEngine";
 
 class ChunkBuilderThreadedWorker {
   #noise: Noise;
@@ -27,7 +27,7 @@ class ChunkBuilderThreadedWorker {
       }),
     ];
 
-    this.#biomeGenerator = new Noise(params.biomesParams);
+    this.#biomeGenerator = new Noise(params.biomeParams);
     this.#colorGenerator = new ColorGenerator({
       ...this.params.colorGeneratorParams,
       biomeGenerator: this.#biomeGenerator,

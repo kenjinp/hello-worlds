@@ -1,8 +1,8 @@
-import WorkerThreadPool from "../../WorkerThreadPool";
 import { NoiseParams } from "../noise/Noise";
+import { ChunkMap, ChunkTypes } from "../planet/PlanetEngine";
+import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded from "./ChinkThreaded";
 import chunkBuilderThreadedWorker from "./ChunkBuilderThreadedWorker?worker";
-import { ChunkMap } from "./PlanetEngine";
 
 const DEFAULT_NUM_WORKERS = 8;
 
@@ -19,7 +19,7 @@ export interface ChunkBuilderThreadedMessage {
 export interface AllocateChunkProps {
   noiseParams: NoiseParams;
   colorNoiseParams: NoiseParams;
-  biomesParams: NoiseParams;
+  biomeParams: NoiseParams;
   colorGeneratorParams: {
     seaDeep: string;
     seaMid: string;
@@ -93,7 +93,7 @@ export default class ChunkBuilderThreaded {
     const threadedParams = {
       noiseParams: params.noiseParams,
       colorNoiseParams: params.colorNoiseParams,
-      biomesParams: params.biomesParams,
+      biomeParams: params.biomeParams,
       colorGeneratorParams: params.colorGeneratorParams,
       heightGeneratorParams: params.heightGeneratorParams,
       width: params.width,
@@ -123,7 +123,7 @@ export default class ChunkBuilderThreaded {
     this.#old.push(...chunks);
   }
 
-  recycleChunks(oldChunks: ChunkThreaded[]) {
+  #recycleChunks(oldChunks: ChunkThreaded[]) {
     for (let chunk of oldChunks) {
       if (!(chunk.params.width in this.#pool)) {
         this.#pool[chunk.params.width] = [];
@@ -136,20 +136,23 @@ export default class ChunkBuilderThreaded {
     return this.#workerPool.busy;
   }
 
+  // is this necessary?
   rebuild(chunkMap: ChunkMap) {
     console.log("rebuild", chunkMap);
-    // for (let key in chunkMap) {
-    //   const { group, material, ...params } = chunkMap[key].params;
-
-    //   this.#workerPool.enqueue(params, () => {
-    //     //
-    //   });
-    // }
+    for (let key in chunkMap) {
+      const chunk = chunkMap[key];
+      if (chunk.type === ChunkTypes.CHILD) {
+        const { group, material, ...params } = chunk.chunk.params;
+        this.#workerPool.enqueue(params, () => {
+          // why? I don't understand this.
+        });
+      }
+    }
   }
 
   update() {
     if (!this.busy) {
-      this.recycleChunks(this.#old);
+      this.#recycleChunks(this.#old);
       this.#old = [];
     }
   }

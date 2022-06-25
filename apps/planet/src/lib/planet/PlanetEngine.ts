@@ -8,7 +8,7 @@ import CubicQuadTree from "../quadtree/CubicQuadTree";
 export interface ThreadedChunkProps {
   noiseParams: any;
   colorNoiseParams: any;
-  biomesParams: any;
+  biomeParams: any;
   colorGeneratorParams: {
     seaDeep: string;
     seaMid: string;
@@ -81,7 +81,7 @@ export interface PlanetEngineProps {
 export interface PlanetProps {
   noiseParams: NoiseParams;
   colorNoiseParams: NoiseParams;
-  biomesParams: NoiseParams;
+  biomeParams: NoiseParams;
   colorGeneratorParams: {
     seaDeep: string;
     seaMid: string;
@@ -99,15 +99,14 @@ export interface PlanetProps {
   maxRadius: number;
   width: number;
   radius: number;
-  resolution: number;
   invert: boolean;
   minCellSize: number;
   minCellResolution: number;
 }
 
 export default class PlanetEngine {
-  #rootGroup = new THREE.Group();
-  #cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
+  rootGroup = new THREE.Group();
+  cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
   #builder: ChunkBuilderThreaded;
   material: THREE.Material;
   #chunkMap: ChunkMap = {};
@@ -123,7 +122,16 @@ export default class PlanetEngine {
       side: THREE.DoubleSide,
       vertexColors: true,
     });
-    this.#rootGroup.add(...this.#cubeFaceGroups);
+    this.rootGroup.add(...this.cubeFaceGroups);
+  }
+
+  // for debugging threads
+  get busyInfo() {
+    return {
+      busy: this.#builder.busy,
+      busyLength: this.#builder.busyLength,
+      queueLength: this.#builder.queueLength,
+    };
   }
 
   // to re-apply parameter changes, for example
@@ -156,7 +164,7 @@ export default class PlanetEngine {
     const center = new THREE.Vector3();
     const dimensions = new THREE.Vector3();
     for (let i = 0; i < sides.length; i++) {
-      const cubeFaceRootGroup = this.#cubeFaceGroups[i];
+      const cubeFaceRootGroup = this.cubeFaceGroups[i];
       cubeFaceRootGroup.matrix = sides[i].transform;
       cubeFaceRootGroup.matrixAutoUpdate = false;
       for (let cubeFaceChildChunk of sides[i].children) {
@@ -201,7 +209,7 @@ export default class PlanetEngine {
           offset,
           noiseParams: this.planetProps.noiseParams,
           colorNoiseParams: this.planetProps.colorNoiseParams,
-          biomesParams: this.planetProps.biomesParams,
+          biomeParams: this.planetProps.biomeParams,
           colorGeneratorParams: this.planetProps.colorGeneratorParams,
           heightGeneratorParams: {
             min: this.planetProps.minRadius,
@@ -209,7 +217,7 @@ export default class PlanetEngine {
           },
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
-          resolution: this.planetProps.resolution,
+          resolution: this.planetProps.minCellResolution,
           invert: this.planetProps.invert,
         }),
       };

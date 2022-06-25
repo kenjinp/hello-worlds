@@ -1,8 +1,8 @@
 import { useControls } from "leva";
 import * as React from "react";
 import * as THREE from "three";
-import Noise from "../noise/Noise";
-import { HeightGenerator } from "./HeightGenerator";
+import { HeightGenerator } from "../../lib/generators/HeightGenerator";
+import Noise from "../../lib/noise/Noise";
 
 export const DEFAULT_HEIGHT_PARAMS = {
   minRadius: 100_000,

@@ -1,9 +1,12 @@
 import { useControls } from "leva";
 import * as React from "react";
 import * as THREE from "three";
-import { NOISE_STYLES } from "../noise/Noise";
+import {
+  ColorGenerator,
+  ColorGeneratorParams,
+} from "../../lib/generators/ColorGenerator";
+import { NOISE_STYLES } from "../../lib/noise/Noise";
 import { useNoiseController } from "../noise/NoiseController";
-import { ColorGenerator, ColorGeneratorParams } from "./ColorGenerator";
 
 export const DEFAULT_COLOR_PARAMS = {
   seaDeep: new THREE.Color(0x20020ff).getStyle(),
