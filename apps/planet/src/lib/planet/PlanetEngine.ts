@@ -221,9 +221,7 @@ export default class PlanetEngine {
     this.#builder.rebuild(this.#chunkMap);
   }
 
-  update(origin: THREE.Vector3) {
-    const floatingOrigin = origin.clone();
-
+  update(anchor: THREE.Vector3) {
     if (!this.planetProps) {
       throw new Error("must set planetProps before updating");
     }
@@ -240,7 +238,13 @@ export default class PlanetEngine {
     });
 
     // collapse the quadtree recursively at this position
-    q.insert(floatingOrigin);
+    q.insert(
+      anchor
+      // floatingOrigin.clone().add(floatingOrigin.clone().multiplyScalar(-1))
+      // floatingOrigin.add(floatingOrigin.clone()).add(floatingOrigin.clone())
+    );
+
+    // this.rootGroup.position.add(floatingOrigin.clone().multiplyScalar(-1));
 
     const sides = q.getChildren();
 
@@ -259,7 +263,7 @@ export default class PlanetEngine {
           type: ChunkTypes.ROOT,
           index: i,
           group: cubeFaceRootGroup,
-          transform: sides[i].transform,
+          transform: cubeFaceRootGroup.matrix,
           position: center.clone(),
           bounds: cubeFaceChildChunk.bounds.clone(),
           size: dimensions.x,
@@ -301,7 +305,7 @@ export default class PlanetEngine {
             min: this.planetProps.minRadius,
             max: this.planetProps.maxRadius,
           },
-          origin: floatingOrigin,
+          origin: anchor,
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,
@@ -315,12 +319,12 @@ export default class PlanetEngine {
     for (let key in this.#chunkMap) {
       const chunk = this.#chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
-        chunk.chunk.update(floatingOrigin);
+        chunk.chunk.update(anchor);
       }
     }
     for (let chunk of this.#builder.old) {
       if (chunk.type === ChunkTypes.CHILD) {
-        chunk.chunk.update(floatingOrigin);
+        chunk.chunk.update(anchor);
       }
     }
   }

@@ -27,6 +27,11 @@ export default class WorkerThreadPool<T> {
   }
 
   enqueue(workItem: any, resolve: (data: T) => void) {
+    // TODO deal with queue memory overload
+    // if (this.#queue.length >= 200) {
+    //   console.warn("queue is too long");
+    //   return void this.#pumpQueue();
+    // }
     this.#queue.push([workItem, resolve]);
     this.#pumpQueue();
   }

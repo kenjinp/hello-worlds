@@ -2,8 +2,7 @@ import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Perf } from "r3f-perf";
 import * as React from "react";
-import { Color, Vector3 } from "three";
-import FlyCamera from "./cameras/FlyCamera";
+import { Color, Quaternion, Vector3 } from "three";
 import { SpaceBox } from "./SpaceBox";
 
 export const LightRig: React.FC = ({}) => {
@@ -68,6 +67,21 @@ export const InvertedLightRig: React.FC = ({}) => {
   );
 };
 
+// new Vector3(0, 6_357 * 1_000, 6_357 * 1_000)
+const small = new Vector3(0, 10_000, 10_000);
+const cameraPosition = new Vector3(0, 6_357 * 1_000, 6_357 * 1_000);
+
+// new Vector3(
+//   355898.9978932907,
+//   -16169.249553939484,
+//   -181920.2108868533
+// );
+const cameraQuat = new Quaternion(
+  0.3525209450519473,
+  0.6189868049149101,
+  -0.58773147927222,
+  0.38360921119467495
+);
 export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
@@ -77,7 +91,9 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
       camera={{
         near: 0.01,
         far: 100_000_000,
-        position: new Vector3(0, 6_357 * 1_000, 6_357 * 1_000),
+        // position: new Vector3(0, 6_357 * 1_000, 6_357 * 1_000),
+        position: small,
+        quaternion: cameraQuat,
       }}
       shadows
     >
@@ -86,13 +102,14 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         {/* <color attach="background" args={["lightblue"]} /> */}
         {/* <gridHelper args={[500, 500]} position={[0, -0.2, 0]} /> */}
         {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}
-        {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.000125} /> */}
+        {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.00000125} /> */}
         <SpaceBox />
         <InvertedLightRig />
         <group scale={new Vector3(5, 5, 5)}>
           <Stars />
         </group>
-        <FlyCamera />
+        {/* <OrbitControls /> */}
+        {/* <FlyCamera /> */}
         {children}
       </React.Suspense>
     </Canvas>

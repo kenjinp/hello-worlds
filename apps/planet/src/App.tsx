@@ -1,3 +1,4 @@
+import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
@@ -15,10 +16,11 @@ function App() {
           console.log("spawn position", pos);
           return <PlayerPhysicsSystem key={index} startingPosition={pos} />;
         })} */}
-        {/* <OrbitControls /> */}
         <PlanetConfigurator />
-
-        {/* <PlayerSpawner /> */}
+        {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
+        {/* <FlyCamera /> */}
+        <OrbitControls />
+        {/* <PlayerSpawwswner /> */}
       </BasicScene>
       <div
         id="actions"

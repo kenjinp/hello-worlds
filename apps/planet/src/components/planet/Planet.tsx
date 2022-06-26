@@ -4,6 +4,12 @@ import * as THREE from "three";
 import { PlanetProps } from "../../lib";
 import PlanetEngine, { PlanetEngineProps } from "../../lib/planet/PlanetEngine";
 
+const PlanetContext = React.createContext<PlanetEngine | null>(null);
+
+export const usePlanet = () => {
+  return React.useContext(PlanetContext);
+};
+
 const Planet = React.forwardRef<
   PlanetEngine,
   React.PropsWithChildren<
@@ -54,7 +60,15 @@ const Planet = React.forwardRef<
           <meshBasicMaterial color="purple" />
         </mesh>
       </mesh> */}
-      <group ref={planetGroupRef} />
+      <PlanetContext.Provider value={planetEngine}>
+        <group ref={planetGroupRef}>
+          {/* <mesh>
+            <icosahedronGeometry args={[planetProps.radius * 1.01, 12]} />
+            <meshStandardMaterial wireframe color="blue" />
+          </mesh> */}
+          {children}
+        </group>
+      </PlanetContext.Provider>
     </>
   );
 });

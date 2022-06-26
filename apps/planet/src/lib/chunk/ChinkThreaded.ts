@@ -32,8 +32,8 @@ export default class ChunkThreaded {
   // }
 
   update(currentCameraPosition: THREE.Vector3) {
-    this.plane.position.copy(this.params.origin);
-    this.plane.position.sub(currentCameraPosition);
+    // this.plane.position.copy(this.params.origin);
+    // this.plane.position.sub(currentCameraPosition);
   }
 
   // reinit(params: AllocateChunkProps & { group: THREE.Object3D }) {

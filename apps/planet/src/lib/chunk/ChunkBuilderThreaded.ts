@@ -161,16 +161,30 @@ export default class ChunkBuilderThreaded {
       if (chunk.type === ChunkTypes.CHILD) {
         const { material, ...params } = chunk.chunk.params;
 
+        const threadedParams = {
+          noiseParams: params.noiseParams,
+          colorNoiseParams: params.colorNoiseParams,
+          biomeParams: params.biomeParams,
+          colorGeneratorParams: params.colorGeneratorParams,
+          heightGeneratorParams: params.heightGeneratorParams,
+          width: params.width,
+          offset: [params.offset.x, params.offset.y, params.offset.z],
+          radius: params.radius,
+          origin: params.origin,
+          resolution: params.resolution,
+          worldMatrix: params.transform,
+          invert: params.invert,
+        };
+
         const msg = {
           subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK,
-          params,
+          params: threadedParams,
         };
 
         this.#workerPool.enqueue(msg, (m) => {
           if (chunk) {
             return void this.#onResult(chunk.chunk, m);
           }
-          console.warn("no chunk found on enqueuement: ", m);
         });
       }
     }

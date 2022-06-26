@@ -44,9 +44,12 @@ class ChunkBuilderThreadedWorker {
     const _D = new THREE.Vector3();
     const _D1 = new THREE.Vector3();
     const _D2 = new THREE.Vector3();
-    const localPosition = new THREE.Vector3();
+    const _P = new THREE.Vector3();
     const _H = new THREE.Vector3();
-    const worldPosition = new THREE.Vector3();
+    const _W = new THREE.Vector3();
+    const _S = new THREE.Vector3();
+    const _C = new THREE.Vector3();
+
     const _N = new THREE.Vector3();
     const _N1 = new THREE.Vector3();
     const _N2 = new THREE.Vector3();
@@ -73,44 +76,41 @@ class ChunkBuilderThreadedWorker {
         const yp = (width * y) / resolution;
 
         // Compute position
-        localPosition.set(xp - half, yp - half, radius);
-        localPosition.add(offset);
-        localPosition.normalize();
-        _D.copy(localPosition);
+        _P.set(xp - half, yp - half, radius);
+        _P.add(offset);
+        _P.normalize();
+        _D.copy(_P);
         _D.transformDirection(localToWorld);
 
-        localPosition.multiplyScalar(radius);
-        localPosition.z -= radius;
-        localPosition.applyMatrix4(localToWorld);
+        _P.multiplyScalar(radius);
+        _P.z -= radius;
+        // _P.applyMatrix4(localToWorld);
 
         // Keep the absolute world space position to sample noise
-        worldPosition.copy(localPosition);
+        _W.copy(_P);
+        _W.applyMatrix4(localToWorld);
 
         // Move the position relative to the origin
-        localPosition.sub(origin);
+        // _P.sub(origin);
 
-        const height = this.generateHeight(worldPosition.clone());
-        // worldPosition.normalize(); // VERY IMPORTANT!
-        const color = this.#colorGenerator.get(
-          worldPosition.x,
-          worldPosition.y,
-          height
-        );
+        const height = this.generateHeight(_W.clone());
+        _W.normalize(); // VERY IMPORTANT!
+        const color = this.#colorGenerator.get(_W.x, _W.y, height);
 
         // Purturb height along z-vector
         _H.copy(_D);
         _H.multiplyScalar(height * (this.params.invert ? -1 : 1));
-        localPosition.add(_H);
+        _P.add(_H);
 
-        positions.push(localPosition.x, localPosition.y, localPosition.z);
+        positions.push(_P.x, _P.y, _P.z);
         // localPosition.normalize();
 
         colors.push(color.r, color.g, color.b);
-
-        // colors.push(localPosition.x, localPosition.y, localPosition.z);
+        // _P.normalize();
+        // colors.push(_W.x, _W.y, _W.z);
         normals.push(_D.x, _D.y, _D.z);
         tangents.push(1, 0, 0, 1);
-        uvs.push(localPosition.x / 10, localPosition.y / 10);
+        uvs.push(_P.x / 200.0, _P.y / 200.0);
       }
     }
 
