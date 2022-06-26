@@ -3,15 +3,13 @@ import { useThree } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
 import { MathUtils, Vector3 } from "three";
-import { useStore } from "../../store";
+import { generateUUID } from "three/src/math/MathUtils";
+import { ECS } from "../../state/ecs";
 
 const spawnCast = new THREE.Raycaster();
 const origin = new THREE.Vector3();
 export const PlayerSpawner: React.FC = () => {
-  const { scene } = useThree();
-  const portal = React.useRef<HTMLElement>(null);
-  const state = useStore();
-
+  const { scene, camera } = useThree();
   const handleSpawnPlayer = (): void => {
     const randomVec = new Vector3(
       MathUtils.randInt(-100, 100),
@@ -25,20 +23,21 @@ export const PlayerSpawner: React.FC = () => {
 
     randomVec.normalize();
     spawnCast.set(origin, randomVec);
-    spawnCast.firstHitOnly = true;
     const intersects = spawnCast.intersectObjects(scene.children, true);
 
-    for (let i = 0; i < intersects.length; i++) {
-      const intersection = intersects[i];
-      state.addPlayerSpawnPosition(
-        intersection.point.sub(randomVec.clone().multiplyScalar(10))
+    if (intersects[0]) {
+      const intersection = intersects[0];
+
+      const playerPosition = intersection.point.sub(
+        randomVec.clone().multiplyScalar(10)
       );
+
+      ECS.world.createEntity({
+        position: playerPosition,
+        playerId: generateUUID(),
+      });
     }
   };
-
-  React.useLayoutEffect(() => {
-    // portal.current = document.body.querySelector("#spawner");
-  }, []);
 
   return (
     <Html transform={false}>

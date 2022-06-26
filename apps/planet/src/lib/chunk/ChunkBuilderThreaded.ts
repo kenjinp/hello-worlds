@@ -55,6 +55,7 @@ export interface AllocateChunkProps {
 
 export default class ChunkBuilderThreaded {
   #old: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[] = [];
+  // we keep the chunks stored with key of width
   #pool: Record<number, ChunkThreaded[]> = {};
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>;
 
@@ -112,7 +113,7 @@ export default class ChunkBuilderThreaded {
       radius: params.radius,
       origin: params.origin,
       resolution: params.resolution,
-      worldMatrix: params.transform,
+      worldMatrix: params.group.matrix,
       invert: params.invert,
     };
 
@@ -156,6 +157,7 @@ export default class ChunkBuilderThreaded {
   }
 
   rebuild(chunkMap: ChunkMap) {
+    console.log({ chunkMap });
     for (let key in chunkMap) {
       const chunk = chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
@@ -172,7 +174,7 @@ export default class ChunkBuilderThreaded {
           radius: params.radius,
           origin: params.origin,
           resolution: params.resolution,
-          worldMatrix: params.transform,
+          worldMatrix: params.group.matrix,
           invert: params.invert,
         };
 
@@ -186,6 +188,8 @@ export default class ChunkBuilderThreaded {
             return void this.#onResult(chunk.chunk, m);
           }
         });
+      } else {
+        console.log({ rootChunk: chunk });
       }
     }
   }

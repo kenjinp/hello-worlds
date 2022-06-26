@@ -253,8 +253,8 @@ export default class PlanetEngine {
     const dimensions = new THREE.Vector3();
     for (let i = 0; i < sides.length; i++) {
       const cubeFaceRootGroup = this.cubeFaceGroups[i];
-      // cubeFaceRootGroup.matrix = sides[i].transform; // removed for floating origin
-      // cubeFaceRootGroup.matrixAutoUpdate = false;
+      cubeFaceRootGroup.matrix = sides[i].transform; // removed for floating origin
+      cubeFaceRootGroup.matrixAutoUpdate = false;
       for (let cubeFaceChildChunk of sides[i].children) {
         cubeFaceChildChunk.bounds.getCenter(center);
         cubeFaceChildChunk.bounds.getSize(dimensions);
@@ -284,9 +284,6 @@ export default class PlanetEngine {
 
     // Now let's build the children chunks who actually show terrain detail
     for (let key in difference) {
-      if (difference[key].type !== ChunkTypes.ROOT) {
-        console.warn("something strange", key, difference[key]);
-      }
       const parentChunkProps = difference[key] as CubeFaceRootChunkProps;
       const offset = parentChunkProps.position.clone();
       newChunkMap[key] = {
@@ -316,16 +313,16 @@ export default class PlanetEngine {
 
     this.#chunkMap = newChunkMap;
 
-    for (let key in this.#chunkMap) {
-      const chunk = this.#chunkMap[key];
-      if (chunk.type === ChunkTypes.CHILD) {
-        chunk.chunk.update(anchor);
-      }
-    }
-    for (let chunk of this.#builder.old) {
-      if (chunk.type === ChunkTypes.CHILD) {
-        chunk.chunk.update(anchor);
-      }
-    }
+    // for (let key in this.#chunkMap) {
+    //   const chunk = this.#chunkMap[key];
+    //   if (chunk.type === ChunkTypes.CHILD) {
+    //     chunk.chunk.update(anchor);
+    //   }
+    // }
+    // for (let chunk of this.#builder.old) {
+    //   if (chunk.type === ChunkTypes.CHILD) {
+    //     chunk.chunk.update(anchor);
+    //   }
+    // }
   }
 }

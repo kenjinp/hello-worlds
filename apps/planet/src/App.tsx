@@ -1,9 +1,9 @@
-import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
-import CameraButtons from "./components/cameras/CameraButtons";
-import PlanetConfigurator from "./components/planet/PlanetConfigurator";
+import { PlanetGenerator } from "./components/planet/PlanetGenerator";
+import { RenderPlayers } from "./components/player/Player";
+import { PlayerSpawner } from "./components/player/PlayerSpawner";
 import { useStore } from "./store";
 function App() {
   const state = useStore();
@@ -16,18 +16,19 @@ function App() {
           console.log("spawn position", pos);
           return <PlayerPhysicsSystem key={index} startingPosition={pos} />;
         })} */}
-        <PlanetConfigurator />
+        <PlanetGenerator />
         {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
         {/* <FlyCamera /> */}
-        <OrbitControls />
-        {/* <PlayerSpawwswner /> */}
+        {/* <OrbitControls /> */}
+        <PlayerSpawner />
+        <RenderPlayers />
       </BasicScene>
       <div
         id="actions"
         style={{ position: "absolute", left: "1em", bottom: "1em" }}
       >
-        <button>Spawn Player</button>
-        <CameraButtons />
+        {/* <button>Spawn Player</button>
+        <CameraButtons /> */}
         <div id="spawner"></div>
       </div>
     </div>

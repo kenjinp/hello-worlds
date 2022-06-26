@@ -12,11 +12,11 @@ export default class ChunkThreaded {
     this.plane.frustumCulled = false;
     this.params.group.add(this.plane);
     this.plane.position.set(0, 0, 0);
-    // this.reinit(params);
   }
 
   destroy() {
     this.params.group.remove(this.plane);
+    this.plane.geometry.dispose(); // IMPORTANT!
   }
 
   hide() {

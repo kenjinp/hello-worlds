@@ -11,9 +11,9 @@ import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
 import Planet from "./Planet";
 
-const EARTH_RADIUS = 6_357 * 1_000;
+export const EARTH_RADIUS = 6_357 * 1_000;
 
-const PlanetConfigurator: React.FC = () => {
+const PlanetConfigurator: React.FC<{ radius: number }> = ({ radius }) => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
   const planetEngine = React.useRef<PlanetEngine | null>(null);
   const { scene, camera } = useThree();
@@ -54,7 +54,7 @@ const PlanetConfigurator: React.FC = () => {
     planetRadius: {
       min: 10,
       max: 10_000_000,
-      value: 4_000,
+      value: radius,
       step: 10,
     },
     minCellSize: {
@@ -91,7 +91,7 @@ const PlanetConfigurator: React.FC = () => {
 
   return (
     <>
-      <Html transform={false}>
+      <Html>
         <div ref={workerDebugRef}></div>
       </Html>
       <Planet

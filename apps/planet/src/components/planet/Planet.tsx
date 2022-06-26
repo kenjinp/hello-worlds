@@ -17,7 +17,7 @@ const Planet = React.forwardRef<
   >
 >(({ children, numWorkers, origin, ...planetProps }, ref) => {
   const planetGroupRef = React.useRef<THREE.Group>(null);
-  const [planetEngine] = React.useState(
+  const [planetEngine] = React.useState<PlanetEngine>(
     new PlanetEngine({
       numWorkers,
     })
@@ -30,7 +30,9 @@ const Planet = React.forwardRef<
       ...planetEngine.planetProps,
       ...planetProps,
     };
-    planetEngine.rebuild();
+    console.log("rebuild call");
+    // TODO: this needs to be throttled somehow?
+    planetEngine.rebuild;
   }, [planetProps]);
 
   React.useLayoutEffect(() => {

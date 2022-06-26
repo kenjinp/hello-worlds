@@ -1,10 +1,13 @@
 import { createECS } from "miniplex-react";
+import { Vector3 } from "three";
 
 type Entity = {
-  position: { x: number; y: number; z: number };
-  velocity?: { x: number; y: number; z: number };
-  playerId?: number;
+  position: Vector3;
+  offset?: Vector3;
+  velocity?: Vector3;
+  playerId?: string;
   planet?: { name: string; radius: number };
+  rotation?: { speed: number };
   controls?: { type: "fly" | "orbit" };
 };
 

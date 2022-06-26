@@ -80,18 +80,12 @@ class ChunkBuilderThreadedWorker {
         _P.add(offset);
         _P.normalize();
         _D.copy(_P);
-        _D.transformDirection(localToWorld);
-
         _P.multiplyScalar(radius);
         _P.z -= radius;
-        // _P.applyMatrix4(localToWorld);
 
-        // Keep the absolute world space position to sample noise
+        // Compute a world space position to sample noise
         _W.copy(_P);
         _W.applyMatrix4(localToWorld);
-
-        // Move the position relative to the origin
-        // _P.sub(origin);
 
         const height = this.generateHeight(_W.clone());
         _W.normalize(); // VERY IMPORTANT!

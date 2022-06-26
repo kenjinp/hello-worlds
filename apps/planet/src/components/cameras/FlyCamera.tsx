@@ -4,7 +4,7 @@ import * as React from "react";
 // import { useControls as useInputControls} from "../../hooks/useControls";
 const FlyCamera: React.FC = () => {
   const { movementSpeed } = useControls("movement", {
-    movementSpeed: 100_000,
+    movementSpeed: 100,
   });
 
   // const controls = useInputControls();

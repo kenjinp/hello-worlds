@@ -105,7 +105,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.00000125} /> */}
         <SpaceBox />
         <InvertedLightRig />
-        <group scale={new Vector3(5, 5, 5)}>
+        <group scale={new Vector3(50, 50, 50)}>
           <Stars />
         </group>
         {/* <OrbitControls /> */}
