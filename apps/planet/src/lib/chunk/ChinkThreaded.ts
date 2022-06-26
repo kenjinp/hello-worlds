@@ -1,8 +1,5 @@
 import * as THREE from "three";
-import { DoubleSide, MeshStandardMaterial } from "three";
 import { AllocateChunkProps } from "./ChunkBuilderThreaded";
-
-const material = new MeshStandardMaterial({ color: "blue", side: DoubleSide });
 
 export default class ChunkThreaded {
   public plane: THREE.Mesh;
@@ -15,9 +12,6 @@ export default class ChunkThreaded {
     this.plane.frustumCulled = !this.params.isMinCellSize;
     this.params.group.add(this.plane);
     this.plane.position.set(0, 0, 0);
-    if (this.params.isMinCellSize) {
-      this.plane.material = material;
-    }
   }
 
   destroy() {
