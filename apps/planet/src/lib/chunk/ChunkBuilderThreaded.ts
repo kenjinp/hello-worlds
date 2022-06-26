@@ -51,6 +51,7 @@ export interface AllocateChunkProps {
   radius: number;
   resolution: number;
   invert: boolean;
+  isMinCellSize: boolean;
 }
 
 export default class ChunkBuilderThreaded {

@@ -1,6 +1,7 @@
 import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
+import FlyCamera from "./components/cameras/FlyCamera";
 import { PlanetGenerator } from "./components/planet/PlanetGenerator";
 import { RenderPlayers } from "./components/player/Player";
 import { PlayerSpawner } from "./components/player/PlayerSpawner";
@@ -22,6 +23,7 @@ function App() {
         {/* <OrbitControls /> */}
         <PlayerSpawner />
         <RenderPlayers />
+        <FlyCamera />
       </BasicScene>
       <div
         id="actions"

@@ -307,6 +307,8 @@ export default class PlanetEngine {
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,
           invert: this.planetProps.invert,
+          isMinCellSize:
+            parentChunkProps.size <= this.planetProps.radius / Math.PI,
         }),
       };
     }

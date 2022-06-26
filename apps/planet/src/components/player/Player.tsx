@@ -1,4 +1,3 @@
-import { OrbitControls } from "@react-three/drei";
 import * as React from "react";
 import * as THREE from "three";
 import { ECS } from "../../state/ecs";
@@ -16,14 +15,14 @@ export const RenderPlayers = () => {
             {/* <OrbitControls maxZoom={20} /> */}
             {/* <FollowCameraSystem /> */}
             {/* <FirstPersonControls position={position} /> */}
-            <OrbitControls
+            {/* <OrbitControls
             // minDistance={50}
             // position={position}
             // enableZoom={false}
             // enablePan={false}
             // minPolarAngle={Math.PI / 2}
             // maxPolarAngle={Math.PI / 2}
-            />
+            /> */}
           </Player>
         );
       })}
