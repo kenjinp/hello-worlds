@@ -13,7 +13,10 @@ import Planet from "./Planet";
 
 export const EARTH_RADIUS = 6_357 * 1_000;
 
-const PlanetConfigurator: React.FC<{ radius: number }> = ({ radius }) => {
+const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
+  radius,
+  name,
+}) => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
   const planetEngine = React.useRef<PlanetEngine | null>(null);
   const { scene, camera } = useThree();
@@ -92,6 +95,7 @@ const PlanetConfigurator: React.FC<{ radius: number }> = ({ radius }) => {
   return (
     <>
       <Html>
+        <h1>{name}</h1>
         <div ref={workerDebugRef}></div>
       </Html>
       <Planet

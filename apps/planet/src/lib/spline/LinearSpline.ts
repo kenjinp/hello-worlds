@@ -1,7 +1,7 @@
 export type Lerp<T = number> = (lerpValue: number, start: T, end: T) => T;
 
 export default class LinearSpline<T> {
-  private points: [number, T][] = [];
+  points: [number, T][] = [];
   constructor(private lerp: Lerp<T>) {}
 
   addPoint(t: number, d: T) {

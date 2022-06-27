@@ -89,7 +89,7 @@ class ChunkBuilderThreadedWorker {
 
         const height = this.generateHeight(_W.clone());
         _W.normalize(); // VERY IMPORTANT!
-        const color = this.#colorGenerator.get(_W.x, _W.y, height);
+        // const color = this.#colorGenerator.get(_W.x, _W.y, height);
 
         // Purturb height along z-vector
         _H.copy(_D);
@@ -99,6 +99,9 @@ class ChunkBuilderThreadedWorker {
         positions.push(_P.x, _P.y, _P.z);
         // localPosition.normalize();
 
+        // colors.push(color.r, color.g, color.b);
+        //@ts-ignore
+        const color = this.#colorGenerator.getTemperature(_W, height);
         colors.push(color.r, color.g, color.b);
         // _P.normalize();
         // colors.push(_W.x, _W.y, _W.z);

@@ -1,12 +1,14 @@
 import { ECS } from "../../state/ecs";
-import PlanetConfigurator, { EARTH_RADIUS } from "./PlanetConfigurator";
+import PlanetConfigurator from "./PlanetConfigurator";
 
 export const RenderPlanet = () => {
   const { entities } = ECS.useArchetype("position", "planet");
 
   return (
-    <ECS.Entities entities={entities}>
-      <PlanetConfigurator radius={EARTH_RADIUS} />
-    </ECS.Entities>
+    <>
+      {entities.map(({ position, planet }) => {
+        return <PlanetConfigurator radius={planet.radius} name={planet.name} />;
+      })}
+    </>
   );
 };

@@ -1,10 +1,9 @@
+import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
-import FlyCamera from "./components/cameras/FlyCamera";
 import { PlanetGenerator } from "./components/planet/PlanetGenerator";
 import { RenderPlayers } from "./components/player/Player";
-import { PlayerSpawner } from "./components/player/PlayerSpawner";
 import { useStore } from "./store";
 function App() {
   const state = useStore();
@@ -20,10 +19,10 @@ function App() {
         <PlanetGenerator />
         {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
         {/* <FlyCamera /> */}
-        {/* <OrbitControls /> */}
-        <PlayerSpawner />
+        <OrbitControls />
+        {/* <PlayerSpawner /> */}
         <RenderPlayers />
-        <FlyCamera />
+        {/* <FlyCamera /> */}
       </BasicScene>
       <div
         id="actions"
