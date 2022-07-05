@@ -26,7 +26,6 @@ importers:
       three-mesh-bvh: ^0.5.14
       typescript: ^4.6.3
       vite: ^2.9.9
-      vite-plugin-cross-origin-isolation: ^0.1.6
       zustand: ^4.0.0-rc.1
     dependencies:
       '@react-three/drei': 9.13.2_72d375f37a437d0ec2e96344a2593f8c
@@ -50,7 +49,6 @@ importers:
       '@vitejs/plugin-react': 1.3.2
       typescript: 4.7.4
       vite: 2.9.12
-      vite-plugin-cross-origin-isolation: 0.1.6
 
 packages:
 
@@ -1788,10 +1786,6 @@ packages:
   /v8n/1.4.0:
     resolution: {integrity: sha512-LzBuh0AYyuTdfsaSG7iabfPQPTggbd/G19fxgcq/QFkdvznB4bYICfbDYBrzqaobASNt0hK/ti4ykwLksvZEbA==}
     dev: false
-
-  /vite-plugin-cross-origin-isolation/0.1.6:
-    resolution: {integrity: sha512-OY0naW9nPUDrKTffYnY7FRYXOgZdHoNwMGpPxUmj/n32mGZi01fcq+J536jkmwGWX7DLT95XBQVHHbrAJzTvrw==}
-    dev: true
 
   /vite/2.9.12:
     resolution: {integrity: sha512-suxC36dQo9Rq1qMB2qiRorNJtJAdxguu5TMvBHOc/F370KvqAe9t48vYp+/TbPKRNrMh/J55tOUmkuIqstZaew==}

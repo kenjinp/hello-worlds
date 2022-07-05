@@ -66,6 +66,7 @@ export const PlayerPhysicsSystem: React.FC<
     playerRef.current.position.add(playerVelocity);
     playerRef.current.lookAt(new Vector3(0, 0, 0));
     playerRef.current.rotateOnAxis(new Vector3(1, 0, 0), (Math.PI / 180) * 90);
+    let rot = playerRef.current.rotation;
 
     // const viewVector = controls.mouse.pointer();
 

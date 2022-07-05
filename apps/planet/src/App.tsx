@@ -3,7 +3,6 @@ import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
 import { PlanetGenerator } from "./components/planet/PlanetGenerator";
-import { RenderPlayers } from "./components/player/Player";
 import { useStore } from "./store";
 function App() {
   const state = useStore();
@@ -18,11 +17,11 @@ function App() {
         })} */}
         <PlanetGenerator />
         {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
+        {/* <FlyControls /> */}
+        {/* <PlayerSpawner /> */}
+        {/* <RenderPlayers /> */}
         {/* <FlyCamera /> */}
         <OrbitControls />
-        {/* <PlayerSpawner /> */}
-        <RenderPlayers />
-        {/* <FlyCamera /> */}
       </BasicScene>
       <div
         id="actions"

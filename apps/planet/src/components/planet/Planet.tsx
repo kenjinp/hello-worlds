@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
 import { PlanetProps } from "../../lib";
+import Geology from "../../lib/geology/Geology";
 import PlanetEngine, { PlanetEngineProps } from "../../lib/planet/PlanetEngine";
 
 const PlanetContext = React.createContext<PlanetEngine | null>(null);
@@ -23,6 +24,11 @@ const Planet = React.forwardRef<
     })
   );
 
+  const geology = React.useMemo(
+    () => new Geology({ radius: planetProps.radius || 4_000 }),
+    [planetProps]
+  );
+
   React.useImperativeHandle(ref, () => planetEngine);
 
   React.useEffect(() => {
@@ -36,14 +42,17 @@ const Planet = React.forwardRef<
   }, [planetProps]);
 
   React.useLayoutEffect(() => {
-    planetGroupRef.current &&
+    if (planetGroupRef.current) {
       planetGroupRef.current.add(planetEngine.rootGroup);
+      planetGroupRef.current.add(geology.mesh);
+    }
     return () => {
       if (planetGroupRef.current) {
         planetGroupRef.current.remove(planetEngine.rootGroup);
+        planetGroupRef.current.remove(geology.mesh);
       }
     };
-  }, [planetGroupRef]);
+  }, [planetGroupRef, geology]);
 
   useFrame(() => {
     if (planetEngine.planetProps) {
@@ -53,23 +62,8 @@ const Planet = React.forwardRef<
 
   return (
     <>
-      {/* <mesh position={origin.clone().sub(new Vector3(0, 1000, 1000))}>
-        <Html>
-          <h1>Origin</h1>
-        </Html>
-        <mesh scale={new Vector3(100, 100, 100)}>
-          <sphereGeometry></sphereGeometry>
-          <meshBasicMaterial color="purple" />
-        </mesh>
-      </mesh> */}
       <PlanetContext.Provider value={planetEngine}>
-        <group ref={planetGroupRef}>
-          {/* <mesh>
-            <icosahedronGeometry args={[planetProps.radius * 1.01, 12]} />
-            <meshStandardMaterial wireframe color="blue" />
-          </mesh> */}
-          {children}
-        </group>
+        <group ref={planetGroupRef}>{children}</group>
       </PlanetContext.Provider>
     </>
   );

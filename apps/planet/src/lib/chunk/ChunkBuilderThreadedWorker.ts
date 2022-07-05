@@ -60,7 +60,7 @@ class ChunkBuilderThreadedWorker {
     const normals = [];
     const tangents = [];
     const uvs = [];
-    const indices = [];
+    const indices: number[] = [];
 
     const localToWorld = this.params.worldMatrix;
     const origin = this.params.origin;

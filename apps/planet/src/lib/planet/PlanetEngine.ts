@@ -198,13 +198,14 @@ export default class PlanetEngine {
     this.#builder = new ChunkBuilderThreaded(this.params.numWorkers);
     // how to update materials...
     this.material = new THREE.MeshStandardMaterial({
-      wireframe: false,
-      wireframeLinewidth: 1,
+      // wireframe: false,
+      // wireframeLinewidth: 1,
       color: 0xffffff,
       side: THREE.DoubleSide,
       vertexColors: true,
     });
     this.rootGroup.add(...this.cubeFaceGroups);
+    this.cubeFaceGroups.forEach((group) => (group.visible = false));
   }
 
   // for debugging threads

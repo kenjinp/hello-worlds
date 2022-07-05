@@ -5,6 +5,7 @@ import { Generator3 } from "./Generator3";
 export interface HeightGeneratorParams {
   generator: Noise;
   offset: THREE.Vector3;
+  // geology: Geology;
   minRadius: number;
   maxRadius: number;
 }
@@ -18,6 +19,7 @@ export class HeightGenerator implements Generator3<[number, number]> {
   }
 
   get(x: number, y: number, z: number) {
+    // TODO this value shall be attenuated by GEOLOGY
     return [this.params.generator.get(x, y, z), 1] as [number, number];
   }
 }

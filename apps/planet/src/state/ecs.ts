@@ -1,5 +1,5 @@
 import { createECS } from "miniplex-react";
-import { Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 
 type Entity = {
   position: Vector3;
@@ -7,7 +7,7 @@ type Entity = {
   velocity?: Vector3;
   playerId?: string;
   planet?: { name: string; radius: number };
-  rotation?: { speed: number };
+  rotation?: Quaternion;
   controls?: { type: "fly" | "orbit" };
 };
 
