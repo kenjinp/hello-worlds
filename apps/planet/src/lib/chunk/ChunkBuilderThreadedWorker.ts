@@ -24,9 +24,10 @@ class ChunkBuilderThreadedWorker {
     this.#heightGenerators = [
       new HeightGenerator({
         generator: this.#noise,
-        offset: this.#offset,
-        minRadius: params.heightGeneratorParams.min,
-        maxRadius: params.heightGeneratorParams.max,
+        tileMap: this.params.heightGeneratorParams.tileMap,
+        // offset: this.#offset,
+        // minRadius: params.heightGeneratorParams.min,
+        // maxRadius: params.heightGeneratorParams.max,
       }),
     ];
     this.#biomeGenerator = new Noise(params.biomeParams);
@@ -89,7 +90,7 @@ class ChunkBuilderThreadedWorker {
 
         const height = this.generateHeight(_W.clone());
         _W.normalize(); // VERY IMPORTANT!
-        // const color = this.#colorGenerator.get(_W.x, _W.y, height);
+        const color = this.#colorGenerator.get(_W.x, _W.y, height);
 
         // Purturb height along z-vector
         _H.copy(_D);
@@ -101,7 +102,7 @@ class ChunkBuilderThreadedWorker {
 
         // colors.push(color.r, color.g, color.b);
         //@ts-ignore
-        const color = this.#colorGenerator.getTemperature(_W, height);
+        // const color = this.#colorGenerator.getTemperature(_W, height);
         colors.push(color.r, color.g, color.b);
         // _P.normalize();
         // colors.push(_W.x, _W.y, _W.z);

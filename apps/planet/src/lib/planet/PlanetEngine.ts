@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { dictDifference, dictIntersection } from "../../utils";
 import ChunkThreaded from "../chunk/ChinkThreaded";
 import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
+import Geology, { TileMap } from "../geology/Geology";
 import { NoiseParams, NOISE_STYLES } from "../noise/Noise";
 import CubicQuadTree from "../quadtree/CubicQuadTree";
 
@@ -25,6 +26,7 @@ export interface ThreadedChunkProps {
   heightGeneratorParams: {
     min: number;
     max: number;
+    tileMap: TileMap;
   };
   origin: THREE.Vector3;
   width: number;
@@ -193,7 +195,7 @@ export default class PlanetEngine {
   material: THREE.Material;
   #chunkMap: ChunkMap = {};
   planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
-
+  geology: Geology;
   constructor(private params: PlanetEngineProps) {
     this.#builder = new ChunkBuilderThreaded(this.params.numWorkers);
     // how to update materials...
@@ -205,6 +207,8 @@ export default class PlanetEngine {
       vertexColors: true,
     });
     this.rootGroup.add(...this.cubeFaceGroups);
+    this.geology = new Geology({ radius: this.planetProps.radius });
+    this.rootGroup.add(this.geology.mesh);
     this.cubeFaceGroups.forEach((group) => (group.visible = false));
   }
 
@@ -220,13 +224,13 @@ export default class PlanetEngine {
   // to re-apply parameter changes, for example
   rebuild() {
     this.#builder.rebuild(this.#chunkMap);
+    this.geology.rebuild({ radius: this.planetProps.radius });
   }
 
   update(anchor: THREE.Vector3) {
     if (!this.planetProps) {
       throw new Error("must set planetProps before updating");
     }
-
     this.#builder.update();
     if (this.#builder.busy) {
       return;
@@ -302,6 +306,7 @@ export default class PlanetEngine {
           heightGeneratorParams: {
             min: this.planetProps.minRadius,
             max: this.planetProps.maxRadius,
+            tileMap: this.geology.tileMap,
           },
           origin: anchor,
           width: parentChunkProps.size,

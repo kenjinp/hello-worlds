@@ -42,15 +42,15 @@ export const InvertedLightRig: React.FC = ({}) => {
         shadow-mapSize-height={512 * 3}
         shadow-mapSize-width={512 * 3}
       />
-      <mesh scale={new Vector3(10, 10, 10)}>
+      {/* <mesh scale={new Vector3(10, 10, 10)}>
         <sphereGeometry></sphereGeometry>
         <meshStandardMaterial
           color={new Color("white")}
           emissive={new Color("white")}
         ></meshStandardMaterial>
-      </mesh>
+      </mesh> */}
 
-      <group>
+      {/* <group>
         <mesh
           castShadow
           receiveShadow
@@ -62,7 +62,7 @@ export const InvertedLightRig: React.FC = ({}) => {
             color={new Color("blue")}
           ></meshStandardMaterial>
         </mesh>
-      </group>
+      </group> */}
     </group>
   );
 };
