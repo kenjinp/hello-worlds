@@ -1,5 +1,7 @@
 export const syllableStructures = [
   "CVC",
+  "C?CVC?C",
+  "C?C?VC?C?C?C?",
   "CVV?C",
   "CVVC?",
   "CVC?",
@@ -21,4 +23,5 @@ export const syllableStructures = [
   "CVL?C?",
   "C?VL?C",
   "C?VLC?",
+  "C?VLC?C?",
 ];

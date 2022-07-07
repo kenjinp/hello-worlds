@@ -1,15 +1,18 @@
 import {
+  BufferGeometry,
   Color,
-  DoubleSide,
   Float32BufferAttribute,
+  FrontSide,
   IcosahedronBufferGeometry,
   Material,
+  MathUtils,
   Mesh,
   MeshBasicMaterial,
   Vector3,
 } from "three";
 import Noise from "../noise/Noise";
 import { DEFAULT_NOISE_PARAMS } from "../planet/PlanetEngine";
+import { EdgeHelper } from "./helpers";
 
 export interface GeologyProps {
   seed?: string | number;
@@ -46,23 +49,25 @@ export const getClosestTile = (v: THREE.Vector3, tileMap: TileMap) => {
   };
 };
 
-const DEFAULT_SUBDIVISIONS = 0;
+const DEFAULT_SUBDIVISIONS = 10;
 
 export default class Geology {
   public mesh: Mesh;
-  public geometry: IcosahedronBufferGeometry;
+  public geometry: BufferGeometry;
   public material: Material;
   public tileMap: TileMap;
+  public edgeHelper: EdgeHelper;
   constructor(public props: GeologyProps) {
     const { radius, subdivisions = DEFAULT_SUBDIVISIONS } = props;
     this.geometry = new IcosahedronBufferGeometry(radius, subdivisions);
     this.material = new MeshBasicMaterial({
-      wireframe: true,
-      wireframeLinewidth: 5,
+      // wireframe: true,
+      // wireframeLinewidth: 5,
       color: 0xffffff,
-      side: DoubleSide,
+      side: FrontSide,
       vertexColors: true,
     });
+    this.edgeHelper = new EdgeHelper(this.geometry);
     this.mesh = new Mesh(this.geometry, this.material);
     this.tileMap = {};
     this.rebuild(props);
@@ -72,44 +77,45 @@ export default class Geology {
     const { radius, subdivisions = DEFAULT_SUBDIVISIONS } = props;
     this.geometry = new IcosahedronBufferGeometry(radius, subdivisions);
     this.mesh.geometry = this.geometry;
+    this.edgeHelper = new EdgeHelper(this.geometry);
+    this.randomFloodFill();
     const noise = new Noise({
       ...DEFAULT_NOISE_PARAMS,
       scale: 4_000 * 2,
       height: 1,
     });
-    // this.mesh.visible = false;
     const points = this.geometry.getAttribute("position").array;
-    console.log(points, this.geometry.index);
     const oceanColor = new Color().setRGB(66 / 255, 135 / 255, 245 / 255);
     const groundColor = new Color().setRGB(54 / 255, 247 / 255, 54 / 255);
     const colors = new Float32Array(points.length);
-    const colorVertexMap: Record<string, number[]> = {};
-    this.tileMap = {};
-    for (let i = 0, n = points.length; i < n; i += 3) {
-      const x = points[i];
-      const y = points[i + 1];
-      const z = points[i + 2];
-      const color = colorVertexMap[`${x}.${y}.${z}`];
+    for (let edgeIndex in this.edgeHelper.edges) {
+      const edge = this.edgeHelper.edges[edgeIndex];
+      const { x, y, z } = edge.vertex;
       const noiseAtPoint = noise.get(x, y, z);
-      if (!color) {
-        const isOcean = noiseAtPoint >= 0.05;
-        const vertexColor = isOcean ? oceanColor : groundColor;
-        colorVertexMap[`${x}.${y}.${z}`] = [
-          vertexColor.r,
-          vertexColor.g,
-          vertexColor.b,
-        ];
-        this.tileMap[`${x}.${y}.${z}`] = {
-          isOcean,
-          point: [x, y, z],
-        };
-        vertexColor.toArray(colors, i);
+      const isOcean = noiseAtPoint >= 0.05;
+      let vertexColor;
+      if (edge.data.vertexColor) {
+        vertexColor = edge.data.vertexColor;
       } else {
-        colors[i] = color[0];
-        colors[i + 1] = color[1];
-        colors[i + 2] = color[2];
+        vertexColor = isOcean ? oceanColor : groundColor;
+        edge.data = {
+          isOcean,
+          vertexColor,
+        };
       }
+
+      vertexColor.toArray(colors, Number(edgeIndex) * 3);
     }
     this.geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  }
+
+  randomFloodFill(points = MathUtils.randInt(15, 20)) {
+    for (let i = 0; i < points; i++) {
+      const color = new Color(0xffffff);
+      color.setHex(Math.random() * 0xffffff);
+      this.edgeHelper.randomEdge.data = {
+        vertexColor: color,
+      };
+    }
   }
 }

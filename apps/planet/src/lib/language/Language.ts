@@ -56,6 +56,7 @@ export default class Language {
       F: shuffle(choose<{ F: string; name: string }[]>(fricativeSets, 2).F),
     };
     this.structure = choose<string[]>(syllableStructures);
+    console.log(this.structure);
     this.joiner = choose("   -");
     this.noOrthography = false;
     this.consonantOrthography = choose<Orthography[]>(
@@ -67,7 +68,7 @@ export default class Language {
     this.noMorphemes = false;
     this.minSyllables = randomRange(1, 3);
     if (this.structure.length < 3) this.minSyllables++;
-    this.maxSyllables = randomRange(this.minSyllables + 1, 7);
+    this.maxSyllables = randomRange(this.minSyllables + 1, 5);
   }
 
   makeSyllable() {
