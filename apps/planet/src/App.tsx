@@ -2,6 +2,7 @@ import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
+import Demographics from "./components/demographics/Demographics";
 import { PlanetGenerator } from "./components/planet/PlanetGenerator";
 import { useStore } from "./store";
 function App() {
@@ -23,14 +24,7 @@ function App() {
         {/* <FlyCamera /> */}
         <OrbitControls />
       </BasicScene>
-      <div
-        id="actions"
-        style={{ position: "absolute", left: "1em", bottom: "1em" }}
-      >
-        {/* <button>Spawn Player</button>
-        <CameraButtons /> */}
-        <div id="spawner"></div>
-      </div>
+      <Demographics />
     </div>
   );
 }
