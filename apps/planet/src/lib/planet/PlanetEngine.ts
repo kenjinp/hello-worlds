@@ -2,40 +2,9 @@ import * as THREE from "three";
 import { dictDifference, dictIntersection } from "../../utils";
 import ChunkThreaded from "../chunk/ChinkThreaded";
 import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
-import Geology, { TileMap } from "../geology/Geology";
+import Geology from "../geology/Geology";
 import { NoiseParams, NOISE_STYLES } from "../noise/Noise";
 import CubicQuadTree from "../quadtree/CubicQuadTree";
-
-export interface ThreadedChunkProps {
-  noiseParams: any;
-  colorNoiseParams: any;
-  biomeParams: any;
-  colorGeneratorParams: {
-    seaDeep: string;
-    seaMid: string;
-    seaShallow: string;
-    tempHot: string;
-    tempMid: string;
-    tempCold: string;
-    humidLow: string;
-    humidMid: string;
-    humidHigh: string;
-    seaLevel: number; // 0.05
-    seaLevelDividend: number; // 100.0
-  };
-  heightGeneratorParams: {
-    min: number;
-    max: number;
-    tileMap: TileMap;
-  };
-  origin: THREE.Vector3;
-  width: number;
-  offset: [number, number, number];
-  radius: number;
-  resolution: number;
-  worldMatrix: THREE.Object3D["matrix"];
-  invert: boolean;
-}
 
 export enum ChunkTypes {
   ROOT = "ROOT",
@@ -209,7 +178,7 @@ export default class PlanetEngine {
     this.rootGroup.add(...this.cubeFaceGroups);
     this.geology = new Geology({ radius: this.planetProps.radius });
     this.rootGroup.add(this.geology.mesh);
-    this.cubeFaceGroups.forEach((group) => (group.visible = false));
+    // this.cubeFaceGroups.forEach((group) => (group.visible = false));
   }
 
   // for debugging threads
@@ -306,7 +275,7 @@ export default class PlanetEngine {
           heightGeneratorParams: {
             min: this.planetProps.minRadius,
             max: this.planetProps.maxRadius,
-            tileMap: this.geology.tileMap,
+            // tileMap: this.geology.tileMap,
           },
           origin: anchor,
           width: parentChunkProps.size,
@@ -320,17 +289,5 @@ export default class PlanetEngine {
     }
 
     this.#chunkMap = newChunkMap;
-
-    // for (let key in this.#chunkMap) {
-    //   const chunk = this.#chunkMap[key];
-    //   if (chunk.type === ChunkTypes.CHILD) {
-    //     chunk.chunk.update(anchor);
-    //   }
-    // }
-    // for (let chunk of this.#builder.old) {
-    //   if (chunk.type === ChunkTypes.CHILD) {
-    //     chunk.chunk.update(anchor);
-    //   }
-    // }
   }
 }

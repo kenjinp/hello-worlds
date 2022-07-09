@@ -3,8 +3,7 @@ import { ColorGenerator } from "../generators/ColorGenerator";
 import { Generator3 } from "../generators/Generator3";
 import { HeightGenerator } from "../generators/HeightGenerator";
 import Noise from "../noise/Noise";
-import { ThreadedChunkProps } from "../planet/PlanetEngine";
-import { ChunkBuilderThreadedMessageTypes } from "./ChunkBuilderThreaded";
+import { ChunkBuilderThreadedMessageTypes, ThreadedChunkProps } from "./types";
 
 class ChunkBuilderThreadedWorker {
   #noise: Noise;
@@ -24,7 +23,7 @@ class ChunkBuilderThreadedWorker {
     this.#heightGenerators = [
       new HeightGenerator({
         generator: this.#noise,
-        tileMap: this.params.heightGeneratorParams.tileMap,
+        // tileMap: this.params.heightGeneratorParams.tileMap,
         // offset: this.#offset,
         // minRadius: params.heightGeneratorParams.min,
         // maxRadius: params.heightGeneratorParams.max,

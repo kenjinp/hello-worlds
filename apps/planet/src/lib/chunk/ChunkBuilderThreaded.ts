@@ -1,4 +1,3 @@
-import { TileMap } from "../geology/Geology";
 import { NoiseParams } from "../noise/Noise";
 import {
   ChunkMap,
@@ -9,18 +8,12 @@ import {
 import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded from "./ChinkThreaded";
 import chunkBuilderThreadedWorker from "./ChunkBuilderThreadedWorker?worker";
+import {
+  ChunkBuilderThreadedMessage,
+  ChunkBuilderThreadedMessageTypes,
+} from "./types";
 
 const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
-
-export enum ChunkBuilderThreadedMessageTypes {
-  BUILD_CHUNK_RESULT = "BUILD_CHUNK_RESULT",
-  BUILD_CHUNK = "BUILD_CHUNK",
-}
-
-export interface ChunkBuilderThreadedMessage {
-  subject: ChunkBuilderThreadedMessageTypes;
-  data: any;
-}
 
 export interface AllocateChunkProps {
   noiseParams: NoiseParams;
@@ -42,7 +35,7 @@ export interface AllocateChunkProps {
   heightGeneratorParams: {
     min: number;
     max: number;
-    tileMap: TileMap;
+    // tileMap: TileMap;
   };
   group: THREE.Object3D;
   offset: THREE.Vector3;

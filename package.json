@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ship:worlds": "flyctl deploy ./ -c apps/planet/fly.toml --dockerfile=./apps/planet/Dockerfile"
   },
   "author": "",
   "license": "ISC"
