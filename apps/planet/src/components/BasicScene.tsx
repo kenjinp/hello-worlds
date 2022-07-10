@@ -1,6 +1,5 @@
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Perf } from "r3f-perf";
 import * as React from "react";
 import { Color, Quaternion, Vector3 } from "three";
 import { SpaceBox } from "./SpaceBox";
@@ -96,9 +95,10 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         quaternion: cameraQuat,
       }}
       shadows
+      style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
     >
       <React.Suspense fallback={null}>
-        <Perf position="top-left" />
+        {/* <Perf position="top-left" /> */}
         {/* <color attach="background" args={["lightblue"]} /> */}
         {/* <gridHelper args={[500, 500]} position={[0, -0.2, 0]} /> */}
         {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}

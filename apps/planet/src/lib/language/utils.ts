@@ -22,6 +22,11 @@ export function shuffle<T extends ArrayLike<unknown> = string>(
     newlist[i] = newlist[j];
     newlist[j] = tmp;
   }
+
+  if (newlist.length !== list.length) {
+    throw new Error("terrible");
+  }
+
   return (
     typeof list !== "string" ? newlist : newlist.join("")
   ) as ArrayOrString<T>;
@@ -34,6 +39,11 @@ export function choose<T extends ArrayLike<unknown> = string>(
   return list[
     Math.floor(Math.pow(Math.random(), exponent) * list.length)
   ] as ElementType<T>;
+}
+
+export function sample<T = any>(list: T[], number: number = 1) {
+  const shuff = shuffle<typeof list>(list);
+  return number === 1 ? [shuff[0]] : shuff.slice(0, number);
 }
 
 export function randomRange(low: number, high?: number) {

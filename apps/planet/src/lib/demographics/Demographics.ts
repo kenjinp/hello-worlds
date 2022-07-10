@@ -1,5 +1,8 @@
 import Roll from "roll";
 import { MathUtils } from "three";
+import Language from "../language/Language";
+import { capitalize } from "../language/utils";
+import Culture from "./Culture";
 import { supportValues } from "./Demographics.values";
 
 const MiToKM = (m: number) => m * 1.609344;
@@ -56,6 +59,9 @@ export default class Kingdom {
   public age: number;
   public castles: number;
   public ruinedCastles: number;
+  culture = new Culture();
+  language = new Language();
+  languageName = capitalize(this.language.makeWord("Language"));
   constructor(sizeInMiles: number = 100_000) {
     this.density = this.rollPopulationDensity();
     this.densityLevel = getDensityLevel(this.density);
@@ -68,7 +74,7 @@ export default class Kingdom {
       .map((_, index) => {
         const pop = MathUtils.randInt(1_000, 8_000);
         return {
-          name: index.toString(),
+          name: index.toString(), //this.language.makeName(index.toString()),
           population: pop,
           guards: pop / 150, // slack cities will have half this
           amenities: Object.keys(supportValues).reduce((memo, key) => {
@@ -97,6 +103,109 @@ export default class Kingdom {
     this.castles = Math.floor(this.population / 50_000);
   }
 
+  get name() {
+    return `The ${this.languageName} State`;
+  }
+
+  hasTrait(traitName: string) {
+    return !!this.culture.traits.filter(({ name }) => name === traitName)
+      .length;
+  }
+
+  get government() {
+    if (this.culture.power[0].name === "Democracy") {
+      if (this.hasTrait("Reavers")) {
+        if (this.hasTrait("Thalassocracy")) {
+          return "Pirate Republic";
+        }
+        return "Viking Moot";
+      }
+      if (this.hasTrait("Venerated Priesthood")) {
+        return "Theocratic Republic";
+      }
+      if (this.hasTrait("Mageocracy")) {
+        return "Thaumocratic Republic";
+      }
+      if (this.hasTrait("Thalassocracy")) {
+        return "Serene Republic";
+      }
+      return "Republic";
+    }
+    if (this.culture.power[0].name === "Autocracy") {
+      if (this.hasTrait("Steppe Nomads")) {
+        if (this.hasTrait("Reavers")) {
+          return "Horde";
+        }
+        return "Khanate";
+      }
+      if (this.hasTrait("Venerated Priesthood")) {
+        if (this.hasTrait("Feudalism")) {
+          return "Divine Empire";
+        }
+        return "Theocratic Empire";
+      }
+      if (this.hasTrait("Kritarchy")) {
+        return "Imperial Kritarchy";
+      }
+      if (this.hasTrait("Ruler Cult")) {
+        return "Celestial Empire";
+      }
+      if (this.hasTrait("Feudalism")) {
+        if (this.hasTrait("Mageocracy")) {
+          return "Feudal Magedom";
+        }
+        return "Kingdom";
+      }
+      if (this.hasTrait("Way of the Warrior")) {
+        if (this.hasTrait("Kritarch")) {
+          return "Police State";
+        }
+        if (this.hasTrait("Mageocracy")) {
+          return "Arcane Shogunate";
+        }
+        return "Shogunate";
+      }
+      if (this.hasTrait("Mageocracy")) {
+        return "Arcane Empire";
+      }
+      if (this.hasTrait("Corvee Labor")) {
+        return "Pharaonic Kingdom";
+      }
+      return "Dominion";
+    }
+    if (this.culture.power[0].name === "Oligarchy") {
+      if (this.hasTrait("Reavers")) {
+        if (this.hasTrait("Thalassocracy")) {
+          return "Pirate Parlayment";
+        }
+        return "Bandit Circle";
+      }
+
+      if (this.hasTrait("Venerated Priesthood")) {
+        return "Holy Conclave";
+      }
+      if (this.hasTrait("Way of the Warrior")) {
+        if (this.hasTrait("Mageocracy")) {
+          return "Spellknight Oathdom";
+        }
+        return "Knightly Order";
+      }
+      if (this.hasTrait("Mageocracy")) {
+        if (this.hasTrait("Naturalists")) {
+          return "Circle of Druids";
+        }
+        return "Brotherhood of Mages";
+      }
+      if (this.hasTrait("Merchant Guilds")) {
+        return "Merchant Council";
+      }
+      if (this.hasTrait("Thalassocracy")) {
+        return "Serene Plutocracy";
+      }
+      return "Oligarchy";
+    }
+  }
+
   createCities() {
     const pop = this.population;
     let popDecrementer = pop;
@@ -105,7 +214,7 @@ export default class Kingdom {
     while (popDecrementer >= smallestCitySize) {
       const lastCity = cities[cities.length - 1];
       const thisCity = {
-        name: cities.length.toString(),
+        name: this.language.makeName(cities.length.toString() + "-city"),
         population: 0,
         amenities: {},
         guards: 0,
