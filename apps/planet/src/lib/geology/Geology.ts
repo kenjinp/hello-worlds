@@ -69,6 +69,7 @@ export default class Geology {
     });
     this.edgeHelper = new EdgeHelper(this.geometry);
     this.mesh = new Mesh(this.geometry, this.material);
+    this.mesh.visible = false;
     this.tileMap = {};
     this.rebuild(props);
   }

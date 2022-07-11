@@ -1,6 +1,7 @@
 import { faCrown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
+import ReactTooltip from "react-tooltip";
 import styled from "styled-components";
 import { generateUUID } from "three/src/math/MathUtils";
 import { City } from "../../lib/demographics/Demographics";
@@ -9,27 +10,47 @@ import { ECS } from "../../state/ecs";
 const Demographics: React.FC = () => {
   const { entities } = ECS.useArchetype("kingdom");
 
-  const cities = entities.reduce(
-    (memo, { kingdom }) => [...memo, ...kingdom.cities],
-    [] as City[]
+  const cities = React.useMemo(
+    () =>
+      entities.reduce(
+        (memo, { kingdom }) => [...memo, ...kingdom.cities],
+        [] as City[]
+      ),
+    [entities]
   );
 
-  const towns = entities.reduce(
-    (memo, { kingdom }) => [...memo, ...kingdom.towns],
-    [] as City[]
+  const towns = React.useMemo(
+    () =>
+      entities.reduce(
+        (memo, { kingdom }) => [...memo, ...kingdom.towns],
+        [] as City[]
+      ),
+    [entities]
   );
 
-  const totalUrbanPopultation = entities
-    .map(({ kingdom }) => kingdom)
-    .reduce((memo, kingdom) => {
-      return memo + kingdom.urbanPopulation;
-    }, 0);
+  const totalUrbanPopultation = React.useMemo(
+    () =>
+      entities
+        .map(({ kingdom }) => kingdom)
+        .reduce((memo, kingdom) => {
+          return memo + kingdom.urbanPopulation;
+        }, 0),
+    [entities]
+  );
 
-  const totalUrban = entities
-    .map(({ kingdom }) => kingdom)
-    .reduce((memo, kingdom) => {
-      return memo + kingdom.population;
-    }, 0);
+  const totalUrban = React.useMemo(
+    () =>
+      entities
+        .map(({ kingdom }) => kingdom)
+        .reduce((memo, kingdom) => {
+          return memo + kingdom.population;
+        }, 0),
+    []
+  );
+
+  React.useEffect(() => {
+    ReactTooltip.rebuild();
+  });
 
   return (
     <div>
@@ -57,6 +78,9 @@ const Demographics: React.FC = () => {
             <CityDisplay city={city} key={generateUUID()}></CityDisplay>
           ))}
       </ul>
+      <ReactTooltip id="capital" aria-haspopup="true">
+        <span>Capital City</span>
+      </ReactTooltip>
     </div>
   );
 };
@@ -83,9 +107,9 @@ const CityDisplay: React.FC<{ city: City }> = ({ city }) => {
           <div>
             {city.name}{" "}
             {city.isCapital && (
-              <span style={{ color: "#ffff42" }}>
+              <a data-tip data-for="capital" style={{ color: "#ffff42" }}>
                 <FontAwesomeIcon icon={faCrown} />
-              </span>
+              </a>
             )}
           </div>
         </h3>

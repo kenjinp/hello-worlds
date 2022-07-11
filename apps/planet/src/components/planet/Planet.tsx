@@ -1,6 +1,7 @@
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as React from "react";
 import * as THREE from "three";
+import { Vector3 } from "three";
 import { PlanetProps } from "../../lib";
 import Language from "../../lib/language/Language";
 import PlanetEngine, { PlanetEngineProps } from "../../lib/planet/PlanetEngine";
@@ -17,6 +18,7 @@ const Planet = React.forwardRef<
     Partial<PlanetProps> & PlanetEngineProps & { origin: THREE.Vector3 }
   >
 >(({ children, numWorkers, origin, ...planetProps }, ref) => {
+  const { camera } = useThree();
   const planetGroupRef = React.useRef<THREE.Group>(null);
   const [planetEngine] = React.useState<PlanetEngine>(
     new PlanetEngine({
@@ -38,6 +40,10 @@ const Planet = React.forwardRef<
     };
     // TODO: this needs to be throttled somehow?
     planetEngine.rebuild();
+    planetProps.radius &&
+      camera.position.copy(
+        new Vector3(planetProps.radius * 1.5, 0, planetProps.radius * 1.5)
+      );
   }, [planetProps]);
 
   React.useLayoutEffect(() => {

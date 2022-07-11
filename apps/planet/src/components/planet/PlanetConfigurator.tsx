@@ -1,4 +1,3 @@
-import { Html } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
@@ -94,10 +93,10 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
 
   return (
     <>
-      <Html>
+      {/* <Html>
         <h1>{name}</h1>
         <div ref={workerDebugRef}></div>
-      </Html>
+      </Html> */}
       <Planet
         ref={planetEngine}
         {...{

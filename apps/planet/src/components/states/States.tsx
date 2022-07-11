@@ -7,6 +7,16 @@ import { ECS } from "../../state/ecs";
 const States: React.FC = () => {
   const { entities } = ECS.useArchetype("kingdom");
 
+  const renderable = React.useMemo(
+    () =>
+      entities
+        .sort((a, b) => b.kingdom.density - a.kingdom.density)
+        .map(({ kingdom }) => (
+          <StatesDisplay kingdom={kingdom} key={generateUUID()}></StatesDisplay>
+        )),
+    [entities]
+  );
+
   return (
     <div>
       <p>Polities of note: {entities.length.toLocaleString()} </p>
@@ -17,14 +27,7 @@ const States: React.FC = () => {
           resize: "both",
         }}
       >
-        {entities
-          .sort((a, b) => b.kingdom.density - a.kingdom.density)
-          .map(({ kingdom }) => (
-            <StatesDisplay
-              kingdom={kingdom}
-              key={generateUUID()}
-            ></StatesDisplay>
-          ))}
+        {renderable}
       </ul>
     </div>
   );

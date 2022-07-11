@@ -49,11 +49,27 @@ export const Container: React.FC<
     onClose?: () => void;
     style: any;
     header: string | ReactNode;
+    center?: boolean;
   }>
-> = ({ style, children, header, onClose }) => {
+> = ({ style, children, header, onClose, center }) => {
   return (
-    <Draggable handle=".dragger" bounds="#window-bounds">
-      <ContainerDiv style={style}>
+    <Draggable
+      handle=".dragger"
+      bounds="#window-bounds"
+      defaultPosition={
+        center
+          ? {
+              x: 0,
+              y: document.body.clientHeight / 2,
+            }
+          : { x: 0, y: 0 }
+      }
+    >
+      <ContainerDiv
+        style={{
+          ...style,
+        }}
+      >
         <div className="dragger-bounds">
           <div
             style={{
