@@ -1,3 +1,5 @@
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import styled from "styled-components";
 import { generateUUID } from "three/src/math/MathUtils";
@@ -11,6 +13,7 @@ const Demographics: React.FC = () => {
     (memo, { kingdom }) => [...memo, ...kingdom.cities],
     [] as City[]
   );
+
   const towns = entities.reduce(
     (memo, { kingdom }) => [...memo, ...kingdom.towns],
     [] as City[]
@@ -35,6 +38,12 @@ const Demographics: React.FC = () => {
         {totalUrbanPopultation.toLocaleString()}
       </p>
       <p>Estimated Global Population: {totalUrban.toLocaleString()}</p>
+      <p>Cities of note: {cities.length.toLocaleString()}</p>
+      <p>
+        Towns and other important settlements: {towns.length.toLocaleString()}
+      </p>
+      <h2>Cities</h2>
+      <hr />
       <ul
         style={{
           minWidth: "500px",
@@ -71,9 +80,17 @@ const CityDisplay: React.FC<{ city: City }> = ({ city }) => {
     <li>
       <div>
         <h3>
-          {city.name} | {city.kingdom.name}
+          <div>
+            {city.name}{" "}
+            {city.isCapital && (
+              <span style={{ color: "#ffff42" }}>
+                <FontAwesomeIcon icon={faCrown} />
+              </span>
+            )}
+          </div>
         </h3>
-        <h4>{city.population.toLocaleString()}</h4>
+        <i>{city.kingdom.name}</i> |{" "}
+        <span>{city.population.toLocaleString()}</span>
       </div>
     </li>
   );

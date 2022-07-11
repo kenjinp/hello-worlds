@@ -8,19 +8,25 @@ const States: React.FC = () => {
   const { entities } = ECS.useArchetype("kingdom");
 
   return (
-    <ul
-      style={{
-        minWidth: "500px",
-        overflowY: "auto",
-        resize: "both",
-      }}
-    >
-      {entities
-        .sort((a, b) => b.kingdom.density - a.kingdom.density)
-        .map(({ kingdom }) => (
-          <StatesDisplay kingdom={kingdom} key={generateUUID()}></StatesDisplay>
-        ))}
-    </ul>
+    <div>
+      <p>Polities of note: {entities.length.toLocaleString()} </p>
+      <ul
+        style={{
+          minWidth: "500px",
+          overflowY: "auto",
+          resize: "both",
+        }}
+      >
+        {entities
+          .sort((a, b) => b.kingdom.density - a.kingdom.density)
+          .map(({ kingdom }) => (
+            <StatesDisplay
+              kingdom={kingdom}
+              key={generateUUID()}
+            ></StatesDisplay>
+          ))}
+      </ul>
+    </div>
   );
 };
 
@@ -58,6 +64,7 @@ const StatesDisplay: React.FC<{ kingdom: Kingdom }> = ({ kingdom }) => {
             <TraitPill key={value.name}>{value.name}</TraitPill>
           ))}
         </div>
+        <div>capital: {kingdom.capital?.name}</div>
         <div>{kingdom.densityLevel} economy</div>
         <div>speaks: {kingdom.languageName}</div>
       </div>

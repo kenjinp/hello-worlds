@@ -10,6 +10,7 @@ export const FooterStyled = styled.footer`
   pointer-events: all;
   color: #222034;
   z-index: 3;
+  align-items: center;
   a {
     transition: all 0.3s ease;
     color: #222034;

@@ -42,6 +42,7 @@ export interface City {
   name: string;
   population: number;
   guards: number;
+  isCapital: boolean;
   kingdom: Kingdom;
   amenities: {
     [key: string]: number;
@@ -65,6 +66,7 @@ export default class Kingdom {
   languageName = capitalize(this.language.makeWord("Language"));
   public name: string;
   public government: string;
+  capital: City;
   constructor(sizeInMiles: number = 100_000) {
     this.density = this.rollPopulationDensity();
     this.densityLevel = getDensityLevel(this.density);
@@ -77,6 +79,7 @@ export default class Kingdom {
       .map((_, index) => {
         const pop = MathUtils.randInt(1_000, 8_000);
         return {
+          isCapital: false,
           name: index.toString(), //this.language.makeName(index.toString()),
           population: pop,
           kingdom: this,
@@ -106,6 +109,7 @@ export default class Kingdom {
     );
     this.castles = Math.floor(this.population / 50_000);
     this.government = this.makeGovernment();
+    this.capital = this.cities.filter((city) => city.isCapital)[0];
     this.name = this.makeName();
   }
 
@@ -115,8 +119,11 @@ export default class Kingdom {
   }
 
   makeName() {
-    const culturalName = this.languageName;
+    let culturalName = this.languageName;
     const dynasticName = capitalize(this.language.makeWord("Dynasty"));
+    if (this.hasTrait("City State")) {
+      culturalName = this.capital.name;
+    }
     const adjectives = [
       "Tourmaline",
       "Azure",
@@ -155,6 +162,10 @@ export default class Kingdom {
       ];
 
       return `The ${sample(adjectives)} ${sample(features)} of ${culturalName}`;
+    }
+
+    if (this.hasTrait("City State") && this.hasTrait("Refuge")) {
+      return `The Free City of ${this.capital.name}`;
     }
 
     if (this.government === "Republic") {
@@ -355,6 +366,7 @@ export default class Kingdom {
         amenities: {},
         guards: 0,
         kingdom: this,
+        isCapital: false,
       };
       if (cities.length === 0) {
         thisCity.population = populationLargestCity(this.population);
@@ -380,6 +392,11 @@ export default class Kingdom {
       }
       popDecrementer = thisCity.population;
     }
+
+    const capitalCity = (sample(
+      sample(cities, MathUtils.randInt(3, 5))
+    )[0].isCapital = true);
+
     return cities;
   }
 
