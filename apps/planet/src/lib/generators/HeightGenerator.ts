@@ -21,7 +21,7 @@ export class HeightGenerator implements Generator3<[number, number]> {
     exponentiation: 4.5,
     seed: 1,
     noiseType: "simplex",
-    scale: 4_000 * 2,
+    scale: 6_357 * 1_000 * 2,
     height: 75,
   });
 

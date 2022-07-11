@@ -3,6 +3,7 @@ import {
   faTwitch,
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
+import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import * as React from "react";
@@ -11,10 +12,14 @@ import { FooterStyled } from "./Footer.style";
 const Footer: React.FC = () => {
   return (
     <FooterStyled>
-      <div></div>
+      <div>
+        <a>
+          <FontAwesomeIcon icon={faGlobe} /> Explore
+        </a>
+      </div>
       <div>
         <div>
-          <a href="https://discord.gg/Qr7Yzzbxzf" target="_blank">
+          <a href="https://discord.gg/7VqE93h58B" target="_blank">
             <FontAwesomeIcon icon={faDiscord} />
           </a>{" "}
           |{" "}

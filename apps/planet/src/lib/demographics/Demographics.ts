@@ -1,7 +1,7 @@
 import Roll from "roll";
 import { MathUtils } from "three";
 import Language from "../language/Language";
-import { capitalize } from "../language/utils";
+import { capitalize, sample } from "../language/utils";
 import Culture from "./Culture";
 import { supportValues } from "./Demographics.values";
 
@@ -42,6 +42,7 @@ export interface City {
   name: string;
   population: number;
   guards: number;
+  kingdom: Kingdom;
   amenities: {
     [key: string]: number;
   };
@@ -62,6 +63,8 @@ export default class Kingdom {
   culture = new Culture();
   language = new Language();
   languageName = capitalize(this.language.makeWord("Language"));
+  public name: string;
+  public government: string;
   constructor(sizeInMiles: number = 100_000) {
     this.density = this.rollPopulationDensity();
     this.densityLevel = getDensityLevel(this.density);
@@ -76,6 +79,7 @@ export default class Kingdom {
         return {
           name: index.toString(), //this.language.makeName(index.toString()),
           population: pop,
+          kingdom: this,
           guards: pop / 150, // slack cities will have half this
           amenities: Object.keys(supportValues).reduce((memo, key) => {
             return {
@@ -101,10 +105,8 @@ export default class Kingdom {
       (this.population / 5_000_000) * Math.sqrt(this.age)
     );
     this.castles = Math.floor(this.population / 50_000);
-  }
-
-  get name() {
-    return `The ${this.languageName} State`;
+    this.government = this.makeGovernment();
+    this.name = this.makeName();
   }
 
   hasTrait(traitName: string) {
@@ -112,7 +114,140 @@ export default class Kingdom {
       .length;
   }
 
-  get government() {
+  makeName() {
+    const culturalName = this.languageName;
+    const dynasticName = capitalize(this.language.makeWord("Dynasty"));
+    const adjectives = [
+      "Tourmaline",
+      "Azure",
+      "Iron",
+      "Glass",
+      "Golden",
+      "Ruby",
+      "Vermillion",
+      "Amethyst",
+      "Black",
+      "Elemental",
+      "Honorable",
+      "Pearl",
+      "Amber",
+      "Diamond",
+      "Jade",
+      "Emerald",
+      "Opal",
+      "Rose",
+    ];
+
+    if (!this.hasTrait("Reavers") && MathUtils.randInt(1, 20) >= 18) {
+      const features = [
+        "Court",
+        "Realm",
+        "Thrones",
+        "Throne",
+        "Cities",
+        "Seat",
+        "See",
+        "Chamber",
+        "Conclave",
+        "Circle",
+        "Palace",
+        "Monestaries",
+      ];
+
+      return `The ${sample(adjectives)} ${sample(features)} of ${culturalName}`;
+    }
+
+    if (this.government === "Republic") {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The Republic of ${culturalName}`;
+      }
+      return `The Senate and People of ${culturalName}`;
+    }
+
+    if (this.hasTrait("Mageocracy")) {
+      if (this.government === "Arcane Empire") {
+        return `The Arcane Empire of ${culturalName}`;
+      }
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The Mageocracy of ${culturalName}`;
+      }
+      return `The Sourcerous Realm of ${culturalName}`;
+    }
+    if (this.government === "Shogunate") {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${sample(adjectives)} Shogunate`;
+      }
+      return `The ${culturalName} Shogunate`;
+    }
+
+    if (this.government === "Knightly Order") {
+      if (this.hasTrait("Venerated Priesthood")) {
+        return `The ${sample(adjectives)} Templars`;
+      }
+
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${sample(adjectives)} Order`;
+      }
+
+      return `The ${culturalName} Order`;
+    }
+
+    if (this.government === "Khanate") {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${sample(adjectives)} Khanate`;
+      }
+      return `The ${culturalName} Khanate`;
+    }
+    if (this.government === "Horde") {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${sample(adjectives)} Horde`;
+      }
+      return `The ${culturalName} Horde`;
+    }
+    if (this.government === "Kingdom") {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${sample(adjectives)} Kingdom`;
+      }
+      return `The ${culturalName} Kingdom`;
+    }
+    if (this.government === "Dominion") {
+      return `The ${culturalName} Dominion`;
+    }
+    if (this.government === "Merchant Council") {
+      if (MathUtils.randInt(1, 20) <= 10) {
+        return `The ${culturalName} League`;
+      }
+      return `The ${culturalName} Council`;
+    }
+    if (this.government === "Theocratic Republic") {
+      if (MathUtils.randInt(1, 20) <= 10) {
+        return `The Holy ${culturalName} Republic`;
+      }
+      return `The Theocratic Republic of ${culturalName}`;
+    }
+
+    if (this.government === "Viking Moot") {
+      if (MathUtils.randInt(1, 20) <= 10) {
+        return `The ${culturalName} Moot`;
+      }
+      return `The ${culturalName} Reavers`;
+    }
+    if (this.culture.hasValue("Autocracy")) {
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${culturalName} Empire`;
+      }
+      if (MathUtils.randInt(1, 20) <= 15) {
+        return `The ${culturalName} Kingdom`;
+      }
+      return `The ${dynasticName} Dynasty`;
+    }
+    if (MathUtils.randInt(1, 20) <= 15) {
+      return `The ${culturalName} Domain`;
+    }
+    return `The ${culturalName} State`;
+  }
+
+  makeGovernment() {
     if (this.culture.power[0].name === "Democracy") {
       if (this.hasTrait("Reavers")) {
         if (this.hasTrait("Thalassocracy")) {
@@ -204,6 +339,7 @@ export default class Kingdom {
       }
       return "Oligarchy";
     }
+    return "Anarchy";
   }
 
   createCities() {
@@ -218,6 +354,7 @@ export default class Kingdom {
         population: 0,
         amenities: {},
         guards: 0,
+        kingdom: this,
       };
       if (cities.length === 0) {
         thisCity.population = populationLargestCity(this.population);

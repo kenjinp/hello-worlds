@@ -18,6 +18,9 @@ export const ContainerDiv = styled.div`
   }
   .content {
     padding: 1em 2em 1em;
+    max-height: 80vh;
+    overflow: auto;
+    resize: both;
   }
 `;
 

@@ -1,20 +1,23 @@
-import { OrbitControls } from "@react-three/drei";
 import "./App.css";
 import BasicScene from "./components/BasicScene";
-import Demographics from "./components/demographics/Demographics";
 import { PlanetGenerator } from "./components/planet/PlanetGenerator";
 
+import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { Container } from "./components/container/Container";
+import CultureGenerator from "./components/cultures/CultureGenerator";
+import Demographics from "./components/demographics/Demographics";
 import Footer from "./components/footer/Footer";
+import States from "./components/states/States";
 
 function App() {
   return (
     <div className="App">
       <Footer />
       <Leva collapsed hidden />
+      <CultureGenerator />
       <BasicScene>
         {/* {state.playerSpawnPositions.map((pos, index) => {
           console.log("spawn position", pos);
@@ -54,11 +57,11 @@ function App() {
           <TabPanel>
             <h2>States</h2>
             <p>From most prosperous to diminished</p>
-            <Demographics />
+            <States />
           </TabPanel>
           <TabPanel>
             <h2>Demographics</h2>
-            <p>todo: place population details</p>
+            <Demographics />
           </TabPanel>
           <TabPanel>
             <h2>Languages</h2>

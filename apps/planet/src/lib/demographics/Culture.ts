@@ -15,6 +15,7 @@ export default class Culture {
           MathUtils.randInt(0, 1)
         ],
       ];
+      return;
     }
     this.power = [
       sourceOfPower[MathUtils.randInt(0, sourceOfPower.length - 1)],

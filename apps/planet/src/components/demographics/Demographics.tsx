@@ -1,32 +1,54 @@
 import * as React from "react";
 import styled from "styled-components";
-import { MathUtils } from "three";
 import { generateUUID } from "three/src/math/MathUtils";
-import Kingdom from "../../lib/demographics/Demographics";
+import { City } from "../../lib/demographics/Demographics";
+import { ECS } from "../../state/ecs";
 
 const Demographics: React.FC = () => {
-  const [kingdoms, setKingdoms] = React.useState(
-    Array(MathUtils.randInt(15, 50))
-      .fill(0)
-      .map(() => new Kingdom())
+  const { entities } = ECS.useArchetype("kingdom");
+
+  const cities = entities.reduce(
+    (memo, { kingdom }) => [...memo, ...kingdom.cities],
+    [] as City[]
   );
+  const towns = entities.reduce(
+    (memo, { kingdom }) => [...memo, ...kingdom.towns],
+    [] as City[]
+  );
+
+  const totalUrbanPopultation = entities
+    .map(({ kingdom }) => kingdom)
+    .reduce((memo, kingdom) => {
+      return memo + kingdom.urbanPopulation;
+    }, 0);
+
+  const totalUrban = entities
+    .map(({ kingdom }) => kingdom)
+    .reduce((memo, kingdom) => {
+      return memo + kingdom.population;
+    }, 0);
+
   return (
-    <ul
-      style={{
-        minWidth: "500px",
-        overflowY: "auto",
-        resize: "both",
-      }}
-    >
-      {kingdoms
-        .sort((a, b) => b.density - a.density)
-        .map((kingdom) => (
-          <KingdomDisplay
-            kingdom={kingdom}
-            key={generateUUID()}
-          ></KingdomDisplay>
-        ))}
-    </ul>
+    <div>
+      <p>
+        Total Urban Population (Towns and Cities):{" "}
+        {totalUrbanPopultation.toLocaleString()}
+      </p>
+      <p>Estimated Global Population: {totalUrban.toLocaleString()}</p>
+      <ul
+        style={{
+          minWidth: "500px",
+          overflowY: "auto",
+          resize: "both",
+        }}
+      >
+        {cities
+          .sort((a, b) => b.population - a.population)
+          .map((city) => (
+            <CityDisplay city={city} key={generateUUID()}></CityDisplay>
+          ))}
+      </ul>
+    </div>
   );
 };
 
@@ -44,28 +66,14 @@ export const PillList = styled.div`
   flex-wrap: wrap;
 `;
 
-const KingdomDisplay: React.FC<{ kingdom: Kingdom }> = ({ kingdom }) => {
+const CityDisplay: React.FC<{ city: City }> = ({ city }) => {
   return (
     <li>
       <div>
-        <h3>{kingdom.name}</h3>
-        <h4>
-          <i>{kingdom.government}</i>
-          {" | "}
-          <span>{kingdom.culture.power[0].name}</span>
-        </h4>
-        <PillList>
-          {kingdom.culture.traits.map((trait) => (
-            <TraitPill key={trait.name}>{trait.name}</TraitPill>
-          ))}
-        </PillList>
-        <div>
-          {kingdom.culture.values.map((value) => (
-            <TraitPill key={value.name}>{value.name}</TraitPill>
-          ))}
-        </div>
-        <div>{kingdom.densityLevel} economy</div>
-        <div>speaks: {kingdom.languageName}</div>
+        <h3>
+          {city.name} | {city.kingdom.name}
+        </h3>
+        <h4>{city.population.toLocaleString()}</h4>
       </div>
     </li>
   );
