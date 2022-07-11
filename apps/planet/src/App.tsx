@@ -21,6 +21,16 @@ function App() {
 
   return (
     <div className="App">
+      <div
+        id="window-bounds"
+        style={{
+          height: "calc(100vh - 57px)",
+          width: "100vw",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      ></div>
       <Footer>
         <Button onClick={() => setExploreWindow(!exploreWindow)}>
           <FontAwesomeIcon icon={faGlobe} /> Explore
@@ -46,6 +56,7 @@ function App() {
           header="Explore"
           style={{
             zIndex: 2,
+            maxWidth: "100vw",
             position: "absolute",
           }}
           onClose={() => setExploreWindow(false)}

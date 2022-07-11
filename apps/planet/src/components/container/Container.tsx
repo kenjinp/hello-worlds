@@ -35,7 +35,7 @@ export const Container: React.FC<
   }>
 > = ({ style, children, header, onClose }) => {
   return (
-    <Draggable handle=".dragger" bounds="body">
+    <Draggable handle=".dragger" bounds="#window-bounds" min>
       <ContainerDiv style={style}>
         <div className="dragger">
           <div
