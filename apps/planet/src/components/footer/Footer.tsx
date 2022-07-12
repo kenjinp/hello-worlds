@@ -8,10 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from "react";
 import { FooterStyled } from "./Footer.style";
 
-const Footer: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+const Footer: React.FC<
+  React.PropsWithChildren<{ middle: string | React.ReactNode }>
+> = ({ children, middle }) => {
   return (
     <FooterStyled>
       <div>{children}</div>
+      <div>{middle}</div>
       <div>
         <div>
           <a href="https://discord.gg/7VqE93h58B" target="_blank">

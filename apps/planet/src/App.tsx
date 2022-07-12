@@ -4,7 +4,6 @@ import { PlanetGenerator } from "./components/planet/PlanetGenerator";
 
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -17,46 +16,12 @@ import Demographics from "./components/demographics/Demographics";
 import Footer from "./components/footer/Footer";
 import States from "./components/states/States";
 
-function App() {
+const Interface = () => {
   const [exploreWindow, setExploreWindow] = React.useState(false);
   const [sayHello, setSayHello] = React.useState(true);
 
-  React.useEffect(() => {
-    ReactTooltip.rebuild();
-  }, [exploreWindow]);
-
   return (
-    <div className="App">
-      <div
-        id="window-bounds"
-        style={{
-          height: "calc(100vh - 57px)",
-          width: "100vw",
-          position: "absolute",
-          top: 0,
-          left: 0,
-        }}
-      ></div>
-      <Footer>
-        <Button onClick={() => setExploreWindow(!exploreWindow)}>
-          <FontAwesomeIcon icon={faGlobe} /> Explore
-        </Button>
-      </Footer>
-      <Leva collapsed hidden />
-      <CultureGenerator />
-      <BasicScene>
-        {/* {state.playerSpawnPositions.map((pos, index) => {
-          console.log("spawn position", pos);
-          return <PlayerPhysicsSystem key={index} startingPosition={pos} />;
-        })} */}
-        <PlanetGenerator />
-        {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
-        {/* <FlyControls /> */}
-        {/* <PlayerSpawner /> */}
-        {/* <RenderPlayers /> */}
-        {/* <FlyCamera /> */}
-        <OrbitControls enablePan={false} />
-      </BasicScene>
+    <>
       {sayHello && (
         <Container
           style={{
@@ -148,6 +113,50 @@ function App() {
         </Container>
       )}
       <ReactTooltip />
+      <Footer
+        middle={
+          <div>
+            <div id="altitude" />
+            {/* <div id="scrollspeed"></div> */}
+          </div>
+        }
+      >
+        <Button onClick={() => setExploreWindow(!exploreWindow)}>
+          <FontAwesomeIcon icon={faGlobe} /> Explore
+        </Button>
+      </Footer>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <div className="App">
+      <div
+        id="window-bounds"
+        style={{
+          height: "calc(100vh - 57px)",
+          width: "100vw",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      ></div>
+      <Leva collapsed hidden />
+      <CultureGenerator />
+      <BasicScene>
+        {/* {state.playerSpawnPositions.map((pos, index) => {
+          console.log("spawn position", pos);
+          return <PlayerPhysicsSystem key={index} startingPosition={pos} />;
+        })} */}
+        <PlanetGenerator />
+        {/* <FloatingOriginScene><OrbitControls /></FloatingOriginScene> */}
+        {/* <FlyControls /> */}
+        {/* <PlayerSpawner /> */}
+        {/* <RenderPlayers /> */}
+        {/* <FlyCamera /> */}
+      </BasicScene>
+      <Interface />
     </div>
   );
 }
