@@ -14,7 +14,11 @@ import Planet from "./Planet";
 
 export const EARTH_RADIUS = 6_357 * 1_000;
 
+// https://easings.net/en#easeOutExpo
 const quadtratic = (t: number) => t * (-(t * t) * t + 4 * t * t - 6 * t + 4);
+function easeOutExpo(x: number): number {
+  return x === 1 ? 1 : 1 - Math.pow(4, -10 * x);
+}
 
 const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
   radius,
@@ -133,12 +137,13 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
       }`;
     }
 
-    const adjustedMovement = quadtratic(
+    orbitControls.current.zoomSpeed = easeOutExpo(
       altitude.current / orbitControls.current.maxDistance
     );
 
-    orbitControls.current.zoomSpeed = adjustedMovement;
-    orbitControls.current.rotateSpeed = adjustedMovement;
+    orbitControls.current.rotateSpeed = quadtratic(
+      altitude.current / orbitControls.current.maxDistance
+    );
   });
 
   return (
