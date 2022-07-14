@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist/esm",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"],
+  "exclude": ["**/*.spec.ts", "**/__mocks__/**/*"],
+  "references": [{ "path": "../core" }, { "path": "../planets" }]
+}

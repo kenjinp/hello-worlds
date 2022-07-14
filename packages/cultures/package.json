@@ -1,5 +1,5 @@
 {
-  "name": "@hello-worlds/planets",
+  "name": "@hello-worlds/cultures",
   "version": "0.0.0-alpha",
   "license": "MIT",
   "main": "dist/cjs/index.js",
@@ -15,20 +15,19 @@
   ],
   "devDependencies": {
     "@hello-worlds/core": "workspace:*",
-    "@types/three": "^0.141.0",
-    "typescript": "^4.7.4",
-    "three": "^0.142.0"
+    "@hello-worlds/tongues": "workspace:*",
+    "@types/roll": "^1.2.0",
+    "typescript": "^4.7.4"
   },
   "peerDependencies": {
     "@hello-worlds/core": "workspace:*",
-    "three": "^0.142.0"
+    "@hello-worlds/tongues": "workspace:*"
   },
   "keywords": [
     "game",
-    "procedural generation",
-    "graphics"
+    "procedural generation"
   ],
   "dependencies": {
-    "simplex-noise": "^3.0.1"
+    "roll": "^1.3.1"
   }
 }
