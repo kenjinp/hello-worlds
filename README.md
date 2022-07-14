@@ -8,7 +8,9 @@
 
 # Hello Worlds 👋🌐
 
-Your Virtual Worldbuilding toolkit for the web
+Your Virtual Worldbuilding toolkit for the web.
+
+Within you'll find a growing collection of tools to plop large planets into your [`three.js`](threejs.org/) scene, and then populate that world with societies and languages.
 
 > **⚠ Hic Sunt Dracones ⚠**
 >

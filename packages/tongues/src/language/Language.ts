@@ -1,7 +1,6 @@
 import {
   capitalize,
   choose,
-  join,
   random,
   randomRange,
   shuffle,
@@ -171,13 +170,13 @@ export class Language {
         let w2 = capitalize(this.makeWord(random() < 0.6 ? key : ""));
         if (w1 == w2) continue;
         if (random() > 0.5) {
-          name = join([w1, w2], this.joiner);
+          name = [w1, w2].join(this.joiner);
         } else {
-          name = join([w1, genitive, w2], this.joiner);
+          name = [w1, genitive, w2].join(this.joiner);
         }
       }
       if (random() < 0.1) {
-        name = join([definite, name], this.joiner);
+        name = [definite, name].join(this.joiner);
       }
 
       if (name.length < this.minChar || name.length > this.maxChar) continue;

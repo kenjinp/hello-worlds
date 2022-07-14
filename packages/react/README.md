@@ -1,4 +1,4 @@
-# `@hello-worlds/react-planets`
+# `@hello-worlds/react`
 
 A React library to add `@hello-worlds/planets` to your [`@react-three/fiber`](https://github.com/pmndrs/drei) scene.
 
