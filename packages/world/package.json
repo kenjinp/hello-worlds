@@ -1,6 +1,6 @@
 {
-  "name": "@kenny.wtf/worlds",
-  "version": "0.0.1",
+  "name": "@hello-worlds/planet",
+  "version": "0.0.0-test",
   "description": "",
   "main": "index.js",
   "scripts": {
