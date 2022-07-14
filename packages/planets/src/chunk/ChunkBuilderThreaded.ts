@@ -7,7 +7,6 @@ import {
 } from "../planet/Planet";
 import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded from "./ChinkThreaded";
-import chunkBuilderThreadedWorker from "./ChunkBuilderThreadedWorker?worker";
 import {
   ChunkBuilderThreadedMessage,
   ChunkBuilderThreadedMessageTypes
@@ -55,10 +54,10 @@ export default class ChunkBuilderThreaded {
   #pool: Record<number, ChunkThreaded[]> = {};
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>;
 
-  constructor(numWorkers: number = DEFAULT_NUM_WORKERS) {
+  constructor(numWorkers: number, worker: new () => Worker) {
     this.#workerPool = new WorkerThreadPool(
       numWorkers,
-      chunkBuilderThreadedWorker
+      worker
     );
   }
 

@@ -114,8 +114,10 @@ importers:
       simplex-noise: ^3.0.1
       three: ^0.142.0
       typescript: ^4.7.4
+      worktank: ^2.3.0
     dependencies:
       simplex-noise: 3.0.1
+      worktank: 2.3.0
     devDependencies:
       '@hello-worlds/core': link:../core
       '@types/three': 0.141.0
@@ -2834,6 +2836,10 @@ packages:
     hasBin: true
     dev: false
 
+  /promise-make-naked/2.0.0:
+    resolution: {integrity: sha512-oPf4+YbFOsYM7oAa/sEdc46L1og6ulm652RA14V2CcUIgJ4cLSWnlX2gxg4H+Z84NIEpDE7wljOLEYWuivmd8A==}
+    dev: false
+
   /prop-types/15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
     dependencies:
@@ -3579,6 +3585,10 @@ packages:
     resolution: {integrity: sha512-9Z0JcMTFxeE+b2x1LJTdnaT8rT8aEp7MVxkNwoycNmJWwPdzoXzMh0BjJSh/AEFP+KPYZUli814h8bJZFIZ2jA==}
     dev: false
 
+  /webworker-shim/1.1.0:
+    resolution: {integrity: sha512-LhPJDED3cM0+K9w4JjIio+RYPqvr712b3lyM+JjMR/rSD9elrSYHrrwE9qu3inPSSf60xqePgFgEwuAg17AuhA==}
+    dev: false
+
   /which-boxed-primitive/1.0.2:
     resolution: {integrity: sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==}
     dependencies:
@@ -3606,6 +3616,13 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
+    dev: false
+
+  /worktank/2.3.0:
+    resolution: {integrity: sha512-nDlXL7LVQj+7DEA/aQJx7WDKceXBojhuC/bLr6SzhBbJGZK1cZJOYZrNDM7mP6+W0i2i0RIZGqH9rIAVkYCMSg==}
+    dependencies:
+      promise-make-naked: 2.0.0
+      webworker-shim: 1.1.0
     dev: false
 
   /wrap-ansi/6.2.0:
