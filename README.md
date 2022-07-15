@@ -12,9 +12,10 @@ Your Virtual Worldbuilding toolkit for the web.
 
 Within you'll find a growing collection of tools to plop large planets into your [`three.js`](threejs.org/) scene, and then populate that world with societies and languages.
 
-> **⚠ Hic Sunt Dracones ⚠**
+> **Warning**
+> Hic Sunt Dracones!
 >
-> These tools are (extremely!) work-in-progress; The code base will likely change _daily_, along with the APIs! Be forwarned!
+> This library is (extremely!) work-in-progress; meaning that it is not done, or ready for use in any other capacity. Please don't use this and assume that anything will work; it probably won't. And when you find something that does work, be ready for it to break in the next release. Be forwarned!
 >
 > If you're interested in using this library and want to keep up to date, please [follow me on Twitter](https://twitter.com/KennyPirman), and/or click the Watch button for this repository.
 

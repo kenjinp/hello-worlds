@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": "git@github.com:kenjinp/hello-worlds",
   "scripts": {
-    "build": "pnpm --filter=@hello-worlds/* run build",
+    "build": "pnpm --filter=@hello-worlds/* build",
     "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ship:worlds": "flyctl deploy ./ -c apps/planet/fly.toml --dockerfile=./apps/planet/Dockerfile",
