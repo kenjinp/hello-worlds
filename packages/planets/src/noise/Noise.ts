@@ -16,7 +16,7 @@ export interface NoiseParams {
   exponentiation: number;
 }
 
-export default class Noise {
+export class Noise {
   private noiseFunctions: {
     [key: string]: {
       noise3D: (x: number, y: number, z: number) => number;

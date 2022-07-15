@@ -1,6 +1,6 @@
+import { Noise, NoiseParams, NOISE_STYLES } from "@hello-worlds/planets";
 import { useControls } from "leva";
 import * as React from "react";
-import Noise, { NoiseParams, NOISE_STYLES } from "../../lib/noise/Noise";
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,

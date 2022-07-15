@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import QuadTree from "./Quadtree";
+import { QuadTree } from "./Quadtree";
 
 export interface CubicQuadTreeParams {
   radius: number;
   minNodeSize: number;
 }
 
-export default class CubicQuadTree {
+export class CubicQuadTree {
   private sides: {
     transform: THREE.Matrix4;
     worldToLocal: THREE.Matrix4;

@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { MathUtils } from "three";
-import Noise from "../noise/Noise";
-import LinearSpline, { Lerp } from "../spline/LinearSpline";
+import { Noise } from "../noise/Noise";
+import { Lerp, LinearSpline } from "../spline/LinearSpline";
 import { Generator3 } from "./Generator3";
 
 const colorLerp: Lerp<THREE.Color> = (

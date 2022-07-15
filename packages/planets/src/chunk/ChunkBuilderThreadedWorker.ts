@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { ColorGenerator } from "../generators/ColorGenerator";
 import { Generator3 } from "../generators/Generator3";
 import { HeightGenerator } from "../generators/HeightGenerator";
-import Noise from "../noise/Noise";
+import { Noise } from "../noise/Noise";
 import { ChunkBuilderThreadedMessageTypes, ThreadedChunkProps } from "./types";
 
 class ChunkBuilderThreadedWorker {

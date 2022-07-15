@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import Noise from "../noise/Noise";
+import { Noise } from "../noise/Noise";
 import { Generator3 } from "./Generator3";
 
 export interface HeightGeneratorParams {

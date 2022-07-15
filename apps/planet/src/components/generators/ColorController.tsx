@@ -1,11 +1,11 @@
-import { useControls } from "leva";
-import * as React from "react";
-import * as THREE from "three";
 import {
   ColorGenerator,
   ColorGeneratorParams,
-} from "../../lib/generators/ColorGenerator";
-import { NOISE_STYLES } from "../../lib/noise/Noise";
+  NOISE_STYLES,
+} from "@hello-worlds/planets";
+import { useControls } from "leva";
+import * as React from "react";
+import * as THREE from "three";
 import { useNoiseController } from "../noise/NoiseController";
 
 export const DEFAULT_COLOR_PARAMS = {
@@ -55,7 +55,7 @@ export const useColorController = (seed: number | string = 1) => {
   const colorGenerator = React.useMemo(
     () =>
       new ColorGenerator({
-        ...(controllerValues as unknown as ColorGeneratorParams),
+        ...((controllerValues as unknown) as ColorGeneratorParams),
         biomeGenerator: noise,
       }),
     [controllerValues, noise]

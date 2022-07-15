@@ -17,7 +17,7 @@ export interface Node {
   root?: boolean;
 }
 
-export default class QuadTree {
+export class QuadTree {
   private root: Node;
   constructor(private params: QuadTreeParams) {
     const s = params.size;

@@ -12,8 +12,6 @@ import {
   ChunkBuilderThreadedMessageTypes
 } from "./types";
 
-const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
-
 export interface AllocateChunkProps {
   noiseParams: NoiseParams;
   colorNoiseParams: NoiseParams;

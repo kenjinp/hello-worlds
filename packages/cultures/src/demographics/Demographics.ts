@@ -47,7 +47,7 @@ export interface City {
     [key: string]: number;
   };
 }
-export default class Kingdom {
+export class Kingdom {
   public density: number;
   public densityLevel: string;
   public population: number;

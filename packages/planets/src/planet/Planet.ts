@@ -3,7 +3,7 @@ import * as THREE from "three";
 import ChunkThreaded from "../chunk/ChinkThreaded";
 import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
 import { NoiseParams, NOISE_STYLES } from "../noise/Noise";
-import CubicQuadTree from "../quadtree/CubicQuadTree";
+import { CubicQuadTree } from "../quadtree/CubicQuadTree";
 import { dictDifference, dictIntersection } from "../utils";
 
 export enum ChunkTypes {
@@ -155,7 +155,7 @@ export const DEFAULT_PLANET_PROPS = {
 
 const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
 
-export default class Planet {
+export class Planet {
   rootGroup = new THREE.Group();
   cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
   #builder: ChunkBuilderThreaded;
@@ -163,8 +163,8 @@ export default class Planet {
   #chunkMap: ChunkMap = {};
   planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
   // geology: Geology;
-  constructor(numWorkers = DEFAULT_NUM_WORKERS) {
-    this.#builder = new ChunkBuilderThreaded(numWorkers);
+  constructor(worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
+    this.#builder = new ChunkBuilderThreaded(numWorkers, worker);
     // how to update materials...
     this.material = new THREE.MeshStandardMaterial({
       // wireframe: false,
@@ -178,7 +178,6 @@ export default class Planet {
     // this.rootGroup.add(this.geology.mesh);
     // this.cubeFaceGroups.forEach((group) => (group.visible = false));
   }
-
   // for debugging threads
   get busyInfo() {
     return {
