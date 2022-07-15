@@ -19,7 +19,12 @@ export const RenderPlanet = () => {
       {entities.map(({ position, planet }) => {
         return (
           <group ref={ref}>
-            <PlanetConfigurator radius={planet.radius} name={planet.name} />;
+            <PlanetConfigurator
+              key={planet.name}
+              radius={planet.radius}
+              name={planet.name}
+            />
+            ;
           </group>
         );
       })}

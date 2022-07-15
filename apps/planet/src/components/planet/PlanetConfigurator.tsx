@@ -1,16 +1,15 @@
+import worker from "@hello-worlds/planets/dist/esm/chunk/ChunkBuilderThreadedWorker?worker";
+import { Planet } from "@hello-worlds/react";
 import { OrbitControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
 import { Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { NOISE_STYLES } from "../../lib/noise/Noise";
-import PlanetEngine from "../../lib/planet/PlanetEngine";
 import { useColorController } from "../generators/ColorController";
 import { useHeightController } from "../generators/HeightController";
 import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
-import Planet from "./Planet";
 
 export const EARTH_RADIUS = 6_357 * 1_000;
 
@@ -25,7 +24,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
   name,
 }) => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
-  const planetEngine = React.useRef<PlanetEngine | null>(null);
+  const planetEngine = React.useRef<Planet | null>(null);
   const { scene, camera } = useThree();
   const origin = React.useRef<Vector3>(camera.position.clone());
   const orbitControls = React.useRef<OrbitControlsImpl>(null);
@@ -91,7 +90,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
     lacunarity: 2.0,
     exponentiation: 1,
     scale: 2048.0,
-    noiseType: NOISE_STYLES.simplex,
+    noiseType: "simplex",
     seed: 2,
     height: 1,
   });
@@ -132,9 +131,9 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
       ).toLocaleString()} km`;
     }
     if (scrollSpeed && orbitControls.current) {
-      scrollSpeed.innerText = `Speed ${orbitControls.current.zoomSpeed} ${
-        altitude.current / orbitControls.current.maxDistance
-      }`;
+      scrollSpeed.innerText = `Speed ${
+        orbitControls.current.zoomSpeed
+      } ${altitude.current / orbitControls.current.maxDistance}`;
     }
 
     orbitControls.current.zoomSpeed = easeOutExpo(
@@ -168,6 +167,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
           colorGeneratorParams: colorParams,
         }}
         origin={camera.position}
+        worker={worker}
       >
         {showOrbitControls && (
           <OrbitControls

@@ -1,0 +1,41 @@
+{
+  "name": "@hello-worlds/react",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "clean": "rm -f *.tsbuildinfo && rm -rf dist",
+    "build": "tsc -b tsconfig.json && tsc -b tsconfig.commonjs.json",
+    "prebuild": "npm run clean"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@hello-worlds/core": "workspace:*",
+    "@hello-worlds/planets": "workspace:*",
+    "@types/react": "^18.0.0",
+    "@types/three": "^0.141.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@react-three/fiber": "^8.0.27",
+    "three": "^0.142.0",
+    "typescript": "^4.7.4"
+  },
+  "peerDependencies": {
+    "@hello-worlds/core": "workspace:*",
+    "@hello-worlds/planets": "workspace:*",
+    "@react-three/drei": "^9.13.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@react-three/fiber": "^8.0.27",
+    "three": "^0.142.0"
+  },
+  "keywords": [
+    "game",
+    "procedural generation",
+    "graphics"
+  ]
+}

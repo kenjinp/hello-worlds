@@ -1,0 +1,28 @@
+{
+  "name": "@hello-worlds/tongues",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "clean": "rm -f *.tsbuildinfo && rm -rf dist",
+    "build": "tsc -b tsconfig.json && tsc -b tsconfig.commonjs.json",
+    "prebuild": "npm run clean"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@hello-worlds/core": "workspace:*",
+    "typescript": "^4.7.4"
+  },
+  "peerDependencies": {
+    "@hello-worlds/core": "workspace:*"
+  },
+  "keywords": [
+    "languages",
+    "game",
+    "procedural generation"
+  ]
+}

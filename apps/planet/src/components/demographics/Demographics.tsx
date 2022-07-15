@@ -1,10 +1,10 @@
 import { faCrown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { City } from "@hello-worlds/cultures";
 import * as React from "react";
 import ReactTooltip from "react-tooltip";
 import styled from "styled-components";
 import { generateUUID } from "three/src/math/MathUtils";
-import { City } from "../../lib/demographics/Demographics";
 import { ECS } from "../../state/ecs";
 
 const Demographics: React.FC = () => {
