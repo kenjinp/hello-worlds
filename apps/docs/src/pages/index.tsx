@@ -1,7 +1,7 @@
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import React from "react";
-
+import * as React from "react";
+import { Whatever } from "../components/Whatever";
 import styles from "./index.module.css";
 
 function HomepageHeader() {
@@ -23,5 +23,6 @@ function HomepageHeader() {
 
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  return <div>Hello World</div>;
+  React.useEffect(() => {}, []);
+  return <Whatever />;
 }

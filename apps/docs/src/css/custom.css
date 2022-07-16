@@ -28,3 +28,14 @@
   --ifm-color-primary-lightest: #ffffff;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+@font-face {
+  font-family: "OsakaMono";
+  font-style: normal;
+  src: url(../../static/fonts/subset-Osaka-Mono.woff2);
+}
+
+html,
+body {
+  font-family: "OsakaMono", monospace;
+}

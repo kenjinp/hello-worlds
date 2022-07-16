@@ -4,7 +4,7 @@ RUN npm --global install pnpm@${PNPM_VERSION}
 WORKDIR /root/monorepo
 
 FROM base AS build 
-ARG APP="planet"
+ARG APP="docs"
 ENV APP=${APP}
 ENV NODE_OPTIONS="--max-old-space-size=1024"
 RUN apk add --no-cache git

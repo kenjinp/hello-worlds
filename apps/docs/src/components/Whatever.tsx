@@ -1,8 +1,8 @@
-import "./App.css";
-import BasicScene from "./components/BasicScene";
-import { PlanetGenerator } from "./components/planet/PlanetGenerator";
+import BasicScene from "./BasicScene";
+import { PlanetGenerator } from "./planet/PlanetGenerator";
 
-import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import Link from "@docusaurus/Link";
+import { faBook, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { setRandomSeed } from "@hello-worlds/core";
 import { Leva } from "leva";
@@ -10,13 +10,13 @@ import * as React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import ReactTooltip from "react-tooltip";
-import logo from "../../../logo.png";
-import { Button } from "./components/button/Button";
-import { Container } from "./components/container/Container";
-import CultureGenerator from "./components/cultures/CultureGenerator";
-import Demographics from "./components/demographics/Demographics";
-import Footer from "./components/footer/Footer";
-import States from "./components/states/States";
+import logo from "../../../../logo.png";
+import { Button } from "./button/Button";
+import { Container } from "./container/Container";
+import CultureGenerator from "./cultures/CultureGenerator";
+import Demographics from "./demographics/Demographics";
+import Footer from "./footer/Footer";
+import States from "./states/States";
 
 setRandomSeed("banana");
 
@@ -122,15 +122,23 @@ const Interface = () => {
           </div>
         }
       >
-        <Button onClick={() => setExploreWindow(!exploreWindow)}>
-          <FontAwesomeIcon icon={faGlobe} /> Explore
-        </Button>
+        <>
+          <Button onClick={() => setExploreWindow(!exploreWindow)}>
+            <FontAwesomeIcon icon={faGlobe} /> Explore
+          </Button>
+          {" | "}
+          <Link to="/docs/intro">
+            <Button>
+              <FontAwesomeIcon icon={faBook} /> Docs!
+            </Button>
+          </Link>
+        </>
       </Footer>
     </>
   );
 };
 
-function App() {
+export function Whatever() {
   return (
     <div className="App">
       <div
@@ -161,5 +169,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

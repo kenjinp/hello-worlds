@@ -6,6 +6,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  plugins: [require("./plugin")],
   title: "Hello Worlds",
   tagline: "Your Virtual Worldbuilding toolkit for the web.",
   url: "https://worlds.kenny.wtf",

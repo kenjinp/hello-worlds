@@ -7,7 +7,7 @@ export enum NOISE_STYLES {
 }
 
 export interface NoiseParams {
-  seed: string | number;
+  seed?: string | number;
   scale: number;
   height: number;
   noiseType: NOISE_STYLES;
