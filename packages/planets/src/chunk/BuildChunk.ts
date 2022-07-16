@@ -1,60 +1,20 @@
-import * as THREE from "three";
-import { ColorGenerator } from "../generators/ColorGenerator";
-import { Generator3 } from "../generators/Generator3";
-import { HeightGenerator } from "../generators/HeightGenerator";
-import { Noise } from "../noise/Noise";
-import { ChunkBuilderThreadedMessageTypes, ThreadedChunkProps_Old } from "./types";
+import { Vector3 } from "three";
+import { BuildChunkParams } from "./types";
 
-class ChunkBuilderThreadedWorker {
-  #noise: Noise;
-  #biomeGenerator: Noise;
-  #heightGenerators: Generator3<[number, number]>[];
-  #colorGenerator: Generator3<THREE.Color>;
-  #offset: THREE.Vector3;
+export const buildChunk = <T>() => {
+  const colorInputVector = new Vector3();
+  const _D = new Vector3();
+  const _D1 = new Vector3();
+  const _D2 = new Vector3();
+  const _P = new Vector3();
+  const _H = new Vector3();
+  const _W = new Vector3();
 
-  constructor(private params: ThreadedChunkProps_Old) {
-    this.params = params;
-    this.#offset = new THREE.Vector3(
-      params.offset[0],
-      params.offset[1],
-      params.offset[2]
-    );
-    this.#noise = new Noise(params.noiseParams);
-    this.#heightGenerators = [
-      new HeightGenerator({
-        generator: this.#noise,
-        // tileMap: this.params.heightGeneratorParams.tileMap,
-        // offset: this.#offset,
-        // minRadius: params.heightGeneratorParams.min,
-        // maxRadius: params.heightGeneratorParams.max,
-      }),
-    ];
-    this.#biomeGenerator = new Noise(params.biomeParams);
-    this.#colorGenerator = new ColorGenerator({
-      ...this.params.colorGeneratorParams,
-      biomeGenerator: this.#biomeGenerator,
-    });
-  }
-
-  generateHeight(v: THREE.Vector3) {
-    return this.#heightGenerators[0].get(v.x, v.y, v.z)[0];
-  }
-
-  rebuild() {
-    const _D = new THREE.Vector3();
-    const _D1 = new THREE.Vector3();
-    const _D2 = new THREE.Vector3();
-    const _P = new THREE.Vector3();
-    const _H = new THREE.Vector3();
-    const _W = new THREE.Vector3();
-    const _S = new THREE.Vector3();
-    const _C = new THREE.Vector3();
-
-    const _N = new THREE.Vector3();
-    const _N1 = new THREE.Vector3();
-    const _N2 = new THREE.Vector3();
-    const _N3 = new THREE.Vector3();
-
+  const _N = new Vector3();
+  const _N1 = new Vector3();
+  const _N2 = new Vector3();
+  const _N3 = new Vector3();
+  return (params: BuildChunkParams<T>) => {
     const positions = [];
     const colors = [];
     const normals = [];
@@ -62,12 +22,11 @@ class ChunkBuilderThreadedWorker {
     const uvs = [];
     const indices: number[] = [];
 
-    const localToWorld = this.params.worldMatrix;
-    const origin = this.params.origin;
-    const resolution = this.params.resolution;
-    const radius = this.params.radius;
-    const offset = this.#offset;
-    const width = this.params.width;
+    const localToWorld = params.worldMatrix;
+    const resolution = params.resolution;
+    const radius = params.radius;
+    const offset = params.offset;
+    const width = params.width;
     const half = width / 2;
 
     for (let x = 0; x < resolution + 1; x++) {
@@ -87,13 +46,35 @@ class ChunkBuilderThreadedWorker {
         _W.copy(_P);
         _W.applyMatrix4(localToWorld);
 
-        const height = this.generateHeight(_W.clone());
+        const heightInput = _W.clone();
+        const height = params.heightGenerator.get({
+          input: heightInput,
+          worldPosition: heightInput,
+          data: params.data,
+          radius,
+          offset,
+          width,
+          worldMatrix: params.worldMatrix,
+          resolution,
+        });
         _W.normalize(); // VERY IMPORTANT!
-        const color = this.#colorGenerator.get(_W.x, _W.y, height);
+        const color = params.colorGenerator.get({
+          input: colorInputVector.set(_W.x, _W.y, height).clone(),
+          worldPosition: _W.clone(),
+          data: {
+            ...params.data,
+            height,
+          },
+          radius,
+          offset,
+          width,
+          worldMatrix: params.worldMatrix,
+          resolution,
+        });
 
         // Purturb height along z-vector
         _H.copy(_D);
-        _H.multiplyScalar(height * (this.params.invert ? -1 : 1));
+        _H.multiplyScalar(height * (params.invert ? -1 : 1));
         _P.add(_H);
 
         positions.push(_P.x, _P.y, _P.z);
@@ -217,15 +198,5 @@ class ChunkBuilderThreadedWorker {
       normals: normalsArray,
       tangents: tangentsArray,
     };
-  }
-}
-
-self.onmessage = (msg) => {
-  if (msg.data.subject == ChunkBuilderThreadedMessageTypes.BUILD_CHUNK) {
-    const data = new ChunkBuilderThreadedWorker(msg.data.params).rebuild();
-    self.postMessage({
-      subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT,
-      data,
-    });
-  }
+  };
 };

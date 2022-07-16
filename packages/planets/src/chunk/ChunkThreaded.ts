@@ -1,10 +1,23 @@
 import * as THREE from "three";
-import { AllocateChunkProps } from "./ChunkBuilderThreaded";
+
+export interface ChunkThreadedParams<T = any> {
+  group: THREE.Object3D;
+  offset: THREE.Vector3;
+  origin: THREE.Vector3;
+  transform: THREE.Matrix4;
+  material: THREE.Material;
+  width: number;
+  radius: number;
+  resolution: number;
+  invert: boolean;
+  isMinCellSize: boolean;
+  data: T;
+}
 
 export default class ChunkThreaded {
   public plane: THREE.Mesh;
   public geometry: THREE.BufferGeometry;
-  constructor(public params: AllocateChunkProps & { group: THREE.Object3D }) {
+  constructor(public params: ChunkThreadedParams & { group: THREE.Object3D }) {
     this.geometry = new THREE.BufferGeometry();
     this.plane = new THREE.Mesh(this.geometry, params.material);
     this.plane.castShadow = false;
@@ -30,19 +43,6 @@ export default class ChunkThreaded {
   show() {
     this.plane.visible = true;
   }
-
-  // generateHeight(v: THREE.Vector3) {
-  //   return this.params.heightGenerators[0].get(v.x, v.y, v.z)[0];
-  // }
-
-  // update(currentCameraPosition: THREE.Vector3) {
-  //   // this.plane.position.copy(this.params.origin);
-  //   // this.plane.position.sub(currentCameraPosition);
-  // }
-
-  // reinit(params: AllocateChunkProps & { group: THREE.Object3D }) {
-  //   this.params = params;
-  // }
 
   rebuildMeshFromData(data: any) {
     this.geometry.setAttribute(

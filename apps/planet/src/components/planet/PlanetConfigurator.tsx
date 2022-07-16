@@ -1,4 +1,4 @@
-import worker from "@hello-worlds/planets/dist/esm/chunk/ChunkBuilderThreadedWorker?worker";
+import { Planet as HelloPlanet } from "@hello-worlds/planets";
 import { Planet } from "@hello-worlds/react";
 import { OrbitControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
@@ -10,6 +10,7 @@ import { useColorController } from "../generators/ColorController";
 import { useHeightController } from "../generators/HeightController";
 import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
+import planetWorker from "./PlanetWorker?worker";
 
 export const EARTH_RADIUS = 6_357 * 1_000;
 
@@ -24,7 +25,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
   name,
 }) => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
-  const planetEngine = React.useRef<Planet | null>(null);
+  const planetEngine = React.useRef<HelloPlanet | null>(null);
   const { scene, camera } = useThree();
   const origin = React.useRef<Vector3>(camera.position.clone());
   const orbitControls = React.useRef<OrbitControlsImpl>(null);
@@ -102,6 +103,17 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
 
   const altitude = React.useRef(0);
 
+  React.useEffect(() => {
+    planetEngine.current?.planetProps.radius &&
+      camera.position.copy(
+        new Vector3(
+          planetEngine.current?.planetProps.radius * 1.5,
+          0,
+          planetEngine.current?.planetProps.radius * 1.5
+        )
+      );
+  }, [planetEngine.current?.planetProps.radius]);
+
   useFrame(() => {
     if (!planetEngine.current) {
       return;
@@ -145,6 +157,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
     );
   });
 
+
   return (
     <>
       {/* <Html>
@@ -153,21 +166,15 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
       </Html> */}
       <Planet
         ref={planetEngine}
-        {...{
+        planetProps={{
           width: terrain.width,
           radius: planet.planetRadius,
-          minRadius: heightParams.minRadius,
-          maxRadius: heightParams.maxRadius,
           minCellSize: planet.minCellSize,
           minCellResolution: planet.minCellResolution,
           invert: planet.invert,
-          noiseParams,
-          colorNoiseParams,
-          biomeParams,
-          colorGeneratorParams: colorParams,
         }}
         origin={camera.position}
-        worker={worker}
+        worker={planetWorker}
       >
         {showOrbitControls && (
           <OrbitControls

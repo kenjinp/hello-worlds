@@ -15,7 +15,7 @@ Within you'll find a growing collection of tools to plop large planets into your
 > **Warning**
 > Hic Sunt Dracones!
 >
-> This library is (extremely!) work-in-progress; meaning that it is not done, or ready for use in any other capacity. Please don't use this and assume that anything will work; it probably won't. And when you find something that does work, be ready for it to break in the next release. Be forwarned!
+> This library is (extremely!) work-in-progress; meaning that it is not done, or ready for use in any other capacity. Please don't use this and assume that anything will work; it probably won't. And when you find something that does work, be ready for it to break in the next release.
 >
 > If you're interested in using this library and want to keep up to date, please [follow me on Twitter](https://twitter.com/KennyPirman), and/or click the Watch button for this repository.
 

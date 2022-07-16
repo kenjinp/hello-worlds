@@ -12,9 +12,7 @@ export const setRandomSeed = (seed: string) => {
   _rand = new Rand(seed);
 };
 
-export const random = (): number => {
-  return _rand.next();
-};
+export const random = (): number => _rand.next();
 
 function main(): void {
   let registry = globalThis._hello_world_core_instances;

@@ -13,11 +13,10 @@ COPY ./pnpm-workspace.yaml .
 RUN pnpm fetch
 COPY . .
 RUN pnpm install --filter "$APP..." --frozen-lockfile --unsafe-perm --offline
-RUN pnpm build --filter "$APP^..."
 RUN pnpm test --if-present --filter $APP
 ARG NODE_ENV="production"
 ENV NODE_ENV=${NODE_ENV}
-RUN pnpm -r build
+RUN pnpm --filter "$APP..." build
 
 FROM alpine as prod
 ENV PORT="3002"
