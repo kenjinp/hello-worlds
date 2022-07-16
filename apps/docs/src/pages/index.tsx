@@ -1,9 +1,8 @@
+import BrowserOnly from "@docusaurus/BrowserOnly";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import * as React from "react";
-import { Whatever } from "../components/Whatever";
 import styles from "./index.module.css";
-
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   return (
@@ -21,8 +20,19 @@ function HomepageHeader() {
   );
 }
 
+const OtherComponent = React.lazy(() => import("../components/Whatever"));
+
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  React.useEffect(() => {}, []);
-  return <Whatever />;
+  return (
+    <BrowserOnly>
+      {() => {
+        return (
+          <React.Suspense>
+            <OtherComponent />
+          </React.Suspense>
+        );
+      }}
+    </BrowserOnly>
+  );
 }

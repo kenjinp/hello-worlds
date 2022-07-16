@@ -140,7 +140,7 @@ const Interface = () => {
 
 export function Whatever() {
   return (
-    <div className="App">
+    <div className="App" style={{ color: "white" }}>
       <div
         id="window-bounds"
         style={{
@@ -169,3 +169,5 @@ export function Whatever() {
     </div>
   );
 }
+
+export default Whatever;

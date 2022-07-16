@@ -1,4 +1,4 @@
-FROM node:16.13-alpine AS base
+FROM node:16.14-alpine AS base
 ARG PNPM_VERSION=7.5.0
 RUN npm --global install pnpm@${PNPM_VERSION}
 WORKDIR /root/monorepo
@@ -24,5 +24,5 @@ EXPOSE $PORT
 RUN apk add curl
 RUN curl -L https://github.com/svenstaro/miniserve/releases/download/v0.18.0/miniserve-v0.18.0-x86_64-unknown-linux-musl > miniserve
 RUN chmod +x miniserve
-COPY --from=build /root/monorepo/apps/planet/dist ./
+COPY --from=build /root/monorepo/apps/docs/build ./
 CMD ./miniserve ./ --header "Cross-Origin-Opener-Policy:same-origin" --header "Cross-Origin-Embedder-Policy:require-corp" --spa --index index.html -p $PORT -g

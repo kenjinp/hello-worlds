@@ -65,6 +65,11 @@ const config = {
             label: "Tutorial",
           },
           {
+            to: "/worldbuilder",
+            position: "left",
+            label: "Woldbuilder",
+          },
+          {
             href: "https://github.com/facebook/docusaurus",
             label: "GitHub",
             position: "right",
@@ -87,16 +92,8 @@ const config = {
             title: "Community",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
                 label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                href: "https://twitter.com/KennyPirman",
               },
             ],
           },
@@ -104,17 +101,13 @@ const config = {
             title: "More",
             items: [
               {
-                label: "Blog",
-                to: "/blog",
-              },
-              {
                 label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                href: "https://github.com/kenjinp/hello-worlds",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Kenneth Pirman`,
       },
       prism: {
         theme: lightCodeTheme,
