@@ -6,8 +6,8 @@ import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { usePlanet } from "../planets/Planets";
 
 export interface OrbitCameraProps {
-  maxAltitudeOffset: number;
-  maxDistanceMultiplier: number;
+  maxAltitudeOffset?: number;
+  maxDistanceMultiplier?: number;
 }
 
 // TODO put into some easing library / utils
