@@ -209,13 +209,18 @@ importers:
     specifiers:
       '@hello-worlds/core': workspace:*
       '@hello-worlds/planets': workspace:*
+      '@react-three/drei': ^9.13.2
       '@react-three/fiber': ^8.0.27
       '@types/react': ^18.0.0
       '@types/three': ^0.141.0
       react: ^18.0.0
       react-dom: ^18.0.0
       three: ^0.142.0
+      three-stdlib: ^2.12.1
       typescript: ^4.7.4
+    dependencies:
+      '@react-three/drei': 9.13.2_7d2478feb515ba1a1c408d278a3f0bb7
+      three-stdlib: 2.12.1_three@0.142.0
     devDependencies:
       '@hello-worlds/core': link:../core
       '@hello-worlds/planets': link:../planets

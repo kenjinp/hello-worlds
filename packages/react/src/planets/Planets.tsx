@@ -3,7 +3,9 @@ import { useFrame } from "@react-three/fiber";
 import * as React from "react";
 import { Vector3 } from "three";
 
-const PlanetContext = React.createContext<HelloPlanet | null>(null);
+// This should only be accessed through the Planet component, and therefore should always be defined
+// if someone tries to access him outside of a context, it should error somehow
+const PlanetContext = React.createContext<HelloPlanet>({} as HelloPlanet);
 
 export const usePlanet = () => {
   return React.useContext(PlanetContext);
@@ -22,7 +24,7 @@ function PlanetInner<T>(
 ) {
   const { children, origin, worker, data, planetProps } = props
   const planetGroupRef = React.useRef<THREE.Group>(null);
-  const [planetEngine] = React.useState<HelloPlanet>(new HelloPlanet(worker));
+  const [planetEngine] = React.useState<HelloPlanet>(new HelloPlanet(planetProps, worker));
 
 
   React.useImperativeHandle(ref, () => planetEngine);

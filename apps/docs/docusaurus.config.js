@@ -51,6 +51,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      defaultMode: "dark",
       navbar: {
         title: "Hello Worlds",
         logo: {
@@ -67,10 +68,10 @@ const config = {
           {
             to: "/worldbuilder",
             position: "left",
-            label: "Woldbuilder",
+            label: "Worldbuilder",
           },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/kenjinp/hello-worlds",
             label: "GitHub",
             position: "right",
           },

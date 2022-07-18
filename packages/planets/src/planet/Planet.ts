@@ -68,7 +68,7 @@ export interface PlanetProps {
   // };
   // minRadius: number;
   // maxRadius: number;
-  width: number;
+  // width: number;
   radius: number;
   invert: boolean;
   minCellSize: number;
@@ -146,7 +146,7 @@ export const DEFAULT_PLANET_PROPS = {
   // colorGeneratorParams: DEFAULT_COLOR_PARAMS,
   // minRadius: DEFAULT_HEIGHT_PARAMS.minRadius,
   // maxRadius: DEFAULT_HEIGHT_PARAMS.maxRadius,
-  width: DEFAULT_TERRAIN_PARAMS.width,
+  // width: DEFAULT_TERRAIN_PARAMS.width,
   radius: DEFAULT_PLANET_PARAMS.radius,
   invert: DEFAULT_PLANET_PARAMS.invert,
   minCellSize: DEFAULT_PLANET_PARAMS.minCellSize,
@@ -161,9 +161,9 @@ export class Planet<T = {}> {
   #builder: ChunkBuilderThreaded<T>;
   material: THREE.Material;
   #chunkMap: ChunkMap = {};
-  planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
+  // planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
   // geology: Geology;
-  constructor(worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
+  constructor(public planetProps: PlanetProps = DEFAULT_PLANET_PROPS, worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
     this.#builder = new ChunkBuilderThreaded<T>(numWorkers, worker);
     // how to update materials...
     this.material = new THREE.MeshStandardMaterial({

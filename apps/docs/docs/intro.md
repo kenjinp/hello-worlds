@@ -1,47 +1,43 @@
 ---
 sidebar_position: 1
+title: Intro
 ---
 
-# Tutorial Intro
+:::caution
+I'm changing things up in this library on a _daily_ basis. Expect these docs to be outdated as soon as they are available online! If you need help or want to ask questions,
+[reach out on twitter]("https://twitter.com/home") or DM me in the [Poimandres Discord](https://discord.gg/papd8Abw5A)
+:::
 
-Let's discover **Docusaurus in less than 5 minutes**.
+# Use Javascript to create whole worlds!
 
-## Getting Started
+So you've watched a few videos about procedurally generating planets. Or you've played StarCitizen, and now it's time to implement `StarCitizen.js`. Why not? The browser is a perfect place for large virtual worlds, and game development with javascript or React is both fun and practical. Your rad mmorpg deserves a vast setting to play in. So let's create a world!
 
-Get started by **creating a new site**.
+## What's all this then?
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+`hello-worlds` is a collection of libraries that helps you procedurally generate beautiful, fantastic worlds, and populate them with interesting stuff.
 
-### What you'll need
+Using these libraries, you can create three.js planetoids, moons, earth-sized celestial objects, and eventually more fantastic realms like ring-worlds, donut-earths, inverted dyson-sphere-like worlds, or maybe a disc world. The point is not to be realistic (although you can be), but _fantastic_!
 
-- [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+I've created these packages and docs as a way to organize my (limited) knowledge about procedural generation. It might not be useful for your website or game, but you you might be able to learn something from [reading the source](https://github.com/kenjinp/hello-worlds).
 
-## Generate a new site
+## Libraries in hello-worlds
 
-Generate a new Docusaurus site using the **classic template**.
+### `hello-worlds/planets`
 
-The classic template will automatically be added to your project after you run the command:
+Create planets in `three.js`.
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+### `hello-worlds/react`
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+Create `hello-worlds` planets in your `@react-three/fiber` scene via `React`.
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+### `hello-worlds/tongues`
 
-## Start your site
+Generate a plausible-ish randomly generated language.
 
-Run the development server:
+### `hello-worlds/cultures`
 
-```bash
-cd my-website
-npm run start
-```
+Probably not useful, but interesting. Procedurally generate countries, their languages, and their demographics.
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+### `hello-worlds/core`
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Core library that each depends on. Mostly useful for setting global `seeds`.

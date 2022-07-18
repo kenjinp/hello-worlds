@@ -57,7 +57,6 @@ export const buildChunk = <T>() => {
           worldMatrix: params.worldMatrix,
           resolution,
         });
-        _W.normalize(); // VERY IMPORTANT!
         const color = params.colorGenerator.get({
           input: colorInputVector.set(_W.x, _W.y, height).clone(),
           worldPosition: _W.clone(),

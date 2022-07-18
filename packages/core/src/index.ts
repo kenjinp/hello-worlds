@@ -14,6 +14,8 @@ export const setRandomSeed = (seed: string) => {
 
 export const random = (): number => _rand.next();
 
+export const getSeed = () => _seed;
+
 function main(): void {
   let registry = globalThis._hello_world_core_instances;
   if (registry) {

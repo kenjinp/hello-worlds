@@ -36,9 +36,11 @@ export class Noise {
     //   };
     // };
 
+    const seed = this.params.seed || random;
+
     this.noiseFunctions = {
       // support more noise types?
-      simplex: new SimplexNoise(this.params.seed || random),
+      simplex: new SimplexNoise(seed),
       // perlin: perlinNoiseObject(),
     };
   }
