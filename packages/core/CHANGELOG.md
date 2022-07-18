@@ -1,5 +1,11 @@
 # @hello-worlds/core
 
+## 0.0.4
+
+### Patch Changes
+
+- 3c7154a: fix data property for createThreadedPlanetWorker
+
 ## 0.0.3
 
 ### Patch Changes

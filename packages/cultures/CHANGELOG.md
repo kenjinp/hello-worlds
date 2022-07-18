@@ -1,5 +1,14 @@
 # @hello-worlds/cultures
 
+## 0.0.4
+
+### Patch Changes
+
+- 3c7154a: fix data property for createThreadedPlanetWorker
+- Updated dependencies [3c7154a]
+  - @hello-worlds/core@0.0.4
+  - @hello-worlds/tongues@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
