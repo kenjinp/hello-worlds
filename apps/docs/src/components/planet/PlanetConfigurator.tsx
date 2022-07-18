@@ -1,6 +1,6 @@
 import { Planet as HelloPlanet } from "@hello-worlds/planets";
 import { Planet } from "@hello-worlds/react";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Stars } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
@@ -177,6 +177,14 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
         lodOrigin={camera.position}
         worker={myWorker}
       >
+        <group
+          scale={new Vector3(1, 1, 1)
+            .multiplyScalar(planet.planetRadius)
+            .multiplyScalar(100)}
+        >
+          <Stars />
+        </group>
+
         {showOrbitControls && (
           <OrbitControls
             ref={orbitControls}

@@ -1,6 +1,6 @@
 import { useThree } from "@react-three/fiber";
 import * as React from "react";
-import { CubeTextureLoader } from "three";
+import { Color, CubeTextureLoader } from "three";
 
 import back from "../../static/img/spacebox/back.png";
 import bottom from "../../static/img/spacebox/bottom.png";
@@ -17,7 +17,7 @@ export const SpaceBox = () => {
 
     const cube = new CubeTextureLoader().load(urls);
 
-    scene.background = cube;
+    scene.background = new Color(0x000000);
   }, []);
 
   return null;

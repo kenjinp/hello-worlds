@@ -6,8 +6,8 @@ export const createThreadedPlanetWorker = <T>({
   heightGenerator,
   colorGenerator,
 }: {
-  colorGenerator: ChunkGenerator3<Color, T>;
-  heightGenerator: ChunkGenerator3<number, T>;
+  colorGenerator: ChunkGenerator3<T, Color>;
+  heightGenerator: ChunkGenerator3<T, number>;
 }) => {
   const builder = buildChunk();
   self.onmessage = (msg) => {

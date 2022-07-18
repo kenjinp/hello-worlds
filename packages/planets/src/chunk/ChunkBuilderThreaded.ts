@@ -68,6 +68,7 @@ export default class ChunkBuilderThreaded<T> {
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
       invert: params.invert,
+      data: params.data
     };
 
     const msg = {

@@ -1,4 +1,3 @@
-import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import * as React from "react";
 import { Color, Quaternion, Vector3 } from "three";
@@ -7,16 +6,16 @@ import { SpaceBox } from "./SpaceBox";
 export const LightRig: React.FC = ({}) => {
   return (
     <mesh>
-      <hemisphereLight
+      {/* <hemisphereLight
         intensity={0.6}
-        color={new Color(0x0000ff)}
-        groundColor={new Color(0x00ff00)}
-        position={new Vector3(0, 500, 0)}
-      />
+        color={new Color(0xffffff)}
+        groundColor={new Color(0xffffff)}
+        position={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
+      /> */}
       <directionalLight
         color={0xffffff}
-        intensity={1}
-        position={new Vector3(-1, 0.75, 1).multiplyScalar(50)}
+        intensity={0.4}
+        position={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
         castShadow
       />
     </mesh>
@@ -104,10 +103,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}
         {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.00000125} /> */}
         <SpaceBox />
-        <InvertedLightRig />
-        <group scale={new Vector3(50, 50, 50)}>
-          <Stars />
-        </group>
+        <LightRig />
         {/* <OrbitControls /> */}
         {/* <FlyCamera /> */}
         {children}
