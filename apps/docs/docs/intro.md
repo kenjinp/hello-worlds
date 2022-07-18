@@ -22,22 +22,22 @@ I've created these packages and docs as a way to organize my (limited) knowledge
 
 ## Libraries in hello-worlds
 
-### `hello-worlds/planets`
+### [`hello-worlds/planets`](/docs/planets/intro)
 
 Create planets in `three.js`.
 
-### `hello-worlds/react`
+### [`hello-worlds/react`](/docs/react/intro)
 
 Create `hello-worlds` planets in your `@react-three/fiber` scene via `React`.
 
-### `hello-worlds/tongues`
+### [`hello-worlds/tongues`](/docs/react/tongues)
 
 Generate a plausible-ish randomly generated language.
 
-### `hello-worlds/cultures`
+### [`hello-worlds/cultures`](/docs/react/cultures)
 
 Probably not useful, but interesting. Procedurally generate countries, their languages, and their demographics.
 
-### `hello-worlds/core`
+### [`hello-worlds/core`](/docs/react/core)
 
 Core library that each depends on. Mostly useful for setting global `seeds`.
