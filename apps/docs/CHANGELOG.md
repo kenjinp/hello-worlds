@@ -1,5 +1,16 @@
 # docs
 
+## 0.0.2
+
+### Patch Changes
+
+- fix types and import policy
+- Updated dependencies
+  - @hello-worlds/core@0.0.3
+  - @hello-worlds/cultures@0.0.3
+  - @hello-worlds/planets@0.0.3
+  - @hello-worlds/react@0.0.3
+
 ## 0.0.1
 
 ### Patch Changes

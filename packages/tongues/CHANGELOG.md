@@ -1,5 +1,13 @@
 # @hello-worlds/tongues
 
+## 0.0.3
+
+### Patch Changes
+
+- fix types and import policy
+- Updated dependencies
+  - @hello-worlds/core@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
