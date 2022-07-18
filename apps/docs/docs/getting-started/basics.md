@@ -48,7 +48,7 @@ function Kerbin () {
       minCellSize: 25,
       minCellResolution: 48,
     }}
-    origin={camera.position}
+    lodOrigin={camera.position}
     worker={planetWorker}
   >
 }

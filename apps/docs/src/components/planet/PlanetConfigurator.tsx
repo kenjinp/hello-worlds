@@ -174,7 +174,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
           minCellResolution: planet.minCellResolution,
           invert: planet.invert,
         }}
-        origin={camera.position}
+        lodOrigin={camera.position}
         worker={myWorker}
       >
         {showOrbitControls && (

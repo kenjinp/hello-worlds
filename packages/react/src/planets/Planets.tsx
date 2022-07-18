@@ -14,7 +14,7 @@ export const usePlanet = () => {
 export type PlanetProps<T> = React.PropsWithChildren<{
   planetProps: HelloPlanetProps;
   data: T;
-  origin: Vector3;
+  lodOrigin: Vector3;
   worker: new () => Worker;
 }>
 
@@ -22,7 +22,7 @@ function PlanetInner<T>(
   props: PlanetProps<T>,
   ref: React.ForwardedRef<HelloPlanet<T>>
 ) {
-  const { children, origin, worker, data, planetProps } = props
+  const { children, lodOrigin, worker, data, planetProps } = props
   const planetGroupRef = React.useRef<THREE.Group>(null);
   const [planetEngine] = React.useState<HelloPlanet>(new HelloPlanet(planetProps, worker));
 
@@ -52,7 +52,7 @@ function PlanetInner<T>(
 
   useFrame(() => {
     if (planetEngine.planetProps) {
-      planetEngine.update(origin, data);
+      planetEngine.update(lodOrigin, data);
     }
   });
 

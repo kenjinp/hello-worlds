@@ -40,7 +40,7 @@ function Editor() {
         minCellResolution: planet.minCellResolution,
         invert: planet.invert,
       }}
-      origin={camera.position}
+      lodOrigin={camera.position}
       worker={planetWorker}
     >
       <OrbitCamera />

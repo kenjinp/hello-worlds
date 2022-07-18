@@ -187,7 +187,7 @@ export class Planet<T = {}> {
     this.#builder.rebuild(this.#chunkMap, data);
   }
 
-  update(anchor: THREE.Vector3, data: T) {
+  update(lodOrigin: THREE.Vector3, data: T) {
     if (!this.planetProps) {
       throw new Error("must set planetProps before updating");
     }
@@ -204,7 +204,7 @@ export class Planet<T = {}> {
 
     // collapse the quadtree recursively at this position
     q.insert(
-      anchor
+      lodOrigin
       // floatingOrigin.clone().add(floatingOrigin.clone().multiplyScalar(-1))
       // floatingOrigin.add(floatingOrigin.clone()).add(floatingOrigin.clone())
     );
@@ -259,7 +259,7 @@ export class Planet<T = {}> {
           transform: parentChunkProps.transform,
           material: this.material,
           offset,
-          origin: anchor,
+          origin: lodOrigin,
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,
