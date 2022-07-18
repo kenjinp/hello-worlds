@@ -1,5 +1,14 @@
 # @hello-worlds/planets
 
+## 0.0.2
+
+### Patch Changes
+
+- f7ca26e: update docs and change worker thread implementatiton
+- Updated dependencies [cb0b9c8]
+- Updated dependencies [f7ca26e]
+  - @hello-worlds/core@0.0.2
+
 ## 0.0.1
 
 ### Patch Changes
