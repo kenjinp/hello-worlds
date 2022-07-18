@@ -70,7 +70,7 @@ export interface PlanetProps {
   // maxRadius: number;
   // width: number;
   radius: number;
-  invert: boolean;
+  invert?: boolean;
   minCellSize: number;
   minCellResolution: number;
 }
@@ -263,7 +263,7 @@ export class Planet<T = {}> {
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,
-          invert: this.planetProps.invert,
+          invert: !!this.planetProps.invert,
           isMinCellSize:
             parentChunkProps.size <= this.planetProps.radius / Math.PI,
           data

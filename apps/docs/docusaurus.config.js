@@ -102,6 +102,14 @@ const config = {
                 label: "Twitter",
                 href: "https://twitter.com/KennyPirman",
               },
+              {
+                label: "Javelin Discord (gamedev & ECS)",
+                href: "https://discord.gg/9qvBurTQwb",
+              },
+              {
+                label: "Poimandres Discord (react graphics)",
+                href: "https://discord.gg/papd8Abw5A",
+              },
             ],
           },
           {
@@ -110,6 +118,10 @@ const config = {
               {
                 label: "GitHub",
                 href: "https://github.com/kenjinp/hello-worlds",
+              },
+              {
+                label: "Firmament (WIP MMORPG)",
+                href: "https://firmament.kenny.wtf",
               },
             ],
           },
