@@ -11,7 +11,7 @@ const config = {
   tagline: "Your Virtual Worldbuilding toolkit for the web.",
   url: "https://worlds.kenny.wtf",
   baseUrl: "/",
-  onBrokenLinks: "throw",
+  onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.png",
 

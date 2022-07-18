@@ -10,9 +10,9 @@ import { useColorController } from "../generators/ColorController";
 import { useHeightController } from "../generators/HeightController";
 import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
-import planetWorker from "./Planet.worker";
+import myWorker from "./Planet.worker";
 
-console.log({ planetWorker });
+console.log({ myWorker });
 
 export const EARTH_RADIUS = 6_357 * 1_000;
 
@@ -175,7 +175,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
           invert: planet.invert,
         }}
         origin={camera.position}
-        worker={planetWorker}
+        worker={myWorker}
       >
         {showOrbitControls && (
           <OrbitControls

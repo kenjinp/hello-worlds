@@ -5,7 +5,7 @@ title: Intro
 
 :::caution
 I'm changing things up in this library on a _daily_ basis. Expect these docs to be outdated as soon as they are available online! If you need help or want to ask questions,
-[reach out on twitter]("https://twitter.com/home") or DM me in the [Poimandres Discord](https://discord.gg/papd8Abw5A)
+[reach out on twitter](https://twitter.com/home) or DM me in the [Poimandres Discord](https://discord.gg/papd8Abw5A)
 :::
 
 # Use Javascript to create whole worlds!

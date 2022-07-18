@@ -1,6 +1,6 @@
 module.exports = function(context, options) {
   return {
-    name: "my-plugin",
+    name: "kennys-fancy-plugin",
     configureWebpack(config, isServer, utils) {
       return {
         mergeStrategy: { "module.rules": "prepend" },
@@ -8,7 +8,15 @@ module.exports = function(context, options) {
           rules: [
             {
               test: /\.worker\.ts$/,
-              use: { loader: "worker-loader" },
+              use: {
+                loader: "worker-loader",
+                options: {
+                  // emitFile: !isServer,
+                  // filename: "[name].[hash:hex:7].[ext]",
+                  // inline: "fallback",
+                  filename: "[id].[contenthash].worker.js",
+                },
+              },
             },
           ],
         },

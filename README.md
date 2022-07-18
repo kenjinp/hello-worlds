@@ -33,6 +33,26 @@ Visit https://worlds.kenny.wtf
 | [@hello-worlds/cultures](./packages/cultures) | Tools to generate cultures and societies                                                                                                                                                                                                           |
 | [@hello-worlds/core](./packages/core)         | shared utilities                                                                                                                                                                                                                                   |
 
+## Roadmap
+
+This project is large enough in scope to last several lifetimes. Here are a couple of the next tasks on my mind.
+Probably not in order.
+
+- [x] Readable Documentation Portal
+- [ ] Codesandbox examples (Hello World, Planet, Moon)
+- [ ] API docs
+- [ ] Make Webworkers optional
+- [ ] Enable use in node.js (remove webworker dependency)
+- [ ] Lifecycle events
+- [ ] Point-specific height generation example (Moon Craters)
+- [ ] Character-on-surface playable example
+- [ ] Calculate Long & Lat
+- [ ] Great Arc helper & methods
+- [ ] Bezier Curves over a sphere (for labels and such)
+- [ ] Oceans example and helpers
+- [ ] Simple Atmosphere helpers
+- [ ] Voronoi subdivision of sphere for... science...
+
 ## Questions? 💬
 
 Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](https://www.twitch.tv/kennycreates), or the [Poimandres Discord](https://discord.gg/aAYjm2p7c7)
