@@ -1,4 +1,4 @@
-import THREE from "three";
+import THREE, { Color, Object3D, Vector3 } from "three";
 
 export enum ChunkBuilderThreadedMessageTypes {
   BUILD_CHUNK_RESULT = "BUILD_CHUNK_RESULT",
@@ -10,7 +10,7 @@ export interface ChunkBuilderThreadedMessage {
   data: any;
 }
 
-export interface ThreadedChunkProps {
+export interface ThreadedChunkProps_Old {
   noiseParams: any;
   colorNoiseParams: any;
   biomeParams: any;
@@ -39,4 +39,30 @@ export interface ThreadedChunkProps {
   resolution: number;
   worldMatrix: THREE.Object3D["matrix"];
   invert: boolean;
+}
+
+export interface ChunkGenerator3<D, T = number> {
+  get(params: {
+    input: Vector3;
+    data: D;
+    worldPosition: Vector3;
+    width: number;
+    offset: Vector3;
+    radius: number;
+    resolution: number;
+    worldMatrix: Object3D["matrix"];
+  }): T;
+}
+
+export interface BuildChunkParams<T> {
+  width: number;
+  offset: Vector3;
+  radius: number;
+  resolution: number;
+  worldMatrix: Object3D["matrix"];
+  invert: boolean;
+  // ColorGenerator receives height data from previous step
+  colorGenerator: ChunkGenerator3<T & { height: number }, Color>;
+  heightGenerator: ChunkGenerator3<T, number>;
+  data: T;
 }

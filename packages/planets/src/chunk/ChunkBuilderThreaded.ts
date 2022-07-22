@@ -1,4 +1,3 @@
-import { NoiseParams } from "../noise/Noise";
 import {
   ChunkMap,
   ChunkTypes,
@@ -6,47 +5,13 @@ import {
   CubeFaceRootChunkProps
 } from "../planet/Planet";
 import WorkerThreadPool from "../worker/WorkerThreadPool";
-import ChunkThreaded from "./ChinkThreaded";
+import ChunkThreaded, { ChunkThreadedParams } from "./ChunkThreaded";
 import {
   ChunkBuilderThreadedMessage,
   ChunkBuilderThreadedMessageTypes
 } from "./types";
 
-export interface AllocateChunkProps {
-  noiseParams: NoiseParams;
-  colorNoiseParams: NoiseParams;
-  biomeParams: NoiseParams;
-  colorGeneratorParams: {
-    seaDeep: string;
-    seaMid: string;
-    seaShallow: string;
-    tempHot: string;
-    tempMid: string;
-    tempCold: string;
-    humidLow: string;
-    humidMid: string;
-    humidHigh: string;
-    seaLevel: number;
-    seaLevelDividend: number;
-  };
-  heightGeneratorParams: {
-    min: number;
-    max: number;
-    // tileMap: TileMap;
-  };
-  group: THREE.Object3D;
-  offset: THREE.Vector3;
-  origin: THREE.Vector3;
-  transform: THREE.Matrix4;
-  material: THREE.Material;
-  width: number;
-  radius: number;
-  resolution: number;
-  invert: boolean;
-  isMinCellSize: boolean;
-}
-
-export default class ChunkBuilderThreaded {
+export default class ChunkBuilderThreaded<T> {
   #old: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[] = [];
   // we keep the chunks stored with key of width
   #pool: Record<number, ChunkThreaded[]> = {};
@@ -78,7 +43,7 @@ export default class ChunkBuilderThreaded {
     }
   }
 
-  allocateChunk(params: AllocateChunkProps) {
+  allocateChunk(params: ChunkThreadedParams<T>) {
     const w = params.width;
 
     if (!(w in this.#pool)) {
@@ -96,18 +61,14 @@ export default class ChunkBuilderThreaded {
     c.hide();
 
     const threadedParams = {
-      noiseParams: params.noiseParams,
-      colorNoiseParams: params.colorNoiseParams,
-      biomeParams: params.biomeParams,
-      colorGeneratorParams: params.colorGeneratorParams,
-      heightGeneratorParams: params.heightGeneratorParams,
       width: params.width,
-      offset: [params.offset.x, params.offset.y, params.offset.z],
+      offset: params.offset,
       radius: params.radius,
       origin: params.origin,
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
       invert: params.invert,
+      data: params.data
     };
 
     const msg = {
@@ -148,25 +109,21 @@ export default class ChunkBuilderThreaded {
     return this.#workerPool.busy;
   }
 
-  rebuild(chunkMap: ChunkMap) {
+  rebuild(chunkMap: ChunkMap, data: T) {
     for (let key in chunkMap) {
       const chunk = chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
         const { material, ...params } = chunk.chunk.params;
 
         const threadedParams = {
-          noiseParams: params.noiseParams,
-          colorNoiseParams: params.colorNoiseParams,
-          biomeParams: params.biomeParams,
-          colorGeneratorParams: params.colorGeneratorParams,
-          heightGeneratorParams: params.heightGeneratorParams,
           width: params.width,
-          offset: [params.offset.x, params.offset.y, params.offset.z],
+          offset: params.offset,
           radius: params.radius,
           origin: params.origin,
           resolution: params.resolution,
           worldMatrix: params.group.matrix,
           invert: params.invert,
+          data
         };
 
         const msg = {

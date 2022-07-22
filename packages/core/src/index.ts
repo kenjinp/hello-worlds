@@ -4,14 +4,17 @@ export * from "./utils";
 declare global {
   var _hello_world_core_instances: number;
 }
-
-let _rand = new Rand();
+let _seed: string | undefined = undefined;
+let _rand = new Rand(_seed);
 
 export const setRandomSeed = (seed: string) => {
+  _seed = seed;
   _rand = new Rand(seed);
 };
 
-export const random = _rand.next.bind(_rand);
+export const random = (): number => _rand.next();
+
+export const getSeed = () => _seed;
 
 function main(): void {
   let registry = globalThis._hello_world_core_instances;

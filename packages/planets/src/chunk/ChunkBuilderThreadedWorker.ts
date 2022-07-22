@@ -3,7 +3,7 @@ import { ColorGenerator } from "../generators/ColorGenerator";
 import { Generator3 } from "../generators/Generator3";
 import { HeightGenerator } from "../generators/HeightGenerator";
 import { Noise } from "../noise/Noise";
-import { ChunkBuilderThreadedMessageTypes, ThreadedChunkProps } from "./types";
+import { ChunkBuilderThreadedMessageTypes, ThreadedChunkProps_Old } from "./types";
 
 class ChunkBuilderThreadedWorker {
   #noise: Noise;
@@ -12,7 +12,7 @@ class ChunkBuilderThreadedWorker {
   #colorGenerator: Generator3<THREE.Color>;
   #offset: THREE.Vector3;
 
-  constructor(private params: ThreadedChunkProps) {
+  constructor(private params: ThreadedChunkProps_Old) {
     this.params = params;
     this.#offset = new THREE.Vector3(
       params.offset[0],

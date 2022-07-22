@@ -1,3 +1,4 @@
+import { random } from "@hello-worlds/core";
 import SimplexNoise from "simplex-noise";
 
 export enum NOISE_STYLES {
@@ -6,7 +7,7 @@ export enum NOISE_STYLES {
 }
 
 export interface NoiseParams {
-  seed: string | number;
+  seed?: string | number;
   scale: number;
   height: number;
   noiseType: NOISE_STYLES;
@@ -35,9 +36,11 @@ export class Noise {
     //   };
     // };
 
+    const seed = this.params.seed || random;
+
     this.noiseFunctions = {
       // support more noise types?
-      simplex: new SimplexNoise(params.seed),
+      simplex: new SimplexNoise(seed),
       // perlin: perlinNoiseObject(),
     };
   }
