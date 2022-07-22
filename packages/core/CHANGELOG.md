@@ -1,5 +1,11 @@
 # @hello-worlds/core
 
+## 0.0.5
+
+### Patch Changes
+
+- Append chunk material with chunk uniform attributes
+
 ## 0.0.4
 
 ### Patch Changes

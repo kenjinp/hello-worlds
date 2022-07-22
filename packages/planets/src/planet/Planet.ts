@@ -159,20 +159,31 @@ export class Planet<T = {}> {
   rootGroup = new THREE.Group();
   cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
   #builder: ChunkBuilderThreaded<T>;
-  material: THREE.Material;
+  #material: THREE.Material;
   #chunkMap: ChunkMap = {};
+  #currentData: T | null = null
   // planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
   // geology: Geology;
   constructor(public planetProps: PlanetProps = DEFAULT_PLANET_PROPS, worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
     this.#builder = new ChunkBuilderThreaded<T>(numWorkers, worker);
     // how to update materials...
-    this.material = new THREE.MeshStandardMaterial({
+    this.#material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       side: THREE.FrontSide,
       vertexColors: true,
     });
     this.rootGroup.add(...this.cubeFaceGroups);
   }
+
+  get material () {
+    return this.#material;
+  }
+
+  set material (mat) {
+    this.#material = mat
+    this.rebuild(this.#currentData!);
+  }
+
   // for debugging threads
   get busyInfo() {
     return {
@@ -184,6 +195,7 @@ export class Planet<T = {}> {
 
   // to re-apply parameter changes, for example
   rebuild(data: T) {
+    this.#currentData = data;
     this.#builder.rebuild(this.#chunkMap, data);
   }
 
@@ -191,6 +203,7 @@ export class Planet<T = {}> {
     if (!this.planetProps) {
       throw new Error("must set planetProps before updating");
     }
+    this.#currentData = data;
     this.#builder.update();
     if (this.#builder.busy) {
       return;

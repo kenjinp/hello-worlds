@@ -20,6 +20,15 @@ export default class ChunkThreaded {
   constructor(public params: ChunkThreadedParams & { group: THREE.Object3D }) {
     this.geometry = new THREE.BufferGeometry();
     this.plane = new THREE.Mesh(this.geometry, params.material);
+    // @ts-ignore
+    if (this.params.material.uniforms) {
+      // @ts-ignore
+      params.material.uniforms.uWidth = { value: this.params.width };
+      // @ts-ignore
+      params.material.uniforms.uRadius = { value: this.params.radius };
+      // @ts-ignore
+      params.material.uniforms.uResolution = { value: this.params.resolution };
+    }
     this.plane.castShadow = false;
     this.plane.receiveShadow = true;
     this.plane.frustumCulled = !this.params.isMinCellSize;
