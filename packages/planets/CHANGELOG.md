@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.6
+
+### Patch Changes
+
+- changed a bit the material stuff
+
 ## 0.0.5
 
 ### Patch Changes

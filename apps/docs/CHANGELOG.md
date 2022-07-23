@@ -1,5 +1,13 @@
 # docs
 
+## 0.0.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @hello-worlds/planets@0.0.6
+  - @hello-worlds/react@0.0.6
+
 ## 0.0.4
 
 ### Patch Changes
