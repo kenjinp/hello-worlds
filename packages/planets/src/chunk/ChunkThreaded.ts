@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { ShaderMaterial } from "three";
 
 export interface ChunkThreadedParams<T = any> {
   group: THREE.Object3D;
@@ -19,19 +20,21 @@ export default class ChunkThreaded {
   public geometry: THREE.BufferGeometry;
   constructor(public params: ChunkThreadedParams & { group: THREE.Object3D }) {
     this.geometry = new THREE.BufferGeometry();
-    this.plane = new THREE.Mesh(this.geometry, params.material);
-    // @ts-ignore
-    if (this.params.material.uniforms) {
-      // @ts-ignore
-      params.material.uniforms.uWidth = { value: this.params.width };
-      // @ts-ignore
-      params.material.uniforms.uRadius = { value: this.params.radius };
-      // @ts-ignore
-      params.material.uniforms.uResolution = { value: this.params.resolution };
+    if ((params.material as ShaderMaterial).uniforms) {
+      (params.material as ShaderMaterial).uniforms.uWidth = {
+        value: this.params.width,
+      };
+      (params.material as ShaderMaterial).uniforms.uRadius = {
+        value: this.params.radius,
+      };
+      (params.material as ShaderMaterial).uniforms.uResolution = {
+        value: this.params.resolution,
+      };
     }
+    this.plane = new THREE.Mesh(this.geometry, params.material);
     this.plane.castShadow = false;
     this.plane.receiveShadow = true;
-    this.plane.frustumCulled = !this.params.isMinCellSize;
+    this.plane.frustumCulled = !params.isMinCellSize;
     this.params.group.add(this.plane);
     this.plane.position.set(0, 0, 0);
   }
