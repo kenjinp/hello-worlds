@@ -54,6 +54,18 @@ export interface ChunkGenerator3<D, T = number> {
   }): T;
 }
 
+// TODO -> should we do something like this?
+// export type ChunkGenerator3<D, T = number> = () => (params: {
+//   input: Vector3;
+//   data: D;
+//   worldPosition: Vector3;
+//   width: number;
+//   offset: Vector3;
+//   radius: number;
+//   resolution: number;
+//   worldMatrix: Object3D["matrix"];
+// }) => T;
+
 export interface BuildChunkParams<T> {
   width: number;
   offset: Vector3;

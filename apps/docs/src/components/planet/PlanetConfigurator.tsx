@@ -12,8 +12,6 @@ import { useNoiseController } from "../noise/NoiseController";
 import { useTerrainController } from "../terrain/TerrainController";
 import myWorker from "./Planet.worker";
 
-console.log({ myWorker });
-
 export const EARTH_RADIUS = 6_357 * 1_000;
 
 // https://easings.net/en#easeOutExpo

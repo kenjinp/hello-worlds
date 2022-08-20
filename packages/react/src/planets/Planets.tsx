@@ -13,6 +13,7 @@ export const usePlanet = () => {
 
 export type PlanetProps<T> = React.PropsWithChildren<{
   planetProps: HelloPlanetProps;
+  numWorkers?: number;
   data?: T;
   lodOrigin: Vector3;
   worker: new () => Worker;
@@ -22,12 +23,12 @@ function PlanetInner<T>(
   props: PlanetProps<T>,
   ref: React.ForwardedRef<HelloPlanet<T>>
 ) {
-  const { children, lodOrigin, worker, data = {}, planetProps } = props
+  const { children, lodOrigin, worker, data = {}, planetProps, numWorkers } = props
   const planetGroupRef = React.useRef<THREE.Group>(null);
-  const [planetEngine] = React.useState<HelloPlanet>(new HelloPlanet(planetProps, worker));
+  const [planetEngine] = React.useState<HelloPlanet>(() => new HelloPlanet<T>(planetProps, worker, numWorkers));
 
 
-  React.useImperativeHandle(ref, () => planetEngine);
+  React.useImperativeHandle(ref, () => planetEngine as HelloPlanet<T>);
 
   React.useEffect(() => {
     planetEngine.planetProps = {
