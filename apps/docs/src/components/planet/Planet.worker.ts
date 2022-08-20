@@ -11,11 +11,30 @@ export type ThreadParams = {
   // totally empty
 };
 
-const noise = new Noise({ ...DEFAULT_NOISE_PARAMS, seed: undefined });
+let noise: Noise;
+let noise2: Noise;
 const simpleHeight: ChunkGenerator3<ThreadParams, number> = {
   // maybe we can use this as a base for an ocean
-  get({ input }) {
-    return noise.get(input.x, input.y, input.z);
+  get({ input, radius }) {
+    if (!noise) {
+      noise = new Noise({
+        ...DEFAULT_NOISE_PARAMS,
+        seed: "banana",
+      });
+    }
+    if (!noise2) {
+      noise2 = new Noise({
+        ...DEFAULT_NOISE_PARAMS,
+        octaves: 20,
+        scale: radius / 4,
+        height: radius / 100,
+        seed: "apple",
+      });
+    }
+    return (
+      noise.get(input.x, input.y, input.z) +
+      noise2.get(input.x, input.y, input.z)
+    );
   },
 };
 

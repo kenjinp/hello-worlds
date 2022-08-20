@@ -6,3 +6,4 @@ export * from "./generators/Generator3";
 export * from "./generators/HeightGenerator";
 export * from "./noise/Noise";
 export * from "./planet/Planet";
+export * from "./spline/LinearSpline";

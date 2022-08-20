@@ -2,10 +2,6 @@
   <img src="./logo.png">
 </p>
 
-<p align="center">
-
-</p>
-
 # Hello Worlds 👋🌐
 
 Your Virtual Worldbuilding toolkit for the web.
@@ -39,19 +35,18 @@ This project is large enough in scope to last several lifetimes. Here are a coup
 Probably not in order.
 
 - [x] Readable Documentation Portal
-- [ ] Codesandbox examples (Hello World, Planet, Moon)
-- [ ] API docs
+- [ ] Codesandbox examples (Hello World, Planet, Moon) (In progress!)
+- [ ] API docs (In progress!)
 - [ ] Make Webworkers optional
-- [ ] Enable use in node.js (remove webworker dependency)
+- [ ] Enable use in node.js (isomorphic threads)
 - [ ] Lifecycle events
-- [ ] Point-specific height generation example (Moon Craters)
+- [x] Point-specific height generation example (Moon Craters)
 - [ ] Character-on-surface playable example
-- [ ] Calculate Long & Lat
 - [ ] Great Arc helper & methods
-- [ ] Bezier Curves over a sphere (for labels and such)
-- [ ] Oceans example and helpers
-- [ ] Simple Atmosphere helpers
-- [ ] Voronoi subdivision of sphere for... science...
+- [ ] Bezier Curves over a sphere (for labels and such) (might just have example of this)
+- [ ] Oceans example and helpers (In progress!)
+- [ ] Simple Atmosphere helpers (In progress!)
+- [ ] Voronoi subdivision of sphere for... science... (In progress!)
 
 ## Questions? 💬
 
