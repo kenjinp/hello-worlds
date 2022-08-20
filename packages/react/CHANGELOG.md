@@ -1,5 +1,13 @@
 # @hello-worlds/react
 
+## 0.0.7
+
+### Patch Changes
+
+- Fix problem causing Planet to be reinitialized in react for each rerender, causing workers to be added each time
+- Updated dependencies
+  - @hello-worlds/planets@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes
