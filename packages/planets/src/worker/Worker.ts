@@ -25,4 +25,8 @@ export default class WorkerThread<T> {
     this.#resolve = resolve;
     this.#worker.postMessage(s);
   }
+
+  destroy () {
+    this.#worker.terminate();
+  }
 }

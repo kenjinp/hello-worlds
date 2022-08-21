@@ -2,7 +2,8 @@ import {
   ChunkMap,
   ChunkTypes,
   CubeFaceChildChunkProps,
-  CubeFaceRootChunkProps
+  CubeFaceRootChunkProps,
+  PlanetProps
 } from "../planet/Planet";
 import WorkerThreadPool from "../worker/WorkerThreadPool";
 import ChunkThreaded, { ChunkThreadedParams } from "./ChunkThreaded";
@@ -11,17 +12,26 @@ import {
   ChunkBuilderThreadedMessageTypes
 } from "./types";
 
-export default class ChunkBuilderThreaded<T> {
+export default class ChunkBuilderThreaded<T, I> {
   #old: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[] = [];
   // we keep the chunks stored with key of width
   #pool: Record<number, ChunkThreaded[]> = {};
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>;
 
-  constructor(numWorkers: number, worker: new () => Worker) {
+  constructor(numWorkers: number, worker: new () => Worker, initialData: PlanetProps & I ) {
     this.#workerPool = new WorkerThreadPool(
       numWorkers,
-      worker
+      worker,
     );
+    this.#workerPool.workers.forEach(worker => {
+      const msg = {
+        subject: ChunkBuilderThreadedMessageTypes.INITIAL_DATA,
+        initialData,
+      };
+      worker.postMessage(msg, () => {
+        // noop
+      })
+    })
   }
 
   get old() {
@@ -145,5 +155,11 @@ export default class ChunkBuilderThreaded<T> {
       this.#recycleChunks(this.#old);
       this.#old = [];
     }
+  }
+
+  destroy () {
+    this.#workerPool.workers.forEach(worker => {
+      worker.destroy()
+    })
   }
 }

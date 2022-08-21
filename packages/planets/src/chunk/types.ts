@@ -1,6 +1,8 @@
 import THREE, { Color, Object3D, Vector3 } from "three";
+import { PlanetProps } from "../planet/Planet";
 
 export enum ChunkBuilderThreadedMessageTypes {
+  INITIAL_DATA = "INITIAL_DATA",
   BUILD_CHUNK_RESULT = "BUILD_CHUNK_RESULT",
   BUILD_CHUNK = "BUILD_CHUNK",
 }
@@ -41,30 +43,20 @@ export interface ThreadedChunkProps_Old {
   invert: boolean;
 }
 
-export interface ChunkGenerator3<D, T = number> {
-  get(params: {
-    input: Vector3;
-    data: D;
-    worldPosition: Vector3;
-    width: number;
-    offset: Vector3;
-    radius: number;
-    resolution: number;
-    worldMatrix: Object3D["matrix"];
-  }): T;
-}
+export type ChunkGenerator3<D, T = number> = (params: {
+  input: Vector3;
+  data: D;
+  worldPosition: Vector3;
+  width: number;
+  offset: Vector3;
+  radius: number;
+  resolution: number;
+  worldMatrix: Object3D["matrix"];
+}) => T;
 
-// TODO -> should we do something like this?
-// export type ChunkGenerator3<D, T = number> = () => (params: {
-//   input: Vector3;
-//   data: D;
-//   worldPosition: Vector3;
-//   width: number;
-//   offset: Vector3;
-//   radius: number;
-//   resolution: number;
-//   worldMatrix: Object3D["matrix"];
-// }) => T;
+export type ChunkGenerator3Initializer<D, T = number, I = undefined> = (
+  initialData: PlanetProps & I
+) => ChunkGenerator3<D, T>;
 
 export interface BuildChunkParams<T> {
   width: number;
@@ -73,8 +65,10 @@ export interface BuildChunkParams<T> {
   resolution: number;
   worldMatrix: Object3D["matrix"];
   invert: boolean;
-  // ColorGenerator receives height data from previous step
+  data: T;
+}
+
+export interface BuildChunkInitialParams<T> {
   colorGenerator: ChunkGenerator3<T & { height: number }, Color>;
   heightGenerator: ChunkGenerator3<T, number>;
-  data: T;
 }

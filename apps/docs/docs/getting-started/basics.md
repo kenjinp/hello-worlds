@@ -104,6 +104,10 @@ How do we add features to our planet? Generators!
 
 Generators are simply functions that take an `x,y,z` position value as an input, and returns an output. You'll have access to other inputs in your webworker generator, but only by knowing the `x,y,z` in world coordinates of your vertex, you can already do many things!
 
+Generators are higher-order functions. The first function allows you to initialize some expensive objects when the worker is first spawned. Use this as your "mount" effect to do things like create your noise objects. It's possible to pass `initialData` to your mounting function, and it has access to details like the planet's radius.
+
+The second function which is returned by the first will be ran for each chunk update.
+
 :::info
 Generators are ran on the threads, and handle one chunk at a time. They're also _static_, which means once you bundle your app, you won't be able to change them. You should import all the functions you intend to use, as you won't be able to say... pass in a function in the generator input data (without shinanigans!)
 :::
@@ -113,11 +117,33 @@ Generators are ran on the threads, and handle one chunk at a time. They're also 
 The height generator will be ran inside the chunk web worker first. Usually you'll apply some noise, but you must return a number. We'll use this height number to push the vertex away from the sphere's origin, creating altitude (or lack thereof).
 
 ```tsx
-const simpleHeight: ChunkGenerator3<ThreadParams, number> = {
-  // will create a boring sphere with no height changes!
-  get({ input, worldPosition, data }) {
-    return 1;
-  },
+import {
+  ChunkGenerator3Initializer,
+  DEFAULT_NOISE_PARAMS,
+  Noise,
+} from "@hello-worlds/planets";
+
+const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number, { seed: string }> = ({
+  initialData: {
+    seed
+  }
+  radius,
+}) => {
+  // create your global (haha) objects here!
+  // this function is ran once when the thread is spawned
+  const noise = new Noise({
+    ...DEFAULT_NOISE_PARAMS,
+    scale: radius / 4,
+    height: radius / 100,
+    seed,
+  });
+
+  return ({ input }) => {
+    // this will be ran for each vertex!
+    return (
+      noise.get(input.x, input.y, input.z);
+    );
+  };
 };
 ```
 
@@ -126,11 +152,10 @@ const simpleHeight: ChunkGenerator3<ThreadParams, number> = {
 The color generator will run after the height generator (and therefore will have access to the heigh details), and will return a `THREE.Color`. We'll use this to paint the vertex in our `THREE.Material`, and thus paint the world!
 
 ```tsx
-const simpleColor: ChunkGenerator3<ThreadParams, Color> = {
-  // this will color everything in a rainbow!
-  get({ input, worldPosition, data }) {
+const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> = () =>
+  // this will color the planet like a rainbow!
+  ({ worldPosition }) => {
     const w = worldPosition.clone().normalize();
     return new Color().setRGB(w.x, w.y, w.z);
-  },
-};
+  };
 ```

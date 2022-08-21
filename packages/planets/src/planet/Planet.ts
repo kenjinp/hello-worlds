@@ -50,25 +50,6 @@ const makeRootChunkKey = (child: CubeFaceRootChunkProps) => {
 const seed = (random() + 1).toString(36).substring(7);
 
 export interface PlanetProps {
-  // noiseParams: NoiseParams;
-  // colorNoiseParams: NoiseParams;
-  // biomeParams: NoiseParams;
-  // colorGeneratorParams: {
-  //   seaDeep: string;
-  //   seaMid: string;
-  //   seaShallow: string;
-  //   tempHot: string;
-  //   tempMid: string;
-  //   tempCold: string;
-  //   humidLow: string;
-  //   humidMid: string;
-  //   humidHigh: string;
-  //   seaLevel: number;
-  //   seaLevelDividend: number;
-  // };
-  // minRadius: number;
-  // maxRadius: number;
-  // width: number;
   radius: number;
   invert?: boolean;
   minCellSize: number;
@@ -88,11 +69,6 @@ export const DEFAULT_COLOR_PARAMS = {
   seaLevel: 0.05,
   seaLevelDividend: 100,
 };
-
-// export const DEFAULT_HEIGHT_PARAMS = {
-//   minRadius: 100_000,
-//   maxRadius: 100_000 + 1,
-// };
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,
@@ -122,31 +98,6 @@ export const DEFAULT_PLANET_PARAMS = {
 };
 
 export const DEFAULT_PLANET_PROPS = {
-  // noiseParams: DEFAULT_NOISE_PARAMS,
-  // colorNoiseParams: {
-  //   octaves: 10,
-  //   persistence: 0.5,
-  //   lacunarity: 2.0,
-  //   exponentiation: 3.9,
-  //   height: 64,
-  //   scale: 256.0,
-  //   noiseType: NOISE_STYLES.simplex,
-  //   seed,
-  // },
-  // biomeParams: {
-  //   octaves: 2,
-  //   persistence: 0.5,
-  //   lacunarity: 2.0,
-  //   exponentiation: 1,
-  //   scale: 2048.0,
-  //   noiseType: NOISE_STYLES.simplex,
-  //   seed,
-  //   height: 1,
-  // },
-  // colorGeneratorParams: DEFAULT_COLOR_PARAMS,
-  // minRadius: DEFAULT_HEIGHT_PARAMS.minRadius,
-  // maxRadius: DEFAULT_HEIGHT_PARAMS.maxRadius,
-  // width: DEFAULT_TERRAIN_PARAMS.width,
   radius: DEFAULT_PLANET_PARAMS.radius,
   invert: DEFAULT_PLANET_PARAMS.invert,
   minCellSize: DEFAULT_PLANET_PARAMS.minCellSize,
@@ -155,17 +106,18 @@ export const DEFAULT_PLANET_PROPS = {
 
 const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
 
-export class Planet<T = {}> {
+export class Planet<T = {}, I = {}> {
   rootGroup = new THREE.Group();
   cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
-  #builder: ChunkBuilderThreaded<T>;
+  #builder: ChunkBuilderThreaded<T, I>;
   #material: THREE.Material;
   #chunkMap: ChunkMap = {};
   #currentData: T | null = null
-  // planetProps: PlanetProps = DEFAULT_PLANET_PROPS;
-  // geology: Geology;
-  constructor(public planetProps: PlanetProps = DEFAULT_PLANET_PROPS, worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
-    this.#builder = new ChunkBuilderThreaded<T>(numWorkers, worker);
+  constructor(public planetProps: PlanetProps = DEFAULT_PLANET_PROPS, initialData: I, worker: new () => Worker, numWorkers = DEFAULT_NUM_WORKERS) {
+    this.#builder = new ChunkBuilderThreaded<T, I>(numWorkers, worker, {
+      ...planetProps,
+      initialData
+    } as unknown as (PlanetProps & I));
     // how to update materials...
     this.#material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
@@ -285,5 +237,9 @@ export class Planet<T = {}> {
     }
 
     this.#chunkMap = newChunkMap;
+  }
+
+  destroy () {
+    this.#builder.destroy();
   }
 }

@@ -6,10 +6,6 @@ import { useControls } from "leva";
 import * as React from "react";
 import { Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { useColorController } from "../generators/ColorController";
-import { useHeightController } from "../generators/HeightController";
-import { useNoiseController } from "../noise/NoiseController";
-import { useTerrainController } from "../terrain/TerrainController";
 import myWorker from "./Planet.worker";
 
 export const EARTH_RADIUS = 6_357 * 1_000;
@@ -26,7 +22,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
 }) => {
   const workerDebugRef = React.useRef<HTMLDivElement>(null);
   const planetEngine = React.useRef<HelloPlanet | null>(null);
-  const { scene, camera } = useThree();
+  const { camera } = useThree();
   const origin = React.useRef<Vector3>(camera.position.clone());
   const orbitControls = React.useRef<OrbitControlsImpl>(null);
 
@@ -82,24 +78,6 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
     },
   });
   const [showOrbitControls, setShowOrbitControls] = React.useState(false);
-  const { noise, noiseParams } = useNoiseController("noise", {
-    seed: (Math.random() + 1).toString(36).substring(7),
-  });
-  const { noiseParams: biomeParams } = useNoiseController("biomes", {
-    octaves: 2,
-    persistence: 0.5,
-    lacunarity: 2.0,
-    exponentiation: 1,
-    scale: 2048.0,
-    noiseType: "simplex",
-    seed: 2,
-    height: 1,
-  });
-  const terrain = useTerrainController();
-
-  const { colorParams, colorNoiseParams } = useColorController();
-
-  const { heightParams } = useHeightController(noise);
 
   const altitude = React.useRef(0);
 
@@ -157,6 +135,16 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
     );
   });
 
+  const planetProps = React.useMemo(
+    () => ({
+      radius: planet.planetRadius,
+      minCellSize: planet.minCellSize,
+      minCellResolution: planet.minCellResolution,
+      invert: planet.invert,
+    }),
+    [planet]
+  );
+
   return (
     <>
       {/* <Html>
@@ -165,13 +153,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
       </Html> */}
       <Planet
         ref={planetEngine}
-        planetProps={{
-          width: terrain.width,
-          radius: planet.planetRadius,
-          minCellSize: planet.minCellSize,
-          minCellResolution: planet.minCellResolution,
-          invert: planet.invert,
-        }}
+        planetProps={planetProps}
         lodOrigin={camera.position}
         worker={myWorker}
       >

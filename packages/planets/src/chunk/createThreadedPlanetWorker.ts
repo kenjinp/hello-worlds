@@ -1,21 +1,33 @@
 import { Color } from "three";
 import { buildChunk } from "./BuildChunk";
-import { ChunkBuilderThreadedMessageTypes, ChunkGenerator3 } from "./types";
+import {
+  ChunkBuilderThreadedMessageTypes,
+  ChunkGenerator3Initializer
+} from "./types";
 
-export const createThreadedPlanetWorker = <T>({
+export function createThreadedPlanetWorker<T, I>({
   heightGenerator,
   colorGenerator,
 }: {
-  colorGenerator: ChunkGenerator3<T, Color>;
-  heightGenerator: ChunkGenerator3<T, number>;
-}) => {
-  const builder = buildChunk();
+  heightGenerator: ChunkGenerator3Initializer<T, number, I>;
+  colorGenerator: ChunkGenerator3Initializer<T, Color, I>;
+}) {
+  let builder: ReturnType<typeof buildChunk<T, I>>;
   self.onmessage = (msg) => {
+    if (msg.data.subject == ChunkBuilderThreadedMessageTypes.INITIAL_DATA) {
+      builder = buildChunk<T, I>({
+        heightGenerator: heightGenerator(msg.data.initialData),
+        colorGenerator: colorGenerator(msg.data.initialData),
+      });
+    }
     if (msg.data.subject == ChunkBuilderThreadedMessageTypes.BUILD_CHUNK) {
+      if (!builder) {
+        throw new Error(
+          "Builder received BUILD_CHUNK message before initialization"
+        );
+      }
       const data = builder({
         ...msg.data.params,
-        heightGenerator,
-        colorGenerator,
       });
       self.postMessage({
         subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT,

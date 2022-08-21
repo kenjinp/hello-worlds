@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
-import { BuildChunkParams } from "./types";
+import { BuildChunkInitialParams, BuildChunkParams } from "./types";
 
-export const buildChunk = <T>() => {
+export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
   const colorInputVector = new Vector3();
   const _D = new Vector3();
   const _D1 = new Vector3();
@@ -14,7 +14,8 @@ export const buildChunk = <T>() => {
   const _N1 = new Vector3();
   const _N2 = new Vector3();
   const _N3 = new Vector3();
-  return (params: BuildChunkParams<T>) => {
+  const { heightGenerator, colorGenerator } = initialParams;
+  return function runBuildChunk(params: BuildChunkParams<T>) {
     const positions = [];
     const colors = [];
     const normals = [];
@@ -47,7 +48,7 @@ export const buildChunk = <T>() => {
         _W.applyMatrix4(localToWorld);
 
         const heightInput = _W.clone();
-        const height = params.heightGenerator.get({
+        const height = heightGenerator({
           input: heightInput,
           worldPosition: heightInput,
           data: params.data,
@@ -57,7 +58,7 @@ export const buildChunk = <T>() => {
           worldMatrix: params.worldMatrix,
           resolution,
         });
-        const color = params.colorGenerator.get({
+        const color = colorGenerator({
           input: colorInputVector.set(_W.x, _W.y, height).clone(),
           worldPosition: _W.clone(),
           data: {
@@ -105,8 +106,6 @@ export const buildChunk = <T>() => {
         );
       }
     }
-
-    // const up = [...normals];
 
     for (let i = 0, n = indices.length; i < n; i += 3) {
       const i1 = indices[i] * 3;
@@ -198,4 +197,4 @@ export const buildChunk = <T>() => {
       tangents: tangentsArray,
     };
   };
-};
+}

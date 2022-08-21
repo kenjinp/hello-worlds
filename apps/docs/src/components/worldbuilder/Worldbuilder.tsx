@@ -102,49 +102,60 @@ function Editor() {
 
   const { camera } = useThree();
 
-  const randomPointsOnSphere: ThreadParams["randomPoints"] = React.useMemo(() => {
-    return Array(crater.numberOfCraters)
-      .fill(0)
-      .map(() => {
-        const [x, y, z] = randomSpherePoint(0, 0, 0, planet.planetRadius);
-        const randomRadius = getRndBias(10, planet.planetRadius / 10, 15, 0.9);
-        return {
-          floorHeight: MathUtils.randFloat(-1, 0),
-          radius: randomRadius,
-          center: tempVector3.set(x, y, z).clone(),
-        };
-      });
-  }, [planet.planetRadius, crater]);
-
-  const myPlanet: Planet<ThreadParams> = (
-    <Planet
-      planetProps={{
-        radius: planet.planetRadius,
-        minCellSize: planet.minCellSize,
-        minCellResolution: planet.minCellResolution,
-        invert: planet.invert,
-      }}
-      lodOrigin={camera.position}
-      worker={planetWorker}
-      data={{
-        randomPoints: randomPointsOnSphere,
-        rimWidth: crater.rimWidth,
-        rimSteepness: crater.rimSteepness,
-        smoothness: crater.smoothness,
-      }}
-    >
-      <OrbitCamera />
-      <group
-        scale={new Vector3(1, 1, 1)
-          .multiplyScalar(planet.planetRadius)
-          .multiplyScalar(100)}
-      >
-        <Stars />
-      </group>
-    </Planet>
+  const initialData: {
+    randomPoints: ThreadParams["randomPoints"];
+  } = React.useMemo(
+    () => ({
+      randomPoints: Array(crater.numberOfCraters)
+        .fill(0)
+        .map(() => {
+          const [x, y, z] = randomSpherePoint(0, 0, 0, planet.planetRadius);
+          const randomRadius = getRndBias(
+            10,
+            planet.planetRadius / 10,
+            15,
+            0.9
+          );
+          return {
+            floorHeight: MathUtils.randFloat(-1, 0),
+            radius: randomRadius,
+            center: tempVector3.set(x, y, z).clone(),
+          };
+        }),
+    }),
+    [planet.planetRadius, crater]
   );
 
-  return <>{myPlanet}</>;
+  const planetProps = React.useMemo(
+    () => ({
+      radius: planet.planetRadius,
+      minCellSize: planet.minCellSize,
+      minCellResolution: planet.minCellResolution,
+      invert: planet.invert,
+    }),
+    [planet]
+  );
+
+  return (
+    <>
+      <Planet
+        planetProps={planetProps}
+        lodOrigin={camera.position}
+        worker={planetWorker}
+        initialData={initialData}
+        data={crater}
+      >
+        <OrbitCamera />
+        <group
+          scale={new Vector3(1, 1, 1)
+            .multiplyScalar(planet.planetRadius)
+            .multiplyScalar(100)}
+        >
+          <Stars />
+        </group>
+      </Planet>
+    </>
+  );
 }
 
 export default function() {
