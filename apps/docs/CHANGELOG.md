@@ -1,5 +1,14 @@
 # docs
 
+## 0.0.7
+
+### Patch Changes
+
+- allow threads to be initialized with initialData
+- Updated dependencies
+  - @hello-worlds/planets@0.0.8
+  - @hello-worlds/react@0.0.8
+
 ## 0.0.6
 
 ### Patch Changes

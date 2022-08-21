@@ -10,6 +10,10 @@ export default class WorkerThreadPool<T> {
     this.#freeWorkers = [...this.#workers];
   }
 
+  get workers () {
+    return this.#workers;
+  }
+
   get length() {
     return this.#workers.length;
   }

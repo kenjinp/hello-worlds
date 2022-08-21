@@ -1,5 +1,5 @@
 import {
-  ChunkGenerator3,
+  ChunkGenerator3Initializer,
   createThreadedPlanetWorker,
   Noise,
   NOISE_STYLES,
@@ -36,34 +36,21 @@ function smoothMax(a: number, b: number, k: number) {
   return a * h + b * (1 - h) - k * h * (1 - h);
 }
 
-const simpleHeight: ChunkGenerator3<ThreadParams, number> = {
-  // maybe we can use this as a base for an ocean
-  get({ input, data: { rimWidth, rimSteepness, randomPoints, smoothness } }) {
-    const noise = new Noise({
-      octaves: 50,
-      persistence: 0.707,
-      lacunarity: 1.8,
-      exponentiation: 4.5,
-      height: 300.0,
-      scale: 1100.0,
-      seed: "🌱", // should set this at build time... or sync through net
-      noiseType: NOISE_STYLES.simplex,
-    });
-
-    // const warpNoise = new Noise({
-    //   octaves: 1,
-    //   persistence: 0.707,
-    //   lacunarity: 1.8,
-    //   exponentiation: 4.5,
-    //   height: 500.0,
-    //   scale: 4000.0,
-    //   seed: "🌱", // should set this at build time... or sync through net
-    //   noiseType: NOISE_STYLES.simplex,
-    // });
-
-    // const offset = warpNoise.get(input.x, input.y, input.z);
+const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number> = ({
+  initialData: { randomPoints },
+}) => {
+  const noise = new Noise({
+    octaves: 50,
+    persistence: 0.707,
+    lacunarity: 1.8,
+    exponentiation: 4.5,
+    height: 300.0,
+    scale: 1100.0,
+    seed: "🌱", // should set this at build time... or sync through net
+    noiseType: NOISE_STYLES.simplex,
+  });
+  return ({ input, data: { rimWidth, rimSteepness, smoothness } }) => {
     const offset = 0;
-
     let craterHeight = 0;
     // TODO optimize by hemisphere, or something
     for (let i = 0; i < randomPoints.length; i++) {
@@ -85,17 +72,15 @@ const simpleHeight: ChunkGenerator3<ThreadParams, number> = {
       noise.get(input.x + offset, input.y + offset, input.z + offset) +
       craterHeight
     );
-  },
+  };
 };
 
 const groundColor = new Color(0x8c7961);
 
-const simpleColor: ChunkGenerator3<ThreadParams, Color> = {
-  // this could be just sent to frag shader lol
-  get({ worldPosition }) {
-    const w = worldPosition.clone().normalize();
+const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> = () => {
+  return () => {
     return groundColor;
-  },
+  };
 };
 
 createThreadedPlanetWorker<ThreadParams>({
