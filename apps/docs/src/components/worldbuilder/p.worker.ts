@@ -2,7 +2,7 @@ import {
   ChunkGenerator3Initializer,
   createThreadedPlanetWorker,
   Noise,
-  NOISE_STYLES,
+  NOISE_STYLES
 } from "@hello-worlds/planets";
 import { Color, Vector3 } from "three";
 
@@ -64,8 +64,6 @@ const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number> = ({
       let craterShape = smoothMax(cavity, floorHeight, smoothness);
       craterShape = smoothMin(craterShape, rim, smoothness);
       craterHeight += craterShape * currentPoint.radius;
-
-      // applyHeightModifier;
     }
 
     return (
@@ -78,8 +76,9 @@ const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number> = ({
 const groundColor = new Color(0x8c7961);
 
 const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> = () => {
+  const chunkColor = new Color(Math.random() * 0xffffff);
   return () => {
-    return groundColor;
+    return chunkColor;
   };
 };
 

@@ -2,6 +2,7 @@ import { Planet as HelloPlanet, PlanetProps as HelloPlanetProps } from "@hello-w
 import { useFrame } from "@react-three/fiber";
 import * as React from "react";
 import { Vector3 } from "three";
+import { useFrameEffect } from "../utils/useFrameEffect";
 
 // This should only be accessed through the Planet component, and therefore should always be defined
 // if someone tries to access him outside of a context, it should error somehow
@@ -25,7 +26,7 @@ function PlanetInner<T, I>(
   ref: React.ForwardedRef<HelloPlanet<T, I>>
 ) {
   const { children, lodOrigin, worker, data, initialData, planetProps, numWorkers } = props
-  const planetGroupRef = React.useRef<THREE.Group>(null);
+  const planetGroupRef = React.useRef<THREE.Mesh>(null);
   const [planetEngine, setPE] = React.useState<HelloPlanet<T, I>>();
 
   React.useImperativeHandle(ref, () => planetEngine as HelloPlanet<T, I>, [planetEngine]);
@@ -38,7 +39,7 @@ function PlanetInner<T, I>(
         ...planetEngine.planetProps,
         ...planetProps,
       };
-    planetEngine.rebuild(data as T);
+      planetEngine.rebuild(data as T);
   }, [data, planetEngine]);
   
   React.useEffect(() => {
@@ -72,9 +73,16 @@ function PlanetInner<T, I>(
     }
   });
 
+  useFrameEffect(() => planetGroupRef.current?.material, (mat) => {
+    if (!planetEngine || !mat || Array.isArray(mat)) {
+      return;
+    }
+    planetEngine.material = mat
+  })
+
   return planetEngine ? 
     <PlanetContext.Provider value={planetEngine as HelloPlanet<T, I>}>
-      <group ref={planetGroupRef}>{children}</group>
+      <mesh ref={planetGroupRef}>{children}</mesh>
     </PlanetContext.Provider> : null
   
 }

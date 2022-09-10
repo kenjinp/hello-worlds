@@ -1,5 +1,14 @@
 # docs
 
+## 0.0.8
+
+### Patch Changes
+
+- Allow for adding r3f <material/> inside <Planet/> children
+- Updated dependencies
+  - @hello-worlds/planets@0.0.9
+  - @hello-worlds/react@0.0.9
+
 ## 0.0.7
 
 ### Patch Changes
