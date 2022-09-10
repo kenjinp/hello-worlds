@@ -22,7 +22,7 @@ FROM alpine as prod
 ENV PORT="3002"
 EXPOSE $PORT
 RUN apk add curl
-RUN curl -L https://github.com/svenstaro/miniserve/releases/download/v0.18.0/miniserve-v0.18.0-x86_64-unknown-linux-musl > miniserve
+RUN curl -L https://github.com/svenstaro/miniserve/releases/download/v0.20.0/miniserve-v0.20.0-x86_64-unknown-linux-musl > miniserve
 RUN chmod +x miniserve
 COPY --from=build /root/monorepo/apps/docs/build ./
 CMD ./miniserve ./ --header "Cross-Origin-Opener-Policy:same-origin" --header "Cross-Origin-Embedder-Policy:require-corp" --spa --index index.html -p $PORT -g

@@ -3,7 +3,7 @@ import { Stars } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
-import { MathUtils, Vector3 } from "three";
+import { BackSide, FrontSide, MathUtils, Vector3 } from "three";
 import BasicScene from "../BasicScene";
 import { EARTH_RADIUS } from "../planet/PlanetConfigurator";
 
@@ -57,6 +57,11 @@ function Editor() {
       value: 128,
       step: 10,
     },
+  });
+
+  const material = useControls('material', {
+    basicMaterial: false,
+    isBackSide: false
   });
 
   const crater = useControls("craters", {
@@ -117,7 +122,7 @@ function Editor() {
             0.9
           );
           return {
-            floorHeight: MathUtils.randFloat(-1, 0),
+            floorHeight: MathUtils.randFloat(-0.2, 0),
             radius: randomRadius,
             center: tempVector3.set(x, y, z).clone(),
           };
@@ -153,6 +158,7 @@ function Editor() {
         >
           <Stars />
         </group>
+        {material.basicMaterial ? <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
       </Planet>
     </>
   );

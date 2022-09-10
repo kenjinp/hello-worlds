@@ -1,3 +1,4 @@
+import { Material } from "three";
 import {
   ChunkMap,
   ChunkTypes,
@@ -46,9 +47,9 @@ export default class ChunkBuilderThreaded<T, I> {
     return this.#workerPool.queueLength;
   }
 
-  #onResult(chunk: ChunkThreaded, msg: any) {
+  #onResult(chunk: ChunkThreaded, msg: any, material: Material) {
     if (msg.subject === ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT) {
-      chunk.rebuildMeshFromData(msg.data);
+      chunk.rebuildMeshFromData({...msg.data, material });
       chunk.show();
     }
   }
@@ -88,7 +89,7 @@ export default class ChunkBuilderThreaded<T, I> {
 
     this.#workerPool.enqueue(msg, (m) => {
       if (c) {
-        return void this.#onResult(c, m);
+        return void this.#onResult(c, m, params.material);
       }
     });
 
@@ -119,11 +120,11 @@ export default class ChunkBuilderThreaded<T, I> {
     return this.#workerPool.busy;
   }
 
-  rebuild(chunkMap: ChunkMap, data: T) {
+  rebuild(chunkMap: ChunkMap, data: T, material: Material) {
     for (let key in chunkMap) {
       const chunk = chunkMap[key];
       if (chunk.type === ChunkTypes.CHILD) {
-        const { material, ...params } = chunk.chunk.params;
+        const { material: _prevMaterial, ...params } = chunk.chunk.params;
 
         const threadedParams = {
           width: params.width,
@@ -143,7 +144,7 @@ export default class ChunkBuilderThreaded<T, I> {
 
         this.#workerPool.enqueue(msg, (m) => {
           if (chunk) {
-            return void this.#onResult(chunk.chunk, m);
+            return void this.#onResult(chunk.chunk, m, material);
           }
         });
       }

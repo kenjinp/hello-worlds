@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.9
+
+### Patch Changes
+
+- Allow for adding r3f <material/> inside <Planet/> children
+
 ## 0.0.8
 
 ### Patch Changes

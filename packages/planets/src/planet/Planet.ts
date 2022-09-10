@@ -148,7 +148,7 @@ export class Planet<T = {}, I = {}> {
   // to re-apply parameter changes, for example
   rebuild(data: T) {
     this.#currentData = data;
-    this.#builder.rebuild(this.#chunkMap, data);
+    this.#builder.rebuild(this.#chunkMap, data, this.#material);
   }
 
   update(lodOrigin: THREE.Vector3, data: T) {
@@ -222,7 +222,7 @@ export class Planet<T = {}, I = {}> {
         chunk: this.#builder.allocateChunk({
           group: parentChunkProps.group,
           transform: parentChunkProps.transform,
-          material: this.material,
+          material: this.#material,
           offset,
           origin: lodOrigin,
           width: parentChunkProps.size,
