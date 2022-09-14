@@ -1,5 +1,6 @@
 import { PerspectiveCamera } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { usePlanet } from "@site/../../packages/react/dist/esm";
 import * as React from "react";
 import { MathUtils, Mesh, Vector2, Vector3 } from "three";
 import { useControls } from "../../hooks/useControls";
@@ -12,11 +13,26 @@ export const GodCamera: React.FC<{
   sensitivity?: Vector2;
   position?: Vector3;
 }> = ({ offset = DEFAULT_OFFSET, sensitivity = DEFAULT_SENSITIVITY, position = new Vector3() }) => {
+
+  const [_position, setPosition] = React.useState(position)
+  const planet = usePlanet();
+  const { camera } = useThree();
   const maxPitchAngle = 89;
   const minPitchAngle = -89;
   const pitchObjectRef = React.useRef<Mesh>(null);
   const yawObjectRef = React.useRef<Mesh>(null);
   const controls = useControls();
+
+  React.useEffect(() => {
+    // TODO this should be ACTUAL HEIGHT + a value
+    setPosition(
+    _position.set(
+        planet.planetProps.radius * 1.005,
+        0,
+        planet.planetProps.radius * 1.005
+    ).clone());
+    console.log(_position)
+  }, [planet.planetProps.radius]);
 
   useFrame(() => {
     yawObjectRef.current?.position.copy(offset);
@@ -50,7 +66,7 @@ export const GodCamera: React.FC<{
   });
 
   return (
-    <group position={position || new Vector3()}>
+    <group position={_position}>
       <mesh ref={yawObjectRef}>
         <mesh ref={pitchObjectRef}>
           <PerspectiveCamera

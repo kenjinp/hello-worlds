@@ -1,10 +1,11 @@
-import { OrbitCamera, Planet } from "@hello-worlds/react";
+import { Planet } from "@hello-worlds/react";
 import { Stars } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
 import { BackSide, FrontSide, MathUtils, Vector3 } from "three";
 import BasicScene from "../BasicScene";
+import { GodCamera } from "../cameras/GodCamera";
 import { EARTH_RADIUS } from "../planet/PlanetConfigurator";
 
 // @ts-ignore this is dumb... its a webworker
@@ -149,8 +150,8 @@ function Editor() {
       initialData={initialData}
       data={crater}
     >
-      <OrbitCamera />
-      {/* <GodCamera /> */}
+      {/* <OrbitCamera /> */}
+      <GodCamera />
       <group
         scale={new Vector3(1, 1, 1)
           .multiplyScalar(planet.planetRadius)
