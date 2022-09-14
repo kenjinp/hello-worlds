@@ -7,7 +7,7 @@ import { useControls } from "../../hooks/useControls";
 const DEFAULT_SENSITIVITY = new Vector2(1, 0.8);
 const DEFAULT_OFFSET = new Vector3(0, 1, 0);
 
-export const FirstPersonCameraSystem: React.FC<{
+export const GodCamera: React.FC<{
   offset?: Vector3;
   sensitivity?: Vector2;
   position?: Vector3;
@@ -23,28 +23,8 @@ export const FirstPersonCameraSystem: React.FC<{
     if (pitchObjectRef.current && yawObjectRef.current) {
       const pitchObject = pitchObjectRef.current;
       const yawObject = yawObjectRef.current;
-      // const targetPos = () => {
-      //   return new Vector3(position.x, position.y, position.z);
-      // };
-      // const target = targetPos();
 
       const update = () => {
-        // yawObject.position.x = MathUtils.lerp(
-        //   yawObject.position.x,
-        //   target.x,
-        //   0.1
-        // );
-        // yawObject.position.y = MathUtils.lerp(
-        //   yawObject.position.y,
-        //   target.y,
-        //   0.1
-        // );
-        // yawObject.position.z = MathUtils.lerp(
-        //   yawObject.position.z,
-        //   target.z,
-        //   0.1
-        // );
-
         const getLook = () => controls.mouse.query();
 
         if (controls.mouse.isPointerLocked()) {

@@ -142,25 +142,26 @@ function Editor() {
   );
 
   return (
-    <>
-      <Planet
-        planetProps={planetProps}
-        lodOrigin={camera.position}
-        worker={planetWorker}
-        initialData={initialData}
-        data={crater}
+    <Planet
+      planetProps={planetProps}
+      lodOrigin={camera.position}
+      worker={planetWorker}
+      initialData={initialData}
+      data={crater}
+    >
+      <OrbitCamera />
+      {/* <GodCamera /> */}
+      <group
+        scale={new Vector3(1, 1, 1)
+          .multiplyScalar(planet.planetRadius)
+          .multiplyScalar(100)}
       >
-        <OrbitCamera />
-        <group
-          scale={new Vector3(1, 1, 1)
-            .multiplyScalar(planet.planetRadius)
-            .multiplyScalar(100)}
-        >
-          <Stars />
-        </group>
-        {material.basicMaterial ? <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
-      </Planet>
-    </>
+        <Stars />
+      </group>
+      {material.basicMaterial ? 
+      <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : 
+      <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
+    </Planet>
   );
 }
 
