@@ -1,5 +1,14 @@
 # docs
 
+## 0.0.9
+
+### Patch Changes
+
+- Fix an error where LODS would only load based on origin 0,0,0
+- Updated dependencies
+  - @hello-worlds/planets@0.0.10
+  - @hello-worlds/react@0.0.10
+
 ## 0.0.8
 
 ### Patch Changes

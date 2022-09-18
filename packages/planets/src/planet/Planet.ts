@@ -1,5 +1,6 @@
 import { random } from "@hello-worlds/core";
 import * as THREE from "three";
+import { Vector3 } from "three";
 import ChunkBuilderThreaded from "../chunk/ChunkBuilderThreaded";
 import ChunkThreaded from "../chunk/ChunkThreaded";
 import { NOISE_STYLES } from "../noise/Noise";
@@ -106,6 +107,8 @@ export const DEFAULT_PLANET_PROPS = {
 
 const DEFAULT_NUM_WORKERS = navigator?.hardwareConcurrency || 8;
 
+const tempVec3 = new Vector3();
+
 export class Planet<T = {}, I = {}> {
   rootGroup = new THREE.Group();
   cubeFaceGroups = [...new Array(6)].map((_) => new THREE.Group());
@@ -117,7 +120,7 @@ export class Planet<T = {}, I = {}> {
     this.#builder = new ChunkBuilderThreaded<T, I>(numWorkers, worker, {
       ...planetProps,
       initialData
-    } as unknown as (PlanetProps & I));
+    } as unknown as (PlanetProps & I), this.rootGroup.uuid);
     // how to update materials...
     this.#material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
@@ -145,6 +148,10 @@ export class Planet<T = {}, I = {}> {
     };
   }
 
+  async getElevationAtPosition (position: Vector3) {
+    
+  }
+
   // to re-apply parameter changes, for example
   rebuild(data: T) {
     this.#currentData = data;
@@ -161,15 +168,17 @@ export class Planet<T = {}, I = {}> {
       return;
     }
 
+    const origin = this.rootGroup.getWorldPosition(tempVec3)
     // update visible chunks quadtree
     const q = new CubicQuadTree({
       radius: this.planetProps.radius,
       minNodeSize: this.planetProps.minCellSize,
+      origin
     });
 
     // collapse the quadtree recursively at this position
     q.insert(
-      lodOrigin
+      lodOrigin.clone()
       // floatingOrigin.clone().add(floatingOrigin.clone().multiplyScalar(-1))
       // floatingOrigin.add(floatingOrigin.clone()).add(floatingOrigin.clone())
     );
@@ -224,7 +233,7 @@ export class Planet<T = {}, I = {}> {
           transform: parentChunkProps.transform,
           material: this.#material,
           offset,
-          origin: lodOrigin,
+          origin: lodOrigin.clone(),
           width: parentChunkProps.size,
           radius: this.planetProps.radius,
           resolution: this.planetProps.minCellResolution,

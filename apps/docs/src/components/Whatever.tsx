@@ -59,7 +59,8 @@ const Interface = () => {
             on the web!
           </p>
           <div>
-            <button onClick={() => setSayHello(false)}>Ok!</button>{" "}
+          <button onClick={() => setSayHello(false)}>Ok!</button>{" "}
+          <Link to="/docs/intro"><button>Go to Library Docs</button></Link>{" "}
             <a href="https://github.com/kenjinp/worlds">
               <button>Github</button>
             </a>
@@ -129,7 +130,13 @@ const Interface = () => {
           {" | "}
           <Link to="/docs/intro">
             <Button>
-              <FontAwesomeIcon icon={faBook} /> Docs!
+              <FontAwesomeIcon icon={faBook} /> Docs
+            </Button>
+          </Link>
+          {" | "}
+          <Link to="/worldbuilder">
+            <Button>
+              World Sandbox
             </Button>
           </Link>
         </>

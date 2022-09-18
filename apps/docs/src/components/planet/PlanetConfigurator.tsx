@@ -157,6 +157,7 @@ const PlanetConfigurator: React.FC<{ radius: number; name: string }> = ({
         lodOrigin={camera.position}
         worker={myWorker}
       >
+        <meshStandardMaterial vertexColors />
         <group
           scale={new Vector3(1, 1, 1)
             .multiplyScalar(planet.planetRadius)

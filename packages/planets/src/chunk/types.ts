@@ -5,11 +5,13 @@ export enum ChunkBuilderThreadedMessageTypes {
   INITIAL_DATA = "INITIAL_DATA",
   BUILD_CHUNK_RESULT = "BUILD_CHUNK_RESULT",
   BUILD_CHUNK = "BUILD_CHUNK",
+  GET_ELEVATION_AT_POSITION = "GET_ELEVATION_AT_POSITION"
 }
 
 export interface ChunkBuilderThreadedMessage {
   subject: ChunkBuilderThreadedMessageTypes;
   data: any;
+  id: string;
 }
 
 export interface ThreadedChunkProps_Old {

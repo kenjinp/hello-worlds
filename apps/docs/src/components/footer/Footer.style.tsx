@@ -8,12 +8,13 @@ export const FooterStyled = styled.footer`
   padding: 1em;
   justify-content: space-between;
   pointer-events: all;
-  color: #222034;
+  color: white;
   z-index: 3;
   align-items: center;
+  white-space: no-wrap;
   a {
     transition: all 0.3s ease;
-    color: #222034;
+    color: white;
     &:hover {
       color: white;
     }

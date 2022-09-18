@@ -18,6 +18,7 @@ export const SpaceBox = () => {
     const cube = new CubeTextureLoader().load(urls);
 
     scene.background = new Color(0x000000);
+    // scene.background = cube; 
   }, []);
 
   return null;

@@ -1,10 +1,12 @@
-import { OrbitCamera, Planet } from "@hello-worlds/react";
+import { Planet, usePlanet } from "@hello-worlds/react";
 import { Stars } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useControls } from "leva";
 import * as React from "react";
-import { BackSide, FrontSide, MathUtils, Vector3 } from "three";
+import { BackSide, FrontSide, Group, MathUtils, Vector3 } from "three";
+import { AtmosphereEffect } from "../atmosphere/Atmosphere";
 import BasicScene from "../BasicScene";
+import FlyCamera from "../cameras/FlyCamera";
 import { EARTH_RADIUS } from "../planet/PlanetConfigurator";
 
 // @ts-ignore this is dumb... its a webworker
@@ -32,6 +34,29 @@ function bias(x: number, bias: number) {
   return (x * k) / (x * k - x + 1);
 }
 
+export const Atmosphere: React.FC = () => {
+  const planet = usePlanet();
+  const atmosphere = useControls("atmosphere", {
+    atmosphereRadius: {
+      min: 1,
+      max: planet.planetProps.radius * 5,
+      value: planet.planetProps.radius * 1.05,
+      step: 1,
+    },
+  });
+
+  // TODO fix update position and radius
+  return (
+    <AtmosphereEffect
+      planetOrigin={planet.rootGroup.position}
+      planetRadius={planet.planetProps.radius}
+      sunPosition={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
+      atmosphereRadius={atmosphere.atmosphereRadius}
+    />
+  );
+};
+
+
 const tempVector3 = new Vector3();
 
 const radiusMoon = 4_000;
@@ -42,19 +67,19 @@ function Editor() {
     planetRadius: {
       min: 10,
       max: EARTH_RADIUS * 2,
-      value: radiusMoon, // EARTH_RADIUS / 4,
+      value: EARTH_RADIUS / 4,
       step: 10,
     },
     minCellSize: {
       min: 0,
       max: 10_000_000,
-      value: 25,
+      value: 100,
       step: 10,
     },
     minCellResolution: {
       min: 0,
       max: 10_000_000,
-      value: 128,
+      value: 64,
       step: 10,
     },
   });
@@ -66,9 +91,9 @@ function Editor() {
 
   const crater = useControls("craters", {
     numberOfCraters: {
-      min: 1,
+      min: 0,
       max: 5000,
-      value: 1000,
+      value: 0,
       step: 1,
     },
     minRadius: {
@@ -104,9 +129,9 @@ function Editor() {
       // step: 1,
     },
   });
+  const groupRef = React.useRef<Group>(null);
 
   const { camera } = useThree();
-
   const initialData: {
     randomPoints: ThreadParams["randomPoints"];
   } = React.useMemo(
@@ -142,33 +167,47 @@ function Editor() {
   );
 
   return (
-    <>
-      <Planet
-        planetProps={planetProps}
-        lodOrigin={camera.position}
-        worker={planetWorker}
-        initialData={initialData}
-        data={crater}
+
+    <Planet
+      planetProps={planetProps}
+      lodOrigin={camera.position}
+      worker={planetWorker}
+      initialData={initialData}
+      data={crater}
+    >
+
+
+      {/* <OrbitCamera /> */}
+      {/* <GodCamera /> */}
+      <FlyCamera />
+      <group
+        scale={new Vector3(1, 1, 1)
+          .multiplyScalar(planet.planetRadius)
+          .multiplyScalar(100)}
       >
-        <OrbitCamera />
-        <group
-          scale={new Vector3(1, 1, 1)
-            .multiplyScalar(planet.planetRadius)
-            .multiplyScalar(100)}
-        >
-          <Stars />
-        </group>
-        {material.basicMaterial ? <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
-      </Planet>
-    </>
+        <Stars />
+      </group>
+      {material.basicMaterial ? 
+      <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : 
+      <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
+      {/* <EffectComposer>
+        <Atmosphere />
+      </EffectComposer> */}
+    </Planet>
   );
 }
 
 export default function() {
   React.useEffect(() => {}, []);
   return (
+    <div>
     <BasicScene>
       <Editor />
     </BasicScene>
+    <footer style={{ color: "white", display: 'flex', padding: '1em', bottom: '0', position: 'fixed', zIndex: 9, justifyContent: 'center', width:"100%" }}>
+      <h1 id="alt"></h1>
+      <h1 id="speed"></h1>
+    </footer>
+    </div>
   );
 }

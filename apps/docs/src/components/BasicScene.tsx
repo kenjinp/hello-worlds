@@ -1,24 +1,26 @@
-import { Canvas } from "@react-three/fiber";
+import { useTexture } from "@react-three/drei";
 import * as React from "react";
+import * as RC from "render-composer";
+import { useStore } from "statery";
 import { Color, Quaternion, Vector3 } from "three";
+import { store } from "../state/store";
 import { SpaceBox } from "./SpaceBox";
 
-export const LightRig: React.FC = ({}) => {
+const AU = 149_597_870_700;
+
+export const LightRig: React.FC = () => {
   return (
-    <mesh>
-      {/* <hemisphereLight
-        intensity={0.6}
-        color={new Color(0xffffff)}
-        groundColor={new Color(0xffffff)}
-        position={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
-      /> */}
-      <directionalLight
-        color={0xffffff}
-        intensity={0.4}
-        position={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
-        castShadow
+    <>
+    <mesh ref={(sun) => store.set({ sun })} position={new Vector3(-1, 0.75, 1).multiplyScalar(AU / 20)}>
+      <directionalLight color={0xffffff} intensity={0.8} castShadow />
+      <sphereGeometry args={[600_000_000 / 4, 32, 16]}></sphereGeometry>
+      <meshStandardMaterial
+        color={0xfdfbd3}
+        emissive={0xfdfbd3}
+        emissiveIntensity={40.0}
       />
     </mesh>
+    </>
   );
 };
 
@@ -80,35 +82,47 @@ const cameraQuat = new Quaternion(
   -0.58773147927222,
   0.38360921119467495
 );
+
+
+const PostProcessing: React.FC = () => {
+  // Move this somewhere
+  const { sun } = useStore(store)
+  return (<RC.RenderPipeline>
+  <RC.EffectPass>
+    <RC.SMAAEffect />
+    <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.9} />
+    <RC.GodRaysEffect lightSource={sun} />
+    <RC.VignetteEffect />
+    <RC.LensDirtEffect texture={useTexture("/img/lensdirt.jpg")} strength={0.3}/>
+  </RC.EffectPass>
+  </RC.RenderPipeline>)
+}
+
 export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
+
   return (
-    <Canvas
+    <RC.Canvas
       gl={{ logarithmicDepthBuffer: true }}
       camera={{
-        near: 0.01,
-        far: 100_000_000,
+          near: 0.01,
+          far: Number.MAX_SAFE_INTEGER,
         // position: new Vector3(0, 6_357 * 1_000, 6_357 * 1_000),
         position: small,
         quaternion: cameraQuat,
       }}
       shadows
       style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+      flat
     >
       <React.Suspense fallback={null}>
-        {/* <Perf position="top-left" /> */}
-        {/* <color attach="background" args={["lightblue"]} /> */}
-        {/* <gridHelper args={[500, 500]} position={[0, -0.2, 0]} /> */}
-        {/* <fogExp2 density={0.001} color={new Color(0xdfe9f3)} /> */}
-        {/* <fogExp2 attach="fog" color={0x40e2ff} density={0.00000125} /> */}
         <SpaceBox />
         <LightRig />
-        {/* <OrbitControls /> */}
-        {/* <FlyCamera /> */}
         {children}
+        <PostProcessing />
       </React.Suspense>
-    </Canvas>
+    </RC.Canvas>
   );
 };
 

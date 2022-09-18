@@ -7,6 +7,10 @@ module.exports = function(context, options) {
         module: {
           rules: [
             {
+                test: /\.glsl$/,
+                loader: 'webpack-glsl-loader'
+            },
+            {
               test: /\.worker\.ts$/,
               use: {
                 loader: "worker-loader",

@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.10
+
+### Patch Changes
+
+- Fix an error where LODS would only load based on origin 0,0,0
+
 ## 0.0.9
 
 ### Patch Changes
