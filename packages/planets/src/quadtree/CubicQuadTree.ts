@@ -1,9 +1,11 @@
 import * as THREE from "three";
+import { Vector3 } from "three";
 import { QuadTree } from "./Quadtree";
 
 export interface CubicQuadTreeParams {
   radius: number;
   minNodeSize: number;
+  origin: Vector3;
 }
 
 export class CubicQuadTree {
@@ -15,9 +17,9 @@ export class CubicQuadTree {
 
   constructor(private params: CubicQuadTreeParams) {
     const r = params.radius;
+    const o = params.origin;
     let m;
     const transforms: THREE.Matrix4[] = [];
-
     // +Y
     m = new THREE.Matrix4();
     m.makeRotationX(-Math.PI / 2);
@@ -61,6 +63,8 @@ export class CubicQuadTree {
           size: r,
           minNodeSize: this.params.minNodeSize,
           localToWorld: t,
+          origin: params.origin,
+          radius: r
         }),
       });
     }

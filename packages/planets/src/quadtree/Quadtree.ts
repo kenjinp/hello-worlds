@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Vector3 } from "three";
 
 const CHILD_SIZE_X_COMPARATOR = 1.25;
 
@@ -6,6 +7,8 @@ export interface QuadTreeParams {
   localToWorld: THREE.Matrix4;
   size: number;
   minNodeSize: number;
+  origin: THREE.Vector3;
+  radius: number;
 }
 
 export interface Node {
@@ -19,12 +22,16 @@ export interface Node {
 
 export class QuadTree {
   private root: Node;
+  private origin: Vector3;
   constructor(private params: QuadTreeParams) {
     const s = params.size;
+    const sphere = new THREE.Sphere(params.origin, params.radius)
     const b = new THREE.Box3(
       new THREE.Vector3(-s, -s, 0),
       new THREE.Vector3(s, s, 0)
     );
+    this.origin = params.origin;
+    // b.setFromCenterAndSize(params.origin, new Vector3(s,s,s));
     this.root = {
       bounds: b,
       children: [],
@@ -37,6 +44,7 @@ export class QuadTree {
     this.root.sphereCenter.applyMatrix4(this.params.localToWorld);
     this.root.sphereCenter.normalize();
     this.root.sphereCenter.multiplyScalar(this.params.size);
+    this.root.sphereCenter.add(params.origin);
   }
 
   getChildren() {
@@ -106,6 +114,7 @@ export class QuadTree {
       sphereCenter.applyMatrix4(this.params.localToWorld);
       sphereCenter.normalize();
       sphereCenter.multiplyScalar(this.params.size);
+      sphereCenter.add(this.origin);
       return {
         bounds: b,
         children: [],

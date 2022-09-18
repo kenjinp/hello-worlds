@@ -11,10 +11,9 @@ const DEFAULT_OFFSET = new Vector3(0, 1, 0);
 export const GodCamera: React.FC<{
   offset?: Vector3;
   sensitivity?: Vector2;
-  position?: Vector3;
-}> = ({ offset = DEFAULT_OFFSET, sensitivity = DEFAULT_SENSITIVITY, position = new Vector3() }) => {
+}> = ({ offset = DEFAULT_OFFSET, sensitivity = DEFAULT_SENSITIVITY }) => {
 
-  const [_position, setPosition] = React.useState(position)
+  const [_position, setPosition] = React.useState(new Vector3())
   const planet = usePlanet();
   const { camera } = useThree();
   const maxPitchAngle = 89;
@@ -41,7 +40,10 @@ export const GodCamera: React.FC<{
       const yawObject = yawObjectRef.current;
 
       const update = () => {
-        const getLook = () => controls.mouse.query();
+        const getLook = () => controls.mouse.move();
+        const getZoom = () => controls.mouse.scroll();
+
+        console.log(getZoom());
 
         if (controls.mouse.isPointerLocked()) {
           const { x, y } = getLook();

@@ -11,6 +11,7 @@ export enum ChunkBuilderThreadedMessageTypes {
 export interface ChunkBuilderThreadedMessage {
   subject: ChunkBuilderThreadedMessageTypes;
   data: any;
+  id: string;
 }
 
 export interface ThreadedChunkProps_Old {

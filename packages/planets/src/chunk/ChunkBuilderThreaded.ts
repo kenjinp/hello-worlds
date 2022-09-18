@@ -18,8 +18,9 @@ export default class ChunkBuilderThreaded<T, I> {
   // we keep the chunks stored with key of width
   #pool: Record<number, ChunkThreaded[]> = {};
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>;
-
-  constructor(numWorkers: number, worker: new () => Worker, initialData: PlanetProps & I ) {
+  public id: string;
+  constructor(numWorkers: number, worker: new () => Worker, initialData: PlanetProps & I, id: string) {
+    this.id = id;
     this.#workerPool = new WorkerThreadPool(
       numWorkers,
       worker,
@@ -28,6 +29,7 @@ export default class ChunkBuilderThreaded<T, I> {
       const msg = {
         subject: ChunkBuilderThreadedMessageTypes.INITIAL_DATA,
         initialData,
+        id: this.id,
       };
       worker.postMessage(msg, () => {
         // noop
@@ -85,6 +87,7 @@ export default class ChunkBuilderThreaded<T, I> {
     const msg = {
       subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK,
       params: threadedParams,
+      id: this.id
     };
 
     this.#workerPool.enqueue(msg, (m) => {
@@ -140,6 +143,7 @@ export default class ChunkBuilderThreaded<T, I> {
         const msg = {
           subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK,
           params: threadedParams,
+          id: this.id
         };
 
         this.#workerPool.enqueue(msg, (m) => {

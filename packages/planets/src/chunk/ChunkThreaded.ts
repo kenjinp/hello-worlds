@@ -32,7 +32,7 @@ export default class ChunkThreaded {
       };
     }
     this.plane = new THREE.Mesh(this.geometry, params.material);
-    this.plane.castShadow = false;
+    this.plane.castShadow = true;
     this.plane.receiveShadow = true;
     this.plane.frustumCulled = !params.isMinCellSize;
     this.params.group.add(this.plane);
