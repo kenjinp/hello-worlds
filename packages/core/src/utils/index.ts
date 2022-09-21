@@ -18,7 +18,7 @@ export function shuffle<T extends ArrayLike<unknown> = string>(
   }
   for (let i = list.length - 1; i > 0; i--) {
     const tmp = newlist[i];
-    const j = randomRange(i);
+    const j = randomRangeInt(i);
     newlist[i] = newlist[j];
     newlist[j] = tmp;
   }
@@ -46,12 +46,16 @@ export function sample<T = any>(list: T[], number: number = 1) {
   return number === 1 ? [shuff[0]] : shuff.slice(0, number);
 }
 
-export function randomRange(low: number, high?: number) {
+export function randomRangeInt(low: number, high?: number) {
   if (high == undefined) {
     high = low;
     low = 0;
   }
   return Math.floor(random() * (high - low)) + low;
+}
+
+export const randomRange = (min: number, max: number) => {
+  return random() * (max - min) + min;
 }
 
 export function capitalize(word: string) {

@@ -42,7 +42,6 @@ Probably not in order.
 - [ ] Lifecycle events
 - [x] Point-specific height generation example (Moon Craters)
 - [ ] Character-on-surface playable example
-- [ ] Great Arc helper & methods
 - [ ] Bezier Curves over a sphere (for labels and such) (might just have example of this)
 - [ ] Oceans example and helpers (In progress!)
 - [ ] Simple Atmosphere helpers (In progress!)

@@ -1,9 +1,11 @@
 import { random } from "@hello-worlds/core";
 import SimplexNoise from "simplex-noise";
 
+
 export enum NOISE_STYLES {
   simplex = "simplex",
-  perlin = "perlin",
+  // perlin = "perlin",
+  // fbm = "fbm"
 }
 
 export interface NoiseParams {
@@ -22,26 +24,13 @@ export class Noise {
     [key: string]: {
       noise3D: (x: number, y: number, z: number) => number;
     };
-    // perlin: {
-    //   noise3D: (x: number, y: number, z: number) => number;
-    // };
   };
   constructor(private params: NoiseParams) {
-    // const perlinNoiseObject = () => {
-    //   const perlin = new perlinNoise3d();
-    //   perlin.noiseSeed(this.params.seed);
-    //   return {
-    //     noise3D: (x: number, y: number, z: number): number =>
-    //       perlin.get(x, y, z),
-    //   };
-    // };
-
     const seed = this.params.seed || random;
+   
 
     this.noiseFunctions = {
-      // support more noise types?
       simplex: new SimplexNoise(seed),
-      // perlin: perlinNoiseObject(),
     };
   }
 

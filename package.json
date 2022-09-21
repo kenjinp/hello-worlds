@@ -10,7 +10,7 @@
     "build-deps": "pnpm --filter=@hello-worlds/* build",
     "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "ship:docs": "flyctl deploy ./ -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
+    "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.2"

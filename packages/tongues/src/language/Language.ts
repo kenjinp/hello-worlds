@@ -2,8 +2,8 @@ import {
   capitalize,
   choose,
   random,
-  randomRange,
-  shuffle,
+  randomRangeInt,
+  shuffle
 } from "@hello-worlds/core";
 import {
   consonantOrthoSets,
@@ -14,7 +14,7 @@ import {
   restrictionSets,
   sibilantSets,
   vowelOrthoSets,
-  vowelSets,
+  vowelSets
 } from "./Language.sets";
 import { syllableStructures } from "./Language.syllables";
 
@@ -67,9 +67,9 @@ export class Language {
     this.vowelOrthography = choose<Orthography[]>(vowelOrthoSets, 2).orth;
     this.restrictions = restrictionSets[2].res;
     this.noMorphemes = false;
-    this.minSyllables = randomRange(1, 3);
+    this.minSyllables = randomRangeInt(1, 3);
     if (this.structure.length < 3) this.minSyllables++;
-    this.maxSyllables = randomRange(this.minSyllables + 1, 5);
+    this.maxSyllables = randomRangeInt(this.minSyllables + 1, 5);
   }
 
   makeSyllable() {
@@ -120,7 +120,7 @@ export class Language {
     let extras = 10;
     if (key) extras = 1;
     while (true) {
-      const n = randomRange(list.length + extras);
+      const n = randomRangeInt(list.length + extras);
       if (list[n]) return list[n];
       const morph = this.makeSyllable();
       let bad = false;
@@ -138,13 +138,13 @@ export class Language {
   }
 
   makeWord(key: string) {
-    const numberSyllables = randomRange(
+    const numberSyllables = randomRangeInt(
       this.minSyllables,
       this.maxSyllables + 1
     );
     let word = "";
     let keys = [];
-    keys[randomRange(numberSyllables)] = key;
+    keys[randomRangeInt(numberSyllables)] = key;
     for (let i = 0; i < numberSyllables; i++) {
       word += this.makeMorpheme(keys[i]);
     }

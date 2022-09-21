@@ -3,10 +3,14 @@
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+// require('dotenv').config()
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  plugins: [require("./plugin")],
+  
+  plugins: [["docusaurus2-dotenv", {
+    systemvars: true,
+  }], require("./plugin")],
   title: "Hello Worlds",
   tagline: "Your Virtual Worldbuilding toolkit for the web.",
   url: "https://worlds.kenny.wtf",
@@ -14,7 +18,9 @@ const config = {
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.png",
-
+  customFields: {
+    'LIVEBLOCKS_API_KEY': process.env.LIVEBLOCKS_API_KEY,
+  },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: "kenjinp", // Usually your GitHub org/user name.
@@ -71,11 +77,11 @@ const config = {
             position: "left",
             label: "Tutorial",
           },
-          {
-            to: "/worldbuilder",
-            position: "left",
-            label: "Worldbuilder",
-          },
+          // {
+          //   to: "/worldbuilder",
+          //   position: "left",
+          //   label: "Worldbuilder",
+          // },
           {
             href: "https://github.com/kenjinp/hello-worlds",
             label: "GitHub",

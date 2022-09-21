@@ -7,12 +7,12 @@ export const PostProcessing: React.FC = () => {
   return (
     <RC.RenderPipeline>
       <RC.EffectPass>
-        <RC.SMAAEffect />
+        {/* <RC.SMAAEffect /> */}
         <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.9} />
         <ECS.ManagedEntities tag="star">
-        {(entity) => {
-          return entity.mesh && <RC.GodRaysEffect lightSource={entity.mesh} />
-        }}
+          {(entity) => {
+            return entity.mesh && <RC.GodRaysEffect lightSource={entity.mesh} />
+          }}
         </ECS.ManagedEntities>
         <RC.VignetteEffect />
         <RC.LensDirtEffect texture={useTexture("/img/lensdirt.jpg")} strength={0.1}/>

@@ -1,39 +1,42 @@
 import {
   ChunkGenerator3Initializer,
-  createThreadedPlanetWorker,
-  DEFAULT_NOISE_PARAMS, Noise
+  createThreadedPlanetWorker
 } from "@hello-worlds/planets";
 import { Color } from "three";
+import { match } from "ts-pattern";
+import { dwarf, simple, terra } from './generators';
+import { PlANET_TYPES } from "./WorldBuilder.state";
 
-// We're not doing anything with this yet
 export type ThreadParams = {
   seed: string;
+  type: PlANET_TYPES
 };
 
-const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
-  initialData: { seed },
-  radius
-}) => {
+export type InitialData = {
+  initialData: ThreadParams
+};
 
-  const noise = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
-    seed,
-    height: 5_000,
-    scale: radius,
-  });
 
-  return ({ input }) => {
-    const n = noise.get(input.x, input.y, input.z);
-
-    return n;
-  }
+const heightGenerator: ChunkGenerator3Initializer<{}, number, InitialData> = (props) => {
+  const{
+    initialData: { type },
+  } = props;
+  const generator = match(type)
+  .with(PlANET_TYPES.TERRAN, () => terra.heightGenerator)
+  .with(PlANET_TYPES.DWARF, () => dwarf.heightGenerator)
+  .otherwise(() => simple.heightGenerator);
+  return generator(props)
 }
 
-const colorGenerator: ChunkGenerator3Initializer<ThreadParams, Color> = () => {
-  const chunkColor = new Color(Math.random() * 0xffffff);
-  return ({ input }) => {
-    return chunkColor;
-  };
+const colorGenerator: ChunkGenerator3Initializer<{}, Color, InitialData> = (props) => {
+  const{
+    initialData: { type },
+  } = props;
+  const generator = match(type)
+  .with(PlANET_TYPES.TERRAN, () => terra.colorGenerator)
+  .with(PlANET_TYPES.DWARF, () => dwarf.colorGenerator)
+  .otherwise(() => simple.colorGenerator);
+  return generator(props)
 };
 
 

@@ -1,20 +1,80 @@
 import * as React from 'react';
-import { Vector3 } from "three";
+import { Color, Vector3 } from "three";
+import { match } from 'ts-pattern';
+import { ExplorerEntity, Explorers } from './Explorers';
 import { Planets } from './Planets';
 import { Stars } from "./Stars";
+import { useTheme } from './Theme';
 import { AU, CERES_RADIUS, EARTH_RADIUS, MARS_RADIUS, MOON_DISTANCE, MOON_RADIUS, SUN_RADIUS } from "./WorldBuilder.math";
-import { ECS } from "./WorldBuilder.state";
+import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state";
 
 export const SunEntity: React.FC = () => {
-  return (
+  const theme = useTheme();
+  const {
+    color,
+    position
+  } = match(theme)
+    .with(THEMES.HARD_SCIFI, () => ({
+      color: 0xffffff,
+      position: new Vector3(-1, 0, 1).multiplyScalar(AU)
+    }))
+    .with(THEMES.SCI_FANTASY, () => ({
+      color: 0xffffff,
+      position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)
+    }))
+    .with(THEMES.SYNTHWAVE, () => ({
+      color: 0xffd319,
+      position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)
+    })).run();
+    
+
+    return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU)} />
+      {/* {
+        match(theme)
+        .with(THEMES.HARD_SCIFI, () => (<>
+        <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU)} />
+        <ECS.Component name="color" data={0xffffff} />
+        <ECS.Component name="emissive" data={0xffffff} />
+        </>)
+      } */}
+      <ECS.Component key={color + position.x} name="position" data={position} />
       <ECS.Component name="radius" data={SUN_RADIUS} />
       <ECS.Component name="star" />
-      <ECS.Component name="color" data={0xffffff} />
-      <ECS.Component name="emissive" data={0xffffff} />
+      <ECS.Component key={color + position.y} name="color" data={color} />
+      <ECS.Component key={color + position.z} name="emissive" data={color} />
       <ECS.Component name="intensity" data={0.8} />
-      <ECS.Component name="name" data="Staritos" />
+      <ECS.Component name="name" data="Sun" />
+    </ECS.Entity>
+  )
+}
+
+
+export const RedSunEntity: React.FC = () => {
+
+  const theme = useTheme();
+  const {
+    position
+  } = match(theme)
+    .with(THEMES.HARD_SCIFI, () => ({
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU)
+    }))
+    .with(THEMES.SCI_FANTASY, () => ({
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(4)
+    }))
+    .with(THEMES.SYNTHWAVE, () => ({
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(10)
+    })).run();
+
+  return (
+    <ECS.Entity>
+      <ECS.Component name="position" data={position} />
+      <ECS.Component name="radius" data={SUN_RADIUS / 5} />
+      <ECS.Component name="star" />
+      <ECS.Component name="color" data={0xf15254} />
+      <ECS.Component name="emissive" data={0xf15254} />
+      <ECS.Component name="intensity" data={0.4} />
+      <ECS.Component name="name" data="Ruinos" />
     </ECS.Entity>
   )
 }
@@ -27,7 +87,9 @@ export const PlanetEntity: React.FC = () => {
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
-      <ECS.Component name="name" data="Planetos" />
+      <ECS.Component name="name" data="Aloth (Planetos)" />
+      <ECS.Component name="type" data={PlANET_TYPES.TERRAN} />
+      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
     </ECS.Entity>
   )
 }
@@ -40,7 +102,23 @@ export const MoonletEntity: React.FC = () => {
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={false} />
-      <ECS.Component name="name" data="Moonlet" />
+      <ECS.Component name="name" data="Xabos" />
+      <ECS.Component name="labelColor" data={new Color(0x8dd98f)} />
+    </ECS.Entity>
+  )
+}
+
+export const DinkyMoonletEntity: React.FC = () => {
+  return (
+    <ECS.Entity>
+      <ECS.Component name="position" data={new Vector3(MOON_DISTANCE / 20, 0, MOON_DISTANCE / 20)} />
+      <ECS.Component name="radius" data={CERES_RADIUS / 5} />
+      <ECS.Component name="planet" />
+      <ECS.Component name="seed" data="hello-worlds" />
+      <ECS.Component name="focused" data={false} />
+      <ECS.Component name="name" data="Mahiri" />
+      <ECS.Component name="type" data={PlANET_TYPES.DWARF} />
+      <ECS.Component name="labelColor" data={new Color(0xf1bd46)} />
     </ECS.Entity>
   )
 }
@@ -53,7 +131,8 @@ export const MoonEntity: React.FC = () => {
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={false} />
-      <ECS.Component name="name" data="Lunatos" />
+      <ECS.Component name="name" data="Thoulea" />
+      <ECS.Component name="labelColor" data={new Color(0xb241e4)} />
     </ECS.Entity>
   )
 }
@@ -66,7 +145,8 @@ export const MoonEntity3: React.FC = () => {
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={false} />
-      <ECS.Component name="name" data="Lunadue" />
+      <ECS.Component name="name" data="Cahowei" />
+      <ECS.Component name="labelColor" data={new Color(0xd0231f)} />
     </ECS.Entity>
   )
 }
@@ -74,13 +154,22 @@ export const MoonEntity3: React.FC = () => {
 export const RenderEntities: React.FC = () => {
   return (
     <>
+    {/* Add data to the scene */}
+      <ExplorerEntity />
       <SunEntity />
+      <RedSunEntity/>
+      
+      
       <PlanetEntity />
+      <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
       <MoonEntity3 />
+      
+      {/* Render them */}
       <Stars />
       <Planets />
+      <Explorers />
     </>
   );
 }

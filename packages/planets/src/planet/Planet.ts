@@ -148,9 +148,9 @@ export class Planet<T = {}, I = {}> {
     };
   }
 
-  async getElevationAtPosition (position: Vector3) {
+  // async getElevationAtPosition (position: Vector3) {
     
-  }
+  // }
 
   // to re-apply parameter changes, for example
   rebuild(data: T) {

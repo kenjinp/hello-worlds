@@ -22,10 +22,7 @@ export function useControls () {
     }
     
     const keyDown = (e: KeyboardEvent) => {
-      if (!e.isComposing) {
-        return;
-      }
-      Object.values((key) => {
+      Object.keys(keyMap).forEach((key) => {
         if (key !== e.key) {
           keyMap[key] = false;
         }
@@ -33,13 +30,13 @@ export function useControls () {
       keyMap[e.key] = true;
     }
     
-    canvas.addEventListener('click', requestPointerLock);
+    // canvas.addEventListener('click', requestPointerLock);
     document.addEventListener('wheel', scrollEvent);
     document.addEventListener('mousemove', mouseEvent);
     document.addEventListener('keydown', keyDown);
 
     return () => {
-      document.removeEventListener('mousemove', mouseEvent);
+      // document.removeEventListener('mousemove', mouseEvent);
       canvas.removeEventListener('click', requestPointerLock)
       document.removeEventListener('wheel', scrollEvent);
       document.addEventListener('keydown', keyDown);
@@ -58,9 +55,12 @@ export function useControls () {
       isPointerLocked: () => {
         return document.pointerLockElement === canvas
       },
+    },
+    keyboard: {
       queryPressed: () => {
         return keyMap;
       }
     }
+    
   }
 }

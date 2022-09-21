@@ -3,12 +3,23 @@ import { Tag } from "miniplex";
 import { createECS } from "miniplex-react";
 import { Color, Mesh, Vector3 } from "three";
 
+export enum THEMES {
+  SCI_FANTASY = "SCI_FANTASY",
+  HARD_SCIFI = "HARD_SCIFI",
+  SYNTHWAVE = "SYNTHWAVE"
+}
+
+export type Theme = {
+  theme: THEMES
+}
+
 export type AstralBody =  {
   position: Vector3;
   rotationSpeed: number;
   children: Entity[];
   offset: Vector3;
   name?: string;
+  labelColor?: Color;
 } & Partial<PlanetProps>
 
 export type Star = AstralBody & {
@@ -19,13 +30,35 @@ export type Star = AstralBody & {
   star: Tag;
 }
 
+export enum PlANET_TYPES {
+  TERRAN = "TERRAN",
+  DWARF = "DWARF",
+  LUNAR = "LUNAR",
+  AREAN = "AREAN",
+  VULCAN = "VULCAN"
+}
+
 export type Planet = AstralBody & {
   planet: Tag;
   seed: string;
   mesh?: Mesh;
   focused?: boolean;
+  type: PlANET_TYPES
 }
 
-type Entity = Star | Planet;
+export type Explorer = {
+  explorer: Tag;
+  position: Vector3;
+  lastUpdateMeta: {
+    positions: {
+      time: number,
+      position: Vector3
+    }[];
+  };
+  connectionId: number;
+  mesh?: Mesh;
+}
+
+type Entity = Star | Planet | Explorer | Theme;
 
 export const ECS = createECS<Entity>();

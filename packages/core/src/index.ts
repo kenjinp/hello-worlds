@@ -12,6 +12,10 @@ export const setRandomSeed = (seed: string) => {
   _rand = new Rand(seed);
 };
 
+export const createRandomSeed = (seed: string) => {
+  return new Rand(seed);
+};
+
 export const random = (): number => _rand.next();
 
 export const getSeed = () => _seed;

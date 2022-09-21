@@ -29,7 +29,6 @@
     "graphics"
   ],
   "dependencies": {
-    "simplex-noise": "^3.0.1",
-    "worktank": "^2.3.0"
+    "simplex-noise": "^3.0.1"
   }
 }

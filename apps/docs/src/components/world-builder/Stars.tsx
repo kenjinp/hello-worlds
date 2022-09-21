@@ -10,6 +10,9 @@ export const StarRender = React.forwardRef<Mesh, Star>(({
   emissive,
   lightIntensity
 }, ref) => {
+
+  console.log("star render!", {position, color})
+
   return (
     <mesh ref={ref} position={position}>
       <directionalLight color={emissive} intensity={lightIntensity} castShadow />
@@ -27,8 +30,9 @@ export const Stars: React.FC = () => {
   return (
     <ECS.ManagedEntities tag="star">
       {(entity) => {
+        console.log({ sun: entity })
         return (
-          <ECS.Component name="mesh">
+          <ECS.Component name="mesh" key={entity.name}>
             <StarRender {...entity} />
           </ECS.Component>
         )
