@@ -1,11 +1,13 @@
 import { Planet as HelloPlanet } from '@hello-worlds/react/dist/esm/planets/Planets';
+import { Html } from '@react-three/drei';
 import { useThree } from '@react-three/fiber';
 import * as React from 'react';
+import { useStore } from 'statery';
 import { Mesh } from 'three';
 import FlyCamera from '../cameras/FlyCamera';
 import { useTheme } from './Theme';
 import { CERES_RADIUS } from './WorldBuilder.math';
-import { ECS, Planet, THEMES } from './WorldBuilder.state';
+import { ECS, Planet, store, THEMES } from './WorldBuilder.state';
 import worker from "./WorldBuilder.worker";
 
 export const PlanetRender = React.forwardRef<Mesh, Planet>(({
@@ -36,6 +38,7 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(({
     type
   }), []);
   const chunkData = React.useMemo(() => ({}), []);
+  const state = useStore(store);
 
   return (
     <mesh ref={ref} position={position}>
@@ -47,6 +50,7 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(({
         data={chunkData}
       >
         {focused && <FlyCamera />}
+        {state.showPlanetLabels && <Html><i style={{color: labelColor.getStyle()}}>{name}</i></Html>}
         {theme === THEMES.SYNTHWAVE ? 
         
         <meshStandardMaterial vertexColors wireframe wireframeLinewidth={2} emissive={labelColor} emissiveIntensity={1.1}/>

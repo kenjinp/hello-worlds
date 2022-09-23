@@ -27,16 +27,17 @@ export const StarRender = React.forwardRef<Mesh, Star>(({
 });
 
 export const Stars: React.FC = () => {
+  const { entities: stars } = ECS.useArchetype("star")
   return (
-    <ECS.ManagedEntities tag="star">
+    <ECS.Entities entities={stars}>
       {(entity) => {
         console.log({ sun: entity })
         return (
-          <ECS.Component name="mesh" key={entity.name}>
+          // <ECS.Component name="mesh" key={entity.name}>
             <StarRender {...entity} />
-          </ECS.Component>
+          // </ECS.Component>
         )
       }}
-    </ECS.ManagedEntities>
+    </ECS.Entities>
   )
 }

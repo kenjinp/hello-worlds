@@ -15,7 +15,9 @@ export const Canvas: React.FC<React.PropsWithChildren<{}>> = ({
       style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
     >
       <React.Suspense fallback={null}>
+        <RC.RenderPipeline>
         {children}
+        </RC.RenderPipeline>
       </React.Suspense>
     </RC.Canvas>
   );

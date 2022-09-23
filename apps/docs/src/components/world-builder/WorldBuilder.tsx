@@ -1,5 +1,5 @@
 import Link from "@docusaurus/Link";
-import { faBook } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Stars } from '@react-three/drei';
 import { RoomProvider, useOthers } from "@site/src/services/multiplayer";
@@ -7,17 +7,18 @@ import * as React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import { Vector3 } from 'three';
 import logo from "../../../../../logo.png";
+import SolarSystem from "../../../static/img/solar-system.svg";
 import { Button } from "../button/Button";
 import Footer from '../footer/Footer';
 import { HeaderStyled } from "../header/Header.style";
 import { SpaceBox } from '../SpaceBox';
 import { JumpTo } from "./JumpTo";
 import { Menu } from "./Settings";
-import { ThemeSelector } from "./Theme";
+import { Options, ThemeSelector } from "./Theme";
 import { Canvas } from './WorldBuilder.canvas';
 import { RenderEntities } from './WorldBuilder.entities';
 import { AU } from './WorldBuilder.math';
-import { PostProcessing } from './WorldBuilder.postprocessing';
+import { PostProcessing } from "./WorldBuilder.postprocessing";
 
 const Presence: React.FC = () => {
   const others = useOthers();
@@ -25,9 +26,43 @@ const Presence: React.FC = () => {
   return <span>{others.count + 1} explorers</span>;
 }
 
+const HeaderThing: React.FC = () => {
+ return (<HeaderStyled>
+ <div>
+
+ <Menu
+ style={{
+   alignItems: "flex-start",
+ }}
+     icon={
+       <SolarSystem style={{ fill: 'white', width: "2.5em"}} />
+     }
+   >
+      <JumpTo />
+   </Menu>
+
+ </div>
+ <div>
+
+ </div>
+ <div>
+   <Menu
+   style={{
+     alignItems: "flex-end",
+   }}
+     icon={
+       <FontAwesomeIcon icon={faGear}/>
+     }
+   >
+     <ThemeSelector />
+     <Options />
+   </Menu>
+ </div>
+</HeaderStyled>)
+}
+
 export default function(): React.ReactElement {
   // because React needs to be defined :[
-
   React.useLayoutEffect(() => {
     toast(<div style={{
       fontFamily: "OsakaMono"
@@ -50,21 +85,8 @@ export default function(): React.ReactElement {
     <RoomProvider id="planetarium">
     
     <div style={{ color: "#f4f4f4"}}>
-      <HeaderStyled>
-        <div>
-        <JumpTo />
 
-        </div>
-        <div>
-
-        </div>
-        <div>
-          <Menu>
-            <ThemeSelector />
-          </Menu>
-        </div>
-      </HeaderStyled>
-
+    <HeaderThing />
     <ToastContainer
       style={{
         position: 'fixed',
@@ -75,7 +97,7 @@ export default function(): React.ReactElement {
       theme={"colored"}
     />
     <Canvas>
-      <RenderEntities />
+      <RenderEntities/>
       <PostProcessing />
       <SpaceBox />
         <group
@@ -85,8 +107,7 @@ export default function(): React.ReactElement {
               .multiplyScalar(10)
           }
         >
-          <Stars/>
-          <Stars/>
+          <Stars saturation={1}/>
         </group>
     </Canvas>
     <Footer middle={<div style={{ display: 'flex', justifyContent: 'space-between', width: '30vw' }}>

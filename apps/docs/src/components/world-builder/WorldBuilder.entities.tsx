@@ -10,43 +10,57 @@ import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state";
 
 export const SunEntity: React.FC = () => {
   const theme = useTheme();
-  const {
-    color,
-    position
-  } = match(theme)
-    .with(THEMES.HARD_SCIFI, () => ({
-      color: 0xffffff,
-      position: new Vector3(-1, 0, 1).multiplyScalar(AU)
-    }))
-    .with(THEMES.SCI_FANTASY, () => ({
-      color: 0xffffff,
-      position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)
-    }))
-    .with(THEMES.SYNTHWAVE, () => ({
-      color: 0xffd319,
-      position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)
-    })).run();
-    
+  // const {
+  //   color,
+  //   position
+  // } = match(theme)
+  //   .with(THEMES.HARD_SCIFI, () => ({
+  //     color: 0xffffff,
+  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU)
+  //   }))
+  //   .with(THEMES.SCI_FANTASY, () => ({
+  //     color: 0xffffff,
+  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)
+  //   }))
+  //   .with(THEMES.SYNTHWAVE, () => ({
+  //     color: 0xffd319,
+  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)
+  //   })).run();
 
-    return (
-    <ECS.Entity>
-      {/* {
-        match(theme)
-        .with(THEMES.HARD_SCIFI, () => (<>
+  return (<>{match(theme)
+    .with(THEMES.HARD_SCIFI, (theme) => (
+      <ECS.Entity >
         <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU)} />
+        <ECS.Component name="radius" data={SUN_RADIUS} />
+        <ECS.Component name="star" />
         <ECS.Component name="color" data={0xffffff} />
         <ECS.Component name="emissive" data={0xffffff} />
-        </>)
-      } */}
-      <ECS.Component key={color + position.x} name="position" data={position} />
+        <ECS.Component name="intensity" data={0.8} />
+        <ECS.Component name="name" data="Sun" />
+    </ECS.Entity>
+    )
+    ).with(THEMES.SCI_FANTASY, () => (
+      <ECS.Entity>
+      <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)} />
       <ECS.Component name="radius" data={SUN_RADIUS} />
       <ECS.Component name="star" />
-      <ECS.Component key={color + position.y} name="color" data={color} />
-      <ECS.Component key={color + position.z} name="emissive" data={color} />
+      <ECS.Component name="color" data={0xffffff} />
+      <ECS.Component name="emissive" data={0xffffff} />
       <ECS.Component name="intensity" data={0.8} />
       <ECS.Component name="name" data="Sun" />
     </ECS.Entity>
-  )
+    )
+    ).with(THEMES.SYNTHWAVE, () => (
+      <ECS.Entity>
+      <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)} />
+      <ECS.Component name="radius" data={SUN_RADIUS} />
+      <ECS.Component name="star" />
+      <ECS.Component name="color" data={0xffd319} />
+      <ECS.Component name="emissive" data={0xffd319} />
+      <ECS.Component name="intensity" data={0.8} />
+      <ECS.Component name="name" data="Sun" />
+    </ECS.Entity>
+    )).run()}</>)
 }
 
 
@@ -87,7 +101,7 @@ export const PlanetEntity: React.FC = () => {
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
-      <ECS.Component name="name" data="Aloth (Planetos)" />
+      <ECS.Component name="name" data="Aloth" />
       <ECS.Component name="type" data={PlANET_TYPES.TERRAN} />
       <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
     </ECS.Entity>
@@ -152,6 +166,7 @@ export const MoonEntity3: React.FC = () => {
 }
 
 export const RenderEntities: React.FC = () => {
+  console.log("rerender? entities")
   return (
     <>
     {/* Add data to the scene */}

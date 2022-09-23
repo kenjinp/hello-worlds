@@ -1,30 +1,47 @@
 import * as React from 'react';
-import { ECS, THEMES } from './WorldBuilder.state';
+import { useStore } from 'statery';
+import { store, THEMES } from './WorldBuilder.state';
 
 
+export const useTheme = () => {
+  const { theme } = useStore(store)
+  return theme
+}
 
 export const ThemeSelector: React.FC = () => {
-  const [theme, setTheme] = React.useState<THEMES>(THEMES.SCI_FANTASY);
-
+  const state = useStore(store);
+  
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) =>{
-    setTheme(e.target.value);
+    store.set((state) => ({
+      theme: e.target.value
+    }))
   }
 
   return (
     <>
       <label>theme</label>{' '}
-      <select value={theme} onChange={handleChange}>
+      <select value={state.theme} onChange={handleChange}>
         {Object.values(THEMES).map(theme => (<option key={theme} value={theme}>{theme}</option>))}
       </select>
-      <ECS.Entity>
-        <ECS.Component name="theme" data={theme}/>
-      </ECS.Entity>
     </>
   );
 }
 
-export const useTheme = () => {
-  const { entities } = ECS.useArchetype("theme");
+export const Options: React.FC = () => {
+  const state = useStore(store);
 
-  return entities.length ? entities[0].theme : THEMES.SCI_FANTASY
+  return (
+    <>
+      <br/>
+      <label>show planet labels</label>{' '}
+      <input 
+        name="screenshot mode" 
+        type="checkbox"
+        checked={state.showPlanetLabels}
+        onChange={() => store.set((state) => ({
+          showPlanetLabels: !state.showPlanetLabels
+        }))}
+      />
+    </>
+  );
 }

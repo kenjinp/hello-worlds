@@ -1,9 +1,9 @@
 
 import * as React from 'react';
 
-import { ECS } from './WorldBuilder.state';
 
 import styled from "styled-components";
+import { ECS } from './WorldBuilder.state';
 
 export const PlanetButton = styled.button`
   border-radius: 0.5em;
@@ -43,30 +43,43 @@ export const PlanetIcon = styled.div`
   }
 `;
 
-
 export const JumpTo: React.FC = () => {
+  const { entities: planets } = ECS.useArchetype("planet")
+  const { entities: stars } = ECS.useArchetype("star")
   return (
     <div>
       <div style={{ marginBottom: '1em'}}>
       <h5>Stars</h5>
-      <ECS.ManagedEntities tag="star">
+      <ECS.Entities entities={stars}>
       {(entity) => {
         return (
           <PlanetButton >{entity.name}</PlanetButton>
         )
       }}
-    </ECS.ManagedEntities>
+    </ECS.Entities>
       </div>
       <div>
 
       <h5>Planets / Moons</h5>
-    <ECS.ManagedEntities tag="planet">
+    <ECS.Entities entities={planets}>
       {(entity) => {
         return (
-          <PlanetButton style={{ color: entity.labelColor.getStyle() }} focused={entity.focused}>{entity.name}</PlanetButton>
+          <PlanetButton 
+          
+            onClick={() => {
+              console.log("banana")
+              planets.forEach(_entity => {
+                if (_entity.name === entity.name) {
+                  _entity.focused = true;
+                  return;
+                }
+                _entity.focused = false;
+              })
+            }}
+          style={{ color: entity.labelColor?.getStyle() }} focused={entity.focused}>{entity.name}</PlanetButton>
         )
       }}
-    </ECS.ManagedEntities>
+    </ECS.Entities>
     </div>
     </div>
   )

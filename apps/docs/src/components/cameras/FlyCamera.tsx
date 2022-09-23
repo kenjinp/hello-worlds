@@ -1,6 +1,5 @@
 import { FlyControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useControls } from "@site/src/hooks/useControls";
 import { useUpdateMyPresence } from "@site/src/services/multiplayer";
 import * as React from "react";
 import { toast } from 'react-toastify';
@@ -17,7 +16,6 @@ const FlyCamera: React.FC<{
   maxSpeed = 10_000_000_000
 }) => {
   const flyControls = React.useRef<FlyControlsImpl>(null);
-  const controls = useControls();
   const groupRef = React.useRef<Group>(null);
   const altitude = React.useRef(0);
   const { entities } = ECS.useArchetype("planet");
@@ -77,6 +75,9 @@ const FlyCamera: React.FC<{
     const newClosestPlanet = entities.sort((a, b) => {
       return camera.position.distanceToSquared(a.position) - camera.position.distanceToSquared(b.position);
     })[0];
+    if (!newClosestPlanet) {
+      return;
+    }
     if (newClosestPlanet.mesh.uuid !== _closestPlanet?.mesh.uuid) {
       setClosestPlanet(newClosestPlanet);
     }
@@ -111,7 +112,7 @@ const FlyCamera: React.FC<{
     document.getElementById('alt').innerHTML = 'Altitude: ' + altitudeText() + ' (Datum)';
     document.getElementById('speed').innerHTML = 'Velocity: ' + velocityText();
     document.getElementById('body').innerHTML = `Body: <b style="color: ${closestPlanet.labelColor.getStyle()}">` + closestPlanet.name + '</b>';
-  
+    // window.location.search = `#${JSON.stringify(camera.position)}`
     updateMyPresence({ position: camera.position })
   });
   

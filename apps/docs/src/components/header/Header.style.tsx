@@ -12,6 +12,7 @@ export const HeaderStyled = styled.header`
   color: #f4f4f4;
   z-index: 3;
   white-space: no-wrap;
+  align-items: flex-start;
   a {
     transition: all 0.3s ease;
     color: #f4f4f4;

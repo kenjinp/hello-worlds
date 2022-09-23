@@ -22,9 +22,12 @@ export const SpaceBox = () => {
   //   }
   // })
   const theme = useTheme();
-  const background = 2;
 
   React.useEffect(() => {
+    let background: number = 4;
+    if (theme === THEMES.SYNTHWAVE) {
+      background = 2;
+    }
     const back = `/img/spacebox-${background}/back.png`
     const bottom = `/img/spacebox-${background}/bottom.png`
     const front = `/img/spacebox-${background}/front.png`
@@ -35,12 +38,13 @@ export const SpaceBox = () => {
     const urls = [right, left, top, bottom, front, back];
 
     const cube = new CubeTextureLoader().load(urls);
-    console.log({theme})
-    scene.background = new Color(0x000000);
-    if (theme !== THEMES.HARD_SCIFI) {
-      scene.background = cube; 
+    if (theme === THEMES.HARD_SCIFI) {
+      scene.background = new Color(0x000000);
+      return;
     }
-  }, [background, theme]);
+    scene.background = cube;
+    
+  }, [theme]);
 
   return null;
 };

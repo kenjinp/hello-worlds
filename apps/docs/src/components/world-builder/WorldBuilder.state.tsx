@@ -1,17 +1,27 @@
 import { PlanetProps } from "@hello-worlds/planets";
 import { Tag } from "miniplex";
 import { createECS } from "miniplex-react";
+import { makeStore } from "statery";
 import { Color, Mesh, Vector3 } from "three";
 
+
 export enum THEMES {
-  SCI_FANTASY = "SCI_FANTASY",
-  HARD_SCIFI = "HARD_SCIFI",
-  SYNTHWAVE = "SYNTHWAVE"
+  SCI_FANTASY = "sci-fantasy",
+  HARD_SCIFI = "hard-scifi",
+  SYNTHWAVE = "synthwave"
 }
 
 export type Theme = {
   theme: THEMES
 }
+
+
+export const store = makeStore({ 
+  theme: THEMES.SCI_FANTASY,
+  screenshotMode: false,
+  showPlanetLabels: true
+})
+
 
 export type AstralBody =  {
   position: Vector3;

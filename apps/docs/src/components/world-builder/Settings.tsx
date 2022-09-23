@@ -1,23 +1,23 @@
-import { faGear } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as React from 'react';
 import { Button } from '../button/Button';
 
-export const Menu: React.FC<React.PropsWithChildren> = ({
+export const Menu: React.FC<React.PropsWithChildren<{ icon: React.ReactElement, style: React.CSSProperties }>> = ({
+  icon,
+  style,
   children
 }) => {
   const [show, setShown] = React.useState(false);
 
   return (
     <div style={{
-      alignItems: "flex-end",
+      ...style,
       display: "flex",
       flexDirection: "column"
     }}>
       <Button onClick={() => {
           setShown(!show);
       }}>
-        <FontAwesomeIcon icon={faGear}/>
+        {icon}
       </Button>
       {show && <div
         style={{
