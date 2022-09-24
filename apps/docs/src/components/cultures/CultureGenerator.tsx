@@ -1,7 +1,7 @@
-import { Kingdom } from "@hello-worlds/cultures";
-import * as React from "react";
-import { MathUtils, Vector3 } from "three";
-import { ECS } from "../../state/ecs";
+import { Kingdom } from "@hello-worlds/cultures"
+import * as React from "react"
+import { MathUtils, Vector3 } from "three"
+import { ECS } from "../../state/ecs"
 
 export const CultureGenerator: React.FC<{ numberOfKingdoms?: number }> = ({
   numberOfKingdoms = MathUtils.randInt(30, 50),
@@ -13,11 +13,11 @@ export const CultureGenerator: React.FC<{ numberOfKingdoms?: number }> = ({
         ECS.world.createEntity({
           position: new Vector3(),
           kingdom: new Kingdom(),
-        })
-      );
-  }, []);
+        }),
+      )
+  }, [])
 
-  return null;
-};
+  return null
+}
 
-export default CultureGenerator;
+export default CultureGenerator

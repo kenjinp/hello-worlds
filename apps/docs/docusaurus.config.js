@@ -1,25 +1,21 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
-// require('dotenv').config()
+const lightCodeTheme = require("prism-react-renderer/themes/github")
+const darkCodeTheme = require("prism-react-renderer/themes/dracula")
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  
-  plugins: [["docusaurus2-dotenv", {
-    systemvars: true,
-  }], require("./plugin")],
+  plugins: [require("./plugin")],
   title: "Hello Worlds",
-  tagline: "Your Virtual Worldbuilding toolkit for the web.",
+  tagline: "Virtual javascript worlds at planetary scales",
   url: "https://worlds.kenny.wtf",
   baseUrl: "/",
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.png",
   customFields: {
-    'LIVEBLOCKS_API_KEY': process.env.LIVEBLOCKS_API_KEY,
+    LIVEBLOCKS_API_KEY: process.env.LIVEBLOCKS_API_KEY,
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -57,6 +53,19 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      metadata: [
+        { name: "robots", content: "max-image-preview:large" },
+        { property: "og:image", content: "/img/preview.png" },
+        {
+          property: "og:description",
+          content: "Virtual javascript worlds at planetary scales",
+        },
+        { property: "twitter:image", content: "/img/preview.png" },
+        {
+          property: "titter:description",
+          content: "Virtual javascript worlds at planetary scales",
+        },
+      ],
       defaultMode: "dark",
       navbar: {
         title: "Hello Worlds",
@@ -139,6 +148,6 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
-};
+}
 
-module.exports = config;
+module.exports = config

@@ -2,11 +2,11 @@ import {
   ColorGenerator,
   ColorGeneratorParams,
   NOISE_STYLES,
-} from "@hello-worlds/planets";
-import { useControls } from "leva";
-import * as React from "react";
-import * as THREE from "three";
-import { useNoiseController } from "../noise/NoiseController";
+} from "@hello-worlds/planets"
+import { useControls } from "leva"
+import * as React from "react"
+import * as THREE from "three"
+import { useNoiseController } from "../noise/NoiseController"
 
 export const DEFAULT_COLOR_PARAMS = {
   seaDeep: new THREE.Color(0x20020ff).getStyle(),
@@ -20,7 +20,7 @@ export const DEFAULT_COLOR_PARAMS = {
   humidHigh: new THREE.Color(0xffffff).getStyle(),
   seaLevel: 0.05,
   seaLevelDividend: 100,
-};
+}
 
 export const useColorController = (seed: number | string = 1) => {
   const controllerValues = useControls(
@@ -38,8 +38,8 @@ export const useColorController = (seed: number | string = 1) => {
         value: 0.05,
         step: 0.01,
       },
-    }
-  );
+    },
+  )
 
   const { noise, noiseParams } = useNoiseController("biome noise", {
     octaves: 10,
@@ -50,20 +50,20 @@ export const useColorController = (seed: number | string = 1) => {
     scale: 256.0,
     noiseType: NOISE_STYLES.simplex,
     seed,
-  });
+  })
 
   const colorGenerator = React.useMemo(
     () =>
       new ColorGenerator({
-        ...((controllerValues as unknown) as ColorGeneratorParams),
+        ...(controllerValues as unknown as ColorGeneratorParams),
         biomeGenerator: noise,
       }),
-    [controllerValues, noise]
-  );
+    [controllerValues, noise],
+  )
 
   return {
     colorGenerator,
     colorParams: controllerValues,
     colorNoiseParams: noiseParams,
-  };
-};
+  }
+}

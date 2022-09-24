@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components"
 
 export const HeaderStyled = styled.header`
   position: fixed;
@@ -20,4 +20,4 @@ export const HeaderStyled = styled.header`
       color: #f4f4f4;
     }
   }
-`;
+`

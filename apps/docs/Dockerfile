@@ -10,6 +10,7 @@ ENV NODE_OPTIONS="--max-old-space-size=1024"
 ARG LIVEBLOCKS_API_KEY
 ENV LIVEBLOCKS_API_KEY=${LIVEBLOCKS_API_KEY}
 RUN apk add --no-cache git
+COPY ./.npmrc .
 COPY ./pnpm-lock.yaml .
 COPY ./pnpm-workspace.yaml .
 RUN pnpm fetch

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components"
 
 export const FooterStyled = styled.footer`
   position: fixed;
@@ -19,4 +19,4 @@ export const FooterStyled = styled.footer`
       color: #f4f4f4;
     }
   }
-`;
+`

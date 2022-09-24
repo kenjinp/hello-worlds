@@ -1,15 +1,23 @@
-import * as React from 'react';
-import { Color, Vector3 } from "three";
-import { match } from 'ts-pattern';
-import { ExplorerEntity, Explorers } from './Explorers';
-import { Planets } from './Planets';
-import { Stars } from "./Stars";
-import { useTheme } from './Theme';
-import { AU, CERES_RADIUS, EARTH_RADIUS, MARS_RADIUS, MOON_DISTANCE, MOON_RADIUS, SUN_RADIUS } from "./WorldBuilder.math";
-import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state";
+import * as React from "react"
+import { Color, Vector3 } from "three"
+import { match } from "ts-pattern"
+import { ExplorerEntity, Explorers } from "./Explorers"
+import { Planets } from "./Planets"
+import { Stars } from "./Stars"
+import { useTheme } from "./Theme"
+import {
+  AU,
+  CERES_RADIUS,
+  EARTH_RADIUS,
+  MARS_RADIUS,
+  MOON_DISTANCE,
+  MOON_RADIUS,
+  SUN_RADIUS,
+} from "./WorldBuilder.math"
+import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state"
 
 export const SunEntity: React.FC = () => {
-  const theme = useTheme();
+  const theme = useTheme()
   // const {
   //   color,
   //   position
@@ -27,58 +35,69 @@ export const SunEntity: React.FC = () => {
   //     position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)
   //   })).run();
 
-  return (<>{match(theme)
-    .with(THEMES.HARD_SCIFI, (theme) => (
-      <ECS.Entity >
-        <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU)} />
-        <ECS.Component name="radius" data={SUN_RADIUS} />
-        <ECS.Component name="star" />
-        <ECS.Component name="color" data={0xffffff} />
-        <ECS.Component name="emissive" data={0xffffff} />
-        <ECS.Component name="intensity" data={0.8} />
-        <ECS.Component name="name" data="Sun" />
-    </ECS.Entity>
-    )
-    ).with(THEMES.SCI_FANTASY, () => (
-      <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)} />
-      <ECS.Component name="radius" data={SUN_RADIUS} />
-      <ECS.Component name="star" />
-      <ECS.Component name="color" data={0xffffff} />
-      <ECS.Component name="emissive" data={0xffffff} />
-      <ECS.Component name="intensity" data={0.8} />
-      <ECS.Component name="name" data="Sun" />
-    </ECS.Entity>
-    )
-    ).with(THEMES.SYNTHWAVE, () => (
-      <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)} />
-      <ECS.Component name="radius" data={SUN_RADIUS} />
-      <ECS.Component name="star" />
-      <ECS.Component name="color" data={0xffd319} />
-      <ECS.Component name="emissive" data={0xffd319} />
-      <ECS.Component name="intensity" data={0.8} />
-      <ECS.Component name="name" data="Sun" />
-    </ECS.Entity>
-    )).run()}</>)
+  return (
+    <>
+      {match(theme)
+        .with(THEMES.HARD_SCIFI, theme => (
+          <ECS.Entity key={theme}>
+            <ECS.Component
+              name="position"
+              data={new Vector3(-1, 0, 1).multiplyScalar(AU)}
+            />
+            <ECS.Component name="radius" data={SUN_RADIUS} />
+            <ECS.Component name="star" />
+            <ECS.Component name="color" data={0xffffff} />
+            <ECS.Component name="emissive" data={0xffffff} />
+            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="name" data="Sun" />
+          </ECS.Entity>
+        ))
+        .with(THEMES.SCI_FANTASY, theme => (
+          <ECS.Entity key={theme}>
+            <ECS.Component
+              name="position"
+              data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)}
+            />
+            <ECS.Component name="radius" data={SUN_RADIUS} />
+            <ECS.Component name="star" />
+            <ECS.Component name="color" data={0xffffff} />
+            <ECS.Component name="emissive" data={0xffffff} />
+            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="name" data="Sun" />
+          </ECS.Entity>
+        ))
+        .with(THEMES.SYNTHWAVE, theme => (
+          <ECS.Entity key={theme}>
+            <ECS.Component
+              name="position"
+              data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)}
+            />
+            <ECS.Component name="radius" data={SUN_RADIUS} />
+            <ECS.Component name="star" />
+            <ECS.Component name="color" data={0xffd319} />
+            <ECS.Component name="emissive" data={0xffd319} />
+            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="name" data="Sun" />
+          </ECS.Entity>
+        ))
+        .run()}
+    </>
+  )
 }
 
-
 export const RedSunEntity: React.FC = () => {
-
-  const theme = useTheme();
-  const {
-    position
-  } = match(theme)
+  const theme = useTheme()
+  const { position } = match(theme)
     .with(THEMES.HARD_SCIFI, () => ({
-      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU)
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU),
     }))
     .with(THEMES.SCI_FANTASY, () => ({
-      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(4)
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(4),
     }))
     .with(THEMES.SYNTHWAVE, () => ({
-      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(10)
-    })).run();
+      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(10),
+    }))
+    .run()
 
   return (
     <ECS.Entity>
@@ -111,7 +130,10 @@ export const PlanetEntity: React.FC = () => {
 export const MoonletEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(MOON_DISTANCE / 10, 0, MOON_DISTANCE / 10)} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(MOON_DISTANCE / 10, 0, MOON_DISTANCE / 10)}
+      />
       <ECS.Component name="radius" data={CERES_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -125,7 +147,10 @@ export const MoonletEntity: React.FC = () => {
 export const DinkyMoonletEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(MOON_DISTANCE / 20, 0, MOON_DISTANCE / 20)} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(MOON_DISTANCE / 20, 0, MOON_DISTANCE / 20)}
+      />
       <ECS.Component name="radius" data={CERES_RADIUS / 5} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -140,7 +165,10 @@ export const DinkyMoonletEntity: React.FC = () => {
 export const MoonEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(MOON_DISTANCE / 2, 0, MOON_DISTANCE / 2)} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(MOON_DISTANCE / 2, 0, MOON_DISTANCE / 2)}
+      />
       <ECS.Component name="radius" data={MOON_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -154,7 +182,10 @@ export const MoonEntity: React.FC = () => {
 export const MoonEntity3: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(MOON_DISTANCE / 4, 0, MOON_DISTANCE / 4)} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(MOON_DISTANCE / 4, 0, MOON_DISTANCE / 4)}
+      />
       <ECS.Component name="radius" data={MARS_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -169,22 +200,21 @@ export const RenderEntities: React.FC = () => {
   console.log("rerender? entities")
   return (
     <>
-    {/* Add data to the scene */}
+      {/* Add data to the scene */}
       <ExplorerEntity />
       <SunEntity />
-      <RedSunEntity/>
-      
-      
+      <RedSunEntity />
+
       <PlanetEntity />
       <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
       <MoonEntity3 />
-      
+
       {/* Render them */}
       <Stars />
       <Planets />
       <Explorers />
     </>
-  );
+  )
 }

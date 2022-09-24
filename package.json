@@ -13,7 +13,9 @@
     "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.23.2"
+    "@changesets/cli": "^2.23.2",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "prettier": "^2.7.1"
   },
   "workspaces": [
     "packages/*",

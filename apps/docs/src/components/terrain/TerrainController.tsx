@@ -1,4 +1,4 @@
-import { useControls } from "leva";
+import { useControls } from "leva"
 
 export const DEFAULT_TERRAIN_PARAMS = {
   wireframe: false,
@@ -7,7 +7,7 @@ export const DEFAULT_TERRAIN_PARAMS = {
   chunkSize: 500,
   visible: true,
   subdivisions: 128,
-};
+}
 
 export const useTerrainController = () => {
   const controllerValues = useControls("terrain", {
@@ -35,7 +35,7 @@ export const useTerrainController = () => {
       value: 128,
       step: 1,
     },
-  });
+  })
 
-  return controllerValues;
-};
+  return controllerValues
+}

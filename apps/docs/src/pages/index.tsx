@@ -1,11 +1,11 @@
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import Link from "@docusaurus/Link";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
-import * as React from "react";
-import styles from "./index.module.css";
+import BrowserOnly from "@docusaurus/BrowserOnly"
+import Link from "@docusaurus/Link"
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext"
+import * as React from "react"
+import styles from "./index.module.css"
 
 function HomepageHeader() {
-  const { siteConfig } = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext()
   return (
     // <header className={clsx("hero hero--primary", styles.heroBanner)}>
     <div className="container">
@@ -18,14 +18,14 @@ function HomepageHeader() {
       </div>
     </div>
     // </header>
-  );
+  )
 }
 
-const LazyWorldbuilder = React.lazy(() =>
-  import("../components/world-builder/WorldBuilder")
-);
+const LazyWorldbuilder = React.lazy(
+  () => import("../components/world-builder/WorldBuilder"),
+)
 
-export default function() {
+export default function () {
   return (
     <BrowserOnly>
       {() => {
@@ -33,9 +33,8 @@ export default function() {
           <React.Suspense>
             <LazyWorldbuilder />
           </React.Suspense>
-        );
+        )
       }}
     </BrowserOnly>
-  );
+  )
 }
-

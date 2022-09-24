@@ -1,59 +1,59 @@
-import * as THREE from "three";
-import { Vector3 } from "three";
-import { QuadTree } from "./Quadtree";
+import * as THREE from "three"
+import { Vector3 } from "three"
+import { QuadTree } from "./Quadtree"
 
 export interface CubicQuadTreeParams {
-  radius: number;
-  minNodeSize: number;
-  origin: Vector3;
+  radius: number
+  minNodeSize: number
+  origin: Vector3
 }
 
 export class CubicQuadTree {
   private sides: {
-    transform: THREE.Matrix4;
-    worldToLocal: THREE.Matrix4;
-    quadtree: QuadTree;
-  }[] = [];
+    transform: THREE.Matrix4
+    worldToLocal: THREE.Matrix4
+    quadtree: QuadTree
+  }[] = []
 
   constructor(private params: CubicQuadTreeParams) {
-    const r = params.radius;
-    const o = params.origin;
-    let m;
-    const transforms: THREE.Matrix4[] = [];
+    const r = params.radius
+    const o = params.origin
+    let m
+    const transforms: THREE.Matrix4[] = []
     // +Y
-    m = new THREE.Matrix4();
-    m.makeRotationX(-Math.PI / 2);
-    m.premultiply(new THREE.Matrix4().makeTranslation(0, r, 0));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.makeRotationX(-Math.PI / 2)
+    m.premultiply(new THREE.Matrix4().makeTranslation(0, r, 0))
+    transforms.push(m)
 
     // -Y
-    m = new THREE.Matrix4();
-    m.makeRotationX(Math.PI / 2);
-    m.premultiply(new THREE.Matrix4().makeTranslation(0, -r, 0));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.makeRotationX(Math.PI / 2)
+    m.premultiply(new THREE.Matrix4().makeTranslation(0, -r, 0))
+    transforms.push(m)
 
     // +X
-    m = new THREE.Matrix4();
-    m.makeRotationY(Math.PI / 2);
-    m.premultiply(new THREE.Matrix4().makeTranslation(r, 0, 0));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.makeRotationY(Math.PI / 2)
+    m.premultiply(new THREE.Matrix4().makeTranslation(r, 0, 0))
+    transforms.push(m)
 
     // -X
-    m = new THREE.Matrix4();
-    m.makeRotationY(-Math.PI / 2);
-    m.premultiply(new THREE.Matrix4().makeTranslation(-r, 0, 0));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.makeRotationY(-Math.PI / 2)
+    m.premultiply(new THREE.Matrix4().makeTranslation(-r, 0, 0))
+    transforms.push(m)
 
     // +Z
-    m = new THREE.Matrix4();
-    m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, r));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, r))
+    transforms.push(m)
 
     // -Z
-    m = new THREE.Matrix4();
-    m.makeRotationY(Math.PI);
-    m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, -r));
-    transforms.push(m);
+    m = new THREE.Matrix4()
+    m.makeRotationY(Math.PI)
+    m.premultiply(new THREE.Matrix4().makeTranslation(0, 0, -r))
+    transforms.push(m)
 
     for (let t of transforms) {
       this.sides.push({
@@ -64,30 +64,30 @@ export class CubicQuadTree {
           minNodeSize: this.params.minNodeSize,
           localToWorld: t,
           origin: params.origin,
-          radius: r
+          radius: r,
         }),
-      });
+      })
     }
   }
 
   getChildren() {
-    const children = [];
+    const children = []
 
     for (let s of this.sides) {
       const side = {
         transform: s.transform,
         children: s.quadtree.getChildren(),
-      };
-      children.push(side);
+      }
+      children.push(side)
     }
-    return children;
+    return children
   }
 
   // create all possible children up to a minimum value
   // measuring from this position
   insert(pos: THREE.Vector3) {
     for (let s of this.sides) {
-      s.quadtree.insert(pos);
+      s.quadtree.insert(pos)
     }
   }
 }

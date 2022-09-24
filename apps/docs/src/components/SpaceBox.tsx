@@ -1,8 +1,8 @@
-import { useThree } from "@react-three/fiber";
-import * as React from "react";
-import { Color, CubeTextureLoader } from "three";
-import { useTheme } from "./world-builder/Theme";
-import { THEMES } from "./world-builder/WorldBuilder.state";
+import { useThree } from "@react-three/fiber"
+import * as React from "react"
+import { Color, CubeTextureLoader } from "three"
+import { useTheme } from "./world-builder/Theme"
+import { THEMES } from "./world-builder/WorldBuilder.state"
 
 // import back from "../../static/img/spacebox-4/back.png";
 // import bottom from "../../static/img/spacebox-4/bottom.png";
@@ -12,7 +12,7 @@ import { THEMES } from "./world-builder/WorldBuilder.state";
 // import top from "../../static/img/spacebox-4/top.png";
 
 export const SpaceBox = () => {
-  const { scene } = useThree();
+  const { scene } = useThree()
   // const { background } = useControls("background", {
   //   background: {
   //     min: 1,
@@ -21,12 +21,12 @@ export const SpaceBox = () => {
   //     step: 1
   //   }
   // })
-  const theme = useTheme();
+  const theme = useTheme()
 
   React.useEffect(() => {
-    let background: number = 4;
+    let background: number = 4
     if (theme === THEMES.SYNTHWAVE) {
-      background = 2;
+      background = 2
     }
     const back = `/img/spacebox-${background}/back.png`
     const bottom = `/img/spacebox-${background}/bottom.png`
@@ -35,16 +35,16 @@ export const SpaceBox = () => {
     const right = `/img/spacebox-${background}/right.png`
     const top = `/img/spacebox-${background}/top.png`
 
-    const urls = [right, left, top, bottom, front, back];
+    const urls = [right, left, top, bottom, front, back]
 
-    const cube = new CubeTextureLoader().load(urls);
+    const cube = new CubeTextureLoader().load(urls)
     if (theme === THEMES.HARD_SCIFI) {
-      scene.background = new Color(0x000000);
-      return;
+      scene.background = new Color(0x000000)
+      return
     }
-    scene.background = cube;
-    
-  }, [theme]);
+    scene.castShadow = true
+    scene.background = cube
+  }, [theme])
 
-  return null;
-};
+  return null
+}

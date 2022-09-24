@@ -1,28 +1,31 @@
-import { useTexture } from "@react-three/drei";
-import * as React from "react";
-import * as RC from "render-composer";
-import { useStore } from "statery";
-import { Color, Quaternion, Vector3 } from "three";
-import { store } from "../state/store";
-import { SpaceBox } from "./SpaceBox";
+import { useTexture } from "@react-three/drei"
+import * as React from "react"
+import * as RC from "render-composer"
+import { useStore } from "statery"
+import { Color, Quaternion, Vector3 } from "three"
+import { store } from "../state/store"
+import { SpaceBox } from "./SpaceBox"
 
-const AU = 149_597_870_700;
+const AU = 149_597_870_700
 
 export const LightRig: React.FC = () => {
   return (
     <>
-    <mesh ref={(sun) => store.set({ sun })} position={new Vector3(-1, 0.75, 1).multiplyScalar(AU / 20)}>
-      <directionalLight color={0xffffff} intensity={0.8} castShadow />
-      <sphereGeometry args={[600_000_000 / 4, 32, 16]}></sphereGeometry>
-      <meshStandardMaterial
-        color={0xfdfbd3}
-        emissive={0xfdfbd3}
-        emissiveIntensity={40.0}
-      />
-    </mesh>
+      <mesh
+        ref={sun => store.set({ sun })}
+        position={new Vector3(-1, 0.75, 1).multiplyScalar(AU / 20)}
+      >
+        <directionalLight color={0xffffff} intensity={0.8} castShadow />
+        <sphereGeometry args={[600_000_000 / 4, 32, 16]}></sphereGeometry>
+        <meshStandardMaterial
+          color={0xfdfbd3}
+          emissive={0xfdfbd3}
+          emissiveIntensity={40.0}
+        />
+      </mesh>
     </>
-  );
-};
+  )
+}
 
 export const InvertedLightRig: React.FC = ({}) => {
   return (
@@ -64,12 +67,12 @@ export const InvertedLightRig: React.FC = ({}) => {
         </mesh>
       </group> */}
     </group>
-  );
-};
+  )
+}
 
 // new Vector3(0, 6_357 * 1_000, 6_357 * 1_000)
-const small = new Vector3(0, 10_000, 10_000);
-const cameraPosition = new Vector3(0, 6_357 * 1_000, 6_357 * 1_000);
+const small = new Vector3(0, 10_000, 10_000)
+const cameraPosition = new Vector3(0, 6_357 * 1_000, 6_357 * 1_000)
 
 // new Vector3(
 //   355898.9978932907,
@@ -80,34 +83,37 @@ const cameraQuat = new Quaternion(
   0.3525209450519473,
   0.6189868049149101,
   -0.58773147927222,
-  0.38360921119467495
-);
-
+  0.38360921119467495,
+)
 
 const PostProcessing: React.FC = () => {
   // Move this somewhere
   const { sun } = useStore(store)
-  return (<RC.RenderPipeline>
-  <RC.EffectPass>
-    <RC.SMAAEffect />
-    <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.9} />
-    <RC.GodRaysEffect lightSource={sun} />
-    <RC.VignetteEffect />
-    <RC.LensDirtEffect texture={useTexture("/img/lensdirt.jpg")} strength={0.3}/>
-  </RC.EffectPass>
-  </RC.RenderPipeline>)
+  return (
+    <RC.RenderPipeline>
+      <RC.EffectPass>
+        <RC.SMAAEffect />
+        <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.9} />
+        <RC.GodRaysEffect lightSource={sun} />
+        <RC.VignetteEffect />
+        <RC.LensDirtEffect
+          texture={useTexture("/img/lensdirt.jpg")}
+          strength={0.3}
+        />
+      </RC.EffectPass>
+    </RC.RenderPipeline>
+  )
 }
 
 export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-
   return (
     <RC.Canvas
       gl={{ logarithmicDepthBuffer: true }}
       camera={{
-          near: 0.01,
-          far: Number.MAX_SAFE_INTEGER,
+        near: 0.01,
+        far: Number.MAX_SAFE_INTEGER,
         // position: new Vector3(0, 6_357 * 1_000, 6_357 * 1_000),
         position: small,
         quaternion: cameraQuat,
@@ -123,7 +129,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         <PostProcessing />
       </React.Suspense>
     </RC.Canvas>
-  );
-};
+  )
+}
 
-export default BasicScene;
+export default BasicScene

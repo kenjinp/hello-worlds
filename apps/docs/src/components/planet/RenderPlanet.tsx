@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Group } from "three";
-import { ECS } from "../../state/ecs";
-import PlanetConfigurator from "./PlanetConfigurator";
+import * as React from "react"
+import { Group } from "three"
+import { ECS } from "../../state/ecs"
+import PlanetConfigurator from "./PlanetConfigurator"
 
 export const RenderPlanet = () => {
-  const { entities } = ECS.useArchetype("position", "planet");
-  const ref = React.useRef<Group>(null);
+  const { entities } = ECS.useArchetype("position", "planet")
+  const ref = React.useRef<Group>(null)
 
   // useFrame(() => {
   //   if (!ref.current) {
@@ -21,8 +21,8 @@ export const RenderPlanet = () => {
           <group ref={ref} key={planet.name}>
             <PlanetConfigurator radius={planet.radius} name={planet.name} />;
           </group>
-        );
+        )
       })}
     </>
-  );
-};
+  )
+}

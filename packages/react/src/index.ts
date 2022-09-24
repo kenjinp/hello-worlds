@@ -1,2 +1,2 @@
-export * from "./cameras/OrbitCamera";
-export * from "./planets/Planets";
+export * from "./cameras/OrbitCamera"
+export * from "./planets/Planets"

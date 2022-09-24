@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { useStore } from 'statery';
-import { store, THEMES } from './WorldBuilder.state';
-
+import * as React from "react"
+import { useStore } from "statery"
+import { store, THEMES } from "./WorldBuilder.state"
 
 export const useTheme = () => {
   const { theme } = useStore(store)
@@ -9,39 +8,45 @@ export const useTheme = () => {
 }
 
 export const ThemeSelector: React.FC = () => {
-  const state = useStore(store);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) =>{
-    store.set((state) => ({
-      theme: e.target.value
+  const state = useStore(store)
+
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    store.set(state => ({
+      theme: e.target.value,
     }))
   }
 
   return (
     <>
-      <label>theme</label>{' '}
+      <label>theme</label>{" "}
       <select value={state.theme} onChange={handleChange}>
-        {Object.values(THEMES).map(theme => (<option key={theme} value={theme}>{theme}</option>))}
+        {Object.values(THEMES).map(theme => (
+          <option key={theme} value={theme}>
+            {theme}
+          </option>
+        ))}
       </select>
     </>
-  );
+  )
 }
 
 export const Options: React.FC = () => {
-  const state = useStore(store);
+  const state = useStore(store)
 
   return (
     <>
-      <br/>
-      <label>show planet labels</label>{' '}
-      <input 
-        name="screenshot mode" 
+      <br />
+      <label>show planet labels</label>{" "}
+      <input
+        name="screenshot mode"
         type="checkbox"
         checked={state.showPlanetLabels}
-        onChange={() => store.set((state) => ({
-          showPlanetLabels: !state.showPlanetLabels
-        }))}
+        onChange={() =>
+          store.set(state => ({
+            showPlanetLabels: !state.showPlanetLabels,
+          }))
+        }
       />
     </>
-  );
+  )
 }

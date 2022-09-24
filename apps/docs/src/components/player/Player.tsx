@@ -1,13 +1,13 @@
-import { Html } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
-import * as React from "react";
-import * as THREE from "three";
-import { ECS } from "../../state/ecs";
+import { Html } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
+import * as React from "react"
+import * as THREE from "three"
+import { ECS } from "../../state/ecs"
 
 export const RenderPlayers: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { entities } = ECS.useArchetype("playerId", "position", "rotation");
+  const { entities } = ECS.useArchetype("playerId", "position", "rotation")
 
   return (
     <>
@@ -16,28 +16,28 @@ export const RenderPlayers: React.FC<React.PropsWithChildren<{}>> = ({
           <Player key={playerId} position={position} rotation={rotation}>
             {children}
           </Player>
-        );
+        )
       })}
     </>
-  );
-};
+  )
+}
 
 const Player = React.forwardRef<
   THREE.Mesh,
   React.PropsWithChildren<{
-    position: THREE.Vector3;
-    rotation: THREE.Quaternion;
+    position: THREE.Vector3
+    rotation: THREE.Quaternion
   }>
 >(({ children, position, rotation }, ref) => {
-  const { camera } = useThree();
-  const controlRef = React.useRef();
+  const { camera } = useThree()
+  const controlRef = React.useRef()
 
   React.useEffect(() => {
     if (controlRef.current) {
-      camera.up.copy(position.clone().negate());
+      camera.up.copy(position.clone().negate())
       // controlRef.current.target.copy(position);
     }
-  }, [controlRef.current]);
+  }, [controlRef.current])
 
   return (
     <mesh ref={ref} position={position} quaternion={rotation}>
@@ -50,7 +50,7 @@ const Player = React.forwardRef<
       <axesHelper position={camera.up} />
       <axesHelper scale={new THREE.Vector3(4, 4, 4)} />
     </mesh>
-  );
-});
+  )
+})
 
-export default Player;
+export default Player

@@ -1,12 +1,12 @@
-import { HeightGenerator, Noise } from "@hello-worlds/planets";
-import { useControls } from "leva";
-import * as React from "react";
-import * as THREE from "three";
+import { HeightGenerator, Noise } from "@hello-worlds/planets"
+import { useControls } from "leva"
+import * as React from "react"
+import * as THREE from "three"
 
 export const DEFAULT_HEIGHT_PARAMS = {
   minRadius: 100_000,
   maxRadius: 100_000 + 1,
-};
+}
 
 export const useHeightController = (noise: Noise) => {
   const controllerValues = useControls(
@@ -21,8 +21,8 @@ export const useHeightController = (noise: Noise) => {
           z: 0,
         },
       },
-    }
-  );
+    },
+  )
 
   const heightGenerator = React.useMemo(
     () =>
@@ -31,12 +31,12 @@ export const useHeightController = (noise: Noise) => {
         offset: new THREE.Vector3(
           controllerValues.offset.x,
           controllerValues.offset.y,
-          controllerValues.offset.z
+          controllerValues.offset.z,
         ),
         generator: noise,
       }),
-    [controllerValues, noise]
-  );
+    [controllerValues, noise],
+  )
 
-  return { heightGenerator, heightParams: controllerValues };
-};
+  return { heightGenerator, heightParams: controllerValues }
+}

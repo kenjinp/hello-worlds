@@ -6,7 +6,7 @@ import { useRef } from "react"
 export function useFrameEffect<T>(
   dependencyCallback: () => T,
   callback: (args: T) => void,
-  renderPriority = 0
+  renderPriority = 0,
 ) {
   const value = useRef<T>(null!)
 

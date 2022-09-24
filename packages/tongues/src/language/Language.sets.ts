@@ -1,4 +1,4 @@
-import { Orthography } from "./Language";
+import { Orthography } from "./Language"
 
 export const defaultOrtho: Orthography["orth"] = {
   ʃ: "sh",
@@ -15,7 +15,7 @@ export const defaultOrtho: Orthography["orth"] = {
   I: "í",
   O: "ó",
   U: "ú",
-};
+}
 
 export const consonantOrthoSets = [
   {
@@ -61,7 +61,7 @@ export const consonantOrthoSets = [
       ʤ: "j",
     },
   },
-];
+]
 
 export const vowelOrthoSets = [
   {
@@ -108,7 +108,7 @@ export const vowelOrthoSets = [
       U: "uu",
     },
   },
-];
+]
 
 export const consonantSets = [
   {
@@ -143,7 +143,7 @@ export const consonantSets = [
     name: "English-lite",
     C: "ptkbdgmnszʒʧhjw",
   },
-];
+]
 
 export const sibilantSets = [
   {
@@ -158,7 +158,7 @@ export const sibilantSets = [
     name: "s ʃ f",
     S: "sʃf",
   },
-];
+]
 
 export const liquidSets = [
   {
@@ -181,7 +181,7 @@ export const liquidSets = [
     name: "r l w j",
     L: "rlwj",
   },
-];
+]
 
 export const fricativeSets = [
   {
@@ -200,7 +200,7 @@ export const fricativeSets = [
     name: "s ʃ z ʒ",
     F: "sʃzʒ",
   },
-];
+]
 
 export const vowelSets = [
   {
@@ -231,7 +231,7 @@ export const vowelSets = [
     name: "Extra A O U",
     V: "aeiouAOU",
   },
-];
+]
 
 export const restrictionSets = [
   {
@@ -246,4 +246,4 @@ export const restrictionSets = [
     name: "Doubles and hard clusters",
     res: [/[sʃf][sʃ]/, /(.)\1/, /[rl][rl]/],
   },
-];
+]

@@ -24,4 +24,4 @@ export const syllableStructures = [
   "C?VL?C",
   "C?VLC?",
   "C?VLC?C?",
-];
+]

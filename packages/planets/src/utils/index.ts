@@ -1,21 +1,21 @@
 export const dictIntersection = <T = Record<string, any>>(
   dictA: T,
-  dictB: T
+  dictB: T,
 ) => {
   // @ts-ignore
-  const intersection: T = {};
+  const intersection: T = {}
   for (let k in dictB) {
     if (k in dictA) {
-      intersection[k] = dictA[k];
+      intersection[k] = dictA[k]
     }
   }
-  return intersection;
-};
+  return intersection
+}
 
 export const dictDifference = <T = Record<string, any>>(dictA: T, dictB: T) => {
-  const diff = { ...dictA };
+  const diff = { ...dictA }
   for (let k in dictB) {
-    delete diff[k];
+    delete diff[k]
   }
-  return diff;
-};
+  return diff
+}

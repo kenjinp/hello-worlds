@@ -2,16 +2,18 @@ import {
   faDiscord,
   faGithub,
   faTwitch,
-  faTwitter
-} from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  faTwitter,
+} from "@fortawesome/free-brands-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
-import * as React from "react";
-import { FooterStyled } from "./Footer.style";
+import * as React from "react"
+import { FooterStyled } from "./Footer.style"
 
-const Footer: React.FC<React.PropsWithChildren<{
-  middle: string | React.ReactNode;
-}>> = ({ children, middle }) => {
+const Footer: React.FC<
+  React.PropsWithChildren<{
+    middle: string | React.ReactNode
+  }>
+> = ({ children, middle }) => {
   return (
     <FooterStyled>
       <div>{children}</div>
@@ -36,7 +38,7 @@ const Footer: React.FC<React.PropsWithChildren<{
         </div>
       </div>
     </FooterStyled>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer
