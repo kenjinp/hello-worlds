@@ -18,22 +18,6 @@ import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state"
 
 export const SunEntity: React.FC = () => {
   const theme = useTheme()
-  // const {
-  //   color,
-  //   position
-  // } = match(theme)
-  //   .with(THEMES.HARD_SCIFI, () => ({
-  //     color: 0xffffff,
-  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU)
-  //   }))
-  //   .with(THEMES.SCI_FANTASY, () => ({
-  //     color: 0xffffff,
-  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)
-  //   }))
-  //   .with(THEMES.SYNTHWAVE, () => ({
-  //     color: 0xffd319,
-  //     position: new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(10)
-  //   })).run();
 
   return (
     <>
@@ -115,7 +99,15 @@ export const RedSunEntity: React.FC = () => {
 export const PlanetEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3()} />
+      {/* <ECS.Component
+        name="position"
+        // TODO replace this with vector 0
+        data={new Vector3()}
+      /> */}
+      <ECS.Component
+        name="position"
+        data={new Vector3(MOON_DISTANCE / 10, 0, MOON_DISTANCE / 10)}
+      />
       <ECS.Component name="radius" data={EARTH_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -206,10 +198,10 @@ export const RenderEntities: React.FC = () => {
       <RedSunEntity />
 
       <PlanetEntity />
-      <DinkyMoonletEntity />
+      {/* <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
-      <MoonEntity3 />
+      <MoonEntity3 /> */}
 
       {/* Render them */}
       <Stars />

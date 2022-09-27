@@ -99,7 +99,7 @@ function PlanetInner<T, I>(
       if (!planetEngine || !mat || Array.isArray(mat)) {
         return
       }
-      console.log("New Mat")
+      console.log("New Mat", planetProps)
       planetEngine.material = mat
     },
   )

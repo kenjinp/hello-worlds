@@ -1,15 +1,19 @@
 import { Planet as HelloPlanet } from "@hello-worlds/react/dist/esm/planets/Planets"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
-import { OrbitCamera } from "@site/../../packages/react/dist/esm"
 import * as React from "react"
 import { useStore } from "statery"
 import { Mesh } from "three"
+import FlyCamera from "../cameras/FlyCamera"
+import AtmosphereMaterial from "./materials/AtmosphereMaterial"
 import { useTheme } from "./Theme"
 import { Atmosphere } from "./vfx/atmosphere/Atmoshpere"
 import { CERES_RADIUS } from "./WorldBuilder.math"
 import { ECS, Planet, store, THEMES } from "./WorldBuilder.state"
 import worker from "./WorldBuilder.worker"
+// extend({ AtmosphereMaterial })
+
+const atmo = new AtmosphereMaterial()
 
 export const PlanetRender = React.forwardRef<Mesh, Planet>(
   (
@@ -17,16 +21,17 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
     ref,
   ) => {
     const theme = useTheme()
+    const isSnythwave = theme === THEMES.SYNTHWAVE
 
     const { camera } = useThree()
     const planetProps = React.useMemo(
       () => ({
         radius: radius,
         minCellSize: 32 * 8,
-        minCellResolution: theme === THEMES.SYNTHWAVE ? 16 : 32 * 2,
+        minCellResolution: isSnythwave ? 16 : 32 * 2,
         invert: false,
       }),
-      [radius],
+      [radius, isSnythwave],
     )
 
     const initialData = React.useMemo(
@@ -48,8 +53,9 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
           initialData={initialData}
           data={chunkData}
         >
-          {focused && <OrbitCamera />}
-          <Atmosphere />
+          {focused && <FlyCamera />}
+          <Atmosphere position={position} />
+
           {state.showPlanetLabels && (
             <Html>
               <i style={{ color: labelColor.getStyle() }}>{name}</i>

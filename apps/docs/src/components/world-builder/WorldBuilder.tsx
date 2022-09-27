@@ -5,6 +5,7 @@ import { Stars } from "@react-three/drei"
 import { RoomProvider, useOthers } from "@site/src/services/multiplayer"
 import * as React from "react"
 import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 import { Vector3 } from "three"
 import logo from "../../../../../logo.png"
 import SolarSystem from "../../../static/img/solar-system.svg"
@@ -83,7 +84,6 @@ export default function (): React.ReactElement {
   return (
     <RoomProvider id="planetarium">
       <div style={{ color: "#f4f4f4" }}>
-        <HeaderThing />
         <ToastContainer
           style={{
             position: "fixed",
@@ -93,10 +93,11 @@ export default function (): React.ReactElement {
           autoClose={3000}
           theme={"colored"}
         />
+        <HeaderThing />
+
         <Canvas>
           <PostProcessing>
             <RenderEntities />
-
             <SpaceBox />
             <group
               scale={new Vector3(1, 1, 1).multiplyScalar(AU).multiplyScalar(10)}

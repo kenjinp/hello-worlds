@@ -34,6 +34,7 @@
     "@react-three/postprocessing": "^2.6.2",
     "clsx": "^1.2.1",
     "fp-ts": "^2.12.3",
+    "gl-noise": "^1.6.1",
     "leva": "^0.9.27",
     "material-composer-r3f": "^0.2.4",
     "miniplex": "^0.10.1",
@@ -56,6 +57,7 @@
     "statery": "^0.6.2",
     "styled-components": "^5.3.5",
     "three": "0.143.0",
+    "three-custom-shader-material": "^4.0.0",
     "ts-pattern": "^4.0.5",
     "vfx-composer-r3f": "^0.2.4"
   },

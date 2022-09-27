@@ -15,7 +15,7 @@ export const FloatingOriginScene: React.FC<React.PropsWithChildren<{}>> = ({
   //   }
   // }, [groupRef.current]);
 
-  useFrame(state => {
+  useFrame(() => {
     if (!groupRef.current) {
       return
     }

@@ -56,6 +56,7 @@ export const OrbitCamera: React.FC<OrbitCameraProps> = ({
     <OrbitControls
       ref={orbitControls}
       enablePan={false}
+      enableZoom
       maxDistance={planet.planetProps.radius * maxDistanceMultiplier}
       minDistance={planet.planetProps.radius + maxAltitudeOffset}
     />
