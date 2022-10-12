@@ -134,7 +134,6 @@ export class Planet<T = {}, I = {}> {
     // how to update materials...
     this.#material = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      side: THREE.FrontSide,
       vertexColors: true,
     })
     this.rootGroup.add(...this.cubeFaceGroups)

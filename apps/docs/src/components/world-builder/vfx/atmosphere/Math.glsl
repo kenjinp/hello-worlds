@@ -1,3 +1,4 @@
+// #define PI 3.14159265359
 #define tmax 1e1
 float MAX_FLOAT = 3.402823466e+38;
 
@@ -11,14 +12,16 @@ vec3 getCameraVector(vec3 resolution, vec2 coord) {
 vec2 ray_sphere_intersect(
     vec3 start, // starting position of the ray
     vec3 dir, // the direction of the ray
-    float radius // and the sphere radius
+    float radius, // and the sphere radius
+    vec3 sphereOrigin
 ) {
+    vec3 origin = start - sphereOrigin;
     // ray-sphere intersection that assumes
     // the sphere is centered at the origin.
     // No intersection when result.x > result.y
     float a = dot(dir, dir);
-    float b = 2.0 * dot(dir, start);
-    float c = dot(start, start) - (radius * radius);
+    float b = 2.0 * dot(dir, origin);
+    float c = dot(origin, origin) - (radius * radius);
     float d = (b*b) - 4.0*a*c;
     if (d < 0.0) return vec2(1e5,-1e5);
     return vec2(
@@ -94,6 +97,25 @@ vec2 squareFrame(vec2 screenSize, vec2 coord) {
   position.x *= screenSize.x / screenSize.y;
   return position;
 }
+
+bool _RayIntersectsSphere(
+  vec3 rayStart, vec3 rayDir, vec3 sphereCenter, float sphereRadius, out float t0, out float t1) {
+  vec3 oc = rayStart - sphereCenter;
+  float a = dot(rayDir, rayDir);
+  float b = 2.0 * dot(oc, rayDir);
+  float c = dot(oc, oc) - sphereRadius * sphereRadius;
+  float d =  b * b - 4.0 * a * c;
+  // Also skip single point of contact
+  if (d <= 0.0) {
+    return false;
+  }
+  float r0 = (-b - sqrt(d)) / (2.0 * a);
+  float r1 = (-b + sqrt(d)) / (2.0 * a);
+  t0 = min(r0, r1);
+  t1 = max(r0, r1);
+  return (t1 >= 0.0);
+}
+
 
 // This assumes the pixel position px to be in [0,1], 
 // which can be done by (x+0.5)/w or (y+0.5)/h (or h-y +0.5 for screens

@@ -18,6 +18,7 @@ export const store = makeStore({
   theme: THEMES.SCI_FANTASY,
   screenshotMode: false,
   showPlanetLabels: true,
+  debugMode: false,
 })
 
 export type AstralBody = {
@@ -43,6 +44,7 @@ export enum PlANET_TYPES {
   LUNAR = "LUNAR",
   AREAN = "AREAN",
   VULCAN = "VULCAN",
+  CLOUD = "CLOUD",
 }
 
 export type Planet = AstralBody & {
@@ -51,6 +53,7 @@ export type Planet = AstralBody & {
   mesh?: Mesh
   focused?: boolean
   type: PlANET_TYPES
+  atmosphereRadius?: number
 }
 
 export type Explorer = {
@@ -66,6 +69,6 @@ export type Explorer = {
   mesh?: Mesh
 }
 
-type Entity = Star | Planet | Explorer | Theme
+type Entity = Star | Planet | Explorer
 
 export const ECS = createECS<Entity>()

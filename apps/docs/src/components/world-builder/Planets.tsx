@@ -3,27 +3,71 @@ import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { useStore } from "statery"
-import { Mesh } from "three"
+import { DoubleSide, Mesh } from "three"
 import FlyCamera from "../cameras/FlyCamera"
-import AtmosphereMaterial from "./materials/AtmosphereMaterial"
 import { useTheme } from "./Theme"
-import { Atmosphere } from "./vfx/atmosphere/Atmoshpere"
+import { AsteroidField } from "./vfx/asteroid-field/AsteroidField"
 import { CERES_RADIUS } from "./WorldBuilder.math"
-import { ECS, Planet, store, THEMES } from "./WorldBuilder.state"
+import { ECS, Planet, PlANET_TYPES, store, THEMES } from "./WorldBuilder.state"
 import worker from "./WorldBuilder.worker"
-// extend({ AtmosphereMaterial })
 
-const atmo = new AtmosphereMaterial()
+export const Clouds: React.FC<
+  Pick<Planet, "atmosphereRadius" | "radius" | "seed">
+> = ({ atmosphereRadius, radius, seed }) => {
+  const planetProps = React.useMemo(
+    () => ({
+      radius: (atmosphereRadius - radius) * 0.1 + radius,
+      minCellSize: 32 * 1000,
+      minCellResolution: 32,
+      invert: false,
+    }),
+    [radius, atmosphereRadius],
+  )
+  const initialData = React.useMemo(
+    () => ({
+      seed,
+      type: PlANET_TYPES.CLOUD,
+    }),
+    [],
+  )
+  const camera = useThree(store => store.camera)
+  const chunkData = React.useMemo(() => ({}), [])
+  return (
+    <HelloPlanet
+      planetProps={planetProps}
+      lodOrigin={camera.position}
+      worker={worker}
+      initialData={initialData}
+      data={chunkData}
+    >
+      <meshStandardMaterial
+        vertexColors
+        transparent
+        depthWrite={false}
+        side={DoubleSide}
+      />
+    </HelloPlanet>
+  )
+}
 
 export const PlanetRender = React.forwardRef<Mesh, Planet>(
   (
-    { position, radius = CERES_RADIUS, seed, focused, name, labelColor, type },
+    {
+      position,
+      radius = CERES_RADIUS,
+      seed,
+      focused,
+      name,
+      labelColor,
+      type,
+      atmosphereRadius,
+    },
     ref,
   ) => {
     const theme = useTheme()
     const isSnythwave = theme === THEMES.SYNTHWAVE
 
-    const { camera } = useThree()
+    const camera = useThree(store => store.camera)
     const planetProps = React.useMemo(
       () => ({
         radius: radius,
@@ -54,13 +98,18 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
           data={chunkData}
         >
           {focused && <FlyCamera />}
-          <Atmosphere position={position} />
-
           {state.showPlanetLabels && (
             <Html>
               <i style={{ color: labelColor.getStyle() }}>{name}</i>
             </Html>
           )}
+          {/* {!isSnythwave && atmosphereRadius && (
+            <Clouds
+              seed={seed}
+              atmosphereRadius={atmosphereRadius}
+              radius={radius}
+            />
+          )} */}
           {theme === THEMES.SYNTHWAVE ? (
             <meshStandardMaterial
               vertexColors
@@ -72,6 +121,7 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
           ) : (
             <meshStandardMaterial vertexColors />
           )}
+          <AsteroidField />
         </HelloPlanet>
       </mesh>
     )

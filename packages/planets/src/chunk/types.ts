@@ -70,7 +70,12 @@ export interface BuildChunkParams<T> {
   data: T
 }
 
+export type ColorArrayWithAlpha = [r: number, g: number, b: number, a: number]
+
 export interface BuildChunkInitialParams<T> {
-  colorGenerator: ChunkGenerator3<T & { height: number }, Color>
+  colorGenerator: ChunkGenerator3<
+    T & { height: number },
+    Color | ColorArrayWithAlpha
+  >
   heightGenerator: ChunkGenerator3<T, number>
 }

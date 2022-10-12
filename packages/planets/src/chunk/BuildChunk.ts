@@ -77,13 +77,20 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
         _H.multiplyScalar(height * (params.invert ? -1 : 1))
         _P.add(_H)
 
+        // color has alpha from array
+        if ("length" in color) {
+          colors.push(...color)
+        } else {
+          colors.push(color.r, color.g, color.b, 1)
+        }
+
         positions.push(_P.x, _P.y, _P.z)
         // localPosition.normalize();
 
         // colors.push(color.r, color.g, color.b);
         //@ts-ignore
         // const color = this.#colorGenerator.getTemperature(_W, height);
-        colors.push(color.r, color.g, color.b)
+        // colors.push(color.r, color.g, color.b)
         // _P.normalize();
         // colors.push(_W.x, _W.y, _W.z);
         normals.push(_D.x, _D.y, _D.z)
@@ -162,7 +169,7 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
     }
 
     const uiPositions = _Unindex(positions, 3)
-    const uiColours = _Unindex(colors, 3)
+    const uiColours = _Unindex(colors, 4)
     const uiNormals = _Unindex(normals, 3)
     const uiTangents = _Unindex(tangents, 4)
     const uiUVs = _Unindex(uvs, 2)

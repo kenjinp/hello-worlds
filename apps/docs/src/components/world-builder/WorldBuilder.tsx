@@ -88,6 +88,7 @@ export default function (): React.ReactElement {
           style={{
             position: "fixed",
             zIndex: 9999,
+            visibility: "hidden",
           }}
           position="top-center"
           autoClose={3000}
@@ -97,13 +98,13 @@ export default function (): React.ReactElement {
 
         <Canvas>
           <PostProcessing>
-            <RenderEntities />
             <SpaceBox />
             <group
               scale={new Vector3(1, 1, 1).multiplyScalar(AU).multiplyScalar(10)}
             >
               <Stars saturation={1} />
             </group>
+            <RenderEntities />
           </PostProcessing>
         </Canvas>
         <Footer

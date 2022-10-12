@@ -47,6 +47,18 @@ export const Options: React.FC = () => {
           }))
         }
       />
+      <br />
+      <label>debug mode</label>{" "}
+      <input
+        name="debude mode"
+        type="checkbox"
+        checked={state.debugMode}
+        onChange={() =>
+          store.set(state => ({
+            debugMode: !state.debugMode,
+          }))
+        }
+      />
     </>
   )
 }

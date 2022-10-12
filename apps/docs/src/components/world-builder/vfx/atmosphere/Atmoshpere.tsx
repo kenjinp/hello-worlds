@@ -12,7 +12,7 @@ export const Atmosphere: React.FC<{ position: Vector3 }> = ({ position }) => {
     atmosphereRadius: {
       min: 1,
       max: planet.planetProps.radius * 5,
-      value: planet.planetProps.radius * 2,
+      value: planet.planetProps.radius + 120_000,
       step: 1,
     },
   })

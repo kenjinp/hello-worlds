@@ -63,7 +63,7 @@ export default class ChunkThreaded {
     )
     this.geometry.setAttribute(
       "color",
-      new THREE.Float32BufferAttribute(data.colours, 3),
+      new THREE.Float32BufferAttribute(data.colours, 4),
     )
     this.geometry.setAttribute(
       "normal",

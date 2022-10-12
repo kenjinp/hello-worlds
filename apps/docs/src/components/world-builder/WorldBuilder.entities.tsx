@@ -30,9 +30,9 @@ export const SunEntity: React.FC = () => {
             />
             <ECS.Component name="radius" data={SUN_RADIUS} />
             <ECS.Component name="star" />
-            <ECS.Component name="color" data={0xffffff} />
+            <ECS.Component name="color" data={new Color(0xffffff)} />
             <ECS.Component name="emissive" data={0xffffff} />
-            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="intensity" data={0.4} />
             <ECS.Component name="name" data="Sun" />
           </ECS.Entity>
         ))
@@ -44,9 +44,9 @@ export const SunEntity: React.FC = () => {
             />
             <ECS.Component name="radius" data={SUN_RADIUS} />
             <ECS.Component name="star" />
-            <ECS.Component name="color" data={0xffffff} />
-            <ECS.Component name="emissive" data={0xffffff} />
-            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="color" data={new Color(0x81cbf5)} />
+            <ECS.Component name="emissive" data={new Color(0x81cbf5)} />
+            <ECS.Component name="intensity" data={0.4} />
             <ECS.Component name="name" data="Sun" />
           </ECS.Entity>
         ))
@@ -58,9 +58,9 @@ export const SunEntity: React.FC = () => {
             />
             <ECS.Component name="radius" data={SUN_RADIUS} />
             <ECS.Component name="star" />
-            <ECS.Component name="color" data={0xffd319} />
+            <ECS.Component name="color" data={new Color(0xffd319)} />
             <ECS.Component name="emissive" data={0xffd319} />
-            <ECS.Component name="intensity" data={0.8} />
+            <ECS.Component name="intensity" data={0.4} />
             <ECS.Component name="name" data="Sun" />
           </ECS.Entity>
         ))
@@ -76,7 +76,7 @@ export const RedSunEntity: React.FC = () => {
       position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU),
     }))
     .with(THEMES.SCI_FANTASY, () => ({
-      position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(4),
+      position: new Vector3(-1.3, 0, 0.8).multiplyScalar(AU).divideScalar(4),
     }))
     .with(THEMES.SYNTHWAVE, () => ({
       position: new Vector3(-1.1, 0, 0.9).multiplyScalar(AU).divideScalar(10),
@@ -88,9 +88,9 @@ export const RedSunEntity: React.FC = () => {
       <ECS.Component name="position" data={position} />
       <ECS.Component name="radius" data={SUN_RADIUS / 5} />
       <ECS.Component name="star" />
-      <ECS.Component name="color" data={0xf15254} />
+      <ECS.Component name="color" data={new Color(0xf15254)} />
       <ECS.Component name="emissive" data={0xf15254} />
-      <ECS.Component name="intensity" data={0.4} />
+      <ECS.Component name="intensity" data={0.1} />
       <ECS.Component name="name" data="Ruinos" />
     </ECS.Entity>
   )
@@ -99,15 +99,12 @@ export const RedSunEntity: React.FC = () => {
 export const PlanetEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      {/* <ECS.Component
+      <ECS.Component
         name="position"
         // TODO replace this with vector 0
         data={new Vector3()}
-      /> */}
-      <ECS.Component
-        name="position"
-        data={new Vector3(MOON_DISTANCE / 10, 0, MOON_DISTANCE / 10)}
       />
+      <ECS.Component name="atmosphereRadius" data={EARTH_RADIUS + 200_000} />
       <ECS.Component name="radius" data={EARTH_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -176,9 +173,10 @@ export const MoonEntity3: React.FC = () => {
     <ECS.Entity>
       <ECS.Component
         name="position"
-        data={new Vector3(MOON_DISTANCE / 4, 0, MOON_DISTANCE / 4)}
+        data={new Vector3(MOON_DISTANCE, 0, MOON_DISTANCE)}
       />
       <ECS.Component name="radius" data={MARS_RADIUS} />
+      <ECS.Component name="atmosphereRadius" data={MARS_RADIUS + 40_000} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={false} />
