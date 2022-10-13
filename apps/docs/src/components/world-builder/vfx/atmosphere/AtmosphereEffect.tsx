@@ -1,5 +1,5 @@
 import { useThree } from "@react-three/fiber"
-import { Effect, EffectAttribute } from "postprocessing"
+import { Effect, EffectAttribute, WebGLExtension } from "postprocessing"
 import * as React from "react"
 import { usePostProcessingEffect } from "render-composer"
 import { Camera, Uniform, Vector3 } from "three"
@@ -59,6 +59,7 @@ class MyCustomEffectImpl extends Effect {
           ],
         ]),
         attributes: EffectAttribute.DEPTH,
+        extensions: new Set([WebGLExtension.DERIVATIVES])
       },
     )
 

@@ -11,7 +11,7 @@ export const Canvas: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
       gl={{ logarithmicDepthBuffer: true }}
       camera={{
         near: 0.01,
-        far: Number.MAX_SAFE_INTEGER,
+        far: Number.MAX_SAFE_INTEGER / 2,
       }}
       shadows
       style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}

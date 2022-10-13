@@ -6,10 +6,10 @@ import { useStore } from "statery"
 import { DoubleSide, Mesh } from "three"
 import FlyCamera from "../cameras/FlyCamera"
 import { useTheme } from "./Theme"
-import { AsteroidField } from "./vfx/asteroid-field/AsteroidField"
 import { CERES_RADIUS } from "./WorldBuilder.math"
 import { ECS, Planet, PlANET_TYPES, store, THEMES } from "./WorldBuilder.state"
 import worker from "./WorldBuilder.worker"
+
 
 export const Clouds: React.FC<
   Pick<Planet, "atmosphereRadius" | "radius" | "seed">
@@ -121,7 +121,6 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
           ) : (
             <meshStandardMaterial vertexColors />
           )}
-          <AsteroidField />
         </HelloPlanet>
       </mesh>
     )

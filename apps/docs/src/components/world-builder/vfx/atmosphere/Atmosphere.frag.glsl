@@ -4,6 +4,7 @@ uniform vec3 uCameraPosition;
 
 #define PLANETS_LENGTH <planetsLength>
 #define SUNS_LENGTH <sunsLength>
+#define saturate(a) clamp( a, 0.0, 1.0 )
 
 struct Planet {
   vec3 origin;
@@ -34,76 +35,37 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
   vec3 rayOrigin = uCameraPosition;
   vec3 rayDirection = normalize((uViewMatrixInverse * vec4(point.xyz, 0)).xyz); // view-space => world
 
-  vec3 addColor = inputColor.xyz;
+  vec3 addColor = inputColor.rgb;
+
+  // vec4 fragCoord = texture2D( depthBuffer, uv );
+  // float logDepthBufFC = 2.0 / ( log( cameraFar + 1.0 ) / log(2.0) );
+  // float viewZ = -1.0 * (exp2(fragCoord.x / (logDepthBufFC * 0.5)) - 1.0);
+
+  // depth isssue?
+  // https://jsfiddle.net/o7fbcqgh/
 
   for (int i = 0; i < PLANETS_LENGTH; i ++) {
-    float t0; // can ignore these guys
-    float t1;
     Planet currentPlanet = uPlanets[i];
-    // if (_RayIntersectsSphere(
-    //   rayOrigin, // start point at this pixel
-    //   rayDirection, // direction this pixel is looking at 
-    //   currentPlanet.origin, // center 
-    //   currentPlanet.atmosphereRadius,
-    //   t0, 
-    //   t1
-    //     )) {
-    //     // if this pixel hits the sphere then we paint the screen purpleish
-    //     addColor += vec3(0.149, 0.141, 0.912);
-    //   }
-      // vec2 sphereIntersect = sphere(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.atmosphereRadius);
-      for (int s = 0; s < SUNS_LENGTH; s ++) {
-
-          // TODO add support for more than one sun
-          Sun sun = uSuns[s];
-          vec3 lightDireciton = normalize(sun.origin - rayOrigin);
-
-          // addColor += in_scatter(
-          //   rayOrigin,
-          //   currentPlanet.origin,
-          //   currentPlanet.radius,
-          //   currentPlanet.atmosphereRadius,
-          //   rayDirection, 
-          //   sphereIntersect,
-          //   lightDireciton
-          // );
-          addColor += blah_calculate_scattering(
-            rayOrigin,				// the position of the camera
-            rayDirection, 					// the camera vector (ray direction of this pixel)
-            sceneDepth, 						// max dist, essentially the scene depth
-            inputColor.xyz,						// scene color, the color of the current pixel being rendered
-            lightDireciton,						// light direction
-            vec3(sun.intensity),						// light intensity, 40 looks nice
-            sun.color,
-            currentPlanet.origin,						// position of the planet
-            currentPlanet.radius,                // radius of the planet in meters
-            currentPlanet.atmosphereRadius,                   // radius of the atmosphere in meters
-            RAY_BETA,						// Rayleigh scattering coefficient
-            MIE_BETA,                       // Mie scattering coefficient
-            ABSORPTION_BETA,                // Absorbtion coefficient
-            AMBIENT_BETA,					// ambient scattering, turned off for now. This causes the air to glow a bit when no light reaches it
-            G,                          	// Mie preferred scattering direction
-            HEIGHT_RAY,                     // Rayleigh scale height
-            HEIGHT_MIE,                     // Mie scale height
-            HEIGHT_ABSORPTION,				// the height at which the most absorption happens
-            ABSORPTION_FALLOFF,				// how fast the absorption falls off from the absorption height 
-            PRIMARY_STEPS, 					// steps in the ray direction 
-            LIGHT_STEPS 					// steps in the light direction
-          );
-        // applyFog(inputColor.rgb, depth, rayDirection, dirToSun);
+    vec2 sphereIntersect = sphere(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.atmosphereRadius);
+    vec2 planetSphereIntersect = sphere(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.radius);
+    for (int s = 0; s < SUNS_LENGTH; s ++) {
+    Sun sun = uSuns[s];
+    vec3 lightDirection = normalize(sun.origin - rayOrigin);
+    if (
+      sphereIntersect.y >= 0.
+    ) {
+        float intersectDist = sphereIntersect.y;
+        intersectDist = min(intersectDist, 2.0 * currentPlanet.atmosphereRadius);
+        // if (planetSphereIntersect.x >= 0.) {
+        //   intersectDist = min(intersectDist, planetSphereIntersect.x );
+        // }
+        // intersectDist = min(intersectDist, sceneDepth * 100000.);
+        vec3 intersectionPoint = rayOrigin + sphereIntersect.y * rayDirection;
+        float intensity = remap(0., 2.0 * currentPlanet.atmosphereRadius, 0., 1.0, intersectDist);
+        addColor += sun.color * intensity;
       }
-
-    // vec2 s0 = sphere(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.atmosphereRadius);
-    //   // Applyfog
-    // float d = getFog(rayOrigin, rayDirection, depth, currentPlanet.atmosphereRadius, currentPlanet.origin);
-    // d = 1.0 - exp(-d);
-    // d = min(d, 1.0);
-    // addColor.rgb = mix(addColor.rgb, vec3(0.5, 0.6, 0.7), d);
-    // if (s0.y > s0.x) {
-    //   addColor += vec3(0.149, 0.141, 0.912);
-    // }
+    }
   }
 
-  outputColor = vec4(inputColor.rgb + addColor, 1.0);
-  // outputColor = vec4(uColors[2].color.xyz, 1.0);
+  outputColor = vec4(addColor, 1.0);
 }
