@@ -1,8 +1,8 @@
-https://user-images.githubusercontent.com/5485824/196034090-fb88cca1-f5a2-4b20-b930-871a9fb6e01b.mp4
+https://user-images.githubusercontent.com/5485824/196038523-2ff806cd-6d75-4d7e-8096-70b5b8ef13ba.mp4
 
 # Hello Worlds 👋🌐
 
-Virtual javascript worlds at planetary scales. 
+**Virtual javascript worlds at planetary scales.**
 
 > **Warning**
 > This library is a work in progress. APIs may change unexpectedly until they reach version 1.0.
@@ -37,4 +37,3 @@ Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](htt
 ## Where did you get all this crap from? 🤔
 
 [I copied from these smarter people](./SOURCES.md)
-
