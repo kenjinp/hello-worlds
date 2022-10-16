@@ -1,11 +1,13 @@
+# Hello Worlds 👋🌐
+
 https://user-images.githubusercontent.com/5485824/196038523-2ff806cd-6d75-4d7e-8096-70b5b8ef13ba.mp4
 
-# Hello Worlds 👋🌐
+## Overview
 
 **Virtual javascript worlds at planetary scales.**
 
 > **Warning**
-> This library is a work in progress. APIs may change unexpectedly until they reach version 1.0.
+> These libraries are a work in progress. APIs may change unexpectedly until they reach version 1.0.
 
 In this project you'll find a growing collection of tools to plop large planets into your [`three.js`](threejs.org/) scene, and then populate that world with interesting things.
 
@@ -34,6 +36,5 @@ Visit https://worlds.kenny.wtf to explore a test scene.
 
 Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](https://www.twitch.tv/kennycreates), or the [Poimandres Discord](https://discord.gg/aAYjm2p7c7)
 
-## Where did you get all this crap from? 🤔
-
-[I copied from these smarter people](./SOURCES.md)
+## Credits 📓
+This library would not be possible without [their help](./SOURCES.md).
