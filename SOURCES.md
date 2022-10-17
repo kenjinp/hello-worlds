@@ -17,3 +17,6 @@ For being supportive and inspirational
 - [Eric McDaniel](https://github.com/3mcd)
 - [Hendrik Mans](https://github.com/hmans)
 - [Javelin Discord](https://discord.gg/9qvBurTQwb)
+
+## Attributions
+- Intro video music by Polar Nights - ["A Hole in My Roof"](https://www.epidemicsound.com/track/IvPmHEB0UY/); licensed from epidemic sounds.
