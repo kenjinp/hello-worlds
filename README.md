@@ -36,5 +36,8 @@ Visit https://worlds.kenny.wtf to explore a test scene.
 
 Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](https://www.twitch.tv/kennycreates), or the [Poimandres Discord](https://discord.gg/aAYjm2p7c7)
 
+## Alternatives 💕
+Check out [terra](https://github.com/fintelia/terra) if you're looking for something more performant and fully-featured. It's amazing!
+
 ## Credits 📓
 This library would not be possible without [their help](./SOURCES.md).
