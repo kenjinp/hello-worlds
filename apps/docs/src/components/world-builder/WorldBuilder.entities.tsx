@@ -3,12 +3,14 @@ import { Color, Vector3 } from "three"
 import { match } from "ts-pattern"
 import { ExplorerEntity, Explorers } from "./Explorers"
 import { Planets } from "./Planets"
+import { RingWorlds } from "./RingWorld"
 import { Stars } from "./Stars"
 import { useTheme } from "./Theme"
 import {
   AU,
   CERES_RADIUS,
   EARTH_RADIUS,
+  km,
   MARS_RADIUS,
   MOON_DISTANCE,
   MOON_RADIUS,
@@ -116,6 +118,39 @@ export const PlanetEntity: React.FC = () => {
   )
 }
 
+export const RingEntity: React.FC = () => {
+  return (
+    <ECS.Entity>
+      <ECS.Component name="position" data={new Vector3()} />
+      <ECS.Component name="radius" data={EARTH_RADIUS * 2} />
+      <ECS.Component name="ringWorld" />
+      <ECS.Component name="seed" data="hello-worlds" />
+      <ECS.Component name="focused" data={true} />
+      <ECS.Component name="name" data="Alothirand" />
+      <ECS.Component name="length" data={100 * km} />
+      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
+    </ECS.Entity>
+  )
+}
+
+export const RingEntity2: React.FC = () => {
+  return (
+    <ECS.Entity>
+      <ECS.Component
+        name="position"
+        data={new Vector3(EARTH_RADIUS * 2, 0, EARTH_RADIUS * 2)}
+      />
+      <ECS.Component name="radius" data={20 * km} />
+      <ECS.Component name="ringWorld" />
+      <ECS.Component name="seed" data="hello-worlds" />
+      <ECS.Component name="focused" data={true} />
+      <ECS.Component name="name" data="Cycler" />
+      <ECS.Component name="length" data={80 * km} />
+      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
+    </ECS.Entity>
+  )
+}
+
 export const MoonletEntity: React.FC = () => {
   return (
     <ECS.Entity>
@@ -187,7 +222,6 @@ export const MoonEntity3: React.FC = () => {
 }
 
 export const RenderEntities: React.FC = () => {
-  console.log("rerender? entities")
   return (
     <>
       {/* Add data to the scene */}
@@ -195,7 +229,9 @@ export const RenderEntities: React.FC = () => {
       <SunEntity />
       <RedSunEntity />
 
-      <PlanetEntity />
+      {/* <PlanetEntity /> */}
+      <RingEntity />
+      {/* <RingEntity2 /> */}
       {/* <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
@@ -205,6 +241,7 @@ export const RenderEntities: React.FC = () => {
       <Stars />
       <Planets />
       <Explorers />
+      <RingWorlds />
     </>
   )
 }

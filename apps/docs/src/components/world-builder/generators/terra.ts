@@ -1,19 +1,19 @@
 import {
   ChunkGenerator3Initializer,
-  DEFAULT_NOISE_PARAMS,
+  ColorGeneratorInitializer,
   Lerp,
   LinearSpline,
-  Noise
+  Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
+import { DEFAULT_NOISE_PARAMS } from "../../noise/NoiseController"
 import { remap } from "../WorldBuilder.math"
-import { InitialData } from "../WorldBuilder.worker"
+import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
-  {},
-  number,
-  InitialData
-> = ({ initialData: { seed, type }, radius }) => {
+  ThreadParams,
+  number
+> = ({ data: { seed, type }, radius }) => {
   const mountains = new Noise({
     ...DEFAULT_NOISE_PARAMS,
     seed: "blip",
@@ -36,56 +36,38 @@ export const heightGenerator: ChunkGenerator3Initializer<
     scale: radius / 2,
   })
 
-  const oceanNoiseMask = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
-    seed: "ocean",
-    height: 1,
-    scale: radius,
-  })
-
   return ({ input }) => {
     const w = warp.get(input.x, input.y, input.z)
     const m = mountains.get(input.x + w, input.y + w, input.z + w)
     const n = noise.get(input.x + w, input.y + w, input.z + w)
-    const o = oceanNoiseMask.get(input.x + w, input.y + w, input.z + w)
-    // if (o > 0.075) {
-    //   return n + m
-    // }
+
     return n + m
   }
 }
 
-const oceanColor = new Color(0x1d5a67)
-const groundColor = new Color(0x214711)
+const oceanColor = new Color(0x2b65ec)
 
 const colorLerp: Lerp<THREE.Color> = (
   t: number,
   p0: THREE.Color,
-  p1: THREE.Color
+  p1: THREE.Color,
 ) => {
-  const c = p0.clone();
-  return c.lerp(p1, t);
-};
+  const c = p0.clone()
+  return c.lerp(p1, t)
+}
 
-const colorSplines = [
-  new LinearSpline<THREE.Color>(colorLerp),
-  new LinearSpline<THREE.Color>(colorLerp),
-  new LinearSpline<THREE.Color>(colorLerp),
-];
+const colorSpline = new LinearSpline<THREE.Color>(colorLerp)
 
 // Temp / Aridity
-colorSplines[0].addPoint(0.0, new Color(0x37a726));
-colorSplines[0].addPoint(0.05, new Color(0x214711));
-colorSplines[0].addPoint(0.4, new Color(0x526b48));
-colorSplines[0].addPoint(0.9, new Color(0xab7916));
-colorSplines[0].addPoint(1.0, new Color(0xbab3a2));
-export const colorGenerator: ChunkGenerator3Initializer<
-  {},
-  Color,
-  InitialData
-> = () => {
-  return ({ input }) => {
-    const height = input.z
-    return height > 0.2 ?  colorSplines[0].get(remap(height, 0, 5_000, 0, 1)) : oceanColor
+colorSpline.addPoint(0.0, new Color(0x37a726))
+colorSpline.addPoint(0.05, new Color(0x214711))
+colorSpline.addPoint(0.4, new Color(0x526b48))
+colorSpline.addPoint(0.9, new Color(0xab7916))
+colorSpline.addPoint(1.0, new Color(0xbab3a2))
+export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = () => {
+  return ({ height }) => {
+    return height > 0
+      ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
+      : oceanColor
   }
 }

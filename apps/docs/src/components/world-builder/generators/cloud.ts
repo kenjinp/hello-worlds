@@ -1,24 +1,23 @@
 import {
   ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
   DEFAULT_NOISE_PARAMS,
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { InitialData } from "../WorldBuilder.worker"
+import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
-  {},
-  number,
-  InitialData
-> = ({ initialData: { seed, type }, radius }) => {
+  ThreadParams,
+  number
+> = ({ data: { seed, type }, radius }) => {
   return ({ input }) => 1
 }
 
 export const colorGenerator: ChunkGenerator3Initializer<
-  {},
-  Color,
-  InitialData
-> = ({ initialData: { seed, type }, radius }) => {
+  ThreadParams,
+  Color | ColorArrayWithAlpha
+> = ({ data: { seed }, radius }) => {
   const noise = new Noise({
     ...DEFAULT_NOISE_PARAMS,
     height: 1,

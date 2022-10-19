@@ -8,10 +8,15 @@ export const Canvas: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const { debugMode } = useStore(store)
   return (
     <RC.Canvas
-      gl={{ logarithmicDepthBuffer: true }}
+      gl={{
+        logarithmicDepthBuffer: true,
+        antialias: false,
+        stencil: false,
+        depth: false,
+      }}
       camera={{
         near: 0.01,
-        far: Number.MAX_SAFE_INTEGER / 2,
+        far: Number.MAX_SAFE_INTEGER,
       }}
       shadows
       style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}

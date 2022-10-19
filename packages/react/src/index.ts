@@ -1,3 +1,4 @@
 export * from "./cameras/OrbitCamera"
-export * from "./planets/Planets"
+export * from "./planet/Planet"
+export * from "./ring-world/RingWorld"
 export * from "./utils/useFrameEffect"

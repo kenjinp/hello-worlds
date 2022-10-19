@@ -1,19 +1,19 @@
 import { randomRange, setRandomSeed } from "@hello-worlds/core"
 import {
   ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
   DEFAULT_NOISE_PARAMS,
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
 import { getRndBias, randomSpherePoint } from "../WorldBuilder.math"
-import { InitialData } from "../WorldBuilder.worker"
+import { ThreadParams } from "../WorldBuilder.worker"
 import { Crater, craterHeight } from "./craters"
 
 export const heightGenerator: ChunkGenerator3Initializer<
-  {},
-  number,
-  InitialData
-> = ({ initialData: { seed, type }, radius }) => {
+  ThreadParams,
+  number
+> = ({ data: { seed, type }, radius }) => {
   setRandomSeed(seed)
 
   const craters: Crater[] = Array(700)
@@ -55,9 +55,8 @@ export const heightGenerator: ChunkGenerator3Initializer<
 
 const moonColor = new Color(0x332e36)
 export const colorGenerator: ChunkGenerator3Initializer<
-  {},
-  Color,
-  InitialData
+  ThreadParams,
+  Color | ColorArrayWithAlpha
 > = () => {
   return ({ input }) => {
     return moonColor

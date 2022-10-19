@@ -1,5 +1,6 @@
 import {
   ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
   createThreadedPlanetWorker,
 } from "@hello-worlds/planets"
 import { Color } from "three"
@@ -12,17 +13,12 @@ export type ThreadParams = {
   type: PlANET_TYPES
 }
 
-export type InitialData = {
-  initialData: ThreadParams
-}
-
 const heightGenerator: ChunkGenerator3Initializer<
-  {},
-  number,
-  InitialData
+  ThreadParams,
+  number
 > = props => {
   const {
-    initialData: { type },
+    data: { type },
   } = props
   const generator = match(type)
     .with(PlANET_TYPES.TERRAN, () => terra.heightGenerator)
@@ -33,12 +29,11 @@ const heightGenerator: ChunkGenerator3Initializer<
 }
 
 const colorGenerator: ChunkGenerator3Initializer<
-  {},
-  Color,
-  InitialData
+  ThreadParams,
+  Color | ColorArrayWithAlpha
 > = props => {
   const {
-    initialData: { type },
+    data: { type },
   } = props
   const generator = match(type)
     .with(PlANET_TYPES.TERRAN, () => terra.colorGenerator)
@@ -48,7 +43,7 @@ const colorGenerator: ChunkGenerator3Initializer<
   return generator(props)
 }
 
-createThreadedPlanetWorker<ThreadParams, {}>({
+createThreadedPlanetWorker<ThreadParams>({
   heightGenerator,
   colorGenerator,
 })

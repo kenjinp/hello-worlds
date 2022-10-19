@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import * as React from "react"
 import { Vector3 } from "three"
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib"
-import { usePlanet } from "../planets/Planets"
+import { usePlanet } from "../planet/Planet"
 
 export interface OrbitCameraProps {
   maxAltitudeOffset?: number
@@ -28,21 +28,16 @@ export const OrbitCamera: React.FC<OrbitCameraProps> = ({
 
   React.useEffect(() => {
     camera.position.copy(
-      new Vector3(
-        planet.planetProps.radius * 1.5,
-        0,
-        planet.planetProps.radius * 1.5,
-      ),
+      new Vector3(planet.radius * 1.5, 0, planet.radius * 1.5),
     )
-  }, [planet.planetProps.radius])
+  }, [planet.radius])
 
   useFrame(() => {
     if (!orbitControls.current) {
       return
     }
     altitude.current =
-      camera.position.distanceTo(planet.rootGroup.position) -
-        planet.planetProps.radius || 0
+      camera.position.distanceTo(planet.position) - planet.radius || 0
     orbitControls.current.zoomSpeed = easeOutExpo(
       altitude.current / orbitControls.current.maxDistance,
     )
@@ -57,8 +52,8 @@ export const OrbitCamera: React.FC<OrbitCameraProps> = ({
       ref={orbitControls}
       enablePan={false}
       enableZoom
-      maxDistance={planet.planetProps.radius * maxDistanceMultiplier}
-      minDistance={planet.planetProps.radius + maxAltitudeOffset}
+      maxDistance={planet.radius * maxDistanceMultiplier}
+      minDistance={planet.radius + maxAltitudeOffset}
     />
   )
 }

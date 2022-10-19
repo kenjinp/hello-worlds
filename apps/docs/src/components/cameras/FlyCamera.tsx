@@ -15,7 +15,7 @@ const FlyCamera: React.FC<{
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
-  const { entities } = ECS.useArchetype("planet")
+  const { entities } = ECS.useArchetype("ringWorld")
   const { camera } = useThree()
   const [_closestPlanet, setClosestPlanet] = React.useState<Planet>(null)
   const updateMyPresence = useUpdateMyPresence()
@@ -97,7 +97,7 @@ const FlyCamera: React.FC<{
         closestPlanet.radius || 0
 
     flyControls.current.movementSpeed = MathUtils.clamp(
-      altitude.current,
+      Math.abs(altitude.current),
       minSpeed,
       maxSpeed,
     )

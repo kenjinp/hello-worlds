@@ -1,7 +1,8 @@
 import { Vector3 } from "three"
-import { BuildChunkInitialParams, BuildChunkParams } from "./types"
+import { BuildChunkInitialParams, ChunkGeneratorProps } from "../chunk/types"
+import { tempColor } from "../utils"
 
-export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
+export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
   const colorInputVector = new Vector3()
   const _D = new Vector3()
   const _D1 = new Vector3()
@@ -15,7 +16,8 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
   const _N2 = new Vector3()
   const _N3 = new Vector3()
   const { heightGenerator, colorGenerator } = initialParams
-  return function runBuildChunk(params: BuildChunkParams<T>) {
+
+  return function runBuildChunk(params: ChunkGeneratorProps<D>) {
     const positions = []
     const colors = []
     const normals = []
@@ -51,30 +53,34 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
         const height = heightGenerator({
           input: heightInput,
           worldPosition: heightInput,
+          radius,
+          offset,
+          width,
+          worldMatrix: params.worldMatrix,
+          resolution,
+          origin: params.origin,
+          inverted: params.inverted,
           data: params.data,
-          radius,
-          offset,
-          width,
-          worldMatrix: params.worldMatrix,
-          resolution,
         })
-        const color = colorGenerator({
-          input: colorInputVector.set(_W.x, _W.y, height).clone(),
-          worldPosition: _W.clone(),
-          data: {
-            ...params.data,
-            height,
-          },
-          radius,
-          offset,
-          width,
-          worldMatrix: params.worldMatrix,
-          resolution,
-        })
+        const color = colorGenerator
+          ? colorGenerator({
+              input: colorInputVector.set(_W.x, _W.y, height).clone(),
+              worldPosition: _W.clone(),
+              radius,
+              offset,
+              width,
+              worldMatrix: params.worldMatrix,
+              resolution,
+              inverted: params.inverted,
+              origin: params.origin,
+              height,
+              data: params.data,
+            })
+          : tempColor.set(0xffffff).clone()
 
         // Purturb height along z-vector
         _H.copy(_D)
-        _H.multiplyScalar(height * (params.invert ? -1 : 1))
+        _H.multiplyScalar(height * (params.inverted ? -1 : 1))
         _P.add(_H)
 
         // color has alpha from array
@@ -83,16 +89,7 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
         } else {
           colors.push(color.r, color.g, color.b, 1)
         }
-
         positions.push(_P.x, _P.y, _P.z)
-        // localPosition.normalize();
-
-        // colors.push(color.r, color.g, color.b);
-        //@ts-ignore
-        // const color = this.#colorGenerator.getTemperature(_W, height);
-        // colors.push(color.r, color.g, color.b)
-        // _P.normalize();
-        // colors.push(_W.x, _W.y, _W.z);
         normals.push(_D.x, _D.y, _D.z)
         tangents.push(1, 0, 0, 1)
         uvs.push(_P.x / 200.0, _P.y / 200.0)
@@ -169,7 +166,7 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
     }
 
     const uiPositions = _Unindex(positions, 3)
-    const uiColours = _Unindex(colors, 4)
+    const uiColors = _Unindex(colors, 4)
     const uiNormals = _Unindex(normals, 3)
     const uiTangents = _Unindex(tangents, 4)
     const uiUVs = _Unindex(uvs, 2)
@@ -178,8 +175,8 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
     const positionsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * uiPositions.length),
     )
-    const coloursArray = new Float32Array(
-      new SharedArrayBuffer(bytesInFloat32 * uiColours.length),
+    const colorsArray = new Float32Array(
+      new SharedArrayBuffer(bytesInFloat32 * uiColors.length),
     )
     const normalsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * uiNormals.length),
@@ -192,13 +189,13 @@ export function buildChunk<T, I>(initialParams: BuildChunkInitialParams<T>) {
     )
 
     positionsArray.set(uiPositions, 0)
-    coloursArray.set(uiColours, 0)
+    colorsArray.set(uiColors, 0)
     normalsArray.set(uiNormals, 0)
     uvsArray.set(uiUVs, 0)
 
     return {
       positions: positionsArray,
-      colours: coloursArray,
+      colors: colorsArray,
       uvs: uvsArray,
       normals: normalsArray,
       tangents: tangentsArray,

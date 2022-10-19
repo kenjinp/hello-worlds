@@ -1,4 +1,4 @@
-import { PlanetProps } from "@hello-worlds/planets"
+import { PlanetProps, RingWorldProps } from "@hello-worlds/planets"
 import { Tag } from "miniplex"
 import { createECS } from "miniplex-react"
 import { makeStore } from "statery"
@@ -28,7 +28,7 @@ export type AstralBody = {
   offset: Vector3
   name?: string
   labelColor?: Color
-} & Partial<PlanetProps>
+} & Partial<PlanetProps<any>>
 
 export type Star = AstralBody & {
   color: Color
@@ -56,6 +56,13 @@ export type Planet = AstralBody & {
   atmosphereRadius?: number
 }
 
+export type RingWorld = AstralBody & {
+  ringWorld: Tag
+  seed: string
+  mesh?: Mesh
+  focused?: boolean
+} & RingWorldProps<any>
+
 export type Explorer = {
   explorer: Tag
   position: Vector3
@@ -69,6 +76,6 @@ export type Explorer = {
   mesh?: Mesh
 }
 
-type Entity = Star | Planet | Explorer
+type Entity = Star | Planet | Explorer | RingWorld
 
 export const ECS = createECS<Entity>()

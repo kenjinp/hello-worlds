@@ -1,12 +1,14 @@
 import { Group, Material, Vector2, Vector3 } from "three"
 import { makeRootChunkKey } from "../chunk/Chunk.helpers"
 import { ChunkMap, ChunkTypes, RootChunkProps } from "../chunk/types"
-import { CubicQuadTree } from "../quadtree/CubicQuadTree"
+import { PlanetBuilderProps } from "../planet/Planet.builder"
 import { dictDifference, dictIntersection } from "../utils"
-import PlanetBuilder, { PlanetBuilderProps } from "./Planet.builder"
+import RingWorldBuilder from "./RingWorld.builder"
+import { RingWorldQuadTree } from "./RingWorld.quadTree"
 
-export interface PlanetProps<D> {
+export interface RingWorldProps<D> {
   radius: number
+  length: number
   inverted?: boolean
   minCellSize: number
   minCellResolution: number
@@ -16,65 +18,69 @@ export interface PlanetProps<D> {
   data: D
 }
 
-export class Planet<D = Record<string, any>> extends Group {
+export class RingWorld<D = Record<string, any>> extends Group {
   #chunkMap: ChunkMap = {}
-  #cubeFaceGroups = [...new Array(6)].map(_ => new Group())
-  #builder: PlanetBuilder<D>
+  #segmentGroups = [...new Array(4)].map(_ => new Group())
+  #builder: RingWorldBuilder<D>
   readonly data: D
   material?: Material
   minCellSize: number
   minCellResolution: number
   radius: number
+  length: number
   inverted: boolean
 
   constructor({
     radius,
+    length,
     minCellSize,
     minCellResolution,
     material,
-    data,
     workerProps,
+    data,
     position,
     inverted = false,
-  }: PlanetProps<D>) {
+  }: RingWorldProps<D>) {
     super()
+    console.log("NEW RING WORLD")
     this.position.copy(position)
-    this.#builder = new PlanetBuilder<D>({
-      workerProps,
-      data,
-      radius,
-      inverted,
-    })
+    this.data = data
+    this.length = length
     this.radius = radius
     this.material = material
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
-    this.data = data
+    this.#builder = new RingWorldBuilder<D>({
+      workerProps,
+      data,
+      radius,
+      inverted,
+      length,
+    })
     this.inverted = inverted
-    this.add(...this.#cubeFaceGroups)
+    this.add(...this.#segmentGroups)
   }
 
-  // this will cause all the chunks to reform
-  // use this to update planet parameters
+  // to re-apply parameter changes, for example
   rebuild() {
     this.#builder.rebuild(this.#chunkMap)
   }
 
-  // this will resolve the LOD
-  // you can call this each frame with a camera
   update(lodOrigin: Vector3) {
     this.#builder.update()
     if (this.#builder.busy) {
       return
     }
 
+    // where should we compare the LOD resolution to?
     const origin = this.position
 
     // update visible chunks quadtree
-    const q = new CubicQuadTree({
+    const q = new RingWorldQuadTree({
       radius: this.radius,
       minNodeSize: this.minCellSize,
       origin,
+      length: this.length,
     })
 
     // collapse the quadtree recursively at this position
@@ -86,7 +92,7 @@ export class Planet<D = Record<string, any>> extends Group {
     const center = new Vector3()
     const dimensions = new Vector3()
     for (let i = 0; i < sides.length; i++) {
-      const cubeFaceRootGroup = this.#cubeFaceGroups[i]
+      const cubeFaceRootGroup = this.#segmentGroups[i]
       cubeFaceRootGroup.matrix = sides[i].transform // removed for floating origin
       cubeFaceRootGroup.matrixAutoUpdate = false
       for (let cubeFaceChildChunk of sides[i].children) {
@@ -131,6 +137,7 @@ export class Planet<D = Record<string, any>> extends Group {
           origin: this.position,
           width: parentChunkProps.size,
           radius: this.radius,
+          length: this.length,
           resolution: this.minCellResolution,
           inverted: !!this.inverted,
         }),
@@ -141,7 +148,7 @@ export class Planet<D = Record<string, any>> extends Group {
   }
 
   dispose() {
-    console.log("goodbye planet!")
+    console.log("goodbye ring world!")
     this.#builder.dispose()
   }
 }

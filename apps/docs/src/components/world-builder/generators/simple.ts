@@ -1,16 +1,16 @@
 import {
   ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
   DEFAULT_NOISE_PARAMS,
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { InitialData } from "../WorldBuilder.worker"
+import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
-  {},
-  number,
-  InitialData
-> = ({ initialData: { seed, type }, radius }) => {
+  ThreadParams,
+  number
+> = ({ data: { seed, type }, radius }) => {
   const noise = new Noise({
     ...DEFAULT_NOISE_PARAMS,
     seed: "moon",
@@ -34,9 +34,8 @@ export const heightGenerator: ChunkGenerator3Initializer<
 
 const moonColor = new Color(0x332e36)
 export const colorGenerator: ChunkGenerator3Initializer<
-  {},
-  Color,
-  InitialData
+  ThreadParams,
+  Color | ColorArrayWithAlpha
 > = () => {
   return ({ input }) => {
     return moonColor

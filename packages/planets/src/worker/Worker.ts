@@ -26,7 +26,7 @@ export default class WorkerThread<T> {
     this.#worker.postMessage(s)
   }
 
-  destroy() {
+  dispose() {
     this.#worker.terminate()
   }
 }

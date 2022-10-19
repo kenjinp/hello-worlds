@@ -1,3 +1,5 @@
+import { Color, Vector3 } from "three"
+
 export const dictIntersection = <T = Record<string, any>>(
   dictA: T,
   dictB: T,
@@ -18,4 +20,11 @@ export const dictDifference = <T = Record<string, any>>(dictA: T, dictB: T) => {
     delete diff[k]
   }
   return diff
+}
+
+export const tempVector3 = new Vector3()
+export const tempColor = new Color()
+
+export const NOOP = () => {
+  // noop, required sometimes by TS
 }

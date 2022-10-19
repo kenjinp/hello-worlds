@@ -18,6 +18,23 @@ vec2 sphere(
     return vec2(t0,t1);
 }
 
+
+// Thanks for IQ's ray sphere instruction
+// https://iquilezles.org/blog/?p=2411
+float iSphere(in vec3 ro, in vec3 rd, in vec3 sph, in float rad) {
+	// This is relating directly to parametric equation
+    // where we define a function xyz = ro + t*rd
+    // solving the quadradic equation below
+ 	vec3 oc = ro - sph;
+    float b = dot(oc, rd);
+    float c = dot(oc, oc) - rad*rad;
+    float t = b*b - c;
+    if( t > 0.0) 
+        t = -b - sqrt(t);
+    return t;
+}
+
+
 bool sphereIntersect(
   vec3 rayStart, 
   vec3 rayDir, 
@@ -51,4 +68,14 @@ float lerp(float from, float to, float rel){
 float remap(float origFrom, float origTo, float targetFrom, float targetTo, float value){
   float rel = invLerp(origFrom, origTo, value);
   return lerp(targetFrom, targetTo, rel);
+}
+
+float smoothClamp(float x, float a, float b)
+{
+    return smoothstep(0., 1., (x - a)/(b - a))*(b - a) + a;
+}
+
+float softClamp(float x, float a, float b)
+{
+    return smoothstep(0., 1., (2./3.)*(x - a)/(b - a) + (1./6.))*(b - a) + a;
 }

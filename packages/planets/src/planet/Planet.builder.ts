@@ -1,41 +1,45 @@
-import { Material } from "three"
+import { MathUtils } from "three"
+import Chunk, { ChunkProps } from "../chunk/Chunk"
 import {
-  ChunkMap,
-  ChunkTypes,
-  CubeFaceChildChunkProps,
-  CubeFaceRootChunkProps,
-  PlanetProps,
-} from "../planet/Planet"
-import WorkerThreadPool from "../worker/WorkerThreadPool"
-import ChunkThreaded, { ChunkThreadedParams } from "./ChunkThreaded"
-import {
+  ChildChunkProps,
   ChunkBuilderThreadedMessage,
   ChunkBuilderThreadedMessageTypes,
-} from "./types"
+  ChunkMap,
+  ChunkTypes,
+  RootChunkProps,
+} from "../chunk/types"
+import { NOOP } from "../utils"
+import WorkerThreadPool from "../worker/WorkerThreadPool"
 
-export default class ChunkBuilderThreaded<T, I> {
-  #old: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[] = []
+export interface PlanetBuilderProps<D> {
+  workerProps: {
+    worker: new () => Worker
+    numWorkers: number
+  }
+  radius: number
+  inverted: boolean
+  data: D
+}
+
+export default class PlanetBuilder<D> {
   // we keep the chunks stored with key of width
-  #pool: Record<number, ChunkThreaded[]> = {}
+  #pool: Record<number, Chunk[]> = {}
+  #old: (RootChunkProps | ChildChunkProps<Chunk>)[] = []
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>
-  public id: string
-  constructor(
-    numWorkers: number,
-    worker: new () => Worker,
-    initialData: PlanetProps & I,
-    id: string,
-  ) {
-    this.id = id
+  public id: string = MathUtils.generateUUID()
+
+  constructor({
+    workerProps: { numWorkers, worker },
+    ...buildChunkInitialProps
+  }: PlanetBuilderProps<D>) {
     this.#workerPool = new WorkerThreadPool(numWorkers, worker)
     this.#workerPool.workers.forEach(worker => {
       const msg = {
         subject: ChunkBuilderThreadedMessageTypes.INITIAL_DATA,
-        initialData,
+        buildChunkInitialProps,
         id: this.id,
       }
-      worker.postMessage(msg, () => {
-        // noop
-      })
+      worker.postMessage(msg, NOOP)
     })
   }
 
@@ -51,26 +55,28 @@ export default class ChunkBuilderThreaded<T, I> {
     return this.#workerPool.queueLength
   }
 
-  #onResult(chunk: ChunkThreaded, msg: any, material: Material) {
+  #onResult(chunk: Chunk, msg: any) {
     if (msg.subject === ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT) {
-      chunk.rebuildMeshFromData({ ...msg.data, material })
+      chunk.rebuildMeshFromData({ ...msg.data })
       chunk.show()
     }
   }
 
-  allocateChunk(params: ChunkThreadedParams<T>) {
+  allocateChunk(params: ChunkProps) {
     const w = params.width
 
     if (!(w in this.#pool)) {
       this.#pool[w] = []
     }
 
-    let c: ChunkThreaded | null = null
+    let c: Chunk | null = null
     if (this.#pool[w].length > 0) {
       c = this.#pool[w].pop()!
-      c.params = params
+      // apply new properties to this chunk
+      // like width, etc
+      Object.assign(c, params)
     } else {
-      c = new ChunkThreaded(params)
+      c = new Chunk(params)
     }
 
     c.hide()
@@ -82,8 +88,7 @@ export default class ChunkBuilderThreaded<T, I> {
       origin: params.origin,
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
-      invert: params.invert,
-      data: params.data,
+      inverted: params.inverted,
     }
 
     const msg = {
@@ -92,32 +97,30 @@ export default class ChunkBuilderThreaded<T, I> {
       id: this.id,
     }
 
-    this.#workerPool.enqueue(msg, m => {
+    this.#workerPool.enqueue(msg, response => {
       if (c) {
-        return void this.#onResult(c, m, params.material)
+        return void this.#onResult(c, response)
       }
     })
 
     return c
   }
 
-  retireChunks(recycle: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[]) {
+  retireChunks(recycle: (RootChunkProps | ChildChunkProps<Chunk>)[]) {
     this.#old.push(...recycle)
   }
 
-  #recycleChunks(
-    oldChunks: (CubeFaceRootChunkProps | CubeFaceChildChunkProps)[],
-  ) {
+  #recycleChunks(oldChunks: (RootChunkProps | ChildChunkProps<Chunk>)[]) {
     for (let chunk of oldChunks) {
       if (chunk.type === ChunkTypes.ROOT) {
         // we never get rid of roots!
         return
       }
-      const childChunk = chunk as unknown as CubeFaceChildChunkProps
-      if (!(childChunk.chunk.params.width in this.#pool)) {
-        this.#pool[childChunk.chunk.params.width] = []
+      const childChunk = chunk as unknown as ChildChunkProps<Chunk>
+      if (!(childChunk.chunk.width in this.#pool)) {
+        this.#pool[childChunk.chunk.width] = []
       }
-      childChunk.chunk.destroy()
+      childChunk.chunk.dispose()
     }
   }
 
@@ -125,11 +128,11 @@ export default class ChunkBuilderThreaded<T, I> {
     return this.#workerPool.busy
   }
 
-  rebuild(chunkMap: ChunkMap, data: T, material: Material) {
+  rebuild(chunkMap: ChunkMap) {
     for (let key in chunkMap) {
       const chunk = chunkMap[key]
       if (chunk.type === ChunkTypes.CHILD) {
-        const { material: _prevMaterial, ...params } = chunk.chunk.params
+        const { material: _prevMaterial, ...params } = chunk.chunk
 
         const threadedParams = {
           width: params.width,
@@ -138,8 +141,7 @@ export default class ChunkBuilderThreaded<T, I> {
           origin: params.origin,
           resolution: params.resolution,
           worldMatrix: params.group.matrix,
-          invert: params.invert,
-          data,
+          invert: params.inverted,
         }
 
         const msg = {
@@ -148,9 +150,9 @@ export default class ChunkBuilderThreaded<T, I> {
           id: this.id,
         }
 
-        this.#workerPool.enqueue(msg, m => {
+        this.#workerPool.enqueue(msg, response => {
           if (chunk) {
-            return void this.#onResult(chunk.chunk, m, material)
+            return void this.#onResult(chunk.chunk, response)
           }
         })
       }
@@ -164,9 +166,9 @@ export default class ChunkBuilderThreaded<T, I> {
     }
   }
 
-  destroy() {
+  dispose() {
     this.#workerPool.workers.forEach(worker => {
-      worker.destroy()
+      worker.dispose()
     })
   }
 }

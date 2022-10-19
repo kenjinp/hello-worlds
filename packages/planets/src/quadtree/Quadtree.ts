@@ -25,7 +25,6 @@ export class QuadTree {
   private origin: Vector3
   constructor(private params: QuadTreeParams) {
     const s = params.size
-    const sphere = new THREE.Sphere(params.origin, params.radius)
     const b = new THREE.Box3(
       new THREE.Vector3(-s, -s, 0),
       new THREE.Vector3(s, s, 0),

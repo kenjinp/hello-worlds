@@ -1,5 +1,30 @@
-import THREE, { Color, Object3D, Vector3 } from "three"
-import { PlanetProps } from "../planet/Planet"
+import THREE, { Box3, Color, Matrix4, Object3D, Vector3 } from "three"
+import Chunk from "./Chunk"
+
+export enum ChunkTypes {
+  ROOT = "ROOT",
+  CHILD = "CHILD",
+}
+
+// These root chunks host the interior children chunks
+export interface RootChunkProps {
+  index: number
+  type: ChunkTypes.ROOT
+  size: number
+  group: Object3D
+  position: Vector3
+  transform: Matrix4
+  bounds: Box3
+}
+
+// These are the nested child nodes that live in the quadtree
+export interface ChildChunkProps<C> {
+  type: ChunkTypes.CHILD
+  position: THREE.Vector2
+  chunk: C
+}
+
+export type ChunkMap = Record<string, RootChunkProps | ChildChunkProps<Chunk>>
 
 export enum ChunkBuilderThreadedMessageTypes {
   INITIAL_DATA = "INITIAL_DATA",
@@ -14,38 +39,7 @@ export interface ChunkBuilderThreadedMessage {
   id: string
 }
 
-export interface ThreadedChunkProps_Old {
-  noiseParams: any
-  colorNoiseParams: any
-  biomeParams: any
-  colorGeneratorParams: {
-    seaDeep: string
-    seaMid: string
-    seaShallow: string
-    tempHot: string
-    tempMid: string
-    tempCold: string
-    humidLow: string
-    humidMid: string
-    humidHigh: string
-    seaLevel: number // 0.05
-    seaLevelDividend: number // 100.0
-  }
-  heightGeneratorParams: {
-    min: number
-    max: number
-    // tileMap: TileMAp;
-  }
-  origin: THREE.Vector3
-  width: number
-  offset: [number, number, number]
-  radius: number
-  resolution: number
-  worldMatrix: THREE.Object3D["matrix"]
-  invert: boolean
-}
-
-export type ChunkGenerator3<D, T = number> = (params: {
+export interface ChunkGeneratorProps<D> {
   input: Vector3
   data: D
   worldPosition: Vector3
@@ -53,29 +47,45 @@ export type ChunkGenerator3<D, T = number> = (params: {
   offset: Vector3
   radius: number
   resolution: number
+  inverted: boolean
+  origin: Vector3
   worldMatrix: Object3D["matrix"]
-}) => T
-
-export type ChunkGenerator3Initializer<D, T = number, I = undefined> = (
-  initialData: PlanetProps & I,
-) => ChunkGenerator3<D, T>
-
-export interface BuildChunkParams<T> {
-  width: number
-  offset: Vector3
-  radius: number
-  resolution: number
-  worldMatrix: Object3D["matrix"]
-  invert: boolean
-  data: T
 }
 
+export type ChunkGenerator3<D, Output = number, E = {}> = (
+  params: ChunkGeneratorProps<D> & E,
+) => Output
+
+export type ChunkGenerator3Initializer<D, Output = number, E = {}, P = {}> = (
+  params: GeneratorInitialParams<D> & P,
+) => ChunkGenerator3<D, Output, E>
+
+export type HeightGeneratorInitializer<D> = ChunkGenerator3Initializer<
+  D,
+  number
+>
+export type ColorGeneratorInitializer<D> = ChunkGenerator3Initializer<
+  D,
+  Color | ColorArrayWithAlpha,
+  { height: number }
+>
+export type HeightGenerator<D> = ChunkGenerator3<D, number>
+export type ColorGenerator<D> = ChunkGenerator3<
+  D,
+  Color | ColorArrayWithAlpha,
+  { height: number }
+>
+
+export interface GeneratorInitialParams<D> {
+  radius: number
+  inverted: boolean
+  data: D
+}
+
+// it's strange that three doesn't have an alpha color
 export type ColorArrayWithAlpha = [r: number, g: number, b: number, a: number]
 
-export interface BuildChunkInitialParams<T> {
-  colorGenerator: ChunkGenerator3<
-    T & { height: number },
-    Color | ColorArrayWithAlpha
-  >
-  heightGenerator: ChunkGenerator3<T, number>
+export interface BuildChunkInitialParams<D> {
+  colorGenerator?: ColorGenerator<D>
+  heightGenerator: HeightGenerator<D>
 }

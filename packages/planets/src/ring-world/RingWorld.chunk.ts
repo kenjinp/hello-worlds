@@ -1,63 +1,27 @@
-import * as THREE from "three"
-import { ColorGenerator } from "../generators/ColorGenerator"
-import { Generator3 } from "../generators/Generator3"
-import { HeightGenerator } from "../generators/HeightGenerator"
-import { Noise } from "../noise/Noise"
-import {
-  ChunkBuilderThreadedMessageTypes,
-  ThreadedChunkProps_Old,
-} from "./types"
+import { Matrix4, Vector3 } from "three"
+import { BuildChunkInitialParams, ChunkGeneratorProps } from "../chunk/types"
+import { tempColor, tempVector3 } from "../utils"
 
-class ChunkBuilderThreadedWorker {
-  #noise: Noise
-  #biomeGenerator: Noise
-  #heightGenerators: Generator3<[number, number]>[]
-  #colorGenerator: Generator3<THREE.Color>
-  #offset: THREE.Vector3
+export function buildRingWorldChunk<D>(
+  initialParams: BuildChunkInitialParams<D>,
+) {
+  const colorInputVector = new Vector3()
+  const _D = new Vector3()
+  const _D1 = new Vector3()
+  const _D2 = new Vector3()
+  const _P = new Vector3()
+  const _H = new Vector3()
+  const _W = new Vector3()
 
-  constructor(private params: ThreadedChunkProps_Old) {
-    this.params = params
-    this.#offset = new THREE.Vector3(
-      params.offset[0],
-      params.offset[1],
-      params.offset[2],
-    )
-    this.#noise = new Noise(params.noiseParams)
-    this.#heightGenerators = [
-      new HeightGenerator({
-        generator: this.#noise,
-        // tileMap: this.params.heightGeneratorParams.tileMap,
-        // offset: this.#offset,
-        // minRadius: params.heightGeneratorParams.min,
-        // maxRadius: params.heightGeneratorParams.max,
-      }),
-    ]
-    this.#biomeGenerator = new Noise(params.biomeParams)
-    this.#colorGenerator = new ColorGenerator({
-      ...this.params.colorGeneratorParams,
-      biomeGenerator: this.#biomeGenerator,
-    })
-  }
+  const _N = new Vector3()
+  const _N1 = new Vector3()
+  const _N2 = new Vector3()
+  const _N3 = new Vector3()
+  const { heightGenerator, colorGenerator } = initialParams
 
-  generateHeight(v: THREE.Vector3) {
-    return this.#heightGenerators[0].get(v.x, v.y, v.z)[0]
-  }
-
-  rebuild() {
-    const _D = new THREE.Vector3()
-    const _D1 = new THREE.Vector3()
-    const _D2 = new THREE.Vector3()
-    const _P = new THREE.Vector3()
-    const _H = new THREE.Vector3()
-    const _W = new THREE.Vector3()
-    const _S = new THREE.Vector3()
-    const _C = new THREE.Vector3()
-
-    const _N = new THREE.Vector3()
-    const _N1 = new THREE.Vector3()
-    const _N2 = new THREE.Vector3()
-    const _N3 = new THREE.Vector3()
-
+  return function runBuildChunk(
+    params: ChunkGeneratorProps<D> & { length: number },
+  ) {
     const positions = []
     const colors = []
     const normals = []
@@ -65,13 +29,22 @@ class ChunkBuilderThreadedWorker {
     const uvs = []
     const indices: number[] = []
 
-    const localToWorld = this.params.worldMatrix
-    const origin = this.params.origin
-    const resolution = this.params.resolution
-    const radius = this.params.radius
-    const offset = this.#offset
-    const width = this.params.width
+    const localToWorld = new Matrix4().fromArray(params.worldMatrix.elements)
+    const worldToLocal = localToWorld.clone().invert()
+
+    const resolution = params.resolution
+    const radius = params.radius
+    const offset = params.offset
+    const width = params.width
+    const origin = new Vector3(
+      params.origin.x,
+      params.origin.y,
+      params.origin.z,
+    )
+    const length = params.length
     const half = width / 2
+    // const maxY = width * resolution
+    const lengthModifier = length / radius
 
     for (let x = 0; x < resolution + 1; x++) {
       const xp = (width * x) / resolution
@@ -81,33 +54,63 @@ class ChunkBuilderThreadedWorker {
         // Compute position
         _P.set(xp - half, yp - half, radius)
         _P.add(offset)
+        const originalY = _P.y
         _P.normalize()
         _D.copy(_P)
         _P.multiplyScalar(radius)
         _P.z -= radius
 
-        // Compute a world space position to sample noise
+        // Here we start the cylindrification
         _W.copy(_P)
         _W.applyMatrix4(localToWorld)
 
-        const height = this.generateHeight(_W.clone())
-        _W.normalize() // VERY IMPORTANT!
-        const color = this.#colorGenerator.get(_W.x, _W.y, height)
+        const something = tempVector3.set(origin.x, _W.y, origin.z).clone()
+        const newVal = tempVector3.subVectors(_W, something).setLength(radius)
+        _P.copy(newVal.applyMatrix4(worldToLocal)).setY(originalY)
 
-        // Purturb height along z-vector
-        _H.copy(_D)
-        _H.multiplyScalar(height * (this.params.invert ? -1 : 1))
+        _W.copy(_P)
+        _W.applyMatrix4(localToWorld)
+        const heightInput = _W.clone()
+        const height = heightGenerator({
+          input: heightInput,
+          worldPosition: heightInput,
+          radius,
+          offset,
+          width,
+          worldMatrix: params.worldMatrix,
+          resolution,
+          inverted: params.inverted,
+          origin: params.origin,
+          data: params.data,
+        })
+        const color = colorGenerator
+          ? colorGenerator({
+              input: colorInputVector.set(_W.x, _W.y, height).clone(),
+              worldPosition: _W.clone(),
+              radius,
+              offset,
+              width,
+              worldMatrix: params.worldMatrix,
+              resolution,
+              inverted: params.inverted,
+              height,
+              origin: params.origin,
+              data: params.data,
+            })
+          : tempColor.set(0xffffff).clone()
+
+        // Purturb height along the normal
+        _H.copy(_P)
+        _H.multiplyScalar(height * (params.inverted ? -1 : 1))
         _P.add(_H)
 
+        // color has alpha from array
+        if ("length" in color) {
+          colors.push(...color)
+        } else {
+          colors.push(color.r, color.g, color.b, 1)
+        }
         positions.push(_P.x, _P.y, _P.z)
-        // localPosition.normalize();
-
-        // colors.push(color.r, color.g, color.b);
-        //@ts-ignore
-        // const color = this.#colorGenerator.getTemperature(_W, height);
-        colors.push(color.r, color.g, color.b)
-        // _P.normalize();
-        // colors.push(_W.x, _W.y, _W.z);
         normals.push(_D.x, _D.y, _D.z)
         tangents.push(1, 0, 0, 1)
         uvs.push(_P.x / 200.0, _P.y / 200.0)
@@ -128,8 +131,6 @@ class ChunkBuilderThreadedWorker {
         )
       }
     }
-
-    // const up = [...normals];
 
     for (let i = 0, n = indices.length; i < n; i += 3) {
       const i1 = indices[i] * 3
@@ -186,7 +187,7 @@ class ChunkBuilderThreadedWorker {
     }
 
     const uiPositions = _Unindex(positions, 3)
-    const uiColours = _Unindex(colors, 3)
+    const uiColors = _Unindex(colors, 4)
     const uiNormals = _Unindex(normals, 3)
     const uiTangents = _Unindex(tangents, 4)
     const uiUVs = _Unindex(uvs, 2)
@@ -195,8 +196,8 @@ class ChunkBuilderThreadedWorker {
     const positionsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * uiPositions.length),
     )
-    const coloursArray = new Float32Array(
-      new SharedArrayBuffer(bytesInFloat32 * uiColours.length),
+    const colorsArray = new Float32Array(
+      new SharedArrayBuffer(bytesInFloat32 * uiColors.length),
     )
     const normalsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * uiNormals.length),
@@ -209,26 +210,16 @@ class ChunkBuilderThreadedWorker {
     )
 
     positionsArray.set(uiPositions, 0)
-    coloursArray.set(uiColours, 0)
+    colorsArray.set(uiColors, 0)
     normalsArray.set(uiNormals, 0)
     uvsArray.set(uiUVs, 0)
 
     return {
       positions: positionsArray,
-      colours: coloursArray,
+      colors: colorsArray,
       uvs: uvsArray,
       normals: normalsArray,
       tangents: tangentsArray,
     }
-  }
-}
-
-self.onmessage = msg => {
-  if (msg.data.subject == ChunkBuilderThreadedMessageTypes.BUILD_CHUNK) {
-    const data = new ChunkBuilderThreadedWorker(msg.data.params).rebuild()
-    self.postMessage({
-      subject: ChunkBuilderThreadedMessageTypes.BUILD_CHUNK_RESULT,
-      data,
-    })
   }
 }

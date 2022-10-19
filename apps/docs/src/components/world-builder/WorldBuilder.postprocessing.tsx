@@ -5,7 +5,7 @@ import { Vector3 } from "three"
 import {
   AtmosphereEffect,
   PlanetAtmosphere,
-  Sun,
+  Sun
 } from "./vfx/atmosphere/AtmosphereEffect"
 import { ECS } from "./WorldBuilder.state"
 
@@ -41,7 +41,6 @@ export const PostProcessing: React.FC<React.PropsWithChildren<{}>> = ({
   return (
     <RC.RenderPipeline>
       <RC.EffectPass>
-        <AtmosphereEffects />
         <RC.SMAAEffect />
         <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.8} />
         <ECS.ArchetypeEntities archetype={["star"]}>
@@ -55,6 +54,7 @@ export const PostProcessing: React.FC<React.PropsWithChildren<{}>> = ({
           strength={0.1}
         />
         <React.Suspense fallback={null}>{children}</React.Suspense>
+        {/* <AtmosphereEffects /> */}
       </RC.EffectPass>
     </RC.RenderPipeline>
   )
