@@ -34,7 +34,6 @@ export class RingWorldQuadTree {
 
     // +Z
     m = new Matrix4()
-    m.makeRotationY(1)
     m.premultiply(new Matrix4().makeTranslation(0, 0, r))
     transforms.push(m)
 

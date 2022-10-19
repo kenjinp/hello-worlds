@@ -66,7 +66,9 @@ export function buildRingWorldChunk<D>(
 
         const something = tempVector3.set(origin.x, _W.y, origin.z).clone()
         const newVal = tempVector3.subVectors(_W, something).setLength(radius)
-        _P.copy(newVal.applyMatrix4(worldToLocal)).setY(originalY)
+        _P.copy(newVal.applyMatrix4(worldToLocal)).setY(
+          originalY * lengthModifier,
+        )
 
         _W.copy(_P)
         _W.applyMatrix4(localToWorld)
@@ -100,7 +102,7 @@ export function buildRingWorldChunk<D>(
           : tempColor.set(0xffffff).clone()
 
         // Purturb height along the normal
-        _H.copy(_P)
+        _H.copy(_D)
         _H.multiplyScalar(height * (params.inverted ? -1 : 1))
         _P.add(_H)
 

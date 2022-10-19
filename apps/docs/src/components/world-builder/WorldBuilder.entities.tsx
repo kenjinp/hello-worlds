@@ -122,7 +122,7 @@ export const RingEntity: React.FC = () => {
   return (
     <ECS.Entity>
       <ECS.Component name="position" data={new Vector3()} />
-      <ECS.Component name="radius" data={EARTH_RADIUS * 2} />
+      <ECS.Component name="radius" data={20 * km} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />

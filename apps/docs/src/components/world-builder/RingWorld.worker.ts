@@ -45,8 +45,8 @@ const heightGenerator: ChunkGenerator3Initializer<
     const m = mountains.get(input.x + w, input.y + w, input.z + w)
     const n = noise.get(input.x + w, input.y + w, input.z + w)
 
-    return n + m
-    // return 1
+    // return n + m
+    return 1
   }
 }
 const colorGenerator: ChunkGenerator3Initializer<
