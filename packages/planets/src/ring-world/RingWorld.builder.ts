@@ -1,12 +1,13 @@
 import { MathUtils } from "three"
 import Chunk, { ChunkProps } from "../chunk/Chunk"
+import { makeRingWorldChildChunkKey } from "../chunk/Chunk.helpers"
 import {
   ChildChunkProps,
   ChunkBuilderThreadedMessage,
   ChunkBuilderThreadedMessageTypes,
   ChunkMap,
   ChunkTypes,
-  RootChunkProps,
+  RingWorldRootChunkProps,
 } from "../chunk/types"
 import { NOOP } from "../utils"
 import WorkerThreadPool from "../worker/WorkerThreadPool"
@@ -23,9 +24,9 @@ export interface RingWorldBuilderProps<D> {
 }
 
 export default class RingWorldBuilder<D> {
-  // we keep the chunks stored with key of width
-  #pool: Record<number, Chunk[]> = {}
-  #old: (RootChunkProps | ChildChunkProps<Chunk>)[] = []
+  // we keep the chunks stored with key of width, length
+  #pool: Record<string, Chunk[]> = {}
+  #old: (RingWorldRootChunkProps | ChildChunkProps<Chunk>)[] = []
   #workerPool: WorkerThreadPool<ChunkBuilderThreadedMessage>
   public id: string = MathUtils.generateUUID()
 
@@ -63,16 +64,17 @@ export default class RingWorldBuilder<D> {
     }
   }
 
-  allocateChunk(params: ChunkProps & { length: number }) {
+  allocateChunk(params: ChunkProps & { height: number }) {
     const w = params.width
-
-    if (!(w in this.#pool)) {
-      this.#pool[w] = []
+    const l = params.height
+    const key = makeRingWorldChildChunkKey(w, l)
+    if (!(key in this.#pool)) {
+      this.#pool[key] = []
     }
 
     let c: Chunk | null = null
-    if (this.#pool[w].length > 0) {
-      c = this.#pool[w].pop()!
+    if (this.#pool[key].length > 0) {
+      c = this.#pool[key].pop()!
       // apply new properties to this chunk
       // like width, etc
       Object.assign(c, params)
@@ -84,6 +86,7 @@ export default class RingWorldBuilder<D> {
 
     const threadedParams = {
       width: params.width,
+      height: params.height,
       offset: params.offset,
       radius: params.radius,
       origin: params.origin,
@@ -91,7 +94,6 @@ export default class RingWorldBuilder<D> {
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
       inverted: params.inverted,
-      length: params.length,
     }
 
     const msg = {
@@ -109,19 +111,25 @@ export default class RingWorldBuilder<D> {
     return c
   }
 
-  retireChunks(recycle: (RootChunkProps | ChildChunkProps<Chunk>)[]) {
+  retireChunks(recycle: (RingWorldRootChunkProps | ChildChunkProps<Chunk>)[]) {
     this.#old.push(...recycle)
   }
 
-  #recycleChunks(oldChunks: (RootChunkProps | ChildChunkProps<Chunk>)[]) {
+  #recycleChunks(
+    oldChunks: (RingWorldRootChunkProps | ChildChunkProps<Chunk>)[],
+  ) {
     for (let chunk of oldChunks) {
       if (chunk.type === ChunkTypes.ROOT) {
         // we never get rid of roots!
         return
       }
-      const childChunk = chunk as unknown as ChildChunkProps<Chunk>
-      if (!(childChunk.chunk.width in this.#pool)) {
-        this.#pool[childChunk.chunk.width] = []
+      const childChunk = chunk
+      const key = makeRingWorldChildChunkKey(
+        childChunk.chunk.width,
+        childChunk.chunk.height,
+      )
+      if (!(key in this.#pool)) {
+        this.#pool[key] = []
       }
       childChunk.chunk.dispose()
     }
@@ -131,14 +139,15 @@ export default class RingWorldBuilder<D> {
     return this.#workerPool.busy
   }
 
-  rebuild(chunkMap: ChunkMap) {
+  rebuild(chunkMap: ChunkMap<RingWorldRootChunkProps>) {
     for (let key in chunkMap) {
       const chunk = chunkMap[key]
       if (chunk.type === ChunkTypes.CHILD) {
-        const { material: _prevMaterial, ...params } = chunk.chunk
+        const { material, ...params } = chunk.chunk
 
         const threadedParams = {
           width: params.width,
+          height: params.height,
           offset: params.offset,
           radius: params.radius,
           origin: params.origin,
@@ -146,7 +155,6 @@ export default class RingWorldBuilder<D> {
           resolution: params.resolution,
           worldMatrix: params.group.matrix,
           invert: params.inverted,
-          // length: params.length,
         }
 
         const msg = {
@@ -157,7 +165,7 @@ export default class RingWorldBuilder<D> {
 
         this.#workerPool.enqueue(msg, response => {
           if (chunk) {
-            return void this.#onResult(chunk.chunk, response)
+            return void this.#onResult(chunk.chunk, { ...response, material })
           }
         })
       }

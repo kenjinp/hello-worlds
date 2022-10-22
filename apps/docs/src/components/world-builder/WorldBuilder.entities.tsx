@@ -121,7 +121,10 @@ export const PlanetEntity: React.FC = () => {
 export const RingEntity: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3()} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(-80 * km, 0, -80 * km)}
+      />
       <ECS.Component name="radius" data={20 * km} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />
@@ -133,19 +136,49 @@ export const RingEntity: React.FC = () => {
   )
 }
 
-export const RingEntity2: React.FC = () => {
+export const RingEntity2Test: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component
-        name="position"
-        data={new Vector3(EARTH_RADIUS * 2, 0, EARTH_RADIUS * 2)}
-      />
-      <ECS.Component name="radius" data={20 * km} />
+      <ECS.Component name="position" data={new Vector3(80 * km, 0, 80 * km)} />
+      <ECS.Component name="radius" data={80 * km} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
       <ECS.Component name="name" data="Cycler" />
-      <ECS.Component name="length" data={80 * km} />
+      <ECS.Component name="length" data={20 * km} />
+      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
+    </ECS.Entity>
+  )
+}
+
+export const RingEntity2: React.FC = () => {
+  return (
+    <ECS.Entity>
+      <ECS.Component name="position" data={new Vector3(0, 0, 0)} />
+      <ECS.Component name="radius" data={EARTH_RADIUS * 3} />
+      <ECS.Component name="ringWorld" />
+      <ECS.Component name="seed" data="hello-worlds" />
+      <ECS.Component name="focused" data={true} />
+      <ECS.Component name="name" data="Cycler" />
+      <ECS.Component name="length" data={50 * km} />
+      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
+    </ECS.Entity>
+  )
+}
+
+export const NivenWorld: React.FC = () => {
+  return (
+    <ECS.Entity>
+      <ECS.Component
+        name="position"
+        data={new Vector3(-1, 0, 1).multiplyScalar(AU)}
+      />
+      <ECS.Component name="radius" data={1.02 * AU} />
+      <ECS.Component name="ringWorld" />
+      <ECS.Component name="seed" data="hello-worlds" />
+      <ECS.Component name="focused" data={true} />
+      <ECS.Component name="name" data="Nivenring" />
+      <ECS.Component name="length" data={125.8 * 2 * EARTH_RADIUS} />
       <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
     </ECS.Entity>
   )
@@ -231,7 +264,9 @@ export const RenderEntities: React.FC = () => {
 
       {/* <PlanetEntity /> */}
       <RingEntity />
+      <RingEntity2Test />
       {/* <RingEntity2 /> */}
+      {/* <NivenWorld /> */}
       {/* <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />

@@ -130,6 +130,7 @@ export class Planet<D = Record<string, any>> extends Group {
           lodOrigin: lodOrigin,
           origin: this.position,
           width: parentChunkProps.size,
+          height: parentChunkProps.size,
           radius: this.radius,
           resolution: this.minCellResolution,
           inverted: !!this.inverted,
@@ -141,7 +142,6 @@ export class Planet<D = Record<string, any>> extends Group {
   }
 
   dispose() {
-    console.log("goodbye planet!")
     this.#builder.dispose()
   }
 }

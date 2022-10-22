@@ -8,7 +8,6 @@ export interface QuadTreeParams {
   size: number
   minNodeSize: number
   origin: THREE.Vector3
-  radius: number
 }
 
 export interface Node {
@@ -30,7 +29,6 @@ export class QuadTree {
       new THREE.Vector3(s, s, 0),
     )
     this.origin = params.origin
-    // b.setFromCenterAndSize(params.origin, new Vector3(s,s,s));
     this.root = {
       bounds: b,
       children: [],

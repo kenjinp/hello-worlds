@@ -5,6 +5,7 @@ export interface ChunkProps {
   group: Object3D
   material?: Material
   width: number
+  height: number
   radius: number
   resolution: number
   offset: Vector3
@@ -25,6 +26,7 @@ export interface ChunkRebuildProps {
 export default class Chunk extends Mesh {
   group: Object3D
   width: number
+  height: number
   radius: number
   resolution: number
   offset: Vector3
@@ -48,6 +50,7 @@ export default class Chunk extends Mesh {
     }
     this.group = props.group
     this.width = props.width
+    this.height = props.height
     this.radius = props.radius
     this.resolution = props.resolution
     this.offset = props.offset
@@ -56,7 +59,6 @@ export default class Chunk extends Mesh {
     this.inverted = props.inverted
     // add ourselves to the parent group
     this.group.add(this)
-    this.position.set(0, 0, 0)
   }
 
   dispose() {

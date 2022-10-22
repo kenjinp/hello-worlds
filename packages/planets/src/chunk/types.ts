@@ -17,6 +17,11 @@ export interface RootChunkProps {
   bounds: Box3
 }
 
+export interface RingWorldRootChunkProps extends Omit<RootChunkProps, "size"> {
+  width: number
+  height: number
+}
+
 // These are the nested child nodes that live in the quadtree
 export interface ChildChunkProps<C> {
   type: ChunkTypes.CHILD
@@ -24,7 +29,10 @@ export interface ChildChunkProps<C> {
   chunk: C
 }
 
-export type ChunkMap = Record<string, RootChunkProps | ChildChunkProps<Chunk>>
+export type ChunkMap<Root = RootChunkProps> = Record<
+  string,
+  Root | ChildChunkProps<Chunk>
+>
 
 export enum ChunkBuilderThreadedMessageTypes {
   INITIAL_DATA = "INITIAL_DATA",

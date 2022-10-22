@@ -1,6 +1,6 @@
 import { Matrix4, Vector3 } from "three"
 import { BuildChunkInitialParams, ChunkGeneratorProps } from "../chunk/types"
-import { tempColor, tempVector3 } from "../utils"
+import { tempColor } from "../utils"
 
 export function buildRingWorldChunk<D>(
   initialParams: BuildChunkInitialParams<D>,
@@ -20,7 +20,7 @@ export function buildRingWorldChunk<D>(
   const { heightGenerator, colorGenerator } = initialParams
 
   return function runBuildChunk(
-    params: ChunkGeneratorProps<D> & { length: number },
+    params: ChunkGeneratorProps<D> & { height: number },
   ) {
     const positions = []
     const colors = []
@@ -41,39 +41,47 @@ export function buildRingWorldChunk<D>(
       params.origin.y,
       params.origin.z,
     )
-    const length = params.length
-    const half = width / 2
-    // const maxY = width * resolution
-    const lengthModifier = length / radius
+    const height = params.height
+    const halfW = width / 2
+    const halfH = height / 2
 
     for (let x = 0; x < resolution + 1; x++) {
       const xp = (width * x) / resolution
       for (let y = 0; y < resolution + 1; y++) {
-        const yp = (width * y) / resolution
+        const yp = (height * y) / resolution
 
         // Compute position
-        _P.set(xp - half, yp - half, radius)
+        _P.set(xp - halfW, yp - halfH, radius)
         _P.add(offset)
         const originalY = _P.y
         _P.normalize()
-        _D.copy(_P)
+        _D.copy(_P.clone())
         _P.multiplyScalar(radius)
+        _P.setY(originalY)
         _P.z -= radius
 
         // Here we start the cylindrification
-        _W.copy(_P)
-        _W.applyMatrix4(localToWorld)
+        // _W.copy(_P)
+        // _W.applyMatrix4(localToWorld)
+        // const originLocalWithHeight = offset
+        //   .clone()
+        //   // .applyMatrix4(worldToLocal)
+        //   .setY(originalY)
+        // const direction = new Vector3()
+        //   .subVectors(_P, originLocalWithHeight)
+        //   .setLength(radius)
+        // _P.copy(direction)
 
-        const something = tempVector3.set(origin.x, _W.y, origin.z).clone()
-        const newVal = tempVector3.subVectors(_W, something).setLength(radius)
-        _P.copy(newVal.applyMatrix4(worldToLocal)).setY(
-          originalY * lengthModifier,
-        )
+        // const something = tempVector3.set(origin.x, originalY, origin.z)
+        // _P.subVectors(_P.applyMatrix4(localToWorld), something)
+        //   .applyMatrix4(worldToLocal)
+        //   .setLength(radius)
+        // _P.copy(newVal.clone().applyMatrix4(worldToLocal)) //.setY(originalY)
 
         _W.copy(_P)
         _W.applyMatrix4(localToWorld)
         const heightInput = _W.clone()
-        const height = heightGenerator({
+        const terrainHeightOffset = heightGenerator({
           input: heightInput,
           worldPosition: heightInput,
           radius,
@@ -87,7 +95,9 @@ export function buildRingWorldChunk<D>(
         })
         const color = colorGenerator
           ? colorGenerator({
-              input: colorInputVector.set(_W.x, _W.y, height).clone(),
+              input: colorInputVector
+                .set(_W.x, _W.y, terrainHeightOffset)
+                .clone(),
               worldPosition: _W.clone(),
               radius,
               offset,
@@ -95,15 +105,22 @@ export function buildRingWorldChunk<D>(
               worldMatrix: params.worldMatrix,
               resolution,
               inverted: params.inverted,
-              height,
+              height: terrainHeightOffset,
               origin: params.origin,
               data: params.data,
             })
           : tempColor.set(0xffffff).clone()
 
-        // Purturb height along the normal
+        // const newVal2 = tempVector3
+        //   .subVectors(_W, something)
+        //   .setLength(radius + height * (params.inverted ? -1 : 1))
+        // _P.copy(newVal2.clone().applyMatrix4(worldToLocal)).setY(
+        //   originalY * lengthModifier,
+        // )
+
+        // Perturb height along the normal
         _H.copy(_D)
-        _H.multiplyScalar(height * (params.inverted ? -1 : 1))
+        _H.multiplyScalar(terrainHeightOffset * (params.inverted ? -1 : 1))
         _P.add(_H)
 
         // color has alpha from array

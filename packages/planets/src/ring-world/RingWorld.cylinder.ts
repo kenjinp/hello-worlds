@@ -1,22 +1,24 @@
-import { Matrix4, Vector3 } from "three"
-import { QuadTree } from "../quadtree/Quadtree"
+import { Matrix4, Object3D, Vector3 } from "three"
+import { CylinderQuadTree } from "./RingWorld.quadtree"
 
 export interface RingWorldQuadTreeProps {
   radius: number
-  length: number
+  height: number
   minNodeSize: number
   origin: Vector3
 }
 
-export class RingWorldQuadTree {
+export class RingWorldQuadTree extends Object3D {
   private sides: {
     transform: Matrix4
     worldToLocal: Matrix4
-    quadtree: QuadTree
+    quadtree: CylinderQuadTree
   }[] = []
 
   constructor(private props: RingWorldQuadTreeProps) {
+    super()
     const r = props.radius
+    const height = props.height
     let m
     const transforms: Matrix4[] = []
 
@@ -44,16 +46,18 @@ export class RingWorldQuadTree {
     transforms.push(m)
 
     for (let t of transforms) {
+      const quadtree = new CylinderQuadTree({
+        height,
+        minNodeSize: this.props.minNodeSize,
+        localToWorld: t,
+        origin: props.origin,
+        radius: r,
+      })
+      this.add(quadtree)
       this.sides.push({
         transform: t.clone(),
         worldToLocal: t.clone().invert(),
-        quadtree: new QuadTree({
-          size: r,
-          minNodeSize: this.props.minNodeSize,
-          localToWorld: t,
-          origin: props.origin,
-          radius: r,
-        }),
+        quadtree,
       })
     }
   }

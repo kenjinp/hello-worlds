@@ -46,7 +46,7 @@ export const RingWorldRender = React.forwardRef<Mesh, HelloRingWorld>(
         radius={radius}
         minCellSize={32 * 8}
         minCellResolution={32 * 2}
-        // inverted={true}
+        inverted
         length={length}
         lodOrigin={camera.position}
         worker={ringWorker}

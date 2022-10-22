@@ -17,7 +17,6 @@ export class CubicQuadTree {
 
   constructor(private params: CubicQuadTreeParams) {
     const r = params.radius
-    const o = params.origin
     let m
     const transforms: THREE.Matrix4[] = []
     // +Y
@@ -64,7 +63,6 @@ export class CubicQuadTree {
           minNodeSize: this.params.minNodeSize,
           localToWorld: t,
           origin: params.origin,
-          radius: r,
         }),
       })
     }

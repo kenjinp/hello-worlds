@@ -1,10 +1,10 @@
 import { Group, Material, Vector2, Vector3 } from "three"
-import { makeRootChunkKey } from "../chunk/Chunk.helpers"
-import { ChunkMap, ChunkTypes, RootChunkProps } from "../chunk/types"
+import { makeRingWorldRootChunkKey } from "../chunk/Chunk.helpers"
+import { ChunkMap, ChunkTypes, RingWorldRootChunkProps } from "../chunk/types"
 import { PlanetBuilderProps } from "../planet/Planet.builder"
 import { dictDifference, dictIntersection } from "../utils"
 import RingWorldBuilder from "./RingWorld.builder"
-import { RingWorldQuadTree } from "./RingWorld.quadTree"
+import { RingWorldQuadTree } from "./RingWorld.cylinder"
 
 export interface RingWorldProps<D> {
   radius: number
@@ -19,7 +19,7 @@ export interface RingWorldProps<D> {
 }
 
 export class RingWorld<D = Record<string, any>> extends Group {
-  #chunkMap: ChunkMap = {}
+  #chunkMap: ChunkMap<RingWorldRootChunkProps> = {}
   #segmentGroups = [...new Array(4)].map(_ => new Group())
   #builder: RingWorldBuilder<D>
   readonly data: D
@@ -42,7 +42,6 @@ export class RingWorld<D = Record<string, any>> extends Group {
     inverted = false,
   }: RingWorldProps<D>) {
     super()
-    console.log("NEW RING WORLD")
     this.position.copy(position)
     this.data = data
     this.length = length
@@ -80,15 +79,19 @@ export class RingWorld<D = Record<string, any>> extends Group {
       radius: this.radius,
       minNodeSize: this.minCellSize,
       origin,
-      length: this.length,
+      height: this.length,
     })
+    q.name = "quadtree"
+    const prev = this.getObjectByName("quadtree")
+    prev && this.remove(prev)
+    this.add(q)
 
     // collapse the quadtree recursively at this position
     q.insert(lodOrigin)
 
     const sides = q.getChildren()
 
-    let newChunkMap: ChunkMap = {}
+    let newChunkMap: ChunkMap<RingWorldRootChunkProps> = {}
     const center = new Vector3()
     const dimensions = new Vector3()
     for (let i = 0; i < sides.length; i++) {
@@ -99,17 +102,18 @@ export class RingWorld<D = Record<string, any>> extends Group {
         cubeFaceChildChunk.bounds.getCenter(center)
         cubeFaceChildChunk.bounds.getSize(dimensions)
 
-        const cubeFaceRootChunk: RootChunkProps = {
+        const cubeFaceRootChunk: RingWorldRootChunkProps = {
           type: ChunkTypes.ROOT,
           index: i,
           group: cubeFaceRootGroup,
           transform: cubeFaceRootGroup.matrix,
           position: center.clone(),
           bounds: cubeFaceChildChunk.bounds.clone(),
-          size: dimensions.x,
+          width: dimensions.x,
+          height: dimensions.y,
         }
 
-        const key = makeRootChunkKey(cubeFaceRootChunk)
+        const key = makeRingWorldRootChunkKey(cubeFaceRootChunk)
         newChunkMap[key] = cubeFaceRootChunk
       }
     }
@@ -124,7 +128,7 @@ export class RingWorld<D = Record<string, any>> extends Group {
 
     // Now let's build the children chunks who actually show terrain detail
     for (let key in difference) {
-      const parentChunkProps = difference[key] as RootChunkProps
+      const parentChunkProps = difference[key] as RingWorldRootChunkProps
       const offset = parentChunkProps.position
       newChunkMap[key] = {
         type: ChunkTypes.CHILD,
@@ -135,9 +139,9 @@ export class RingWorld<D = Record<string, any>> extends Group {
           offset,
           lodOrigin: lodOrigin,
           origin: this.position,
-          width: parentChunkProps.size,
+          height: parentChunkProps.height,
+          width: parentChunkProps.width,
           radius: this.radius,
-          length: this.length,
           resolution: this.minCellResolution,
           inverted: !!this.inverted,
         }),
@@ -148,7 +152,6 @@ export class RingWorld<D = Record<string, any>> extends Group {
   }
 
   dispose() {
-    console.log("goodbye ring world!")
     this.#builder.dispose()
   }
 }

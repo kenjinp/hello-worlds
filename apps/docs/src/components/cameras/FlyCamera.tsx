@@ -29,7 +29,7 @@ const FlyCamera: React.FC<{
     })[0]
     setClosestPlanet(closestPlanet)
     camera.position.copy(
-      new Vector3(closestPlanet.radius * 1.5, 0, closestPlanet.radius * 1.5),
+      new Vector3(closestPlanet.radius * 5, 0, closestPlanet.radius * 5),
     )
     camera.lookAt(closestPlanet.position)
   }, [entities])
