@@ -11,7 +11,7 @@ import { ECS, Planet } from "../world-builder/WorldBuilder.state"
 const FlyCamera: React.FC<{
   minSpeed?: number
   maxSpeed?: number
-}> = ({ minSpeed = 100, maxSpeed = 10_000_000_000 }) => {
+}> = ({ minSpeed = 100_000, maxSpeed = 10_000_000_000 }) => {
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
@@ -29,7 +29,7 @@ const FlyCamera: React.FC<{
     })[0]
     setClosestPlanet(closestPlanet)
     camera.position.copy(
-      new Vector3(closestPlanet.radius * 5, 0, closestPlanet.radius * 5),
+      new Vector3(closestPlanet.radius * 1, 0, closestPlanet.radius * 1),
     )
     camera.lookAt(closestPlanet.position)
   }, [entities])

@@ -2,11 +2,10 @@ import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
   createThreadedRingWorldWorker,
-  Noise
+  Noise,
 } from "@hello-worlds/planets"
 import { Color, MathUtils } from "three"
 import { DEFAULT_NOISE_PARAMS } from "../noise/NoiseController"
-import { terra } from "./generators"
 import { PlANET_TYPES } from "./WorldBuilder.state"
 
 export type ThreadParams = {
@@ -44,10 +43,10 @@ const colorGenerator: ChunkGenerator3Initializer<
   Color | ColorArrayWithAlpha
 > = props => {
   const color = new Color(MathUtils.randFloat(0, 1) * 0xffffff)
-  // return () => {
-  //   return color
-  // }
-  return terra.colorGenerator(props)
+  // return terra.colorGenerator(props)
+  return () => {
+    return color
+  }
 }
 
 createThreadedRingWorldWorker<ThreadParams>({

@@ -29,6 +29,7 @@ export const SunEntity: React.FC = () => {
             <ECS.Component
               name="position"
               data={new Vector3(-1, 0, 1).multiplyScalar(AU)}
+              // data={new Vector3()}
             />
             <ECS.Component name="radius" data={SUN_RADIUS} />
             <ECS.Component name="star" />
@@ -43,6 +44,7 @@ export const SunEntity: React.FC = () => {
             <ECS.Component
               name="position"
               data={new Vector3(-1, 0, 1).multiplyScalar(AU).divideScalar(4)}
+              // data={new Vector3()}
             />
             <ECS.Component name="radius" data={SUN_RADIUS} />
             <ECS.Component name="star" />
@@ -169,10 +171,7 @@ export const RingEntity2: React.FC = () => {
 export const NivenWorld: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component
-        name="position"
-        data={new Vector3(-1, 0, 1).multiplyScalar(AU)}
-      />
+      <ECS.Component name="position" data={new Vector3()} />
       <ECS.Component name="radius" data={1.02 * AU} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />

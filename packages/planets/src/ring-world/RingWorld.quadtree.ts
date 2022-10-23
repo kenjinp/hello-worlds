@@ -168,8 +168,16 @@ export class CylinderQuadTree extends Object3D {
 
     const children = childrenBounds.map(b => {
       const center = b.getCenter(new THREE.Vector3())
+
+      // BEGING change worldCenter position to test lods against
+      // this should be as close as possible to real world space pos
+      // but we can't sample the height yet (Maybe can improve this)
       const worldCenter = center.clone()
       worldCenter.applyMatrix4(this.params.localToWorld)
+      const prev = worldCenter.clone()
+      worldCenter.normalize()
+      worldCenter.multiplyScalar(this.params.radius)
+      worldCenter.setY(prev.y)
       worldCenter.add(this.params.origin)
 
       // const bh = new Box3Helper(b, new Color(Math.random() * 0xffffff))

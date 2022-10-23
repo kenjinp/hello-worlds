@@ -2,7 +2,7 @@ import { Group, Material, Vector2, Vector3 } from "three"
 import { makeRingWorldRootChunkKey } from "../chunk/Chunk.helpers"
 import { ChunkMap, ChunkTypes, RingWorldRootChunkProps } from "../chunk/types"
 import { PlanetBuilderProps } from "../planet/Planet.builder"
-import { dictDifference, dictIntersection } from "../utils"
+import { dictDifference, dictIntersection, tempVector3 } from "../utils"
 import RingWorldBuilder from "./RingWorld.builder"
 import { RingWorldQuadTree } from "./RingWorld.cylinder"
 
@@ -92,8 +92,8 @@ export class RingWorld<D = Record<string, any>> extends Group {
     const sides = q.getChildren()
 
     let newChunkMap: ChunkMap<RingWorldRootChunkProps> = {}
-    const center = new Vector3()
-    const dimensions = new Vector3()
+    const center = tempVector3.set(0, 0, 0).clone()
+    const dimensions = tempVector3.set(0, 0, 0).clone()
     for (let i = 0; i < sides.length; i++) {
       const cubeFaceRootGroup = this.#segmentGroups[i]
       cubeFaceRootGroup.matrix = sides[i].transform // removed for floating origin

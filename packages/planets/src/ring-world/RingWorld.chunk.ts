@@ -54,9 +54,10 @@ export function buildRingWorldChunk<D>(
         _P.set(xp - halfW, yp - halfH, radius)
         _P.add(offset)
         const originalY = _P.y
-        _P.normalize()
-        _D.copy(_P.clone())
-        _P.multiplyScalar(radius)
+        const cylinderLength = Math.sqrt(_P.x * _P.x + _P.z * _P.z)
+        _P.divideScalar(cylinderLength)
+        _D.copy(_P)
+        _P.setLength(radius)
         _P.setY(originalY)
         _P.z -= radius
 
