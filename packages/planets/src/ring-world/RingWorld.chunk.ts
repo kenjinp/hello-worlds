@@ -54,24 +54,31 @@ export function buildRingWorldChunk<D>(
         _P.set(xp - halfW, yp - halfH, radius)
         _P.add(offset)
         const originalY = _P.y
-        const cylinderLength = Math.sqrt(_P.x * _P.x + _P.z * _P.z)
-        _P.divideScalar(cylinderLength)
-        _D.copy(_P)
-        _P.setLength(radius)
-        _P.setY(originalY)
+        // _P.setLength(Math.sqrt(_P.x * _P.x + _P.y * _P.y))
+        // _P.normalize()
+        // const cylinderLength = Math.sqrt(_P.x * _P.x + _P.z * _P.z)
+        // _P.divide(new Vector3(cylinderLength, 1, cylinderLength))
+        // _P.divideScalar(cylinderLength)
+        // _D.copy(_P.clone().normalize())
+        // _P.setLength(radius)
+        // _P.setY(originalY)
+
         _P.z -= radius
+        // _P.subVectors(_P, origin.applyMatrix4(worldToLocal))
+        //   .setLength(radius)
+        //   .setY(originalY)
 
         // Here we start the cylindrification
         // _W.copy(_P)
         // _W.applyMatrix4(localToWorld)
-        // const originLocalWithHeight = offset
-        //   .clone()
-        //   // .applyMatrix4(worldToLocal)
-        //   .setY(originalY)
+        // const originLocalWithHeight = offset.clone()
+        // // .setY(originalY)
         // const direction = new Vector3()
-        //   .subVectors(_P, originLocalWithHeight)
+        //   .subVectors(_W, originLocalWithHeight)
         //   .setLength(radius)
-        // _P.copy(direction)
+        // // .applyMatrix4(worldToLocal)
+
+        // _P.copy(direction).setY(originalY)
 
         // const something = tempVector3.set(origin.x, originalY, origin.z)
         // _P.subVectors(_P.applyMatrix4(localToWorld), something)
