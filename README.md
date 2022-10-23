@@ -39,5 +39,9 @@ Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](htt
 ## Alternatives 💕
 Check out [terra](https://github.com/fintelia/terra) if you're looking for something more performant and fully-featured. It's amazing!
 
+## Support ☕
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X01C6KM)
+
 ## Credits 📓
 This library would not be possible without [their help](./SOURCES.md).
