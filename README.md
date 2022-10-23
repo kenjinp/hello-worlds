@@ -1,23 +1,25 @@
-<p align="center">
-  <img src="./logo.png">
-</p>
-
 # Hello Worlds 👋🌐
 
-Your Virtual Worldbuilding toolkit for the web.
+https://user-images.githubusercontent.com/5485824/196038523-2ff806cd-6d75-4d7e-8096-70b5b8ef13ba.mp4
 
-Within you'll find a growing collection of tools to plop large planets into your [`three.js`](threejs.org/) scene, and then populate that world with societies and languages.
+## Overview
+
+**Virtual javascript worlds at planetary scales.**
 
 > **Warning**
-> Hic Sunt Dracones!
->
-> This library is (extremely!) work-in-progress; meaning that it is not done, or ready for use in any other capacity. Please don't use this and assume that anything will work; it probably won't. And when you find something that does work, be ready for it to break in the next release.
->
-> If you're interested in using this library and want to keep up to date, please [follow me on Twitter](https://twitter.com/KennyPirman), and/or click the Watch button for this repository.
+> These libraries are a work in progress. APIs may change unexpectedly until they reach version 1.0.
+
+In this project you'll find a growing collection of tools to plop large planets into your [`three.js`](threejs.org/) scene, and then populate that world with interesting things.
+
+If you're interested in using this library and want to keep up to date, please [follow me on Twitter](https://twitter.com/KennyPirman), and/or click the Watch button for this repository.
 
 ## Docs 📄
 
-Visit https://worlds.kenny.wtf
+Visit https://worlds.kenny.wtf/docs/intro to learn more.
+
+## Demo 🚀
+
+Visit https://worlds.kenny.wtf to explore a test scene.
 
 ## Packages 🎁
 
@@ -29,28 +31,18 @@ Visit https://worlds.kenny.wtf
 | [@hello-worlds/cultures](./packages/cultures) | Tools to generate cultures and societies                                                                                                                                                                                                           |
 | [@hello-worlds/core](./packages/core)         | shared utilities                                                                                                                                                                                                                                   |
 
-## Roadmap
-
-This project is large enough in scope to last several lifetimes. Here are a couple of the next tasks on my mind.
-Probably not in order.
-
-- [x] Readable Documentation Portal
-- [ ] Codesandbox examples (Hello World, Planet, Moon) (In progress!)
-- [ ] API docs (In progress!)
-- [ ] Make Webworkers optional
-- [ ] Enable use in node.js (isomorphic threads)
-- [ ] Lifecycle events
-- [x] Point-specific height generation example (Moon Craters)
-- [ ] Character-on-surface playable example
-- [ ] Bezier Curves over a sphere (for labels and such) (might just have example of this)
-- [ ] Oceans example and helpers (In progress!)
-- [ ] Simple Atmosphere helpers (In progress!)
-- [ ] Voronoi subdivision of sphere for... science... (In progress!)
-
 ## Questions? 💬
 
 Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](https://www.twitch.tv/kennycreates), or the [Poimandres Discord](https://discord.gg/aAYjm2p7c7)
 
-## Where did you get all this crap from? 🤔
+## Alternatives 💕
 
-[I copied from these smarter people](./SOURCES.md)
+Check out [terra](https://github.com/fintelia/terra) if you're looking for something more performant and don't mind something not written in js. It's fantastic!
+
+## Support ☕
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X01C6KM)
+
+## Credits 📓
+
+This library would not be possible without [their help](./SOURCES.md).
