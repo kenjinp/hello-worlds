@@ -1,6 +1,6 @@
 import { Matrix4, Vector3 } from "three"
 import { BuildChunkInitialParams, ChunkGeneratorProps } from "../chunk/types"
-import { tempColor } from "../utils"
+import { tempColor, tempVector3 } from "../utils"
 
 export function buildRingWorldChunk<D>(
   initialParams: BuildChunkInitialParams<D>,
@@ -53,38 +53,19 @@ export function buildRingWorldChunk<D>(
         // Compute position
         _P.set(xp - halfW, yp - halfH, radius)
         _P.add(offset)
-        const originalY = _P.y
-        // _P.setLength(Math.sqrt(_P.x * _P.x + _P.y * _P.y))
-        // _P.normalize()
-        // const cylinderLength = Math.sqrt(_P.x * _P.x + _P.z * _P.z)
-        // _P.divide(new Vector3(cylinderLength, 1, cylinderLength))
-        // _P.divideScalar(cylinderLength)
-        // _D.copy(_P.clone().normalize())
-        // _P.setLength(radius)
-        // _P.setY(originalY)
+
+        // bend cube into cylinder
+        const cylinderLength = Math.sqrt(_P.x * _P.x + _P.z * _P.z)
+        // this is esentially normalizing the vector, but without the y component
+        _P.divide(tempVector3.set(cylinderLength, 1, cylinderLength))
+
+        // for height offset later
+        _D.copy(_P.clone())
+
+        // push out the points across the circle at radius
+        _P.multiply(tempVector3.set(radius, 1, radius))
 
         _P.z -= radius
-        // _P.subVectors(_P, origin.applyMatrix4(worldToLocal))
-        //   .setLength(radius)
-        //   .setY(originalY)
-
-        // Here we start the cylindrification
-        // _W.copy(_P)
-        // _W.applyMatrix4(localToWorld)
-        // const originLocalWithHeight = offset.clone()
-        // // .setY(originalY)
-        // const direction = new Vector3()
-        //   .subVectors(_W, originLocalWithHeight)
-        //   .setLength(radius)
-        // // .applyMatrix4(worldToLocal)
-
-        // _P.copy(direction).setY(originalY)
-
-        // const something = tempVector3.set(origin.x, originalY, origin.z)
-        // _P.subVectors(_P.applyMatrix4(localToWorld), something)
-        //   .applyMatrix4(worldToLocal)
-        //   .setLength(radius)
-        // _P.copy(newVal.clone().applyMatrix4(worldToLocal)) //.setY(originalY)
 
         _W.copy(_P)
         _W.applyMatrix4(localToWorld)
@@ -119,17 +100,19 @@ export function buildRingWorldChunk<D>(
             })
           : tempColor.set(0xffffff).clone()
 
-        // const newVal2 = tempVector3
-        //   .subVectors(_W, something)
-        //   .setLength(radius + height * (params.inverted ? -1 : 1))
-        // _P.copy(newVal2.clone().applyMatrix4(worldToLocal)).setY(
-        //   originalY * lengthModifier,
-        // )
-
         // Perturb height along the normal
+        const signedTerrainHeightOffset =
+          terrainHeightOffset * (params.inverted ? -1 : 1)
         _H.copy(_D)
-        _H.multiplyScalar(terrainHeightOffset * (params.inverted ? -1 : 1))
-        _P.add(_H)
+        _H.multiply(
+          tempVector3.set(
+            signedTerrainHeightOffset,
+            1,
+            signedTerrainHeightOffset,
+          ),
+        )
+        _P.setX(_H.x + _P.x)
+        _P.setZ(_H.z + _P.z)
 
         // color has alpha from array
         if ("length" in color) {

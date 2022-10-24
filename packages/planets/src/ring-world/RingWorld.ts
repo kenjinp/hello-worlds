@@ -81,10 +81,6 @@ export class RingWorld<D = Record<string, any>> extends Group {
       origin,
       height: this.length,
     })
-    q.name = "quadtree"
-    const prev = this.getObjectByName("quadtree")
-    prev && this.remove(prev)
-    this.add(q)
 
     // collapse the quadtree recursively at this position
     q.insert(lodOrigin)

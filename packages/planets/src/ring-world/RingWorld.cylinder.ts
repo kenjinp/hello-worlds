@@ -1,4 +1,4 @@
-import { Matrix4, Object3D, Vector3 } from "three"
+import { Matrix4, Vector3 } from "three"
 import { CylinderQuadTree } from "./RingWorld.quadtree"
 
 export interface RingWorldQuadTreeProps {
@@ -8,7 +8,7 @@ export interface RingWorldQuadTreeProps {
   origin: Vector3
 }
 
-export class RingWorldQuadTree extends Object3D {
+export class RingWorldQuadTree {
   private sides: {
     transform: Matrix4
     worldToLocal: Matrix4
@@ -16,7 +16,6 @@ export class RingWorldQuadTree extends Object3D {
   }[] = []
 
   constructor(private props: RingWorldQuadTreeProps) {
-    super()
     const r = props.radius
     const height = props.height
     let m
@@ -53,7 +52,6 @@ export class RingWorldQuadTree extends Object3D {
         origin: props.origin,
         radius: r,
       })
-      this.add(quadtree)
       this.sides.push({
         transform: t.clone(),
         worldToLocal: t.clone().invert(),

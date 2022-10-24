@@ -69,7 +69,6 @@ export default function (): React.ReactElement {
           <img src={logo} alt="hello worlds" />
         </h2>
         <h3>Demo Planetarium</h3>
-        <p>Virtual world-building toolkit for the web</p>
         <p>
           navigate with keys <b>WASD-QE</b> + <b>mouse1/mouse2</b>
         </p>
@@ -88,7 +87,7 @@ export default function (): React.ReactElement {
           style={{
             position: "fixed",
             zIndex: 9999,
-            visibility: "hidden",
+            // visibility: "hidden",
           }}
           position="top-center"
           autoClose={3000}

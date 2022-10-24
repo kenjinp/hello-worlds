@@ -2,6 +2,7 @@
 
 import { random } from "@hello-worlds/core"
 import { Vector3 } from "three"
+import { tempVector3 } from "../utils"
 
 // When k = 0, this behaves identically to min(a, b)
 export function smoothMin(a: number, b: number, k: number) {
@@ -60,4 +61,13 @@ export function remap(
   y2: number,
 ) {
   return ((value - x1) * (y2 - x2)) / (y1 - x1) + x2
+}
+
+export function normalizeAsCylinder(input: Vector3, radius: number) {
+  // bend cube into cylinder
+  const cylinderLength = Math.sqrt(input.x * input.x + input.z * input.z)
+  // this is esentially normalizing the vector, but without the y component
+  input.divide(tempVector3.set(cylinderLength, 1, cylinderLength))
+  // push out the points across the circle at radius
+  return input.multiply(tempVector3.set(radius, 1, radius))
 }

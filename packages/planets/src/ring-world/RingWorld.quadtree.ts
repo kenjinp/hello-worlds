@@ -1,5 +1,6 @@
 import * as THREE from "three"
-import { Box3, Object3D, Vector3 } from "three"
+import { Box3, Vector3 } from "three"
+import { normalizeAsCylinder } from "../math/Math"
 import { tempVector3 } from "../utils"
 
 const CHILD_SIZE_X_COMPARATOR = 1.25
@@ -22,10 +23,9 @@ export interface Node {
   root?: boolean
 }
 
-export class CylinderQuadTree extends Object3D {
+export class CylinderQuadTree {
   private root: Node
   constructor(private params: CylinderQuadTreeParams) {
-    super()
     const s = params.height
     const r = params.radius
     const b = new THREE.Box3(
@@ -33,34 +33,22 @@ export class CylinderQuadTree extends Object3D {
       new THREE.Vector3(r, s / 2, 0),
     )
 
-    // debug helper
-    // const bh = new Box3Helper(b, new Color(0xffff00))
-    // bh.applyMatrix4(this.params.localToWorld)
-    // bh.position.add(params.origin)
-    // this.add(bh)
-
     const center = b.getCenter(tempVector3)
 
     // note world center is what we use to compare the camera distance to
     // so it should be 'bent' into the right shape
     const worldCenter = center.clone()
     worldCenter.applyMatrix4(this.params.localToWorld)
+    normalizeAsCylinder(worldCenter, this.params.radius)
     worldCenter.add(params.origin)
-    // b.setFromCenterAndSize(params.origin, new Vector3(s, s, s))
     this.root = {
       bounds: b,
       children: [],
       center,
       worldCenter,
-      // sphereCenter: b.getCenter(new THREE.Vector3()),
       size: b.getSize(new THREE.Vector3()),
       root: true,
     }
-    // this.root.sphereCenter = this.root.center.clone()
-    // this.root.sphereCenter.applyMatrix4(this.params.localToWorld)
-    // this.root.sphereCenter.normalize()
-    // this.root.sphereCenter.multiply(new Vector3(r, s / 2, 0))
-    // this.root.sphereCenter.add(params.origin)
   }
 
   getChildren() {
@@ -169,28 +157,21 @@ export class CylinderQuadTree extends Object3D {
     const children = childrenBounds.map(b => {
       const center = b.getCenter(new THREE.Vector3())
 
-      // BEGING change worldCenter position to test lods against
+      // change worldCenter position to test lods against
       // this should be as close as possible to real world space pos
       // but we can't sample the height yet (Maybe can improve this)
       const worldCenter = center.clone()
       worldCenter.applyMatrix4(this.params.localToWorld)
-      const prev = worldCenter.clone()
-      worldCenter.normalize()
-      worldCenter.multiplyScalar(this.params.radius)
-      worldCenter.setY(prev.y)
-      worldCenter.add(this.params.origin)
 
-      // const bh = new Box3Helper(b, new Color(Math.random() * 0xffffff))
-      // bh.applyMatrix4(this.params.localToWorld)
-      // // bh.position.add(this.params.origin)
-      // this.add(bh)
+      normalizeAsCylinder(worldCenter, this.params.radius)
+
+      worldCenter.add(this.params.origin)
 
       return {
         bounds: b,
         children: [],
         size: b.getSize(new THREE.Vector3()),
         worldCenter,
-        // sphereCenter,
         center,
       }
     })

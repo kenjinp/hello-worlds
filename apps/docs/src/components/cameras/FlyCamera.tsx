@@ -11,15 +11,19 @@ import { ECS, Planet } from "../world-builder/WorldBuilder.state"
 const FlyCamera: React.FC<{
   minSpeed?: number
   maxSpeed?: number
-}> = ({ minSpeed = 100_000, maxSpeed = 10_000_000_000 }) => {
+}> = ({ minSpeed = 100, maxSpeed = 10_000_000_000 }) => {
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
-  const { entities } = ECS.useArchetype("ringWorld")
+  const { entities: planeties } = ECS.useArchetype("planet")
+  const { entities: ringies } = ECS.useArchetype("ringWorlds")
   const { camera } = useThree()
   const [_closestPlanet, setClosestPlanet] = React.useState<Planet>(null)
   const updateMyPresence = useUpdateMyPresence()
-
+  const entities = React.useMemo(
+    () => [...planeties, ...ringies],
+    [planeties, ringies],
+  )
   React.useEffect(() => {
     const closestPlanet = entities.sort((a, b) => {
       return (

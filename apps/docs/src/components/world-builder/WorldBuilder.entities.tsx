@@ -127,7 +127,7 @@ export const RingEntity: React.FC = () => {
         name="position"
         data={new Vector3(-80 * km, 0, -80 * km)}
       />
-      <ECS.Component name="radius" data={20 * km} />
+      <ECS.Component name="radius" data={EARTH_RADIUS * 2} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
@@ -138,31 +138,19 @@ export const RingEntity: React.FC = () => {
   )
 }
 
-export const RingEntity2Test: React.FC = () => {
+export const Cycler: React.FC = () => {
   return (
     <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(80 * km, 0, 80 * km)} />
-      <ECS.Component name="radius" data={80 * km} />
+      <ECS.Component
+        name="position"
+        data={new Vector3(-3, 0, -3).multiplyScalar(EARTH_RADIUS)}
+      />
+      <ECS.Component name="radius" data={20 * km} />
       <ECS.Component name="ringWorld" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
       <ECS.Component name="name" data="Cycler" />
-      <ECS.Component name="length" data={20 * km} />
-      <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
-    </ECS.Entity>
-  )
-}
-
-export const RingEntity2: React.FC = () => {
-  return (
-    <ECS.Entity>
-      <ECS.Component name="position" data={new Vector3(0, 0, 0)} />
-      <ECS.Component name="radius" data={EARTH_RADIUS * 3} />
-      <ECS.Component name="ringWorld" />
-      <ECS.Component name="seed" data="hello-worlds" />
-      <ECS.Component name="focused" data={true} />
-      <ECS.Component name="name" data="Cycler" />
-      <ECS.Component name="length" data={50 * km} />
+      <ECS.Component name="length" data={80 * km} />
       <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
     </ECS.Entity>
   )
@@ -261,15 +249,15 @@ export const RenderEntities: React.FC = () => {
       <SunEntity />
       <RedSunEntity />
 
-      {/* <PlanetEntity /> */}
+      <PlanetEntity />
       <RingEntity />
-      <RingEntity2Test />
+      <Cycler />
       {/* <RingEntity2 /> */}
       {/* <NivenWorld /> */}
-      {/* <DinkyMoonletEntity />
+      <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
-      <MoonEntity3 /> */}
+      <MoonEntity3 />
 
       {/* Render them */}
       <Stars />

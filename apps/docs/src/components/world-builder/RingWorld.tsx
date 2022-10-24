@@ -58,6 +58,15 @@ export const RingWorldRender = React.forwardRef<Mesh, HelloRingWorld>(
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
           </Html>
         )}
+        {/* <mesh>
+          <directionalLight color={0xffffff} intensity={0.3} castShadow />
+          <sphereGeometry args={[radius / 100, 32, 16]}></sphereGeometry>
+          <meshStandardMaterial
+            color={0xffffff}
+            emissive={0xffffff}
+            emissiveIntensity={0.4}
+          />
+        </mesh> */}
         <meshStandardMaterial side={DoubleSide} vertexColors />
       </RingWorld>
     )
