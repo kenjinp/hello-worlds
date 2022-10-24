@@ -2,7 +2,6 @@ import { FlyControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useUpdateMyPresence } from "@site/src/services/multiplayer"
 import * as React from "react"
-import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { Group, MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
@@ -15,15 +14,12 @@ const FlyCamera: React.FC<{
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
-  const { entities: planeties } = ECS.useArchetype("planet")
-  const { entities: ringies } = ECS.useArchetype("ringWorlds")
+  const { entities } = ECS.useArchetype("planet")
+
   const { camera } = useThree()
   const [_closestPlanet, setClosestPlanet] = React.useState<Planet>(null)
   const updateMyPresence = useUpdateMyPresence()
-  const entities = React.useMemo(
-    () => [...planeties, ...ringies],
-    [planeties, ringies],
-  )
+
   React.useEffect(() => {
     const closestPlanet = entities.sort((a, b) => {
       return (
@@ -47,14 +43,14 @@ const FlyCamera: React.FC<{
     })
     _closestPlanet.focused = true
 
-    toast(
-      <>
-        Approaching{" "}
-        <b style={{ color: _closestPlanet.labelColor.getStyle() }}>
-          <i>{_closestPlanet.name}</i>
-        </b>
-      </>,
-    )
+    // toast(
+    //   <>
+    //     Approaching{" "}
+    //     <b style={{ color: _closestPlanet.labelColor.getStyle() }}>
+    //       <i>{_closestPlanet.name}</i>
+    //     </b>
+    //   </>,
+    // )
   }, [_closestPlanet])
 
   // const selectPlanet = (index: number) => {
