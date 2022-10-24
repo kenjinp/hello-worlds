@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 export enum CameraTypes {
   orbit = "orbit",
@@ -8,11 +8,11 @@ export enum CameraTypes {
 }
 
 const CameraButtons: React.FC = () => {
-  const [camera, setCamera] = React.useState(CameraTypes.orbit);
+  const [camera, setCamera] = React.useState(CameraTypes.orbit)
 
   const handleCameraChange = (e: any) => {
-    setCamera(e.target.value as CameraTypes);
-  };
+    setCamera(e.target.value as CameraTypes)
+  }
 
   return (
     <>
@@ -55,7 +55,7 @@ const CameraButtons: React.FC = () => {
         </label>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default CameraButtons;
+export default CameraButtons

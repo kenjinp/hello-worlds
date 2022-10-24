@@ -1,6 +1,6 @@
-import { Noise, NoiseParams, NOISE_STYLES } from "@hello-worlds/planets";
-import { useControls } from "leva";
-import * as React from "react";
+import { Noise, NoiseParams, NOISE_STYLES } from "@hello-worlds/planets"
+import { useControls } from "leva"
+import * as React from "react"
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,
@@ -11,11 +11,11 @@ export const DEFAULT_NOISE_PARAMS = {
   scale: 1100.0,
   seed: 1,
   noiseType: NOISE_STYLES.simplex,
-};
+}
 
 export const useNoiseController = (
   name: string = "noise",
-  noiseParams: Partial<NoiseParams> = {}
+  noiseParams: Partial<NoiseParams> = {},
 ) => {
   const controllerValues = useControls(name, {
     ...DEFAULT_NOISE_PARAMS,
@@ -24,7 +24,7 @@ export const useNoiseController = (
       value: NOISE_STYLES.simplex,
       options: [NOISE_STYLES.perlin, NOISE_STYLES.simplex],
     },
-  });
+  })
 
   const noise = React.useMemo(
     () =>
@@ -32,8 +32,8 @@ export const useNoiseController = (
         ...controllerValues,
         noiseType: controllerValues.noiseType,
       }),
-    [controllerValues]
-  );
+    [controllerValues],
+  )
 
-  return { noise, noiseParams: controllerValues };
-};
+  return { noise, noiseParams: controllerValues }
+}

@@ -52,4 +52,4 @@ export const supportValues = {
   woodcarvers: 2_400,
   Booksellers: 6_300,
   Illuminators: 3_900,
-};
+}

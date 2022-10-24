@@ -1,28 +1,28 @@
-import BasicScene from "./BasicScene";
-import { PlanetGenerator } from "./planet/PlanetGenerator";
+import BasicScene from "./BasicScene"
+import { PlanetGenerator } from "./planet/PlanetGenerator"
 
-import Link from "@docusaurus/Link";
-import { faBook, faGlobe } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setRandomSeed } from "@hello-worlds/core";
-import { Leva } from "leva";
-import * as React from "react";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
-import ReactTooltip from "react-tooltip";
-import logo from "../../../../logo.png";
-import { Button } from "./button/Button";
-import { Container } from "./container/Container";
-import CultureGenerator from "./cultures/CultureGenerator";
-import Demographics from "./demographics/Demographics";
-import Footer from "./footer/Footer";
-import States from "./states/States";
+import Link from "@docusaurus/Link"
+import { faBook, faGlobe } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { setRandomSeed } from "@hello-worlds/core"
+import { Leva } from "leva"
+import * as React from "react"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import "react-tabs/style/react-tabs.css"
+import ReactTooltip from "react-tooltip"
+import logo from "../../../../logo.png"
+import { Button } from "./button/Button"
+import { Container } from "./container/Container"
+import CultureGenerator from "./cultures/CultureGenerator"
+import Demographics from "./demographics/Demographics"
+import Footer from "./footer/Footer"
+import States from "./states/States"
 
-setRandomSeed("banana");
+setRandomSeed("banana")
 
 const Interface = () => {
-  const [exploreWindow, setExploreWindow] = React.useState(false);
-  const [sayHello, setSayHello] = React.useState(true);
+  const [exploreWindow, setExploreWindow] = React.useState(false)
+  const [sayHello, setSayHello] = React.useState(true)
 
   return (
     <>
@@ -59,8 +59,10 @@ const Interface = () => {
             on the web!
           </p>
           <div>
-          <button onClick={() => setSayHello(false)}>Ok!</button>{" "}
-          <Link to="/docs/intro"><button>Go to Library Docs</button></Link>{" "}
+            <button onClick={() => setSayHello(false)}>Ok!</button>{" "}
+            <Link to="/docs/intro">
+              <button>Go to Library Docs</button>
+            </Link>{" "}
             <a href="https://github.com/kenjinp/worlds">
               <button>Github</button>
             </a>
@@ -135,15 +137,13 @@ const Interface = () => {
           </Link>
           {" | "}
           <Link to="/worldbuilder">
-            <Button>
-              World Sandbox
-            </Button>
+            <Button>World Sandbox</Button>
           </Link>
         </>
       </Footer>
     </>
-  );
-};
+  )
+}
 
 export function Whatever() {
   return (
@@ -174,7 +174,7 @@ export function Whatever() {
       </BasicScene>
       <Interface />
     </div>
-  );
+  )
 }
 
-export default Whatever;
+export default Whatever

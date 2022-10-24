@@ -1,2 +1,2 @@
-export * from "./demographics/Culture";
-export * from "./demographics/Demographics";
+export * from "./demographics/Culture"
+export * from "./demographics/Demographics"

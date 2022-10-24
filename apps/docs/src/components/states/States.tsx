@@ -1,11 +1,11 @@
-import * as React from "react";
-import styled from "styled-components";
-import { generateUUID } from "three/src/math/MathUtils";
-import Kingdom from "../../lib/demographics/Demographics";
-import { ECS } from "../../state/ecs";
+import * as React from "react"
+import styled from "styled-components"
+import { generateUUID } from "three/src/math/MathUtils"
+import Kingdom from "../../lib/demographics/Demographics"
+import { ECS } from "../../state/ecs"
 
 const States: React.FC = () => {
-  const { entities } = ECS.useArchetype("kingdom");
+  const { entities } = ECS.useArchetype("kingdom")
 
   const renderable = React.useMemo(
     () =>
@@ -14,8 +14,8 @@ const States: React.FC = () => {
         .map(({ kingdom }) => (
           <StatesDisplay kingdom={kingdom} key={generateUUID()}></StatesDisplay>
         )),
-    [entities]
-  );
+    [entities],
+  )
 
   return (
     <div>
@@ -30,8 +30,8 @@ const States: React.FC = () => {
         {renderable}
       </ul>
     </div>
-  );
-};
+  )
+}
 
 export const TraitPill = styled.div`
   display: inline-block;
@@ -40,12 +40,12 @@ export const TraitPill = styled.div`
   margin: 0 0.5em 0.5em 0;
   white-space: nowrap;
   background: #ffffff17;
-`;
+`
 
 export const PillList = styled.div`
   display: flex;
   flex-wrap: wrap;
-`;
+`
 
 const StatesDisplay: React.FC<{ kingdom: Kingdom }> = ({ kingdom }) => {
   return (
@@ -58,12 +58,12 @@ const StatesDisplay: React.FC<{ kingdom: Kingdom }> = ({ kingdom }) => {
           <span>{kingdom.culture.power[0].name}</span>
         </h4>
         <PillList>
-          {kingdom.culture.traits.map((trait) => (
+          {kingdom.culture.traits.map(trait => (
             <TraitPill key={trait.name}>{trait.name}</TraitPill>
           ))}
         </PillList>
         <div>
-          {kingdom.culture.values.map((value) => (
+          {kingdom.culture.values.map(value => (
             <TraitPill key={value.name}>{value.name}</TraitPill>
           ))}
         </div>
@@ -72,7 +72,7 @@ const StatesDisplay: React.FC<{ kingdom: Kingdom }> = ({ kingdom }) => {
         <div>speaks: {kingdom.languageName}</div>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default States;
+export default States

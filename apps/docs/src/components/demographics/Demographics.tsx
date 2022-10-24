@@ -1,56 +1,56 @@
-import { faCrown } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { City } from "@hello-worlds/cultures";
-import * as React from "react";
-import ReactTooltip from "react-tooltip";
-import styled from "styled-components";
-import { generateUUID } from "three/src/math/MathUtils";
-import { ECS } from "../../state/ecs";
+import { faCrown } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { City } from "@hello-worlds/cultures"
+import * as React from "react"
+import ReactTooltip from "react-tooltip"
+import styled from "styled-components"
+import { generateUUID } from "three/src/math/MathUtils"
+import { ECS } from "../../state/ecs"
 
 const Demographics: React.FC = () => {
-  const { entities } = ECS.useArchetype("kingdom");
+  const { entities } = ECS.useArchetype("kingdom")
 
   const cities = React.useMemo(
     () =>
       entities.reduce(
         (memo, { kingdom }) => [...memo, ...kingdom.cities],
-        [] as City[]
+        [] as City[],
       ),
-    [entities]
-  );
+    [entities],
+  )
 
   const towns = React.useMemo(
     () =>
       entities.reduce(
         (memo, { kingdom }) => [...memo, ...kingdom.towns],
-        [] as City[]
+        [] as City[],
       ),
-    [entities]
-  );
+    [entities],
+  )
 
   const totalUrbanPopultation = React.useMemo(
     () =>
       entities
         .map(({ kingdom }) => kingdom)
         .reduce((memo, kingdom) => {
-          return memo + kingdom.urbanPopulation;
+          return memo + kingdom.urbanPopulation
         }, 0),
-    [entities]
-  );
+    [entities],
+  )
 
   const totalUrban = React.useMemo(
     () =>
       entities
         .map(({ kingdom }) => kingdom)
         .reduce((memo, kingdom) => {
-          return memo + kingdom.population;
+          return memo + kingdom.population
         }, 0),
-    []
-  );
+    [],
+  )
 
   React.useEffect(() => {
-    ReactTooltip.rebuild();
-  });
+    ReactTooltip.rebuild()
+  })
 
   return (
     <div>
@@ -74,7 +74,7 @@ const Demographics: React.FC = () => {
       >
         {cities
           .sort((a, b) => b.population - a.population)
-          .map((city) => (
+          .map(city => (
             <CityDisplay city={city} key={generateUUID()}></CityDisplay>
           ))}
       </ul>
@@ -82,8 +82,8 @@ const Demographics: React.FC = () => {
         <span>Capital City</span>
       </ReactTooltip>
     </div>
-  );
-};
+  )
+}
 
 export const TraitPill = styled.div`
   display: inline-block;
@@ -92,12 +92,12 @@ export const TraitPill = styled.div`
   margin: 0 0.5em 0.5em 0;
   white-space: nowrap;
   background: #ffffff17;
-`;
+`
 
 export const PillList = styled.div`
   display: flex;
   flex-wrap: wrap;
-`;
+`
 
 const CityDisplay: React.FC<{ city: City }> = ({ city }) => {
   return (
@@ -117,7 +117,7 @@ const CityDisplay: React.FC<{ city: City }> = ({ city }) => {
         <span>{city.population.toLocaleString()}</span>
       </div>
     </li>
-  );
-};
+  )
+}
 
-export default Demographics;
+export default Demographics

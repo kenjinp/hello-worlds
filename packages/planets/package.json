@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/planets",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -29,7 +29,6 @@
     "graphics"
   ],
   "dependencies": {
-    "simplex-noise": "^3.0.1",
-    "worktank": "^2.3.0"
+    "simplex-noise": "^3.0.1"
   }
 }

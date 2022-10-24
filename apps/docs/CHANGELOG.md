@@ -1,5 +1,21 @@
 # docs
 
+## 0.0.10
+
+### Patch Changes
+
+- # Ring Worlds update!
+
+  This is a first crack at creating the geometries necessary for Cylinder/Ring worlds
+
+  Other packages have been effected as math utilities have expanded
+
+- Updated dependencies
+  - @hello-worlds/core@0.0.6
+  - @hello-worlds/cultures@0.0.6
+  - @hello-worlds/planets@0.0.11
+  - @hello-worlds/react@0.0.11
+
 ## 0.0.9
 
 ### Patch Changes

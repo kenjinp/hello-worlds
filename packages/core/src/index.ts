@@ -1,27 +1,31 @@
-import Rand from "rand-seed";
-export * from "./utils";
+import Rand from "rand-seed"
+export * from "./utils"
 
 declare global {
-  var _hello_world_core_instances: number;
+  var _hello_world_core_instances: number
 }
-let _seed: string | undefined = undefined;
-let _rand = new Rand(_seed);
+let _seed: string | undefined = undefined
+let _rand = new Rand(_seed)
 
 export const setRandomSeed = (seed: string) => {
-  _seed = seed;
-  _rand = new Rand(seed);
-};
-
-export const random = (): number => _rand.next();
-
-export const getSeed = () => _seed;
-
-function main(): void {
-  let registry = globalThis._hello_world_core_instances;
-  if (registry) {
-    throw new Error("You should only have one version of @hello-worlds/core");
-  }
-  registry = 1;
+  _seed = seed
+  _rand = new Rand(seed)
 }
 
-main();
+export const createRandomSeed = (seed: string) => {
+  return new Rand(seed)
+}
+
+export const random = (): number => _rand.next()
+
+export const getSeed = () => _seed
+
+function main(): void {
+  let registry = globalThis._hello_world_core_instances
+  if (registry) {
+    throw new Error("You should only have one version of @hello-worlds/core")
+  }
+  registry = 1
+}
+
+main()

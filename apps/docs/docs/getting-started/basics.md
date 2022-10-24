@@ -16,8 +16,8 @@ Your basic world is created through interacting with the `Planet` class. This wi
 <TabItem value="ts" label="Typescript">
 
 ```ts
-import { Planet } from "@hello-worlds/planet";
-import planetWorker from "./planet.worker";
+import { Planet } from "@hello-worlds/planet"
+import planetWorker from "./planet.worker"
 
 // ...some threejs scene above
 
@@ -27,9 +27,9 @@ const kerbin = new Planet(
     minCellSize: 25,
     minCellResolution: 48,
   },
-  planetWorker
-);
-scene.add(kerbin);
+  planetWorker,
+)
+scene.add(kerbin)
 ```
 
 </TabItem>
@@ -75,7 +75,7 @@ Because we will make use web workers, you'll need a way to tell your bundler to 
 
 ```ts title="components/planet/Planet.tsx"
 // simply import your webworker directly with a query param
-import PlanetWorker from "./planet.worker?worker";
+import PlanetWorker from "./planet.worker?worker"
 ```
 
 </TabItem>
@@ -91,7 +91,7 @@ module.exports = {
       },
     ],
   },
-};
+}
 ```
 
 </TabItem>
@@ -152,10 +152,11 @@ const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number, { seed: str
 The color generator will run after the height generator (and therefore will have access to the heigh details), and will return a `THREE.Color`. We'll use this to paint the vertex in our `THREE.Material`, and thus paint the world!
 
 ```tsx
-const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> = () =>
+const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> =
+  () =>
   // this will color the planet like a rainbow!
   ({ worldPosition }) => {
-    const w = worldPosition.clone().normalize();
-    return new Color().setRGB(w.x, w.y, w.z);
-  };
+    const w = worldPosition.clone().normalize()
+    return new Color().setRGB(w.x, w.y, w.z)
+  }
 ```

@@ -1,11 +1,11 @@
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import * as React from "react";
+import BrowserOnly from "@docusaurus/BrowserOnly"
+import * as React from "react"
 
-const LazyWorldbuilder = React.lazy(() =>
-  import("../components/world-builder/WorldBuilder")
-);
+const LazyWorldbuilder = React.lazy(
+  () => import("../components/world-builder/WorldBuilder"),
+)
 
-export default function() {
+export default function () {
   return (
     <BrowserOnly>
       {() => {
@@ -13,8 +13,8 @@ export default function() {
           <React.Suspense>
             <LazyWorldbuilder />
           </React.Suspense>
-        );
+        )
       }}
     </BrowserOnly>
-  );
+  )
 }

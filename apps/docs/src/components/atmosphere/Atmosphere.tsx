@@ -1,17 +1,18 @@
-import { useThree } from "@react-three/fiber";
-import { Effect, EffectAttribute } from "postprocessing";
-import * as React from "react";
-import { Camera, Uniform, Vector2, Vector3, WebGLRenderer } from "three";
-import fragment from "./Atmosphere.frag.glsl";
+import { useThree } from "@react-three/fiber"
+import { Effect, EffectAttribute } from "postprocessing"
+import * as React from "react"
+import { usePostProcessingEffect } from "render-composer"
+import { Camera, Uniform, Vector2, Vector3, WebGLRenderer } from "three"
+import fragment from "./Atmosphere.frag.glsl"
 
-console.log({fragment})
+console.log({ fragment })
 
 // Effect implementation
 class MyCustomEffectImpl extends Effect {
-  camera: Camera;
-  atmosphereRadius: number;
-  planetOrigin: Vector3;
-  sunPosition: Vector3;
+  camera: Camera
+  atmosphereRadius: number
+  planetOrigin: Vector3
+  sunPosition: Vector3
   constructor({
     camera,
     renderer,
@@ -20,17 +21,17 @@ class MyCustomEffectImpl extends Effect {
     sunPosition,
     atmosphereRadius,
   }: {
-    camera: Camera;
-    renderer: WebGLRenderer;
-    planetOrigin: Vector3;
-    atmosphereRadius: number;
-    planetRadius: number;
-    sunPosition: Vector3;
+    camera: Camera
+    renderer: WebGLRenderer
+    planetOrigin: Vector3
+    atmosphereRadius: number
+    planetRadius: number
+    sunPosition: Vector3
   }) {
-    const height = renderer.domElement.clientHeight;
-    const width = renderer.domElement.clientWidth;
-    const viewVector = new Vector3();
-    camera.getWorldDirection(viewVector);
+    const height = renderer.domElement.clientHeight
+    const width = renderer.domElement.clientWidth
+    const viewVector = new Vector3()
+    camera.getWorldDirection(viewVector)
 
     super("MyCustomEffect", fragment, {
       uniforms: new Map([
@@ -44,32 +45,32 @@ class MyCustomEffectImpl extends Effect {
         ["uSunPosition", new Uniform(sunPosition)],
       ]),
       attributes: EffectAttribute.DEPTH,
-    });
+    })
 
-    this.camera = camera;
-    this.planetOrigin = planetOrigin;
-    this.atmosphereRadius = atmosphereRadius;
-    this.sunPosition = sunPosition;
+    this.camera = camera
+    this.planetOrigin = planetOrigin
+    this.atmosphereRadius = atmosphereRadius
+    this.sunPosition = sunPosition
   }
 
   updateProps({
     atmosphereRadius,
     sunPosition,
   }: {
-    atmosphereRadius: number;
-    sunPosition: Vector3;
+    atmosphereRadius: number
+    sunPosition: Vector3
   }) {
-    this.atmosphereRadius = atmosphereRadius;
-    this.sunPosition = sunPosition;
+    this.atmosphereRadius = atmosphereRadius
+    this.sunPosition = sunPosition
   }
 
   update() {
-    const viewVector = new Vector3();
-    this.camera.getWorldDirection(viewVector);
-    this.uniforms.get("uViewVector").value = viewVector;
-    this.uniforms.get("uWorldspaceCameraPosition").value = this.camera.position;
-    this.uniforms.get("uAtmosphereRadius").value = this.atmosphereRadius;
-    this.uniforms.get("uSunPosition").value = this.sunPosition;
+    const viewVector = new Vector3()
+    this.camera.getWorldDirection(viewVector)
+    this.uniforms.get("uViewVector").value = viewVector
+    this.uniforms.get("uWorldspaceCameraPosition").value = this.camera.position
+    this.uniforms.get("uAtmosphereRadius").value = this.atmosphereRadius
+    this.uniforms.get("uSunPosition").value = this.sunPosition
   }
 }
 
@@ -77,24 +78,25 @@ class MyCustomEffectImpl extends Effect {
 export const AtmosphereEffect = React.forwardRef<
   ThreeElements.primitive,
   {
-    planetOrigin: Vector3;
-    atmosphereRadius: number;
-    planetRadius: number;
-    sunPosition: Vector3;
+    planetOrigin: Vector3
+    atmosphereRadius: number
+    planetRadius: number
+    sunPosition: Vector3
   }
 >(({ planetOrigin, atmosphereRadius, planetRadius, sunPosition }, ref) => {
-  const { camera, gl } = useThree();
+  const { camera, gl } = useThree()
+  usePostProcessingEffect(
+    () =>
+      new MyCustomEffectImpl({
+        camera,
+        renderer: gl,
+        planetOrigin,
+        atmosphereRadius,
+        sunPosition,
+        planetRadius,
+      }),
+    [camera, gl, planetOrigin, atmosphereRadius],
+  )
 
-  const effect = React.useMemo(() => {
-    return new MyCustomEffectImpl({
-      camera,
-      renderer: gl,
-      planetOrigin,
-      atmosphereRadius,
-      sunPosition,
-      planetRadius,
-    });
-  }, [camera, gl, planetOrigin, atmosphereRadius]);
-
-  return <primitive ref={ref} object={effect} dispose={null} />;
-});
+  return null
+})

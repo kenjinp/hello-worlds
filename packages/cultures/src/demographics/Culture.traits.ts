@@ -1,10 +1,10 @@
 export interface Characteristic {
-  name: string;
-  description: string;
+  name: string
+  description: string
 }
 
 export interface Trait extends Characteristic {
-  restrictions?: string[];
+  restrictions?: string[]
 }
 export interface PowerSource extends Characteristic {}
 
@@ -32,7 +32,7 @@ export const values = [
     name: "Perfection",
     description: "through knowledge",
   },
-];
+]
 
 export const sourceOfPower = [
   {
@@ -49,9 +49,9 @@ export const sourceOfPower = [
     name: "Oligarchy",
     description: "Power rests in the hands a few distinguished patricians",
   },
-];
+]
 
-export const KingdomName = (power: PowerSource, traits: Trait[]) => {};
+export const KingdomName = (power: PowerSource, traits: Trait[]) => {}
 
 // these traits will have an impact on the ranks of civil positions and other things
 export const traits: Trait[] = [
@@ -171,7 +171,7 @@ export const traits: Trait[] = [
     description:
       "The incredible arcane automatons or technological gadgets that are made here a known across the world for their fineness and quality",
   },
-];
+]
 
 export interface Wonders extends Characteristic {}
 
@@ -190,4 +190,4 @@ export const wonders: Wonders[] = [
     name: "Great Library",
     description: "A grand athenaeum filled with the knowledge of the world",
   },
-];
+]

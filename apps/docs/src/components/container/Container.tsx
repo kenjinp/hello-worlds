@@ -1,9 +1,9 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as React from "react";
-import { PropsWithChildren, ReactNode } from "react";
-import Draggable from "react-draggable";
-import styled from "styled-components";
+import { faXmark } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import * as React from "react"
+import { PropsWithChildren, ReactNode } from "react"
+import Draggable from "react-draggable"
+import styled from "styled-components"
 
 export const ContainerDiv = styled.div`
   border-radius: 0.5em;
@@ -43,14 +43,16 @@ export const ContainerDiv = styled.div`
     overflow: auto;
     resize: both;
   }
-`;
+`
 
-export const Container: React.FC<PropsWithChildren<{
-  onClose?: () => void;
-  style: any;
-  header: string | ReactNode;
-  center?: boolean;
-}>> = ({ style, children, header, onClose, center }) => {
+export const Container: React.FC<
+  PropsWithChildren<{
+    onClose?: () => void
+    style: any
+    header: string | ReactNode
+    center?: boolean
+  }>
+> = ({ style, children, header, onClose, center }) => {
   return (
     <Draggable
       handle=".dragger"
@@ -104,5 +106,5 @@ export const Container: React.FC<PropsWithChildren<{
         <div className="content">{children}</div>
       </ContainerDiv>
     </Draggable>
-  );
-};
+  )
+}

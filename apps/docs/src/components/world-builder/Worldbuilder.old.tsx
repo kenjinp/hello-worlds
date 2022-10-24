@@ -1,41 +1,41 @@
-import { Planet, usePlanet } from "@hello-worlds/react";
-import { Stars } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
-import { useControls } from "leva";
-import * as React from "react";
-import { BackSide, FrontSide, Group, MathUtils, Vector3 } from "three";
-import { AtmosphereEffect } from "../atmosphere/Atmosphere";
-import BasicScene from "../BasicScene";
-import FlyCamera from "../cameras/FlyCamera";
-import { EARTH_RADIUS } from "../planet/PlanetConfigurator";
+import { Planet, usePlanet } from "@hello-worlds/react"
+import { Stars } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
+import { useControls } from "leva"
+import * as React from "react"
+import { BackSide, FrontSide, Group, MathUtils, Vector3 } from "three"
+import { AtmosphereEffect } from "../atmosphere/Atmosphere"
+import BasicScene from "../BasicScene"
+import FlyCamera from "../cameras/FlyCamera"
+import { EARTH_RADIUS } from "../planet/PlanetConfigurator"
 
 // @ts-ignore this is dumb... its a webworker
-import planetWorker, { ThreadParams } from "./p.worker";
+import planetWorker, { ThreadParams } from "./p.worker"
 
 function randomSpherePoint(x0, y0, z0, radius) {
-  var u = Math.random();
-  var v = Math.random();
-  var theta = 2 * Math.PI * u;
-  var phi = Math.acos(2 * v - 1);
-  var x = x0 + radius * Math.sin(phi) * Math.cos(theta);
-  var y = y0 + radius * Math.sin(phi) * Math.sin(theta);
-  var z = z0 + radius * Math.cos(phi);
-  return [x, y, z];
+  var u = Math.random()
+  var v = Math.random()
+  var theta = 2 * Math.PI * u
+  var phi = Math.acos(2 * v - 1)
+  var x = x0 + radius * Math.sin(phi) * Math.cos(theta)
+  var y = y0 + radius * Math.sin(phi) * Math.sin(theta)
+  var z = z0 + radius * Math.cos(phi)
+  return [x, y, z]
 }
 
 function getRndBias(min, max, bias, influence) {
   var rnd = Math.random() * (max - min) + min, // random in range
-    mix = Math.random() * influence; // random mixer
-  return rnd * (1 - mix) + bias * mix; // mix full range and bias
+    mix = Math.random() * influence // random mixer
+  return rnd * (1 - mix) + bias * mix // mix full range and bias
 }
 
 function bias(x: number, bias: number) {
-  const k = Math.pow(1 - bias, 3);
-  return (x * k) / (x * k - x + 1);
+  const k = Math.pow(1 - bias, 3)
+  return (x * k) / (x * k - x + 1)
 }
 
 export const Atmosphere: React.FC = () => {
-  const planet = usePlanet();
+  const planet = usePlanet()
   const atmosphere = useControls("atmosphere", {
     atmosphereRadius: {
       min: 1,
@@ -43,7 +43,7 @@ export const Atmosphere: React.FC = () => {
       value: planet.planetProps.radius * 1.05,
       step: 1,
     },
-  });
+  })
 
   // TODO fix update position and radius
   return (
@@ -53,13 +53,12 @@ export const Atmosphere: React.FC = () => {
       sunPosition={new Vector3(-1, 0.75, 1).multiplyScalar(10_000)}
       atmosphereRadius={atmosphere.atmosphereRadius}
     />
-  );
-};
+  )
+}
 
+const tempVector3 = new Vector3()
 
-const tempVector3 = new Vector3();
-
-const radiusMoon = 4_000;
+const radiusMoon = 4_000
 
 function Editor() {
   const planet = useControls("planet", {
@@ -82,12 +81,12 @@ function Editor() {
       value: 64,
       step: 10,
     },
-  });
+  })
 
-  const material = useControls('material', {
+  const material = useControls("material", {
     basicMaterial: false,
-    isBackSide: false
-  });
+    isBackSide: false,
+  })
 
   const crater = useControls("craters", {
     numberOfCraters: {
@@ -128,33 +127,28 @@ function Editor() {
       step: 0.001,
       // step: 1,
     },
-  });
-  const groupRef = React.useRef<Group>(null);
+  })
+  const groupRef = React.useRef<Group>(null)
 
-  const { camera } = useThree();
+  const { camera } = useThree()
   const initialData: {
-    randomPoints: ThreadParams["randomPoints"];
+    randomPoints: ThreadParams["randomPoints"]
   } = React.useMemo(
     () => ({
       randomPoints: Array(crater.numberOfCraters)
         .fill(0)
         .map(() => {
-          const [x, y, z] = randomSpherePoint(0, 0, 0, planet.planetRadius);
-          const randomRadius = getRndBias(
-            10,
-            planet.planetRadius / 10,
-            15,
-            0.9
-          );
+          const [x, y, z] = randomSpherePoint(0, 0, 0, planet.planetRadius)
+          const randomRadius = getRndBias(10, planet.planetRadius / 10, 15, 0.9)
           return {
             floorHeight: MathUtils.randFloat(-0.2, 0),
             radius: randomRadius,
             center: tempVector3.set(x, y, z).clone(),
-          };
+          }
         }),
     }),
-    [planet.planetRadius, crater]
-  );
+    [planet.planetRadius, crater],
+  )
 
   const planetProps = React.useMemo(
     () => ({
@@ -163,11 +157,10 @@ function Editor() {
       minCellResolution: planet.minCellResolution,
       invert: planet.invert,
     }),
-    [planet]
-  );
+    [planet],
+  )
 
   return (
-
     <Planet
       planetProps={planetProps}
       lodOrigin={camera.position}
@@ -175,8 +168,6 @@ function Editor() {
       initialData={initialData}
       data={crater}
     >
-
-
       {/* <OrbitCamera /> */}
       {/* <GodCamera /> */}
       <FlyCamera />
@@ -187,27 +178,46 @@ function Editor() {
       >
         <Stars />
       </group>
-      {material.basicMaterial ? 
-      <meshBasicMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/> : 
-      <meshStandardMaterial vertexColors side={material.isBackSide ? BackSide : FrontSide}/>}
+      {material.basicMaterial ? (
+        <meshBasicMaterial
+          vertexColors
+          side={material.isBackSide ? BackSide : FrontSide}
+        />
+      ) : (
+        <meshStandardMaterial
+          vertexColors
+          side={material.isBackSide ? BackSide : FrontSide}
+        />
+      )}
       {/* <EffectComposer>
         <Atmosphere />
       </EffectComposer> */}
     </Planet>
-  );
+  )
 }
 
-export default function() {
-  React.useEffect(() => {}, []);
+export default function () {
+  React.useEffect(() => {}, [])
   return (
     <div>
-    <BasicScene>
-      <Editor />
-    </BasicScene>
-    <footer style={{ color: "white", display: 'flex', padding: '1em', bottom: '0', position: 'fixed', zIndex: 9, justifyContent: 'center', width:"100%" }}>
-      <h1 id="alt"></h1>
-      <h1 id="speed"></h1>
-    </footer>
+      <BasicScene>
+        <Editor />
+      </BasicScene>
+      <footer
+        style={{
+          color: "white",
+          display: "flex",
+          padding: "1em",
+          bottom: "0",
+          position: "fixed",
+          zIndex: 9,
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        <h1 id="alt"></h1>
+        <h1 id="speed"></h1>
+      </footer>
     </div>
-  );
+  )
 }

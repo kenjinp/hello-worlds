@@ -1,5 +1,5 @@
-import { useFrame, useLoader } from "@react-three/fiber";
-import * as React from "react";
+import { useFrame, useLoader } from "@react-three/fiber"
+import * as React from "react"
 import {
   DoubleSide,
   Mesh,
@@ -7,27 +7,27 @@ import {
   NearestFilter,
   RepeatWrapping,
   TextureLoader,
-} from "three";
-import cloudTexture from "./clouds.png";
+} from "three"
+import cloudTexture from "./clouds.png"
 
 export const Clouds: React.FC<{ radius: number }> = ({ radius }) => {
-  const materialRef = React.useRef<MeshStandardMaterial>(null);
-  const cloudRef = React.useRef<Mesh>(null);
-  const colorMap = useLoader(TextureLoader, cloudTexture);
+  const materialRef = React.useRef<MeshStandardMaterial>(null)
+  const cloudRef = React.useRef<Mesh>(null)
+  const colorMap = useLoader(TextureLoader, cloudTexture)
 
   React.useEffect(() => {
-    colorMap.magFilter = NearestFilter;
-    colorMap.wrapS = colorMap.wrapT = RepeatWrapping;
-    colorMap.repeat.set(10, 10);
-    colorMap.needsUpdate = true;
-  }, [colorMap]);
+    colorMap.magFilter = NearestFilter
+    colorMap.wrapS = colorMap.wrapT = RepeatWrapping
+    colorMap.repeat.set(10, 10)
+    colorMap.needsUpdate = true
+  }, [colorMap])
 
   useFrame((_, delta) => {
     if (!cloudRef.current) {
-      return;
+      return
     }
-    cloudRef.current.rotation.y += (1 / (128 * 2)) * delta;
-  });
+    cloudRef.current.rotation.y += (1 / (128 * 2)) * delta
+  })
 
   return (
     <mesh ref={cloudRef}>
@@ -40,5 +40,5 @@ export const Clouds: React.FC<{ radius: number }> = ({ radius }) => {
         side={DoubleSide}
       />
     </mesh>
-  );
-};
+  )
+}
