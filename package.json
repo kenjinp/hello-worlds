@@ -9,7 +9,10 @@
   "scripts": {
     "build-deps": "pnpm --filter=@hello-worlds/* build",
     "preinstall": "npx only-allow pnpm",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --passWithNoTests",
+    "ci": "pnpm --filter=!docs build && pnpm -r test",
+    "ci:version": "changeset version && pnpm install --no-frozen-lockfile",
+    "ci:release": "pnpm ci && pnpm changeset publish",
     "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
   "devDependencies": {
