@@ -1,5 +1,7 @@
+export * from "./chunk/Chunk"
 export * from "./chunk/types"
 export * from "./defaults"
+export * from "./flat-world/FlatWorld"
 export * from "./generators/Generator3"
 export * from "./math/LinearSpline"
 export * from "./math/Math"

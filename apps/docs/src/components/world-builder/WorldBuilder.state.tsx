@@ -45,6 +45,8 @@ export enum PlANET_TYPES {
   AREAN = "AREAN",
   VULCAN = "VULCAN",
   CLOUD = "CLOUD",
+  OCEAN = "OCEAN",
+  STRANGE = "STRANGE",
 }
 
 export type Planet = AstralBody & {

@@ -2,6 +2,7 @@ import Link from "@docusaurus/Link"
 import { faBook, faGear } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Stars } from "@react-three/drei"
+import { Physics } from "@react-three/rapier"
 import { RoomProvider, useOthers } from "@site/src/services/multiplayer"
 import * as React from "react"
 import { toast, ToastContainer } from "react-toastify"
@@ -10,10 +11,12 @@ import { Vector3 } from "three"
 import logo from "../../../../../logo.png"
 import SolarSystem from "../../../static/img/solar-system.svg"
 import { Button } from "../button/Button"
+import FlyCamera from "../cameras/FlyCamera"
 import Footer from "../footer/Footer"
 import { HeaderStyled } from "../header/Header.style"
 import { SpaceBox } from "../SpaceBox"
 import { JumpTo } from "./JumpTo"
+import { PhysicsTest } from "./physics/test"
 import { Menu } from "./Settings"
 import { Options, ThemeSelector } from "./Theme"
 import { Canvas } from "./WorldBuilder.canvas"
@@ -103,7 +106,11 @@ export default function (): React.ReactElement {
             >
               <Stars saturation={1} />
             </group>
-            <RenderEntities />
+            <Physics gravity={[0, 0, 0]}>
+              <RenderEntities />
+              <PhysicsTest />
+            </Physics>
+            <FlyCamera />
           </PostProcessing>
         </Canvas>
         <Footer

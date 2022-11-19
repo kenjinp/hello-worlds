@@ -2,9 +2,10 @@ import { random } from "@hello-worlds/core"
 import SimplexNoise from "simplex-noise"
 
 export enum NOISE_STYLES {
-  simplex = "simplex",
-  // perlin = "perlin",
-  // fbm = "fbm"
+  fbm = "fbm",
+  billowing = "billowing",
+  rigid = "rigid",
+  iq = "iq",
 }
 
 export interface NoiseParams {
@@ -26,9 +27,19 @@ export class Noise {
   }
   constructor(private params: NoiseParams) {
     const seed = this.params.seed || random
+    const simplex = new SimplexNoise(seed)
 
     this.noiseFunctions = {
-      simplex: new SimplexNoise(seed),
+      fbm: simplex,
+      billowing: {
+        noise3D: (x: number, y: number, z: number) =>
+          Math.abs(simplex.noise3D(x, y, z)),
+      },
+      rigid: {
+        noise3D: (x: number, y: number, z: number) =>
+          1.0 - Math.abs(simplex.noise3D(x, y, z)),
+      },
+      iq: simplex, // not implemented
     }
   }
 

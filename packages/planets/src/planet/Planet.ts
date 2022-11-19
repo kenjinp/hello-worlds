@@ -1,6 +1,12 @@
-import { Group, Material, Vector2, Vector3 } from "three"
+import { Group, Material, Object3D, Vector2, Vector3 } from "three"
 import { makeRootChunkKey } from "../chunk/Chunk.helpers"
-import { ChunkMap, ChunkTypes, RootChunkProps } from "../chunk/types"
+import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "../chunk/Events"
+import {
+  ChunkMap,
+  ChunkTypes,
+  RootChunkProps,
+  WORLD_TYPES,
+} from "../chunk/types"
 import { CubicQuadTree } from "../quadtree/CubicQuadTree"
 import { dictDifference, dictIntersection } from "../utils"
 import PlanetBuilder, { PlanetBuilderProps } from "./Planet.builder"
@@ -16,17 +22,17 @@ export interface PlanetProps<D> {
   data: D
 }
 
-export class Planet<D = Record<string, any>> extends Group {
+export class Planet<D = Record<string, any>> extends Object3D {
   #chunkMap: ChunkMap = {}
   #cubeFaceGroups = [...new Array(6)].map(_ => new Group())
   #builder: PlanetBuilder<D>
+  #material?: Material
   readonly data: D
-  material?: Material
   minCellSize: number
   minCellResolution: number
   radius: number
   inverted: boolean
-
+  readonly worldType = WORLD_TYPES.PLANET
   constructor({
     radius,
     minCellSize,
@@ -46,12 +52,28 @@ export class Planet<D = Record<string, any>> extends Group {
       inverted,
     })
     this.radius = radius
-    this.material = material
+    this.#material = material
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
     this.data = data
     this.inverted = inverted
     this.add(...this.#cubeFaceGroups)
+  }
+
+  get material(): Material | undefined {
+    return this.#material
+  }
+
+  set material(material: Material | undefined) {
+    if (material) {
+      for (let key in this.#chunkMap) {
+        const chunk = this.#chunkMap[key]
+        if (chunk.type === ChunkTypes.CHILD) {
+          chunk.chunk.material = material
+        }
+      }
+    }
+    this.#material = material
   }
 
   // this will cause all the chunks to reform
@@ -120,21 +142,30 @@ export class Planet<D = Record<string, any>> extends Group {
     for (let key in difference) {
       const parentChunkProps = difference[key] as RootChunkProps
       const offset = parentChunkProps.position
+      const allocatedChunk = this.#builder.allocateChunk({
+        group: parentChunkProps.group,
+        material: this.#material,
+        offset,
+        lodOrigin,
+        origin: this.position,
+        width: parentChunkProps.size,
+        height: parentChunkProps.size,
+        radius: this.radius,
+        resolution: this.minCellResolution,
+        inverted: !!this.inverted,
+      })
+      allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
+        const { chunk } = e as unknown as ChunkGeneratedEvent
+        this.dispatchEvent(new ChunkGeneratedEvent(chunk))
+      })
+      allocatedChunk.addEventListener(ChunkWillBeDisposedEvent.type, e => {
+        const { chunk } = e as unknown as ChunkWillBeDisposedEvent
+        this.dispatchEvent(new ChunkWillBeDisposedEvent(chunk))
+      })
       newChunkMap[key] = {
         type: ChunkTypes.CHILD,
         position: new Vector2(offset.x, offset.z),
-        chunk: this.#builder.allocateChunk({
-          group: parentChunkProps.group,
-          material: this.material,
-          offset,
-          lodOrigin: lodOrigin,
-          origin: this.position,
-          width: parentChunkProps.size,
-          height: parentChunkProps.size,
-          radius: this.radius,
-          resolution: this.minCellResolution,
-          inverted: !!this.inverted,
-        }),
+        chunk: allocatedChunk,
       }
     }
 

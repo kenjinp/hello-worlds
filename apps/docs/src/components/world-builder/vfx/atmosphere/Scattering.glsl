@@ -11,32 +11,33 @@
 // and the steps (more looks better, but is slower)
 // the primary step has the most effect on looks
 // and these on desktop
-#define PRIMARY_STEPS 8//12 /* primary steps, affects quality the most */
-#define LIGHT_STEPS 4//10 /* light steps, how much steps in the light direction are taken */
+#define PRIMARY_STEPS 12 /* primary steps, affects quality the most */
+#define LIGHT_STEPS 10 /* light steps, how much steps in the light direction are taken */
 
-vec3 blah_calculate_scattering(
-	  vec3 start, 				// the start of the ray (the camera position)
+vec3 scatter(
+    vec3 start, 				// the start of the ray (the camera position)
     vec3 dir, 					// the direction of the ray (the camera vector)
     float max_dist, 			// the maximum distance the ray can travel (because something is in the way, like an object)
     vec3 scene_color,			// the color of the scene
     vec3 light_dir, 			// the direction of the light
-    vec3 light_intensity,		// how bright the light is, affects the brightness of the atmosphere
+    float light_intensity,		// how bright the light is, affects the brightness of the atmosphere
     vec3 light_color,
     vec3 planet_position, 		// the position of the planet
     float planet_radius, 		// the radius of the planet
-    float atmo_radius, 			// the radius of the atmosphere
-    vec3 beta_ray, 				// the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
-    vec3 beta_mie, 				// the amount mie scattering scatters colors
-    vec3 beta_absorption,   	// how much air is absorbed
-    vec3 beta_ambient,			// the amount of scattering that always occurs, cna help make the back side of the atmosphere a bit brighter
-    float g, 					// the direction mie scatters the light in (like a cone). closer to -1 means more towards a single direction
-    float height_ray, 			// how high do you have to go before there is no rayleigh scattering?
-    float height_mie, 			// the same, but for mie
-    float height_absorption,	// the height at which the most absorption happens
-    float absorption_falloff,	// how fast the absorption falls off from the absorption height
-    int steps_i, 				// the amount of steps along the 'primary' ray, more looks better but slower
-    int steps_l 				// the amount of steps along the light ray, more looks better but slower
+    float atmo_radius 			// the radius of the atmosphere
 ) {
+
+    vec3 beta_ray = RAY_BETA; 				// the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
+    vec3 beta_mie = MIE_BETA; 				// the amount mie scattering scatters colors
+    vec3 beta_absorption = ABSORPTION_BETA;   	// how much air is absorbed
+    vec3 beta_ambient = ABSORPTION_BETA;			// the amount of scattering that always occurs, cna help make the back side of the atmosphere a bit brighter
+    float g = G;					// the direction mie scatters the light in (like a cone). closer to -1 means more towards a single direction
+    float height_ray = HEIGHT_RAY; 			// how high do you have to go before there is no rayleigh scattering?
+    float height_mie = HEIGHT_MIE; 			// the same, but for mie
+    float height_absorption = HEIGHT_ABSORPTION;	// the height at which the most absorption happens
+    float absorption_falloff = ABSORPTION_FALLOFF;	// how fast the absorption falls off from the absorption height
+    int steps_i = PRIMARY_STEPS; 				// the amount of steps along the 'primary' ray, more looks better but slower
+    int steps_l =LIGHT_STEPS;				// the amount of steps along the light ray, more looks better but slower
     // add an offset to the camera position, so that the atmosphere is in the correct position
     start -= planet_position;
     // calculate the start and end position of the ray, as a distance along the ray

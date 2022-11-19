@@ -14,14 +14,14 @@
     "dist"
   ],
   "devDependencies": {
-    "@hello-worlds/core": "workspace:*",
+    "@hello-worlds/core": "0.0.6",
     "@types/three": "^0.141.0",
-    "three": "^0.142.0",
+    "three": "0.143.0",
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@hello-worlds/core": "workspace:*",
-    "three": "^0.142.0"
+    "@hello-worlds/core": "0.0.6",
+    "three": "0.143.0"
   },
   "keywords": [
     "game",

@@ -86,11 +86,11 @@ const config = {
             position: "left",
             label: "Tutorial",
           },
-          // {
-          //   to: "/worldbuilder",
-          //   position: "left",
-          //   label: "Worldbuilder",
-          // },
+          {
+            href: "https://ko-fi.com/kennywtf",
+            position: "right",
+            label: "Support this project",
+          },
           {
             href: "https://github.com/kenjinp/hello-worlds",
             label: "GitHub",
@@ -102,20 +102,11 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/intro",
-              },
-            ],
-          },
-          {
             title: "Community",
             items: [
               {
-                label: "Twitter",
-                href: "https://twitter.com/KennyPirman",
+                label: "Web Game Dev Discord",
+                href: "https://discord.gg/xZAUSMgBU6",
               },
               {
                 label: "Javelin Discord (gamedev & ECS)",
@@ -131,12 +122,12 @@ const config = {
             title: "More",
             items: [
               {
-                label: "GitHub",
-                href: "https://github.com/kenjinp/hello-worlds",
+                label: "Twitter",
+                href: "https://twitter.com/KennyPirman",
               },
               {
-                label: "Firmament (WIP MMORPG)",
-                href: "https://firmament.kenny.wtf",
+                label: "GitHub",
+                href: "https://github.com/kenjinp/hello-worlds",
               },
             ],
           },

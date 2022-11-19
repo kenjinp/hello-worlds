@@ -9,5 +9,5 @@ export const DEFAULT_NOISE_PARAMS = {
   height: 300.0,
   scale: 1100.0,
   seed: getSeed(),
-  noiseType: NOISE_STYLES.simplex,
+  noiseType: NOISE_STYLES.fbm,
 }

@@ -1,14 +1,112 @@
+import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import { Planet as HelloPlanet } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
-import { useThree } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import * as React from "react"
 import { useStore } from "statery"
-import { Mesh, Vector3 } from "three"
-import FlyCamera from "../cameras/FlyCamera"
+import { Euler, Mesh, Object3D, Vector3 } from "three"
 import { useTheme } from "./Theme"
-import { CERES_RADIUS } from "./WorldBuilder.math"
+import { Shadow } from "./vfx/materials/csm/Shadow"
+import { CERES_RADIUS, MOON_DISTANCE, MOON_RADIUS } from "./WorldBuilder.math"
 import { ECS, Planet, store, THEMES } from "./WorldBuilder.state"
 import worker from "./WorldBuilder.worker"
+
+const CastShadowBoys: React.FC<{
+  speed: number
+  radiusScale: Vector3
+  orbitScale: Vector3
+}> = ({ speed = 0.0005, orbitScale, radiusScale }) => {
+  console.log({ orbitScale, radiusScale, speed })
+  const ref1 = React.useRef<Mesh>(null)
+  const ref2 = React.useRef<Mesh>(null)
+
+  const sides = [
+    new Vector3(1, 0, 1).multiplyScalar(orbitScale),
+    new Vector3(-1, 0, 1).multiplyScalar(orbitScale),
+    new Vector3(1, 0, -1).multiplyScalar(orbitScale),
+    new Vector3(-1, 0, -1).multiplyScalar(orbitScale),
+  ]
+
+  useFrame(() => {
+    if (!ref1.current || !ref2.current) {
+      return
+    }
+    ref1.current.rotation.y += speed
+    ref2.current.rotation.y += speed
+  })
+
+  return (
+    <group>
+      <mesh ref={ref1}>
+        {sides.map(vec => {
+          return (
+            <mesh
+              position={vec}
+              scale={new Vector3(radiusScale, radiusScale, radiusScale)}
+              castShadow
+              receiveShadow
+            >
+              <sphereGeometry />
+              <meshStandardMaterial color="purple" />
+            </mesh>
+          )
+        })}
+      </mesh>
+      <mesh ref={ref2} rotation={new Euler(1, (Math.PI / 2) * 180, 1)}>
+        {sides.map(vec => {
+          return (
+            <mesh
+              position={vec}
+              scale={new Vector3(radiusScale, radiusScale, radiusScale)}
+              castShadow
+              receiveShadow
+            >
+              <sphereGeometry />
+              <meshStandardMaterial color="purple" />
+            </mesh>
+          )
+        })}
+      </mesh>
+    </group>
+  )
+}
+
+export const CorrectedChunk: React.FC<{
+  chunk: HelloChunk
+}> = ({ chunk, children }) => {
+  const pos = React.useMemo(
+    () =>
+      chunk.geometry.boundingBox
+        .getCenter(new Vector3())
+        .applyMatrix4(chunk.group.matrixWorld),
+    [chunk.uuid],
+  )
+
+  const rot = React.useMemo(() => {
+    const rotationobj = new Object3D()
+    rotationobj.position.copy(pos)
+    rotationobj.lookAt(chunk.position)
+    return rotationobj.rotation
+  }, [pos])
+
+  return (
+    <group key={chunk.uuid} position={pos} rotation={rot}>
+      {/* <RigidBody colliders="trimesh"></RigidBody> */}
+      {/* <Html>chunk: {chunk.uuid}</Html> */}
+      {/* <box3Helper
+      position={position}
+      rotation={chunk.rotation}
+      args={[
+        chunk.geometry.boundingBox,
+        new Color(Math.random() * 0xffffff),
+      ]}
+    /> */}
+      {children}
+    </group>
+  )
+}
+
+// const MemoChunk = React.memo(CorrectedChunk)
 
 // export const Clouds: React.FC<
 //   Pick<Planet, "atmosphereRadius" | "radius" | "seed">
@@ -64,7 +162,7 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
     ref,
   ) => {
     const theme = useTheme()
-    const isSnythwave = theme === THEMES.SYNTHWAVE
+    const isSynthwave = theme === THEMES.SYNTHWAVE
 
     const camera = useThree(store => store.camera)
 
@@ -77,26 +175,45 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
     )
     const state = useStore(store)
 
-    const testSpheres = [
-      new Vector3(radius * 2, 0, 0),
-      new Vector3(-radius * 2, 0, 0),
-      new Vector3(0, 0, radius * 2),
-      new Vector3(0, 0, -radius * 2),
-    ]
-
     return (
       <HelloPlanet
         ref={ref}
         position={position}
         radius={radius}
         minCellSize={32 * 8}
-        minCellResolution={isSnythwave ? 16 : 32 * 2}
-        // invert={false},
+        minCellResolution={isSynthwave ? 16 : 32 * 2}
         lodOrigin={camera.position}
         worker={worker}
         data={initialData}
       >
-        {focused && <FlyCamera />}
+        <CastShadowBoys
+          orbitScale={MOON_DISTANCE / 10}
+          radiusScale={MOON_RADIUS}
+        />
+        <CastShadowBoys
+          orbitScale={MOON_DISTANCE / 12}
+          radiusScale={MOON_RADIUS / 10}
+          speed={0.005}
+        />
+        <CastShadowBoys
+          orbitScale={MOON_DISTANCE / 8}
+          radiusScale={MOON_RADIUS / 20}
+          speed={0.0025}
+        />
+        {/* <Instances
+          material={new MeshStandardMaterial({ color: "green" })}
+          geometry={new BoxBufferGeometry(100, 100, 100)}
+        >
+          <PlanetChunks>
+            {chunk => (
+              <CorrectedChunk key={chunk.uuid} chunk={chunk}>
+                {chunk.width / chunk.resolution < 200 && (
+                  <Rocks range={chunk.width} />
+                )}
+              </CorrectedChunk>
+            )}
+          </PlanetChunks>
+        </Instances> */}
         {state.showPlanetLabels && (
           <Html>
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
@@ -118,8 +235,14 @@ export const PlanetRender = React.forwardRef<Mesh, Planet>(
             emissiveIntensity={1.1}
           />
         ) : (
-          <meshStandardMaterial vertexColors />
+          <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
+            <Shadow>
+              <meshPhongMaterial vertexColors />
+              {/* <Ground /> */}
+            </Shadow>
+          </React.Suspense>
         )}
+        {/* <Ocean radius={radius} seaLevel={1000} /> */}
       </HelloPlanet>
     )
   },
