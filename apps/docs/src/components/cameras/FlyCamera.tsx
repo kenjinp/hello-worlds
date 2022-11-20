@@ -29,7 +29,7 @@ const FlyCamera: React.FC<{
     })[0]
     setClosestPlanet(closestPlanet)
     camera.position.copy(
-      new Vector3(closestPlanet.radius * 1, 0, closestPlanet.radius * 1),
+      new Vector3(closestPlanet.radius * 3, 0, closestPlanet.radius * 3),
     )
     camera.lookAt(closestPlanet.position)
   }, [entities])
@@ -150,12 +150,10 @@ const FlyCamera: React.FC<{
     <>
       <FlyControls ref={flyControls} rollSpeed={0.25} />
       <group ref={groupRef}>
-        {/* <group position={new Vector3(0, 0, -10)}>
-        <mesh castShadow receiveShadow>
-          <capsuleGeometry args={[0.75, 1]}  />
+        <mesh position={new Vector3(0, 0, 10)} castShadow receiveShadow>
+          <capsuleGeometry args={[0.75, 1]} />
           <meshStandardMaterial color="pink" />
         </mesh>
-      </group> */}
       </group>
     </>
   )

@@ -100,7 +100,7 @@ export function buildRingWorldChunk<D>(
             })
           : tempColor.set(0xffffff).clone()
 
-        // Perturb height along the normal
+        // Perturb height along the "normal", sticking out from the cylinder surface
         const signedTerrainHeightOffset =
           terrainHeightOffset * (params.inverted ? -1 : 1)
         _H.copy(_D)
@@ -121,7 +121,7 @@ export function buildRingWorldChunk<D>(
           colors.push(color.r, color.g, color.b, 1)
         }
         positions.push(_P.x, _P.y, _P.z)
-        normals.push(_D.x, _D.y, _D.z)
+        normals.push(0, 0, 0)
         tangents.push(1, 0, 0, 1)
         uvs.push(_P.x / 200.0, _P.y / 200.0)
       }

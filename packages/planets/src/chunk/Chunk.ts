@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import { Material, Mesh, Object3D, ShaderMaterial, Vector3 } from "three"
+import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "./Events"
 
 export interface ChunkProps {
   group: Object3D
@@ -19,6 +20,8 @@ export interface ChunkRebuildProps {
   colors: ArrayBuffer
   normals: ArrayBuffer
   uvs: ArrayBuffer
+  textureSplatIndices: ArrayBuffer
+  textureSplatStrengths: ArrayBuffer
   material?: Material
 }
 
@@ -57,11 +60,14 @@ export default class Chunk extends Mesh {
     this.lodOrigin = props.lodOrigin
     this.origin = props.origin
     this.inverted = props.inverted
+    this.castShadow = true
+    this.receiveShadow = true
     // add ourselves to the parent group
     this.group.add(this)
   }
 
   dispose() {
+    this.dispatchEvent(new ChunkWillBeDisposedEvent(this))
     // we have to dispose of all the attributes associated with this mesh
     this.group.remove(this)
     this.geometry.deleteAttribute("position")
@@ -96,11 +102,26 @@ export default class Chunk extends Mesh {
       "uv",
       new THREE.Float32BufferAttribute(data.uvs, 2),
     )
+    if (!!data.textureSplatIndices && !!data.textureSplatStrengths) {
+      this.geometry.setAttribute(
+        "textureSplatIndices",
+        new THREE.Float32BufferAttribute(data.textureSplatIndices, 4),
+      )
+      this.geometry.setAttribute(
+        "textureSplatStrengths",
+        new THREE.Float32BufferAttribute(data.textureSplatStrengths, 4),
+      )
+    }
 
     // swap materials if requested
     if (data.material) {
       this.material = data.material
       this.material.needsUpdate = true
     }
+
+    this.geometry.computeBoundingBox()
+    this.geometry.computeBoundingSphere()
+
+    this.dispatchEvent(new ChunkGeneratedEvent(this))
   }
 }

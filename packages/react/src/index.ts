@@ -1,4 +1,5 @@
 export * from "./cameras/OrbitCamera"
+export * from "./flat-world/FlatWorld"
+export * from "./hooks/useFrameEffect"
 export * from "./planet/Planet"
 export * from "./ring-world/RingWorld"
-export * from "./utils/useFrameEffect"

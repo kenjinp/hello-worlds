@@ -13,22 +13,26 @@ Your basic world is created through interacting with the `Planet` class. This wi
 > from [this gamedev.net post](https://www.gamedev.net/forums/topic/642127-a-pathfinding-on-a-sphere-projected-cube-uneven-planetary-body/5055776/)
 
 <Tabs>
-<TabItem value="ts" label="Typescript">
+<TabItem value="ts" label="Three.js">
 
 ```ts
 import { Planet } from "@hello-worlds/planet"
-import planetWorker from "./planet.worker"
+import worker from "./planet.worker"
 
 // ...some threejs scene above
 
-const kerbin = new Planet(
-  {
-    radius: 4_000,
-    minCellSize: 25,
-    minCellResolution: 48,
+const kerbin = new Planet({
+  radius: 100_000
+  minCellSize: 32,
+  minCellResolution: 48,
+  workerProps: {
+    numWorkers: 8,
+    worker,
   },
-  planetWorker,
-)
+  data: {
+    seed: "My Cool Seed!",
+  },
+})
 scene.add(kerbin)
 ```
 
@@ -36,21 +40,27 @@ scene.add(kerbin)
 <TabItem value="jsx" label="React">
 
 ```tsx
-import { useThree } from "@react-three/fiber";
-import { Planet } from "@hello-worlds/react";
-import planetWorker from "./planet.worker";
+import { useThree } from "@react-three/fiber"
+import { Planet } from "@hello-worlds/react"
+import worker from "./planet.worker"
 
-function Kerbin () {
-  const { camera } = useThree();
-  return <Planet
-    planetProps={{
-      radius: 4_000,
-      minCellSize: 25,
-      minCellResolution: 48,
-    }}
-    lodOrigin={camera.position}
-    worker={planetWorker}
-  >
+function Kerbin() {
+  const { camera } = useThree()
+  return (
+    <Planet
+      position={new Vector3()}
+      radius={100_000}
+      minCellSize={32}
+      minCellResolution={32 * 2}
+      lodOrigin={camera.position}
+      worker={worker}
+      data={{
+        seed: "My Cool Seed!",
+      }}
+    >
+      <meshStandardMaterial vertexColors />
+    </Planet>
+  )
 }
 ```
 
@@ -119,32 +129,35 @@ The height generator will be ran inside the chunk web worker first. Usually you'
 ```tsx
 import {
   ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
+  createThreadedPlanetWorker,
   DEFAULT_NOISE_PARAMS,
   Noise,
-} from "@hello-worlds/planets";
+  NOISE_TYPES,
+} from "@hello-worlds/planets"
+import { Color, MathUtils } from "three"
 
-const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number, { seed: string }> = ({
-  initialData: {
-    seed
-  }
-  radius,
+export type ThreadParams = {
+  seed: string
+}
+
+const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
+  data: { seed },
 }) => {
-  // create your global (haha) objects here!
-  // this function is ran once when the thread is spawned
-  const noise = new Noise({
+  const terrainNoise = new Noise({
     ...DEFAULT_NOISE_PARAMS,
-    scale: radius / 4,
-    height: radius / 100,
     seed,
-  });
+    height: 2000,
+    scale: 3000,
+  })
 
   return ({ input }) => {
-    // this will be ran for each vertex!
-    return (
-      noise.get(input.x, input.y, input.z);
-    );
-  };
-};
+    const height = terrainNoise.get(input.x + w, input.y + w, input.z + w)
+    return height
+  }
+}
+
+// ... more below
 ```
 
 ### Color Generator
@@ -152,11 +165,28 @@ const simpleHeight: ChunkGenerator3Initializer<ThreadParams, number, { seed: str
 The color generator will run after the height generator (and therefore will have access to the heigh details), and will return a `THREE.Color`. We'll use this to paint the vertex in our `THREE.Material`, and thus paint the world!
 
 ```tsx
-const simpleColor: ChunkGenerator3Initializer<ThreadParams, Color> =
-  () =>
-  // this will color the planet like a rainbow!
-  ({ worldPosition }) => {
+// ... continued from above
+const colorGenerator: ChunkGenerator3Initializer<
+  ThreadParams,
+  Color | ColorArrayWithAlpha
+> = () => {
+  return ({ worldPosition }) => {
     const w = worldPosition.clone().normalize()
     return new Color().setRGB(w.x, w.y, w.z)
   }
+}
+
+// ... more below
+```
+
+### Integrating into a worker
+
+Simply call the `createThreaded-WorldType-Worker()` function and pass in your generators.
+
+```tsx
+// ... continued from above
+createThreadedPlanetWorker<ThreadParams>({
+  heightGenerator,
+  colorGenerator,
+})
 ```

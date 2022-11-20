@@ -6,8 +6,6 @@ import {
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { DEFAULT_NOISE_PARAMS } from "../../noise/NoiseController"
-import { remap } from "../WorldBuilder.math"
 import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
@@ -15,33 +13,44 @@ export const heightGenerator: ChunkGenerator3Initializer<
   number
 > = ({ data: { seed, type }, radius }) => {
   const mountains = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "blip",
     height: 20_000,
     scale: radius / 75,
   })
 
   const noise = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "blarp",
     height: 10_000,
     scale: radius / 3,
   })
 
   const warp = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 8,
     seed: "apple", // <-important
     height: 10000.0,
     scale: radius / 2,
   })
 
+  const mask = new Noise({
+    seed: "mask",
+    height: 10_000,
+    scale: radius,
+  })
+
+  const maskh = new Noise({
+    octaves: 1,
+    seed: "mask",
+    height: 1,
+    scale: radius,
+  })
+
   return ({ input }) => {
     const w = warp.get(input.x, input.y, input.z)
     const m = mountains.get(input.x + w, input.y + w, input.z + w)
     const n = noise.get(input.x + w, input.y + w, input.z + w)
-
-    return n + m
+    const msk = mask.get(input.x + w, input.y + w, input.z + w)
+    const mskh = maskh.get(input.x + w, input.y + w, input.z + w)
+    return msk + (n + m) * mskh * (n / 100)
   }
 }
 
@@ -57,6 +66,7 @@ const colorLerp: Lerp<THREE.Color> = (
 }
 
 const colorSpline = new LinearSpline<THREE.Color>(colorLerp)
+const white = new Color(0xffffff)
 
 // Temp / Aridity
 colorSpline.addPoint(0.0, new Color(0x37a726))
@@ -66,8 +76,9 @@ colorSpline.addPoint(0.9, new Color(0xab7916))
 colorSpline.addPoint(1.0, new Color(0xbab3a2))
 export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = () => {
   return ({ height }) => {
-    return height > 0
-      ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
-      : oceanColor
+    return white
+    // return height > 0
+    //   ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
+    //   : oceanColor
   }
 }

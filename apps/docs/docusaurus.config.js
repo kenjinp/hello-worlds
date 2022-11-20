@@ -37,10 +37,6 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: false,
         theme: {
@@ -81,16 +77,10 @@ const config = {
             label: "Docs",
           },
           {
-            type: "doc",
-            docId: "intro",
-            position: "left",
-            label: "Tutorial",
+            href: "https://ko-fi.com/kennywtf",
+            position: "right",
+            label: "Support this project",
           },
-          // {
-          //   to: "/worldbuilder",
-          //   position: "left",
-          //   label: "Worldbuilder",
-          // },
           {
             href: "https://github.com/kenjinp/hello-worlds",
             label: "GitHub",
@@ -102,20 +92,15 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/intro",
-              },
-            ],
-          },
-          {
             title: "Community",
             items: [
               {
-                label: "Twitter",
-                href: "https://twitter.com/KennyPirman",
+                label: "Hello Worlds Discord",
+                href: "https://discord.gg/7VqE93h58B",
+              },
+              {
+                label: "Web Game Dev Discord",
+                href: "https://discord.gg/xZAUSMgBU6",
               },
               {
                 label: "Javelin Discord (gamedev & ECS)",
@@ -131,12 +116,12 @@ const config = {
             title: "More",
             items: [
               {
-                label: "GitHub",
-                href: "https://github.com/kenjinp/hello-worlds",
+                label: "Twitter",
+                href: "https://twitter.com/KennyPirman",
               },
               {
-                label: "Firmament (WIP MMORPG)",
-                href: "https://firmament.kenny.wtf",
+                label: "GitHub",
+                href: "https://github.com/kenjinp/hello-worlds",
               },
             ],
           },

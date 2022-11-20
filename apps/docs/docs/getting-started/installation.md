@@ -24,7 +24,7 @@ You'll need `three.js` installed, as it is a peer dependency. If you plan to use
 
 ```bash
 # install packages
-npm install three @hello-worlds/planets
+npm install three @hello-worlds/planets @hello-worlds/core
 
 ```
 
@@ -33,7 +33,7 @@ npm install three @hello-worlds/planets
 
 ```bash
 # install packages
-npm install three @hello-worlds/planets @hello-worlds/react
+npm install three @hello-worlds/planets @hello-worlds/react @hello-worlds/core
 
 ```
 

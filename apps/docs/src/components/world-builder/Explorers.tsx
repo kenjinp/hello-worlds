@@ -100,7 +100,7 @@ export const ExplorerRender = React.forwardRef<Mesh, Explorer>(
           <meshStandardMaterial color={randomColor} />
         </mesh>
         <mesh ref={ref}>
-          <directionalLight color={randomColor} intensity={0.02} castShadow />
+          {/* <directionalLight color={randomColor} intensity={0.02} castShadow /> */}
           <sphereGeometry args={[CERES_RADIUS / 20, 32, 16]}></sphereGeometry>
           <meshStandardMaterial
             color={randomColor}

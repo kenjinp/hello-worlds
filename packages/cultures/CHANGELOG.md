@@ -1,5 +1,25 @@
 # @hello-worlds/cultures
 
+## 0.0.7
+
+### Patch Changes
+
+Features:
+
+- FlatWorlds
+
+Bugfixes:
+
+- fix a problem with RingWorld normals
+
+Docs:
+
+- updated docs to reflect latest API for @hello-worlds/planets
+- added examples for @hello-worlds/planets' world types and for Noise
+
+- Updated dependencies
+  - @hello-worlds/tongues@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes

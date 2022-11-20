@@ -1,5 +1,22 @@
 # @hello-worlds/planets
 
+## 0.0.12
+
+### Patch Changes
+
+Features:
+
+- FlatWorlds
+
+Bugfixes:
+
+- fix a problem with RingWorld normals
+
+Docs:
+
+- updated docs to reflect latest API for @hello-worlds/planets
+- added examples for @hello-worlds/planets' world types and for Noise
+
 ## 0.0.11
 
 ### Patch Changes

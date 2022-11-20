@@ -83,6 +83,15 @@ export type ColorGenerator<D> = ChunkGenerator3<
   Color | ColorArrayWithAlpha,
   { height: number }
 >
+export type TerrainSplatGenerator<D> = ChunkGenerator3<
+  D,
+  TerrainSplatDictionary,
+  {
+    position: Vector3
+    normal: Vector3
+    up: Vector3
+  }
+>
 
 export interface GeneratorInitialParams<D> {
   radius: number
@@ -90,10 +99,22 @@ export interface GeneratorInitialParams<D> {
   data: D
 }
 
+export type TerrainSplatDictionary = Record<
+  string,
+  { index: number; strength: number }
+>
+
 // it's strange that three doesn't have an alpha color
 export type ColorArrayWithAlpha = [r: number, g: number, b: number, a: number]
 
 export interface BuildChunkInitialParams<D> {
   colorGenerator?: ColorGenerator<D>
+  terrainSplatGenerator?: TerrainSplatGenerator<D>
   heightGenerator: HeightGenerator<D>
+}
+
+export enum WORLD_TYPES {
+  RING_WORLD = "RING_WORLD",
+  FLAT_WORLD = "FLAT_WORLD",
+  PLANET = "PLANET",
 }

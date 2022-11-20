@@ -1,0 +1,150 @@
+import FlatWorldExample from "../../../src/components/examples/flat-world/FlatWorld"
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+# Flat Worlds
+
+<FlatWorldExample />
+<br />
+Generate a simple flat and square plane with the same subdivided LOD algorithm
+as other worlds.
+
+## Usage
+
+<Tabs>
+<TabItem value="ts" label="Three.js">
+
+```ts
+import { FlatWorld } from "@hello-worlds/planet"
+import worker from "./flatWorld.worker"
+
+// ...some threejs scene above
+const myWorld = new FlatWorld({
+  size: 10_000,
+  minCellSize: 32,
+  minCellResolution: 48,
+  workerProps: {
+    numWorkers: 8,
+    worker,
+  },
+  data: {
+    seed: "My Cool Seed!",
+  },
+})
+scene.add(myWorld)
+```
+
+</TabItem>
+<TabItem value="jsx" label="React">
+
+```tsx
+import { useThree } from "@react-three/fiber"
+import { FlatWorld } from "@hello-worlds/react"
+import worker from "./FlatWorld.worker"
+
+const MyWorld: React.FC = () => {
+  const camera = useThree(s => s.camera)
+  return (
+    // Rotate World so it's along the x axis
+    <group
+      rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
+    >
+      <FlatWorld
+        position={new Vector3()}
+        size={10_000}
+        minCellSize={32}
+        minCellResolution={32 * 2}
+        lodOrigin={camera.position}
+        worker={worker}
+        data={{
+          seed: "My Cool Seed!",
+        }}
+      >
+        <meshStandardMaterial vertexColors />
+      </FlatWorld>
+    </group>
+  )
+}
+```
+
+</TabItem>
+<TabItem value="worker" label="FlatWorld.worker.ts">
+
+```ts
+import {
+  ChunkGenerator3Initializer,
+  ColorArrayWithAlpha,
+  createThreadedFlatWorldWorker,
+  Noise,
+  NOISE_TYPES,
+} from "@hello-worlds/planets"
+import { Color, MathUtils } from "three"
+
+export type ThreadParams = {
+  seed: string
+}
+
+const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
+  data: { seed },
+}) => {
+  const warp = new Noise({
+    octaves: 2,
+    seed,
+    height: 1000,
+    scale: 3000,
+    noiseType: NOISE_TYPES.BILLOWING,
+  })
+
+  const mountains = new Noise({
+    seed,
+    height: 2000,
+    scale: 3000,
+  })
+
+  return ({ input }) => {
+    const w = warp.get(input.x, input.y, input.z)
+    const m = mountains.get(input.x + w, input.y + w, input.z + w)
+    return m
+  }
+}
+
+const colorGenerator: ChunkGenerator3Initializer<
+  ThreadParams,
+  Color | ColorArrayWithAlpha
+> = props => {
+  const color = new Color(0x9fc164)
+  return () => {
+    return color
+  }
+}
+
+createThreadedFlatWorldWorker<ThreadParams>({
+  heightGenerator,
+  colorGenerator,
+})
+```
+
+</TabItem>
+</Tabs>
+
+### Props
+
+|       Prop        | Type                                                            | Default (if optional) | Description                                                                 |
+| :---------------: | --------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------- |
+|     inverted      | boolean                                                         | false                 | If true, flips the terrain upside down                                      |
+|       size        | number                                                          | required              | The size of a side of the square FlatWorld                                  |
+|    minCellSize    | number                                                          | required              | The smallest size that a terrain chunk will be                              |
+| minCellResolution | number                                                          | required              | The amount of subdivisions in a terrain chunk                               |
+|     material      | [Material](https://threejs.org/docs/#api/en/materials/Material) | undefined             | The material to use                                                         |
+|     position      | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | The position to place the world                                             |
+|    workerProps    | [WorkerProps](#workerprops)                                     | required              | Config for the worker                                                       |
+|       data        | Record<string, any>                                             | required              | User datta that will be consumed by the worker threads' generator functions |
+
+#### WorkerProps
+
+```typescript
+export interface workerProps: {
+  worker: new () => Worker
+  numWorkers: number
+}
+```

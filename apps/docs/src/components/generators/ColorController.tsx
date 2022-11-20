@@ -1,8 +1,4 @@
-import {
-  ColorGenerator,
-  ColorGeneratorParams,
-  NOISE_STYLES,
-} from "@hello-worlds/planets"
+import { ColorGeneratorParams, NOISE_TYPES } from "@hello-worlds/planets"
 import { useControls } from "leva"
 import * as React from "react"
 import * as THREE from "three"
@@ -48,7 +44,7 @@ export const useColorController = (seed: number | string = 1) => {
     exponentiation: 3.9,
     height: 64,
     scale: 256.0,
-    noiseType: NOISE_STYLES.simplex,
+    noiseType: NOISE_TYPES.FBM,
     seed,
   })
 

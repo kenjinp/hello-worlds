@@ -1,0 +1,8 @@
+{
+  "label": "Planets",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "API docs for @hello-worlds/planets. Contains the classes to create various world types."
+  }
+}

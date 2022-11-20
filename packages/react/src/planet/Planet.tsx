@@ -2,9 +2,15 @@ import {
   Planet as HelloPlanet,
   PlanetProps as HelloPlanetProps,
 } from "@hello-worlds/planets"
+import Chunk from "@hello-worlds/planets/src/chunk/Chunk"
+import {
+  ChunkGeneratedEvent,
+  ChunkWillBeDisposedEvent,
+} from "@hello-worlds/planets/src/chunk/Events"
+import { useRerender } from "@hmans/use-rerender"
 import { useFrame } from "@react-three/fiber"
 import * as React from "react"
-import { Vector3 } from "three"
+import { Event, Vector3 } from "three"
 import { PartialBy } from "../utils/types"
 
 export const PlanetContext = React.createContext<HelloPlanet<any>>(
@@ -21,6 +27,45 @@ export type PlanetProps<D> = React.PropsWithChildren<
       lodOrigin: Vector3
     }
 >
+
+export const usePlanetChunks = () => {
+  const planet = usePlanet()
+  const rerender = useRerender()
+  const [chunks] = React.useState<Map<number, Chunk>>(new Map<number, Chunk>())
+
+  React.useEffect(() => {
+    const createdListener = (e: Event) => {
+      const { chunk } = e as unknown as ChunkGeneratedEvent
+      chunks.set(chunk.id, chunk)
+      rerender()
+    }
+    const willDisposeListener = (e: Event) => {
+      const { chunk } = e as unknown as ChunkWillBeDisposedEvent
+      chunks.delete(chunk.id)
+      rerender()
+    }
+    planet.addEventListener(ChunkGeneratedEvent.type, createdListener)
+    planet.addEventListener(ChunkWillBeDisposedEvent.type, willDisposeListener)
+    return () => {
+      planet.removeEventListener(ChunkGeneratedEvent.type, createdListener)
+      planet.removeEventListener(
+        ChunkWillBeDisposedEvent.type,
+        willDisposeListener,
+      )
+      chunks.clear()
+    }
+  }, [planet])
+
+  return Array.from(chunks.values())
+}
+
+export interface PlanetChunksProps {
+  children: (chunks: Chunk, index: number) => React.ReactNode
+}
+export const PlanetChunks: React.FC<PlanetChunksProps> = ({ children }) => {
+  const chunks = usePlanetChunks()
+  return <>{chunks.map(children)}</>
+}
 
 function PlanetInner<D>(
   props: PlanetProps<D>,
@@ -80,9 +125,11 @@ function PlanetInner<D>(
   })
 
   return (
-    <primitive ref={forwardedRef} object={helloPlanet}>
-      {children}
-    </primitive>
+    <PlanetContext.Provider value={helloPlanet}>
+      <primitive ref={forwardedRef} object={helloPlanet}>
+        {children}
+      </primitive>
+    </PlanetContext.Provider>
   )
 }
 

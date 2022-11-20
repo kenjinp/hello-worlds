@@ -14,7 +14,7 @@ import {
   MARS_RADIUS,
   MOON_DISTANCE,
   MOON_RADIUS,
-  SUN_RADIUS,
+  SUN_RADIUS
 } from "./WorldBuilder.math"
 import { ECS, PlANET_TYPES, THEMES } from "./WorldBuilder.state"
 
@@ -108,13 +108,13 @@ export const PlanetEntity: React.FC = () => {
         // TODO replace this with vector 0
         data={new Vector3()}
       />
-      <ECS.Component name="atmosphereRadius" data={EARTH_RADIUS + 200_000} />
+      <ECS.Component name="atmosphereRadius" data={EARTH_RADIUS * 2} />
       <ECS.Component name="radius" data={EARTH_RADIUS} />
       <ECS.Component name="planet" />
       <ECS.Component name="seed" data="hello-worlds" />
       <ECS.Component name="focused" data={true} />
       <ECS.Component name="name" data="Aloth" />
-      <ECS.Component name="type" data={PlANET_TYPES.TERRAN} />
+      <ECS.Component name="type" data={PlANET_TYPES.STRANGE} />
       <ECS.Component name="labelColor" data={new Color(0x1b9acd)} />
     </ECS.Entity>
   )
@@ -246,18 +246,18 @@ export const RenderEntities: React.FC = () => {
     <>
       {/* Add data to the scene */}
       <ExplorerEntity />
-      <SunEntity />
-      <RedSunEntity />
+      {/* <SunEntity /> */}
+      {/* <RedSunEntity /> */}
 
       <PlanetEntity />
-      <RingEntity />
-      <Cycler />
+      {/* <RingEntity /> */}
+      {/* <Cycler /> */}
       {/* <RingEntity2 /> */}
       {/* <NivenWorld /> */}
-      <DinkyMoonletEntity />
+      {/* <DinkyMoonletEntity />
       <MoonletEntity />
       <MoonEntity />
-      <MoonEntity3 />
+      <MoonEntity3 /> */}
 
       {/* Render them */}
       <Stars />

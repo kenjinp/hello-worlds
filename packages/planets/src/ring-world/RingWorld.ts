@@ -1,6 +1,12 @@
-import { Group, Material, Vector2, Vector3 } from "three"
+import { Group, Material, Object3D, Vector2, Vector3 } from "three"
 import { makeRingWorldRootChunkKey } from "../chunk/Chunk.helpers"
-import { ChunkMap, ChunkTypes, RingWorldRootChunkProps } from "../chunk/types"
+import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "../chunk/Events"
+import {
+  ChunkMap,
+  ChunkTypes,
+  RingWorldRootChunkProps,
+  WORLD_TYPES,
+} from "../chunk/types"
 import { PlanetBuilderProps } from "../planet/Planet.builder"
 import { dictDifference, dictIntersection, tempVector3 } from "../utils"
 import RingWorldBuilder from "./RingWorld.builder"
@@ -18,7 +24,7 @@ export interface RingWorldProps<D> {
   data: D
 }
 
-export class RingWorld<D = Record<string, any>> extends Group {
+export class RingWorld<D = Record<string, any>> extends Object3D {
   #chunkMap: ChunkMap<RingWorldRootChunkProps> = {}
   #segmentGroups = [...new Array(4)].map(_ => new Group())
   #builder: RingWorldBuilder<D>
@@ -29,7 +35,7 @@ export class RingWorld<D = Record<string, any>> extends Group {
   radius: number
   length: number
   inverted: boolean
-
+  readonly worldType = WORLD_TYPES.RING_WORLD
   constructor({
     radius,
     length,
@@ -56,7 +62,7 @@ export class RingWorld<D = Record<string, any>> extends Group {
       inverted,
       length,
     })
-    this.inverted = inverted
+    this.inverted = !!inverted
     this.add(...this.#segmentGroups)
   }
 
@@ -126,21 +132,31 @@ export class RingWorld<D = Record<string, any>> extends Group {
     for (let key in difference) {
       const parentChunkProps = difference[key] as RingWorldRootChunkProps
       const offset = parentChunkProps.position
+
+      const allocatedChunk = this.#builder.allocateChunk({
+        group: parentChunkProps.group,
+        material: this.material,
+        offset,
+        lodOrigin: lodOrigin,
+        origin: this.position,
+        height: parentChunkProps.height,
+        width: parentChunkProps.width,
+        radius: this.radius,
+        resolution: this.minCellResolution,
+        inverted: !!this.inverted,
+      })
+      allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
+        const { chunk } = e as unknown as ChunkGeneratedEvent
+        this.dispatchEvent(new ChunkGeneratedEvent(chunk))
+      })
+      allocatedChunk.addEventListener(ChunkWillBeDisposedEvent.type, e => {
+        const { chunk } = e as unknown as ChunkWillBeDisposedEvent
+        this.dispatchEvent(new ChunkWillBeDisposedEvent(chunk))
+      })
       newChunkMap[key] = {
         type: ChunkTypes.CHILD,
         position: new Vector2(offset.x, offset.z),
-        chunk: this.#builder.allocateChunk({
-          group: parentChunkProps.group,
-          material: this.material,
-          offset,
-          lodOrigin: lodOrigin,
-          origin: this.position,
-          height: parentChunkProps.height,
-          width: parentChunkProps.width,
-          radius: this.radius,
-          resolution: this.minCellResolution,
-          inverted: !!this.inverted,
-        }),
+        chunk: allocatedChunk,
       }
     }
 
