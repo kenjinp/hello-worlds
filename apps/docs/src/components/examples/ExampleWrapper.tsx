@@ -6,7 +6,11 @@ import { SpaceBox } from "../SpaceBox"
 import { Canvas } from "../world-builder/WorldBuilder.canvas"
 import { AU } from "../world-builder/WorldBuilder.math"
 
-export default function ExampleWrapper({ children, link }): React.ReactElement {
+export default function ExampleWrapper({
+  children,
+  controls = <OrbitControls enablePan enableZoom maxDistance={100_000} />,
+  link,
+}): React.ReactElement {
   return (
     <div
       id="example"
@@ -20,9 +24,8 @@ export default function ExampleWrapper({ children, link }): React.ReactElement {
         >
           <Stars saturation={1} />
         </group>
-
         {children}
-        <OrbitControls enablePan enableZoom maxDistance={100_000} />
+        {controls}
       </Canvas>
       <div style={{ position: "absolute", bottom: "1em", left: "1em" }}>
         <Button

@@ -1,6 +1,5 @@
----
-position: 1
----
+import { NoiseExample } from "../../../src/components/examples/noise/Noise"
+import { NOISE_TYPES } from "@site/../../packages/planets/dist/esm"
 
 # Noise
 
@@ -55,10 +54,16 @@ Although props are all optional, the defaults may not make sense for your usecas
 
 The most generic type, which the other ones extend from.
 
+<NoiseExample noiseType={NOISE_TYPES.FBM} />
+
 ### Billowing
 
 Create bubbling landscapes reminiscent of sand dunes.
 
+<NoiseExample noiseType={NOISE_TYPES.BILLOWING} />
+
 ### Rigid
 
 Create sharp peaks evoking mountainscapes.
+
+<NoiseExample noiseType={NOISE_TYPES.RIGID} />

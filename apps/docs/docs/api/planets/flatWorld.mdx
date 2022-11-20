@@ -75,7 +75,6 @@ import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
   createThreadedFlatWorldWorker,
-  DEFAULT_NOISE_PARAMS,
   Noise,
   NOISE_TYPES,
 } from "@hello-worlds/planets"
@@ -89,7 +88,6 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   data: { seed },
 }) => {
   const warp = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 2,
     seed,
     height: 1000,
@@ -98,7 +96,6 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   })
 
   const mountains = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed,
     height: 2000,
     scale: 3000,
