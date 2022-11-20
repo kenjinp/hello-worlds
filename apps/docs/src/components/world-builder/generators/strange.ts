@@ -2,11 +2,10 @@ import { setRandomSeed } from "@hello-worlds/core"
 import {
   ChunkGenerator3Initializer,
   ColorGeneratorInitializer,
-  DEFAULT_NOISE_PARAMS,
   Lerp,
   LinearSpline,
   Noise,
-  NOISE_STYLES,
+  NOISE_TYPES,
   remap,
 } from "@hello-worlds/planets"
 import { Color } from "three"
@@ -34,7 +33,6 @@ export const heightGenerator: ChunkGenerator3Initializer<
   //   })
 
   const noiseM = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 3,
     seed,
     height: 1,
@@ -42,7 +40,6 @@ export const heightGenerator: ChunkGenerator3Initializer<
   })
 
   const noiseB = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 3,
     seed: "blah",
     height: 1,
@@ -50,23 +47,20 @@ export const heightGenerator: ChunkGenerator3Initializer<
   })
 
   const billow = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
-    noiseType: NOISE_STYLES.billowing,
+    noiseType: NOISE_TYPES.BILLOWING,
     seed: "strange!",
     height: 40_000,
     scale: radius / 20,
   })
 
   const huh = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "asdfasd!",
     height: 1000,
     scale: radius / 10,
   })
 
   const rigid = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
-    noiseType: NOISE_STYLES.rigid,
+    noiseType: NOISE_TYPES.RIGID,
     seed: "strange!",
     height: 40_000,
     scale: radius / 20,

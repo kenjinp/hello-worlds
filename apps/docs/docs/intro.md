@@ -19,27 +19,27 @@ I've created these packages and docs as a way to organize my (limited) knowledge
 
 :::caution
 I'm changing things up in this library on a _daily_ basis. Expect these docs to be outdated as soon as they are available online! If you need help or want to ask questions,
-[reach out on twitter](https://twitter.com/home) or DM me in the [Poimandres Discord](https://discord.gg/papd8Abw5A)
+[reach out on twitter](https://twitter.com/home) or DM me in the [Discord](https://discord.gg/7VqE93h58B)
 :::
 
 ## Libraries in hello-worlds
 
-### [`hello-worlds/planets`](/docs/planets/intro)
+### [`hello-worlds/planets`](/docs/category/planets)
 
 Create planets and other various types of worlds in `three.js`.
 
-### [`hello-worlds/react`](/docs/react/intro)
+### [`hello-worlds/react`](/docs/category/planets)
 
 Create `hello-worlds` planets and worlds in your `@react-three/fiber` scene via `React`.
 
-### [`hello-worlds/tongues`](/docs/react/tongues)
+### [`hello-worlds/tongues`](/docs/category/languages)
 
 Generate a plausible-ish randomly generated language.
 
-### [`hello-worlds/cultures`](/docs/react/cultures)
+### [`hello-worlds/cultures`](/docs/category/cultures)
 
 Procedurally generate countries, their languages, and their demographics. Based on "Medieval Demographics Made Easy" by S. John Ross and popularized by [dunjon.bin.sh](https://donjon.bin.sh/fantasy/demographics/)
 
-### [`hello-worlds/core`](/docs/react/core)
+### [`hello-worlds/core`](/docs/category/core)
 
 Core library that each depends on. Mostly useful for setting global `seeds`.

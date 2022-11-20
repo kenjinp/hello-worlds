@@ -1,7 +1,7 @@
 import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
-  createThreadedFlatWorldWorker,
+  createThreadedRingWorldWorker,
   DEFAULT_NOISE_PARAMS,
   Noise,
   NOISE_TYPES,
@@ -49,7 +49,7 @@ const colorGenerator: ChunkGenerator3Initializer<
   }
 }
 
-createThreadedFlatWorldWorker<ThreadParams>({
+createThreadedRingWorldWorker<ThreadParams>({
   heightGenerator,
   colorGenerator,
 })

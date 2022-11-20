@@ -1,0 +1,64 @@
+---
+position: 1
+---
+
+# Noise
+
+This library includes a couple of styles of noise to help generate interesting landscapes. The noise is based on a 3D simplex noise function.
+
+The styles are based on [this excellent blog series by Giliam de Carpentier](https://www.decarpentier.nl/scape-procedural-basics).
+
+More discussion about how to use noise in combinations will be covered in the [ProcGen Terrain Cookbook](/docs/category/procgen-terrain-cookbook).
+
+## Usage
+
+```typescript
+import { Noise, NOISE_TYPES } from "@hello-worlds/planets"
+
+new Noise({
+  octaves: 13,
+  persistence: 0.707,
+  lacunarity: 1.8,
+  exponentiation: 4.5,
+  height: 300.0,
+  scale: 1100.0,
+  seed: "My Noise Seed",
+  noiseType: NOISE_TYPES.FBM,
+})
+
+const { x, y, z } = new Vector3()
+
+const value = Noise.get(x, y, z)
+// returns some number
+```
+
+### Props
+
+:::note Defaults
+The props are all optional. The defaults may not make sense for your usecase.
+:::
+
+|      Prop      | Type               | Default                               | Description                                                                                  |
+| :------------: | ------------------ | ------------------------------------- | -------------------------------------------------------------------------------------------- |
+|    octaves     | number             | 13                                    | How many layers of Noise?                                                                    |
+|  persistence   | number             | 0.707                                 | A multiplier that determines how quickly the amplitudes diminish for each successive octave. |
+|   lacunarity   | number             | 1.8                                   | the frequency multiplier between octaves                                                     |
+| exponentiation | number             | 4.5                                   | Raises the output by this exponent, conveninece tool                                         |
+|     height     | number             | 300                                   | What's the min and max values?                                                               |
+|     scale      | number             | 1100                                  | Scales the noise by a multiplier                                                             |
+|      seed      | string             | `getSeed()` from `@hello-worlds/core` | Allows passing a seed for consistency                                                        |
+|   noiseType    | `NOISE_TYPES` enum | `NOISE_TYPES.FMB`                     | Which premade noise "style" to use? described below                                          |
+
+## Noise Types
+
+### Fractal Brownian Motion
+
+The most generic and useful noise type.
+
+### Billowing
+
+Create bubbling landscapes reminiscent of sand dunes.
+
+### Rigid
+
+Create sharp peaks evoking mountainscapes.

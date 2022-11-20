@@ -6,7 +6,6 @@ import {
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { DEFAULT_NOISE_PARAMS } from "../../noise/NoiseController"
 import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
@@ -14,21 +13,18 @@ export const heightGenerator: ChunkGenerator3Initializer<
   number
 > = ({ data: { seed, type }, radius }) => {
   const mountains = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "blip",
     height: 20_000,
     scale: radius / 75,
   })
 
   const noise = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "blarp",
     height: 10_000,
     scale: radius / 3,
   })
 
   const warp = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 8,
     seed: "apple", // <-important
     height: 10000.0,
@@ -36,14 +32,12 @@ export const heightGenerator: ChunkGenerator3Initializer<
   })
 
   const mask = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "mask",
     height: 10_000,
     scale: radius,
   })
 
   const maskh = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 1,
     seed: "mask",
     height: 1,

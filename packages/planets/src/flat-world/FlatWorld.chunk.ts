@@ -50,7 +50,6 @@ export function buildFlatWorldChunk<D>(
         // Compute position
         _P.set(xp - half, yp - half, 0)
         _P.add(offset)
-        _D.copy(_P)
         // Compute a world space position to sample noise
         _W.copy(_P)
         _W.applyMatrix4(localToWorld)
@@ -93,10 +92,14 @@ export function buildFlatWorldChunk<D>(
         } else {
           colors.push(color.r, color.g, color.b, 1)
         }
+        _D.copy(_P.clone().normalize())
         positions.push(_P.x, _P.y, _P.z)
-        normals.push(_P.x, _P.y, _P.z)
+        normals.push(_D.x, _D.y, _D.z)
         tangents.push(1, 0, 0, 1)
         wsPositions.push(_W.x, _W.y, height)
+
+        // TODO change values from main thread's instance
+        // Provide a nice param to tweak these values
         uvs.push(_P.x / 200.0, _P.y / 200.0)
       }
     }

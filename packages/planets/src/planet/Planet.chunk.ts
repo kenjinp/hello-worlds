@@ -2,7 +2,7 @@ import { Vector3 } from "three"
 import {
   BuildChunkInitialParams,
   ChunkGeneratorProps,
-  TerrainSplatDictionary,
+  TerrainSplatDictionary
 } from "../chunk/types"
 import { tempColor } from "../utils"
 
@@ -99,6 +99,7 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
         }
         positions.push(_P.x, _P.y, _P.z)
         normals.push(_D.x, _D.y, _D.z)
+        normals.push(0, 0, 0)
         tangents.push(1, 0, 0, 1)
         wsPositions.push(_W.x, _W.y, height)
         uvs.push(_P.x / 200.0, _P.y / 200.0)
