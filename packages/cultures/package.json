@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/cultures",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -26,7 +26,7 @@
     "procedural generation"
   ],
   "dependencies": {
-    "@hello-worlds/tongues": "0.0.6",
+    "@hello-worlds/tongues": "0.0.7",
     "roll": "^1.3.1"
   }
 }

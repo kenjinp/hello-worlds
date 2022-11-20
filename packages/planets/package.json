@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/planets",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
