@@ -7,12 +7,12 @@ import {
   RootChunkProps,
   WORLD_TYPES,
 } from "../chunk/types"
-import { QuadTree } from "../quadtree/Quadtree"
 import { dictDifference, dictIntersection } from "../utils"
 import FlatWorldBuilder, { FlatWorldBuilderProps } from "./FlatWorld.builder"
+import { FlatWorldsQuadTree } from "./FlatWorlds.quadtree"
 
 export interface FlatWorldProps<D> {
-  inverted: boolean
+  inverted?: boolean
   size: number
   minCellSize: number
   minCellResolution: number
@@ -54,7 +54,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
     this.data = data
-    this.inverted = inverted
+    this.inverted = !!inverted
   }
 
   get material(): Material | undefined {
@@ -90,8 +90,8 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     const origin = this.position
 
     // update visible chunks quadtree
-    const q = new QuadTree({
-      size: this.size,
+    const q = new FlatWorldsQuadTree({
+      size: this.size / 2,
       localToWorld: this.matrixWorld,
       minNodeSize: this.minCellSize,
       origin,
@@ -105,10 +105,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     let newChunkMap: ChunkMap = {}
     const center = new Vector3()
     const dimensions = new Vector3()
-    // for (let i = 0; i < sides.length; i++) {
-    //   const cubeFaceRootGroup = this.#cubeFaceGroups[i]
-    //   cubeFaceRootGroup.matrix = sides[i].transform // removed for floating origin
-    //   cubeFaceRootGroup.matrixAutoUpdate = false
+
     for (let i = 0; i < children.length; i++) {
       const node = children[i]
       node.bounds.getCenter(center)
@@ -148,7 +145,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
         origin: this.position,
         width: parentChunkProps.size,
         height: parentChunkProps.size,
-        radius: this.size,
+        radius: this.size / 2,
         resolution: this.minCellResolution,
         inverted: !!this.inverted,
       })

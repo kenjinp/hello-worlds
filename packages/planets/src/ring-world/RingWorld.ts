@@ -62,7 +62,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
       inverted,
       length,
     })
-    this.inverted = inverted
+    this.inverted = !!inverted
     this.add(...this.#segmentGroups)
   }
 

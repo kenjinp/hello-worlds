@@ -37,10 +37,6 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
         },
         blog: false,
         theme: {
@@ -81,12 +77,6 @@ const config = {
             label: "Docs",
           },
           {
-            type: "doc",
-            docId: "intro",
-            position: "left",
-            label: "Tutorial",
-          },
-          {
             href: "https://ko-fi.com/kennywtf",
             position: "right",
             label: "Support this project",
@@ -104,6 +94,10 @@ const config = {
           {
             title: "Community",
             items: [
+              {
+                label: "Hello Worlds Discord",
+                href: "https://discord.gg/7VqE93h58B",
+              },
               {
                 label: "Web Game Dev Discord",
                 href: "https://discord.gg/xZAUSMgBU6",

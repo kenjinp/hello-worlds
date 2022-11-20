@@ -56,7 +56,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
     this.data = data
-    this.inverted = inverted
+    this.inverted = !!inverted
     this.add(...this.#cubeFaceGroups)
   }
 
