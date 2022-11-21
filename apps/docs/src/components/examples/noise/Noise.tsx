@@ -31,7 +31,7 @@ const Example: React.FC<{ noiseType: NOISE_TYPES }> = ({ noiseType }) => {
   )
 }
 
-export function NoiseExample({ noiseType }) {
+export default function NoiseExample({ noiseType }) {
   return (
     <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/noise">
       <group position={new Vector3(0, -1, 0).multiplyScalar(1000)}>

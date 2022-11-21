@@ -5,7 +5,6 @@ import {
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { DEFAULT_NOISE_PARAMS } from "../noise/NoiseController"
 import { terra } from "./generators"
 import { PlANET_TYPES } from "./WorldBuilder.state"
 
@@ -19,7 +18,6 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   length,
 }) => {
   const warp = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     octaves: 2,
     seed: "blip",
     height: 100,
@@ -27,7 +25,6 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   })
 
   const mountains = new Noise({
-    ...DEFAULT_NOISE_PARAMS,
     seed: "blip",
     height: 2000,
     scale: length,

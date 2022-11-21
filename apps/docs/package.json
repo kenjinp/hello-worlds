@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "^1.17.0",
-    "@docusaurus/core": "2.0.0-rc.1",
-    "@docusaurus/preset-classic": "2.0.0-rc.1",
+    "@docusaurus/core": "2.2.0",
+    "@docusaurus/preset-classic": "2.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
@@ -72,7 +72,7 @@
     }
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.0.0-rc.1",
+    "@docusaurus/module-type-aliases": "2.2.0",
     "@tsconfig/docusaurus": "^1.0.5",
     "@types/react-resizable": "^3.0.1",
     "@types/three": "^0.141.0",

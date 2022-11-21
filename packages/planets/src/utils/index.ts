@@ -1,11 +1,7 @@
 import { Color, Vector3 } from "three"
 
-export const dictIntersection = <T = Record<string, any>>(
-  dictA: T,
-  dictB: T,
-) => {
-  // @ts-ignore
-  const intersection: T = {}
+export const dictIntersection = <T extends object>(dictA: T, dictB: T) => {
+  const intersection = {} as T
   for (let k in dictB) {
     if (k in dictA) {
       intersection[k] = dictA[k]

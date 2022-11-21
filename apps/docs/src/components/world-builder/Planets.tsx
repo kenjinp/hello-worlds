@@ -16,7 +16,6 @@ const CastShadowBoys: React.FC<{
   radiusScale: Vector3
   orbitScale: Vector3
 }> = ({ speed = 0.0005, orbitScale, radiusScale }) => {
-  console.log({ orbitScale, radiusScale, speed })
   const ref1 = React.useRef<Mesh>(null)
   const ref2 = React.useRef<Mesh>(null)
 
@@ -38,9 +37,10 @@ const CastShadowBoys: React.FC<{
   return (
     <group>
       <mesh ref={ref1}>
-        {sides.map(vec => {
+        {sides.map((vec, i) => {
           return (
             <mesh
+              key={`this-way-${i}`}
               position={vec}
               scale={new Vector3(radiusScale, radiusScale, radiusScale)}
               castShadow
@@ -53,9 +53,10 @@ const CastShadowBoys: React.FC<{
         })}
       </mesh>
       <mesh ref={ref2} rotation={new Euler(1, (Math.PI / 2) * 180, 1)}>
-        {sides.map(vec => {
+        {sides.map((vec, i) => {
           return (
             <mesh
+              key={`that-way-${i}`}
               position={vec}
               scale={new Vector3(radiusScale, radiusScale, radiusScale)}
               castShadow
