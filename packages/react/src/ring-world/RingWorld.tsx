@@ -88,6 +88,7 @@ function RingWorldInner<D>(
     length,
     position,
     worker,
+    lodDistanceComparisonValue,
   } = props
 
   const workerProps = React.useMemo(
@@ -123,9 +124,18 @@ function RingWorldInner<D>(
       helloRingWorld.minCellSize = minCellSize
       helloRingWorld.minCellResolution = minCellResolution
       helloRingWorld.position.copy(position)
+      if (lodDistanceComparisonValue) {
+        helloRingWorld.lodDistanceComparisonValue = lodDistanceComparisonValue
+      }
       helloRingWorld.rebuild()
     }
-  }, [inverted, minCellSize, minCellResolution, position])
+  }, [
+    inverted,
+    minCellSize,
+    minCellResolution,
+    position,
+    lodDistanceComparisonValue,
+  ])
 
   useFrame(() => {
     helloRingWorld.update(lodOrigin)

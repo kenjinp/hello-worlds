@@ -7,6 +7,7 @@ import {
   RootChunkProps,
   WORLD_TYPES,
 } from "../chunk/types"
+import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
 import { dictDifference, dictIntersection } from "../utils"
 import FlatWorldBuilder, { FlatWorldBuilderProps } from "./FlatWorld.builder"
 import { FlatWorldsQuadTree } from "./FlatWorlds.quadtree"
@@ -20,6 +21,7 @@ export interface FlatWorldProps<D> {
   position: Vector3
   workerProps: FlatWorldBuilderProps<D>["workerProps"]
   data: D
+  lodDistanceComparisonValue?: number
 }
 
 export class FlatWorld<D = Record<string, any>> extends Object3D {
@@ -31,6 +33,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
   minCellResolution: number
   size: number
   inverted: boolean
+  lodDistanceComparisonValue: number
   readonly worldType = WORLD_TYPES.FLAT_WORLD
   constructor({
     minCellSize,
@@ -40,6 +43,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     workerProps,
     position,
     size,
+    lodDistanceComparisonValue,
     inverted = false,
   }: FlatWorldProps<D>) {
     super()
@@ -50,6 +54,8 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
       data,
       inverted,
     })
+    this.lodDistanceComparisonValue =
+      lodDistanceComparisonValue || DEFAULT_LOD_DISTANCE_COMPARISON_VALUE
     this.#material = material
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
@@ -95,6 +101,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
       localToWorld: this.matrixWorld,
       minNodeSize: this.minCellSize,
       origin,
+      comparatorValue: this.lodDistanceComparisonValue,
     })
 
     // collapse the quadtree recursively at this position

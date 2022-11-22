@@ -1,5 +1,14 @@
 # docs
 
+## 0.0.12
+
+### Patch Changes
+
+- expose lodDistanceComparisonValue to allow users to tune the resolution & performance
+- Updated dependencies
+  - @hello-worlds/planets@0.0.13
+  - @hello-worlds/react@0.0.13
+
 ## 0.0.11
 
 ### Patch Changes

@@ -6,6 +6,7 @@ export interface CubicQuadTreeParams {
   radius: number
   minNodeSize: number
   origin: Vector3
+  comparatorValue: number
 }
 
 export class CubicQuadTree {
@@ -63,6 +64,7 @@ export class CubicQuadTree {
           minNodeSize: this.params.minNodeSize,
           localToWorld: t,
           origin: params.origin,
+          comparatorValue: this.params.comparatorValue,
         }),
       })
     }

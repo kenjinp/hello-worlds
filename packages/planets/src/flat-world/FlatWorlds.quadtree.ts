@@ -3,11 +3,12 @@ import { Vector3 } from "three"
 
 const CHILD_SIZE_X_COMPARATOR = 1.25
 
-export interface QuadTreeParams {
+export interface FlatWorldsQuadTreeProps {
   localToWorld: THREE.Matrix4
   size: number
   minNodeSize: number
   origin: THREE.Vector3
+  comparatorValue: number
 }
 
 export interface Node {
@@ -22,12 +23,15 @@ export interface Node {
 export class FlatWorldsQuadTree {
   private root: Node
   private origin: Vector3
-  constructor(private params: QuadTreeParams) {
+  constructor(private params: FlatWorldsQuadTreeProps) {
     const s = params.size
     const b = new THREE.Box3(
       new THREE.Vector3(-s, -s, 0),
       new THREE.Vector3(s, s, 0),
     )
+    if (params.comparatorValue <= 0) {
+      throw new Error("Quadtree Comparison Value must be greater than 0")
+    }
     this.origin = params.origin
     this.root = {
       bounds: b,
@@ -67,7 +71,7 @@ export class FlatWorldsQuadTree {
     const distToChild = this.#distanceToChild(child, pos)
 
     if (
-      distToChild < child.size.x * CHILD_SIZE_X_COMPARATOR &&
+      distToChild < child.size.x * this.params.comparatorValue &&
       child.size.x > this.params.minNodeSize
     ) {
       child.children = this.#createChildren(child)

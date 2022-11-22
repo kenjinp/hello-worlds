@@ -59,9 +59,8 @@ const Example2: React.FC = () => {
 
 export default function RingWorldExample({ type }: { type: "long" | "thin" }) {
   return (
-    <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/planet">
+    <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/ring-world">
       {type === "long" ? <Example2 /> : <Example1 />}
-      <Example1 />
     </ExampleWrapper>
   )
 }

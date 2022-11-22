@@ -3,7 +3,6 @@ import * as React from "react"
 
 const Lazy = React.lazy(() => import("./FlatWorld.tsx"))
 
-// This is aweful
 export default function () {
   return (
     <BrowserOnly>

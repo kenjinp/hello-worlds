@@ -3,7 +3,6 @@ import * as React from "react"
 
 const Lazy = React.lazy(() => import("./Planet.tsx"))
 
-// This is aweful
 export default function ({ noiseType }) {
   return (
     <BrowserOnly>

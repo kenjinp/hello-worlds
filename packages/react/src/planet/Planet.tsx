@@ -78,6 +78,7 @@ function PlanetInner<D>(
     minCellSize,
     minCellResolution,
     data,
+    lodDistanceComparisonValue,
     numWorkers = navigator.hardwareConcurrency || 8,
     lodOrigin,
     position,
@@ -116,9 +117,18 @@ function PlanetInner<D>(
       helloPlanet.minCellSize = minCellSize
       helloPlanet.minCellResolution = minCellResolution
       helloPlanet.position.copy(position)
+      if (lodDistanceComparisonValue) {
+        helloPlanet.lodDistanceComparisonValue = lodDistanceComparisonValue
+      }
       helloPlanet.rebuild()
     }
-  }, [inverted, minCellSize, minCellResolution, position])
+  }, [
+    inverted,
+    minCellSize,
+    minCellResolution,
+    position,
+    lodDistanceComparisonValue,
+  ])
 
   useFrame(() => {
     helloPlanet.update(lodOrigin)

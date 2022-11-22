@@ -11,3 +11,5 @@ export const DEFAULT_NOISE_PARAMS = {
   seed: getSeed(),
   noiseType: NOISE_TYPES.FBM,
 }
+
+export const DEFAULT_LOD_DISTANCE_COMPARISON_VALUE = 1.25

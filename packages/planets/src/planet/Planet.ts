@@ -5,8 +5,9 @@ import {
   ChunkMap,
   ChunkTypes,
   RootChunkProps,
-  WORLD_TYPES,
+  WORLD_TYPES
 } from "../chunk/types"
+import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
 import { CubicQuadTree } from "../quadtree/CubicQuadTree"
 import { dictDifference, dictIntersection } from "../utils"
 import PlanetBuilder, { PlanetBuilderProps } from "./Planet.builder"
@@ -19,6 +20,7 @@ export interface PlanetProps<D> {
   material?: Material
   position: Vector3
   workerProps: PlanetBuilderProps<D>["workerProps"]
+  lodDistanceComparisonValue?: number
   data: D
 }
 
@@ -32,6 +34,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
   minCellResolution: number
   radius: number
   inverted: boolean
+  lodDistanceComparisonValue: number
   readonly worldType = WORLD_TYPES.PLANET
   constructor({
     radius,
@@ -41,6 +44,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
     data,
     workerProps,
     position,
+    lodDistanceComparisonValue,
     inverted = false,
   }: PlanetProps<D>) {
     super()
@@ -57,6 +61,8 @@ export class Planet<D = Record<string, any>> extends Object3D {
     this.minCellSize = minCellSize
     this.data = data
     this.inverted = !!inverted
+    this.lodDistanceComparisonValue =
+      lodDistanceComparisonValue || DEFAULT_LOD_DISTANCE_COMPARISON_VALUE
     this.add(...this.#cubeFaceGroups)
   }
 
@@ -97,6 +103,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
       radius: this.radius,
       minNodeSize: this.minCellSize,
       origin,
+      comparatorValue: this.lodDistanceComparisonValue
     })
 
     // collapse the quadtree recursively at this position

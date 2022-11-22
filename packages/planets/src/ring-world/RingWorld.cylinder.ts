@@ -6,6 +6,7 @@ export interface RingWorldQuadTreeProps {
   height: number
   minNodeSize: number
   origin: Vector3
+  comparatorValue: number
 }
 
 export class RingWorldQuadTree {
@@ -51,6 +52,7 @@ export class RingWorldQuadTree {
         localToWorld: t,
         origin: props.origin,
         radius: r,
+        comparatorValue: this.props.comparatorValue,
       })
       this.sides.push({
         transform: t.clone(),

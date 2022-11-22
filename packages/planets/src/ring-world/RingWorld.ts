@@ -7,6 +7,7 @@ import {
   RingWorldRootChunkProps,
   WORLD_TYPES,
 } from "../chunk/types"
+import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
 import { PlanetBuilderProps } from "../planet/Planet.builder"
 import { dictDifference, dictIntersection, tempVector3 } from "../utils"
 import RingWorldBuilder from "./RingWorld.builder"
@@ -22,6 +23,7 @@ export interface RingWorldProps<D> {
   position: Vector3
   workerProps: PlanetBuilderProps<D>["workerProps"]
   data: D
+  lodDistanceComparisonValue?: number
 }
 
 export class RingWorld<D = Record<string, any>> extends Object3D {
@@ -35,6 +37,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
   radius: number
   length: number
   inverted: boolean
+  lodDistanceComparisonValue: number
   readonly worldType = WORLD_TYPES.RING_WORLD
   constructor({
     radius,
@@ -45,6 +48,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
     workerProps,
     data,
     position,
+    lodDistanceComparisonValue,
     inverted = false,
   }: RingWorldProps<D>) {
     super()
@@ -63,6 +67,8 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
       length,
     })
     this.inverted = !!inverted
+    this.lodDistanceComparisonValue =
+      lodDistanceComparisonValue || DEFAULT_LOD_DISTANCE_COMPARISON_VALUE
     this.add(...this.#segmentGroups)
   }
 
@@ -86,6 +92,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
       minNodeSize: this.minCellSize,
       origin,
       height: this.length,
+      comparatorValue: this.lodDistanceComparisonValue,
     })
 
     // collapse the quadtree recursively at this position

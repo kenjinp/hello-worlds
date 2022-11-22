@@ -84,6 +84,7 @@ function FlatWorldInner<D>(
     position,
     worker,
     size,
+    lodDistanceComparisonValue,
   } = props
 
   const workerProps = React.useMemo(
@@ -118,9 +119,18 @@ function FlatWorldInner<D>(
       helloFlatWorld.minCellSize = minCellSize
       helloFlatWorld.minCellResolution = minCellResolution
       helloFlatWorld.position.copy(position)
+      if (lodDistanceComparisonValue) {
+        helloFlatWorld.lodDistanceComparisonValue = lodDistanceComparisonValue
+      }
       helloFlatWorld.rebuild()
     }
-  }, [inverted, minCellSize, minCellResolution, position])
+  }, [
+    inverted,
+    minCellSize,
+    minCellResolution,
+    position,
+    lodDistanceComparisonValue,
+  ])
 
   useFrame(() => {
     helloFlatWorld.update(lodOrigin)

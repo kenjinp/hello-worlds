@@ -8,7 +8,6 @@ import worker from "./Planet.worker"
 const Example: React.FC = () => {
   const camera = useThree(s => s.camera)
   return (
-    // Rotate World so it's along the x axis
     <Planet
       position={new Vector3()}
       radius={10_000}

@@ -3,7 +3,6 @@ import { Box3, Vector3 } from "three"
 import { normalizeAsCylinder } from "../math/Math"
 import { tempVector3 } from "../utils"
 
-const CHILD_SIZE_X_COMPARATOR = 1.25
 const CHILD_QUADTREE_RATIO_COMPARATOR = 1.05
 
 export interface CylinderQuadTreeParams {
@@ -12,6 +11,7 @@ export interface CylinderQuadTreeParams {
   minNodeSize: number
   origin: THREE.Vector3
   radius: number
+  comparatorValue: number
 }
 
 export interface Node {
@@ -34,6 +34,9 @@ export class CylinderQuadTree {
     )
 
     const center = b.getCenter(tempVector3)
+    if (params.comparatorValue <= 0) {
+      throw new Error("Quadtree Comparison Value must be greater than 0")
+    }
 
     // note world center is what we use to compare the camera distance to
     // so it should be 'bent' into the right shape
@@ -78,7 +81,7 @@ export class CylinderQuadTree {
     const comparator = x > y ? x : y
 
     if (
-      distToChild < comparator * CHILD_SIZE_X_COMPARATOR &&
+      distToChild < comparator * this.params.comparatorValue &&
       comparator > this.params.minNodeSize
     ) {
       child.children = this.#createChildren(child)
