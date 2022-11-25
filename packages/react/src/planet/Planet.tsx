@@ -1,12 +1,10 @@
 import {
   Chunk,
+  ChunkGeneratedEvent,
+  ChunkWillBeDisposedEvent,
   Planet as HelloPlanet,
   PlanetProps as HelloPlanetProps,
 } from "@hello-worlds/planets"
-import {
-  ChunkGeneratedEvent,
-  ChunkWillBeDisposedEvent,
-} from "@hello-worlds/planets/src/chunk/Events"
 import { useRerender } from "@hmans/use-rerender"
 import { useFrame } from "@react-three/fiber"
 import * as React from "react"
