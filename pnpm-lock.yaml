@@ -173,7 +173,7 @@ importers:
   packages/react:
     specifiers:
       '@hello-worlds/core': 0.0.6
-      '@hello-worlds/planets': 0.0.13
+      '@hello-worlds/planets': 0.0.14
       '@hmans/use-rerender': ^0.0.2
       '@react-three/drei': 9.30.1
       '@react-three/fiber': 8.8.2
