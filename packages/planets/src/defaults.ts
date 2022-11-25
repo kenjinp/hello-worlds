@@ -1,5 +1,5 @@
 import { getSeed } from "@hello-worlds/core"
-import { NOISE_TYPES } from "./math/Noise"
+import { NOISE_TYPES } from "./math/Noise.types"
 
 export const DEFAULT_NOISE_PARAMS = {
   octaves: 13,

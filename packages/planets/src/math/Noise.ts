@@ -1,14 +1,7 @@
 import { random } from "@hello-worlds/core"
 import SimplexNoise from "simplex-noise"
 import { DEFAULT_NOISE_PARAMS } from "../defaults"
-
-// from https://www.decarpentier.nl/scape-procedural-basics
-export enum NOISE_TYPES {
-  FBM = "FBM",
-  BILLOWING = "BILLOWING",
-  RIGID = "RIGID",
-  // iq = "iq", TODO
-}
+import { NOISE_TYPES } from "./Noise.types"
 
 export interface NoiseParams {
   seed?: string | number

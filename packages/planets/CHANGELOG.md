@@ -1,5 +1,13 @@
 # @hello-worlds/planets
 
+## 0.0.15
+
+### Patch Changes
+
+- remove sourcemaps from builds, fix exports
+- Updated dependencies
+  - @hello-worlds/core@0.0.7
+
 ## 0.0.14
 
 ### Patch Changes

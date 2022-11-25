@@ -1,5 +1,11 @@
 # @hello-worlds/core
 
+## 0.0.7
+
+### Patch Changes
+
+- remove sourcemaps from builds, fix exports
+
 ## 0.0.6
 
 ### Patch Changes

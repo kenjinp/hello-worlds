@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/react",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -14,8 +14,8 @@
     "dist"
   ],
   "devDependencies": {
-    "@hello-worlds/core": "0.0.6",
-    "@hello-worlds/planets": "0.0.14",
+    "@hello-worlds/core": "0.0.7",
+    "@hello-worlds/planets": "0.0.15",
     "@react-three/drei": "9.30.1",
     "@react-three/fiber": "8.8.2",
     "@types/react": "^18.0.0",
@@ -26,13 +26,13 @@
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@hello-worlds/core": "0.0.6",
-    "@hello-worlds/planets": "0.0.14",
+    "@hello-worlds/core": "0.0.7",
+    "@hello-worlds/planets": "0.0.15",
     "@react-three/drei": "9.30.1",
     "@react-three/fiber": "8.8.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "three": "0.143.0"
+    "three": "^0.143.0"
   },
   "keywords": [
     "game",

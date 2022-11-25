@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/planets",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -14,14 +14,14 @@
     "dist"
   ],
   "devDependencies": {
-    "@hello-worlds/core": "0.0.6",
+    "@hello-worlds/core": "0.0.7",
     "@types/three": "^0.141.0",
     "three": "0.143.0",
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
-    "@hello-worlds/core": "0.0.6",
-    "three": "0.143.0"
+    "@hello-worlds/core": "0.0.7",
+    "three": "^0.143.0"
   },
   "keywords": [
     "game",

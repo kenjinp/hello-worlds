@@ -1,5 +1,13 @@
 # @hello-worlds/tongues
 
+## 0.0.8
+
+### Patch Changes
+
+- remove sourcemaps from builds, fix exports
+- Updated dependencies
+  - @hello-worlds/core@0.0.7
+
 ## 0.0.7
 
 ### Patch Changes
