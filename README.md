@@ -37,7 +37,12 @@ Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](htt
 
 ## Alternatives 💕
 
-Check out [terra](https://github.com/fintelia/terra) if you're looking for something more performant and don't mind something not written in js. It's fantastic!
+There are a couple solutions allow you to create beautiful terrain for the web:
+
+#### Heightmap-based
+These require high resoluion sample data generated offline, and don't generate them procedurally
+-  [three-landscape](https://github.com/nwpointer/three-landscape)
+-  [terra](https://github.com/fintelia/terra) 
 
 <!-- ## Support ☕
 
