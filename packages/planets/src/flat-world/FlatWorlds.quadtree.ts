@@ -1,8 +1,6 @@
 import * as THREE from "three"
 import { Vector3 } from "three"
 
-const CHILD_SIZE_X_COMPARATOR = 1.25
-
 export interface FlatWorldsQuadTreeProps {
   localToWorld: THREE.Matrix4
   size: number

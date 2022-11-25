@@ -1,8 +1,8 @@
 import {
+  Chunk,
   FlatWorld as HelloFlatWorld,
   FlatWorldProps as HelloFlatWorldProps,
 } from "@hello-worlds/planets"
-import Chunk from "@hello-worlds/planets/src/chunk/Chunk"
 import {
   ChunkGeneratedEvent,
   ChunkWillBeDisposedEvent,

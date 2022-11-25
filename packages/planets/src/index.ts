@@ -1,4 +1,5 @@
 export * from "./chunk/Chunk"
+export * from "./chunk/Events"
 export * from "./chunk/types"
 export * from "./defaults"
 export * from "./flat-world/FlatWorld"

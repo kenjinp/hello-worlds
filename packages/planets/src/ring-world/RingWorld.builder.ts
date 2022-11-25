@@ -1,5 +1,5 @@
 import { MathUtils } from "three"
-import Chunk, { ChunkProps } from "../chunk/Chunk"
+import { Chunk, ChunkProps } from "../chunk/Chunk"
 import { makeRingWorldChildChunkKey } from "../chunk/Chunk.helpers"
 import {
   ChildChunkProps,

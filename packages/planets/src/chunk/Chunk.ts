@@ -26,7 +26,7 @@ export interface ChunkRebuildProps {
 }
 
 // This represents a single terrain tile
-export default class Chunk extends Mesh {
+export class Chunk extends Mesh {
   group: Object3D
   width: number
   height: number

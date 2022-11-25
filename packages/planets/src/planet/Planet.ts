@@ -5,7 +5,7 @@ import {
   ChunkMap,
   ChunkTypes,
   RootChunkProps,
-  WORLD_TYPES
+  WORLD_TYPES,
 } from "../chunk/types"
 import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
 import { CubicQuadTree } from "../quadtree/CubicQuadTree"
@@ -103,7 +103,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
       radius: this.radius,
       minNodeSize: this.minCellSize,
       origin,
-      comparatorValue: this.lodDistanceComparisonValue
+      comparatorValue: this.lodDistanceComparisonValue,
     })
 
     // collapse the quadtree recursively at this position

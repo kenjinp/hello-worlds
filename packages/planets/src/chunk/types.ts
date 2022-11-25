@@ -1,5 +1,5 @@
 import THREE, { Box3, Color, Matrix4, Object3D, Vector3 } from "three"
-import Chunk from "./Chunk"
+import { Chunk } from "./Chunk"
 
 export enum ChunkTypes {
   ROOT = "ROOT",

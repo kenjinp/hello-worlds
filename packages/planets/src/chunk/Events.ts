@@ -1,4 +1,4 @@
-import Chunk from "./Chunk"
+import { Chunk } from "./Chunk"
 
 export class ChunkWillBeDisposedEvent {
   type = "ChunkWillBeDisposed"

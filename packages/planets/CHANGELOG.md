@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.14
+
+### Patch Changes
+
+- fix export issue for chunk events
+
 ## 0.0.13
 
 ### Patch Changes
