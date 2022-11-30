@@ -9,6 +9,7 @@ import { useRerender } from "@hmans/use-rerender"
 import { useFrame } from "@react-three/fiber"
 import * as React from "react"
 import { Event, Vector3 } from "three"
+import { concurrency } from "../defaults"
 import { PartialBy } from "../utils/types"
 
 export const FlatWorldContext = React.createContext<HelloFlatWorld<any>>(
@@ -77,7 +78,7 @@ function FlatWorldInner<D>(
     minCellSize,
     minCellResolution,
     data,
-    numWorkers = navigator.hardwareConcurrency || 8,
+    numWorkers = concurrency,
     lodOrigin,
     position,
     worker,

@@ -14,6 +14,7 @@ const Example: React.FC = () => {
       minCellSize={32}
       minCellResolution={32 * 2}
       lodOrigin={camera.position}
+      lodDistanceComparisonValue={3}
       worker={worker}
       data={{
         seed: "Flat Worlds Example",

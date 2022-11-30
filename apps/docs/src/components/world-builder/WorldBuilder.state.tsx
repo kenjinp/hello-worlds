@@ -1,8 +1,9 @@
-import { PlanetProps, RingWorldProps } from "@hello-worlds/planets"
-import { Tag } from "miniplex"
-import { createECS } from "miniplex-react"
+import { RingWorldProps } from "@hello-worlds/planets"
+import { Strict, With } from "miniplex"
 import { makeStore } from "statery"
 import { Color, Mesh, Vector3 } from "three"
+import { world } from "./WorldBuilder.ecs"
+export type Tag = true
 
 export enum THEMES {
   SCI_FANTASY = "sci-fantasy",
@@ -21,21 +22,40 @@ export const store = makeStore({
   debugMode: false,
 })
 
-export type AstralBody = {
-  position: Vector3
-  rotationSpeed: number
-  children: Entity[]
-  offset: Vector3
-  name?: string
-  labelColor?: Color
-} & Partial<PlanetProps<any>>
+// Determine location based on this and timestamp
+export type OrbitalCharacteristicProperties = {
+  apogee: number //km
+  perigee: number
+  semiMajorAxis: number
+  eccentricity: number
+  inclination: number
+  orbitalPeriod: number // in days maybe
+  satelliteOf?: Entity // everything is a satelite of something?
+  axialTilt: number // by plane of the ecliptic or y = 0
+  rotationPeriod: number //day
+}
 
-export type Star = AstralBody & {
+export type AstronomicalObjectProperties = {
+  id: number | string
+  index?: number
+  radius: number
+  children: Entity[]
+  name: string
+  labelColor: Color
+  mesh?: Mesh
+}
+
+export type ObjectProperties = {
+  mesh?: Mesh
+  position: Vector3
+}
+
+export type StarProperties = {
+  star: Tag
+  seed: string
   color: Color
   emissive: Color
   lightIntensity: number
-  mesh?: Mesh
-  star: Tag
 }
 
 export enum PlANET_TYPES {
@@ -49,23 +69,25 @@ export enum PlANET_TYPES {
   STRANGE = "STRANGE",
 }
 
-export type Planet = AstralBody & {
-  planet: Tag
+export type PlanetProperties = {
+  radius: number
   seed: string
-  mesh?: Mesh
-  focused?: boolean
-  type: PlANET_TYPES
+  planet?: Tag
+  moon?: Tag
+  planetType: PlANET_TYPES
   atmosphereRadius?: number
+  atmosphereDensity?: number
 }
 
-export type RingWorld = AstralBody & {
+export type RingWorldProperties = {
   ringWorld: Tag
+  length
   seed: string
   mesh?: Mesh
   focused?: boolean
 } & RingWorldProps<any>
 
-export type Explorer = {
+export type ExplorerProperties = {
   explorer: Tag
   position: Vector3
   lastUpdateMeta: {
@@ -75,9 +97,30 @@ export type Explorer = {
     }[]
   }
   connectionId: number
-  mesh?: Mesh
 }
 
-type Entity = Star | Planet | Explorer | RingWorld
+export type Entity = Partial<
+  OrbitalCharacteristicProperties &
+    AstronomicalObjectProperties &
+    ObjectProperties &
+    StarProperties &
+    PlanetProperties &
+    RingWorldProperties &
+    ExplorerProperties
+>
 
-export const ECS = createECS<Entity>()
+export type Player = Strict<With<Entity, "explorer">>
+
+/* Create some archetype queries: */
+export const archetypes = {
+  star: world.archetype<
+    StarProperties &
+      AstronomicalObjectProperties &
+      OrbitalCharacteristicProperties
+  >("star"),
+  planet: world.archetype("planet"),
+  planetOrMoon: world.archetype("planetType"),
+  moon: world.archetype("moon"),
+  ringWorld: world.archetype("ringWorld"),
+  player: world.archetype("explorer"),
+}

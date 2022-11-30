@@ -1,11 +1,43 @@
 import { useFrame, useThree } from "@react-three/fiber"
-import { usePlanet } from "@site/../../packages/react/dist/esm"
+import { usePlanet, useRingWorld } from "@site/../../packages/react/dist/esm"
 import * as React from "react"
 import { PCFSoftShadowMap, PerspectiveCamera, Vector3 } from "three"
 import CSM from "three-csm"
 import { AU } from "../../../WorldBuilder.math"
 
-export const Shadow: React.FC<
+export const ShadowContext = React.createContext({} as CSM)
+
+export const useShadows = () => {
+  return React.useContext(ShadowContext)
+}
+
+export const PlanetShadow = () => {
+  const csm = useShadows()
+  const planet = usePlanet()
+
+  React.useEffect(() => {
+    if (planet.material) {
+      csm.setupMaterial(planet.material)
+    }
+  }, [planet, csm])
+
+  return null
+}
+
+export const RingWorldShadow = () => {
+  const csm = useShadows()
+  const planet = useRingWorld()
+
+  React.useEffect(() => {
+    if (planet.material) {
+      csm.setupMaterial(planet.material)
+    }
+  }, [planet, csm])
+
+  return null
+}
+
+export const Shadows: React.FC<
   React.PropsWithChildren<{
     cascades?: number
     shadowMapSize?: number
@@ -13,13 +45,12 @@ export const Shadow: React.FC<
   }>
 > = ({
   children,
-  cascades = 16,
+  cascades = 12,
   shadowMapSize = 2048,
   normalizedLightDirection = new Vector3()
     .subVectors(new Vector3(0, 0, 0), new Vector3(-1, 0, 1).multiplyScalar(AU))
     .normalize(),
 }) => {
-  const planet = usePlanet()
   const camera = useThree(store => store.camera) as PerspectiveCamera
   const scene = useThree(store => store.scene)
   const gl = useThree(store => store.gl)
@@ -42,19 +73,16 @@ export const Shadow: React.FC<
   React.useEffect(() => {
     gl.shadowMap.enabled = true
     gl.shadowMap.type = PCFSoftShadowMap
-    if (planet.material) {
-      csm.fade = true
-      csm.setupMaterial(planet.material)
-      for (var i = 0; i < csm.lights.length; i++) {
-        csm.lights[i].shadow.camera.far = camera.far
-        csm.lights[i].shadow.camera.updateProjectionMatrix()
-      }
+    csm.fade = true
+    for (var i = 0; i < csm.lights.length; i++) {
+      csm.lights[i].shadow.camera.far = camera.far
+      csm.lights[i].shadow.camera.updateProjectionMatrix()
     }
-  }, [planet, csm, gl])
+  }, [csm, gl])
 
   useFrame(() => {
     csm.update()
   })
 
-  return <>{children}</>
+  return <ShadowContext.Provider value={csm}>{children}</ShadowContext.Provider>
 }

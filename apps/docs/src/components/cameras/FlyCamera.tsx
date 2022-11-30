@@ -1,23 +1,30 @@
 import { FlyControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useUpdateMyPresence } from "@site/src/services/multiplayer"
+import { useEntities } from "miniplex/react"
 import * as React from "react"
 import "react-toastify/dist/ReactToastify.css"
 import { Group, MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
-import { ECS, Planet } from "../world-builder/WorldBuilder.state"
+import {
+  archetypes,
+  PlanetProperties,
+} from "../world-builder/WorldBuilder.state"
 
 const FlyCamera: React.FC<{
   minSpeed?: number
   maxSpeed?: number
-}> = ({ minSpeed = 100, maxSpeed = 10_000_000_000 }) => {
+}> = ({ minSpeed = 100, maxSpeed = 100_000_000_000 }) => {
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
-  const { entities } = ECS.useArchetype("planet")
+  const { entities } = useEntities(archetypes.planetOrMoon)
+
+  console.log({ entities })
 
   const { camera } = useThree()
-  const [_closestPlanet, setClosestPlanet] = React.useState<Planet>(null)
+  const [_closestPlanet, setClosestPlanet] =
+    React.useState<PlanetProperties>(null)
   const updateMyPresence = useUpdateMyPresence()
 
   React.useEffect(() => {
@@ -39,42 +46,14 @@ const FlyCamera: React.FC<{
       return
     }
     entities.forEach(entity => {
-      entity.focused = false
+      if (entity) {
+        entity.focused = false
+      }
     })
     _closestPlanet.focused = true
-
-    // toast(
-    //   <>
-    //     Approaching{" "}
-    //     <b style={{ color: _closestPlanet.labelColor.getStyle() }}>
-    //       <i>{_closestPlanet.name}</i>
-    //     </b>
-    //   </>,
-    // )
   }, [_closestPlanet])
 
-  // const selectPlanet = (index: number) => {
-  //   const selection = entities[index];
-  //   console.log({selection })
-  //   setClosestPlanet(selection);
-  //   camera.position.copy(
-  //     new Vector3(
-  //       selection.radius * 1.5,
-  //       0,
-  //       selection.radius * 1.5
-  //     )
-  //   );
-  //   camera.lookAt(selection.position);
-  // }
-
   useFrame((_, deltaTime) => {
-    // for (let i = 0; i < entities.length; i++) {
-    //   if (controls.keyboard.queryPressed()[`${i + 1}`]) {
-    //     selectPlanet(i);
-    //     return;
-    //   }
-    // }
-
     const newClosestPlanet = entities.sort((a, b) => {
       return (
         camera.position.distanceToSquared(a.position) -
@@ -84,7 +63,7 @@ const FlyCamera: React.FC<{
     if (!newClosestPlanet) {
       return
     }
-    if (newClosestPlanet.mesh.uuid !== _closestPlanet?.mesh.uuid) {
+    if (newClosestPlanet.id !== _closestPlanet?.id) {
       setClosestPlanet(newClosestPlanet)
     }
     const closestPlanet = newClosestPlanet

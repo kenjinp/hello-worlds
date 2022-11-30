@@ -101,6 +101,7 @@ export default function (): React.ReactElement {
         <Canvas>
           <PostProcessing>
             <SpaceBox />
+            {/* <Shadows> */}
             <group
               scale={new Vector3(1, 1, 1).multiplyScalar(AU).multiplyScalar(10)}
             >
@@ -110,8 +111,14 @@ export default function (): React.ReactElement {
               <RenderEntities />
               <PhysicsTest />
             </Physics>
+            {/* <PerspectiveCamera /> */}
+            {/* </Shadows> */}
             <FlyCamera />
+            {/* <OrbitControls /> */}
           </PostProcessing>
+          {/* <Html visible={false}>
+            <Distribution />
+          </Html> */}
         </Canvas>
         <Footer
           middle={

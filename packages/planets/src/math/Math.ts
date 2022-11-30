@@ -37,20 +37,46 @@ export function randomSpherePoint(
   return new Vector3(x, y, z)
 }
 
-export function getRndBias(
-  min: number,
-  max: number,
-  bias: number,
-  influence: number,
-) {
-  let rnd = random() * (max - min) + min, // random in range
-    mix = random() * influence // random mixer
-  return rnd * (1 - mix) + bias * mix // mix full range and bias
+// from https://spin.atomicobject.com/2019/09/30/skew-normal-prng-javascript/
+export const randomNormals = () => {
+  let u = 1 - random() //Converting [0,1) to (0,1)
+  let v = random()
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)
+}
+
+export const randomSkewNormal = (min: number, max: number, skew = 0) => {
+  let u = 0,
+    v = 0
+  while (u === 0) u = random() //Converting [0,1) to (0,1)
+  while (v === 0) v = random()
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)
+
+  num = num / 10.0 + 0.5 // Translate to 0 -> 1
+  if (num > 1 || num < 0) num = randomSkewNormal(min, max, skew)
+  // resample between 0 and 1 if out of range
+  else {
+    num = Math.pow(num, skew) // Skew
+    num *= max - min // Stretch to fill range
+    num += min // offset to min
+  }
+  return num
 }
 
 export function bias(x: number, bias: number) {
   const k = Math.pow(1 - bias, 3)
   return (x * k) / (x * k - x + 1)
+}
+
+// from https://stackoverflow.com/questions/29325069/how-to-generate-random-numbers-biased-towards-one-value-in-a-range
+export function getRandomBias(
+  min: number,
+  max: number,
+  bias: number,
+  influence: number,
+) {
+  let rnd = Math.random() * (max - min) + min, // random in range
+    mix = Math.random() * influence // random mixer
+  return rnd * (1 - mix) + bias * mix // mix full range and bias
 }
 
 export function remap(

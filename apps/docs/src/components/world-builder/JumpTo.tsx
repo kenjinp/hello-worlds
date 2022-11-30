@@ -1,7 +1,8 @@
 import * as React from "react"
 
 import styled from "styled-components"
-import { ECS } from "./WorldBuilder.state"
+import { ECS } from "./WorldBuilder.ecs"
+import { archetypes } from "./WorldBuilder.state"
 
 export const PlanetButton = styled.button`
   border-radius: 0.5em;
@@ -43,20 +44,94 @@ export const PlanetIcon = styled.div`
   }
 `
 
+function alphabetize(n: number) {
+  var result = ""
+  do {
+    result = ((n % 26) + 10).toString(36) + result
+    n = Math.floor(n / 26) - 1
+  } while (n >= 0)
+  return result.toUpperCase()
+}
+
+function romanize(num: number) {
+  if (isNaN(num)) return NaN
+  var digits = String(+num).split(""),
+    key = [
+      "",
+      "C",
+      "CC",
+      "CCC",
+      "CD",
+      "D",
+      "DC",
+      "DCC",
+      "DCCC",
+      "CM",
+      "",
+      "X",
+      "XX",
+      "XXX",
+      "XL",
+      "L",
+      "LX",
+      "LXX",
+      "LXXX",
+      "XC",
+      "",
+      "I",
+      "II",
+      "III",
+      "IV",
+      "V",
+      "VI",
+      "VII",
+      "VIII",
+      "IX",
+    ],
+    roman = "",
+    i = 3
+  while (i--) roman = (key[+digits.pop() + i * 10] || "") + roman
+  return Array(+digits.join("") + 1).join("M") + roman
+}
+
 export const JumpTo: React.FC = () => {
-  const { entities: planets } = ECS.useArchetype("planet")
-  const { entities: stars } = ECS.useArchetype("star")
   return (
     <div>
       <div style={{ marginBottom: "1em" }}>
         <h5>Stars</h5>
-        <ECS.Entities entities={stars}>
+        <ECS.Entities in={archetypes.star}>
           {entity => {
             return <PlanetButton>{entity.name}</PlanetButton>
           }}
         </ECS.Entities>
       </div>
-      <div>
+      <div style={{ marginBottom: "1em" }}>
+        <h5>Planets</h5>
+        <ECS.Entities in={archetypes.planet}>
+          {entity => {
+            return (
+              <div>
+                <PlanetButton>
+                  {entity.name} ({entity.satelliteOf?.name}{" "}
+                  {romanize(entity.index + 1)})
+                </PlanetButton>
+                <ol>
+                  {entity.children.map((mEntity, index) => {
+                    return (
+                      <li>
+                        <PlanetButton>
+                          {mEntity.name} ({entity.name} {romanize(index + 1)})
+                        </PlanetButton>
+                      </li>
+                    )
+                  })}
+                </ol>
+              </div>
+            )
+          }}
+        </ECS.Entities>
+      </div>
+      {/* <div>
         <h5>Planets / Moons</h5>
         <ECS.Entities entities={planets}>
           {entity => {
@@ -80,7 +155,7 @@ export const JumpTo: React.FC = () => {
             )
           }}
         </ECS.Entities>
-      </div>
+      </div> */}
     </div>
   )
 }

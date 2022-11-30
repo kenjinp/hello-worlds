@@ -1,6 +1,7 @@
 import { random } from "@hello-worlds/core"
 import { Vector3 } from "three"
 
+export const DAY = 86_400_000
 export const km = 1_000
 export const AU = 149_597_870_700
 export const MOON_DISTANCE = 384_400 * km
