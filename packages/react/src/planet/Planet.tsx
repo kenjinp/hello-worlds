@@ -1,6 +1,7 @@
 import {
   Chunk,
   ChunkGeneratedEvent,
+  ChunkPendingEvent,
   ChunkWillBeDisposedEvent,
   Planet as HelloPlanet,
   PlanetProps as HelloPlanetProps,
@@ -30,12 +31,23 @@ export type PlanetProps<D> = React.PropsWithChildren<
 export const usePlanetChunks = () => {
   const planet = usePlanet()
   const rerender = useRerender()
-  const [chunks] = React.useState<Map<number, Chunk>>(new Map<number, Chunk>())
+  const [chunks] = React.useState<Map<number, Chunk & { built: boolean }>>(
+    new Map<number, Chunk & { built: boolean }>(),
+  )
 
   React.useEffect(() => {
+    const pendingListener = (e: Event) => {
+      const { chunk } = e as unknown as ChunkPendingEvent
+      const pendingChunk = chunk as Chunk & { built: boolean }
+      pendingChunk.built = false
+      chunks.set(chunk.id, pendingChunk)
+      rerender()
+    }
     const createdListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkGeneratedEvent
-      chunks.set(chunk.id, chunk)
+      const builtChunk = chunk as Chunk & { built: boolean }
+      builtChunk.built = false
+      chunks.set(chunk.id, builtChunk)
       rerender()
     }
     const willDisposeListener = (e: Event) => {
@@ -43,9 +55,11 @@ export const usePlanetChunks = () => {
       chunks.delete(chunk.id)
       rerender()
     }
+    planet.addEventListener(ChunkPendingEvent.type, pendingListener)
     planet.addEventListener(ChunkGeneratedEvent.type, createdListener)
     planet.addEventListener(ChunkWillBeDisposedEvent.type, willDisposeListener)
     return () => {
+      planet.removeEventListener(ChunkPendingEvent.type, pendingListener)
       planet.removeEventListener(ChunkGeneratedEvent.type, createdListener)
       planet.removeEventListener(
         ChunkWillBeDisposedEvent.type,

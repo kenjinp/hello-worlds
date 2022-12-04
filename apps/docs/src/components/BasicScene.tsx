@@ -1,9 +1,7 @@
 import { useTexture } from "@react-three/drei"
 import * as React from "react"
 import * as RC from "render-composer"
-import { useStore } from "statery"
 import { Color, Quaternion, Vector3 } from "three"
-import { store } from "../state/store"
 import { SpaceBox } from "./SpaceBox"
 
 const AU = 149_597_870_700
@@ -11,10 +9,7 @@ const AU = 149_597_870_700
 export const LightRig: React.FC = () => {
   return (
     <>
-      <mesh
-        ref={sun => store.set({ sun })}
-        position={new Vector3(-1, 0.75, 1).multiplyScalar(AU / 20)}
-      >
+      <mesh position={new Vector3(-1, 0.75, 1).multiplyScalar(AU / 20)}>
         <directionalLight color={0xffffff} intensity={0.8} castShadow />
         <sphereGeometry args={[600_000_000 / 4, 32, 16]}></sphereGeometry>
         <meshStandardMaterial
@@ -88,13 +83,12 @@ const cameraQuat = new Quaternion(
 
 const PostProcessing: React.FC = () => {
   // Move this somewhere
-  const { sun } = useStore(store)
   return (
     <RC.RenderPipeline>
       <RC.EffectPass>
         <RC.SMAAEffect />
         <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.9} />
-        <RC.GodRaysEffect lightSource={sun} />
+        {/* <RC.GodRaysEffect lightSource={sun} /> */}
         <RC.VignetteEffect />
         <RC.LensDirtEffect
           texture={useTexture("/img/lensdirt.jpg")}

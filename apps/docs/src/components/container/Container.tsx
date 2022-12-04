@@ -56,7 +56,7 @@ export const Container: React.FC<
   return (
     <Draggable
       handle=".dragger"
-      bounds="#window-bounds"
+      // bounds="#window-bounds"
       defaultPosition={
         center
           ? {

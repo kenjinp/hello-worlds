@@ -64,6 +64,7 @@ export class Chunk extends Mesh {
     this.receiveShadow = true
     // add ourselves to the parent group
     this.group.add(this)
+    // this.dispatchEvent(new ChunkPendingEvent(this))
   }
 
   dispose() {

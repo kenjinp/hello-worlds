@@ -33,9 +33,11 @@ export default function ExampleWrapper({
         >
           Full Screen
         </Button>{" "}
-        <a href={link} target="_blank">
-          <Button>View Source</Button>
-        </a>
+        {link && (
+          <a href={link} target="_blank">
+            <Button>View Source</Button>
+          </a>
+        )}
       </div>
     </div>
   )

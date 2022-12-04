@@ -2,6 +2,7 @@ import { Chunk as HelloChunk, remap } from "@hello-worlds/planets"
 import { Planet as HelloPlanet } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import { ChunkDebugger } from "@site/src/experiments/tectonics/ChunkDebugger"
 import * as React from "react"
 import { useStore } from "statery"
 import { Euler, Mesh, Object3D, Vector3 } from "three"
@@ -166,6 +167,7 @@ export const PlanetRender = React.forwardRef<
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
           </Html>
         )}
+        <ChunkDebugger />
 
         <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
           {/* <PlanetShadow /> */}

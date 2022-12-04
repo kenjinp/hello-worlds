@@ -67,4 +67,8 @@ export class Noise {
     total /= normalization
     return Math.pow(total, this.params.exponentiation) * this.params.height
   }
+
+  getFromVector(v: THREE.Vector3) {
+    return this.get(v.x, v.y, v.z)
+  }
 }

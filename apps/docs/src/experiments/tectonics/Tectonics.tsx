@@ -2,18 +2,19 @@ import { OrbitCamera, Planet as HelloPlanet } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import { randomSpherePoint } from "@site/../../packages/planets/dist/esm"
+import { EARTH_RADIUS } from "@site/src/components/world-builder/WorldBuilder.math"
 import { Leva, useControls } from "leva"
 import * as React from "react"
 import {
-  BackSide,
   BufferGeometry,
   Color,
   Float32BufferAttribute,
   Mesh,
-  MeshBasicMaterial,
   Sphere,
   Vector3,
 } from "three"
+import { ChunkDebugger } from "./ChunkDebugger"
+import { Map } from "./Map"
 import planetWorker from "./Planet.worker"
 import { PlateMovement } from "./tectonics/Movement"
 import { PlateLabels } from "./tectonics/PlateLabel"
@@ -22,10 +23,6 @@ import {
   useTectonics,
 } from "./tectonics/TectonicsComponent"
 import { VoronoiSphere } from "./voronoi/Voronoi"
-
-const material = new MeshBasicMaterial({ vertexColors: true, side: BackSide })
-
-// const MemoPlanet = React.memo(HelloPlanet);
 
 const TectonicPlanet: React.FC<
   React.PropsWithChildren<{ radius: number; seaLevel: number }>
@@ -54,13 +51,13 @@ const TectonicPlanet: React.FC<
   const planetProps = React.useMemo(
     () => ({
       radius,
-      minCellSize: 25,
-      minCellResolution: 125,
+      minCellSize: 32 * 8,
+      minCellResolution: 32 * 2,
     }),
     [radius],
   )
 
-  return (
+  return tectonics ? (
     <HelloPlanet
       position={new Vector3(0, 0, 0)}
       radius={planetProps.radius}
@@ -70,18 +67,16 @@ const TectonicPlanet: React.FC<
       worker={planetWorker}
       data={data}
     >
+      <ChunkDebugger />
       {children}
     </HelloPlanet>
-  )
+  ) : null
 }
 
 export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const planet = useControls("planet", {
     planetRadius: {
-      min: 100,
-      max: 6_000_000,
-      value: 20_000,
-      step: 10,
+      value: EARTH_RADIUS,
     },
     jitter: {
       min: -10.0,
@@ -220,8 +215,8 @@ export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
 
   return (
     <group>
-      <Html>
-        <Leva />
+      <Html fullscreen>
+        <Leva collapsed />
       </Html>
       <mesh frustumCulled={false}>
         <mesh
@@ -269,6 +264,7 @@ export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
             >
               <meshStandardMaterial vertexColors side={2} />
               <OrbitCamera />
+              <Map />
             </TectonicPlanet>
           )}
 
