@@ -31,7 +31,9 @@ class MyCustomEffectImpl extends Effect {
     suns: Sun[]
     planets: PlanetAtmosphere[]
   }) {
-    console.log({ planets, suns })
+    const cameraDirection = new Vector3()
+    camera.getWorldDirection(cameraDirection)
+    console.log("MyCustomEffectImpl", { camera, suns, planets })
     super(
       "MyCustomEffect",
       fragment
@@ -40,6 +42,7 @@ class MyCustomEffectImpl extends Effect {
       {
         uniforms: new Map<string, Uniform | { value: any }>([
           ["uCameraPosition", new Uniform(camera.position)],
+          ["uCameraWorldDirection", new Uniform(cameraDirection)],
           [
             "uPlanets",
             {
@@ -59,7 +62,7 @@ class MyCustomEffectImpl extends Effect {
           ],
         ]),
         attributes: EffectAttribute.DEPTH,
-        extensions: new Set([WebGLExtension.DERIVATIVES])
+        extensions: new Set([WebGLExtension.DERIVATIVES]),
       },
     )
 
@@ -70,6 +73,9 @@ class MyCustomEffectImpl extends Effect {
 
   // UPDATE ALL OUR THINGS!
   update() {
+    const cameraDirection = new Vector3()
+    this.camera.getWorldDirection(cameraDirection)
+    this.uniforms.get("uCameraWorldDirection")!.value = cameraDirection
     this.uniforms.get("uCameraPosition")!.value = this.camera.position
     this.uniforms.get("uViewMatrixInverse")!.value = this.camera.matrixWorld
     this.uniforms.get("uProjectionMatrixInverse")!.value =
@@ -85,14 +91,13 @@ export const AtmosphereEffect: React.FC<{
 }> = ({ suns, planets }) => {
   const camera = useThree(store => store.camera)
 
-  usePostProcessingEffect(
-    () =>
-      new MyCustomEffectImpl({
-        camera,
-        suns,
-        planets,
-      }),
-    [camera, suns, planets],
-  )
+  usePostProcessingEffect(() => {
+    console.log("hello")
+    return new MyCustomEffectImpl({
+      camera,
+      suns,
+      planets,
+    })
+  }, [camera, suns, planets])
   return null
 }

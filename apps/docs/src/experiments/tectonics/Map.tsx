@@ -4,7 +4,7 @@ import { Planet, remap } from "@site/../../packages/planets/dist/esm"
 import { Container } from "@site/src/components/container/Container"
 import * as React from "react"
 import { Color, Mesh, Vector3 } from "three"
-import { colorGenerator, tectonicHeightGenerator } from "./Planet.generators"
+import { plateColor, tectonicHeightGenerator } from "./Planet.generators"
 import { LatLonCoordinates } from "./polar-spatial-hash/LatLongCoordinates"
 import { SphericalSpatialHash } from "./polar-spatial-hash/SphericalSpatialHash"
 import { Plate } from "./tectonics/Plate"
@@ -32,6 +32,7 @@ function PlanetMapInner(
   React.useEffect(() => {
     const canvasRef = ref.current
     if (canvasRef && planet.data && planet?.data?.tectonics) {
+      console.log(planet.data.tectonics)
       const ctx = canvasRef.getContext("2d") as CanvasRenderingContext2D
       const width = ctx.canvas.width
       const height = ctx.canvas.height
@@ -76,7 +77,7 @@ function PlanetMapInner(
             data: planet.data,
             inverted: planet.inverted,
           }),
-          colorGenerator: colorGenerator({
+          colorGenerator: plateColor({
             radius: planet.radius,
             data: planet.data,
             inverted: planet.inverted,

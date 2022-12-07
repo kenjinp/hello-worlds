@@ -16,6 +16,7 @@ import {
   EARTH_RADIUS,
   MARS_RADIUS,
   MOON_DISTANCE,
+  MOON_RADIUS,
   SUN_RADIUS,
 } from "./WorldBuilder.math"
 import { PlANET_TYPES } from "./WorldBuilder.state"
@@ -73,11 +74,16 @@ export const makePlanetarySystem = () =>
     console.log("generating planets")
     // lets go simple for now
     const numberOfMoons = moonAmountDistribution()
+    const radius = randomRange(MOON_RADIUS, EARTH_RADIUS * 1.5)
     const planet = world.add({
       id: MathUtils.generateUUID(),
-      radius: EARTH_RADIUS,
+      radius,
       planet: true,
       planetType: PlANET_TYPES.TERRAN,
+      atmosphereRadius:
+        randomRangeInt(0, 2) >= 1
+          ? randomRange(radius * 1.01, radius * 1.25)
+          : undefined,
       position: new Vector3()
         .randomDirection()
         .setY(0)
@@ -130,7 +136,7 @@ export const generateWorlds = () => {
     lightIntensity: 0.4,
     star: true,
     satelliteOf: root,
-    children: new Array(randomRangeInt(1, 10)).fill(0).map(makePlanetarySystem),
+    children: new Array(randomRangeInt(1, 4)).fill(0).map(makePlanetarySystem),
     position: new Vector3(),
   })
 

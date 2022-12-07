@@ -119,6 +119,7 @@ export const archetypes = {
       OrbitalCharacteristicProperties
   >("star"),
   planet: world.archetype("planet"),
+  planetWithAtmosphere: world.archetype("radius", "atmosphereRadius"),
   planetOrMoon: world.archetype("planetType"),
   moon: world.archetype("moon"),
   ringWorld: world.archetype("ringWorld"),

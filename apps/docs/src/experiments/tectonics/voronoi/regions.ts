@@ -1,44 +1,43 @@
-import { Vector3 } from "three";
-import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
-import { polarToCartesian } from "./math";
-import { GeoFeature, Region } from "./Voronoi";
+import { Vector3 } from "three"
+import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry"
+import { polarToCartesian } from "./math"
+import { GeoFeature, Region } from "./Voronoi"
 
 export const convertFeaturesToRegions = (
   features: GeoFeature[],
-  radius: number
+  radius: number,
 ): Region[] => {
-  const tempVector3 = new Vector3();
-  const regions: Region[] = [];
+  const tempVector3 = new Vector3()
+  const regions: Region[] = []
   for (let i = 0; i < features.length; i++) {
-    const feature = features[i];
+    const feature = features[i]
 
-    const [lon, lat] = feature.properties.site;
-    const siteXYZ = polarToCartesian(lat, lon, radius);
+    const [lon, lat] = feature.properties.site
+    const siteXYZ = polarToCartesian(lat, lon, radius)
 
-    const polygonVerts = [];
+    const polygonVerts = []
     // const polygonXYZ = [];
-
     const coords3d = feature.geometry.coordinates
-      .map((coordsSegment) =>
-        coordsSegment.map(([lng, lat]) => polarToCartesian(lat, lng, radius))
+      .map(coordsSegment =>
+        coordsSegment.map(([lng, lat]) => polarToCartesian(lat, lng, radius)),
       )[0]
       .reduce((memo, { x, y, z }) => {
-        memo.push(x, y, z);
-        return memo;
-      }, [] as number[]);
+        memo.push(x, y, z)
+        return memo
+      }, [] as number[])
 
-    const polygonPoints = [];
+    const polygonPoints = []
     for (let i = 0; i < coords3d.length; i += 3) {
-      const x = coords3d[i];
-      const y = coords3d[i + 1];
-      const z = coords3d[i + 2];
-      polygonPoints.push(tempVector3.set(x, y, z).clone());
+      const x = coords3d[i]
+      const y = coords3d[i + 1]
+      const z = coords3d[i + 2]
+      polygonPoints.push(tempVector3.set(x, y, z).clone())
     }
-    const hull = new ConvexGeometry(polygonPoints);
+    const hull = new ConvexGeometry(polygonPoints)
 
-    const xyz = Array.from(hull.getAttribute("position").array);
+    const xyz = Array.from(hull.getAttribute("position").array)
 
-    polygonVerts.push(...xyz);
+    polygonVerts.push(...xyz)
 
     // for (let i = 0; i < xyz.length; i += 3) {
     //   const x = xyz[i];
@@ -52,6 +51,8 @@ export const convertFeaturesToRegions = (
       geometry: {
         ...feature.geometry,
         vertices: polygonVerts,
+        edgeVertices: polygonVerts,
+        polygonEdgePoints: polygonPoints,
         // verticesXYZ: polygonXYZ,
       },
       properties: {
@@ -60,7 +61,7 @@ export const convertFeaturesToRegions = (
         ...feature.properties,
         siteXYZ,
       },
-    });
+    })
   }
-  return regions;
-};
+  return regions
+}

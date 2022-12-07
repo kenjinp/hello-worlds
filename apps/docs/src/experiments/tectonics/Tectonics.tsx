@@ -209,7 +209,7 @@ export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   }
 
   const selectedPosition = new Vector3()
-  if (selected) {
+  if (selected && voronoi.regions[selected]) {
     selectedPosition.copy(voronoi.regions[selected].properties.siteXYZ)
   }
 

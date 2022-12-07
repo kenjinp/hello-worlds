@@ -8,7 +8,7 @@ import { FlyControls as FlyControlsImpl } from "three-stdlib"
 import {
   archetypes,
   PlanetProperties,
-} from "../world-builder/WorldBuilder.state"
+} from "../../components/world-builder/WorldBuilder.state"
 
 const FlyCamera: React.FC<{
   minSpeed?: number
@@ -19,12 +19,9 @@ const FlyCamera: React.FC<{
   const altitude = React.useRef(0)
   const { entities } = useEntities(archetypes.planetOrMoon)
 
-  console.log({ entities })
-
   const { camera } = useThree()
   const [_closestPlanet, setClosestPlanet] =
     React.useState<PlanetProperties>(null)
-  // const updateMyPresence = useUpdateMyPresence()
 
   React.useEffect(() => {
     const closestPlanet = entities.sort((a, b) => {
@@ -79,49 +76,8 @@ const FlyCamera: React.FC<{
       minSpeed,
       maxSpeed,
     )
-    const distance = groupRef.current.position.distanceTo(camera.position)
     groupRef.current.position.copy(camera.position)
     groupRef.current.quaternion.copy(camera.quaternion)
-
-    const altitudeText = () => {
-      const alt = altitude.current
-      if (alt < 10_000) {
-        return (
-          alt.toLocaleString(navigator.language, { maximumFractionDigits: 2 }) +
-          " meters"
-        )
-      }
-      return (
-        (alt / 1000).toLocaleString(navigator.language, {
-          maximumFractionDigits: 2,
-        }) + " km"
-      )
-    }
-
-    const velocityText = () => {
-      const v = distance / deltaTime
-      if (v < 10_000) {
-        return (
-          v.toLocaleString(navigator.language, { maximumFractionDigits: 2 }) +
-          " m/s"
-        )
-      }
-      return (
-        (v / 1000).toLocaleString(navigator.language, {
-          maximumFractionDigits: 2,
-        }) + " km/s"
-      )
-    }
-
-    document.getElementById("alt").innerHTML =
-      "Altitude: " + altitudeText() + " (Datum)"
-    document.getElementById("speed").innerHTML = "Velocity: " + velocityText()
-    document.getElementById("body").innerHTML =
-      `Body: <b style="color: ${closestPlanet.labelColor.getStyle()}">` +
-      closestPlanet.name +
-      "</b>"
-    // window.location.search = `#${JSON.stringify(camera.position)}`
-    // updateMyPresence({ position: camera.position })
   })
 
   return (

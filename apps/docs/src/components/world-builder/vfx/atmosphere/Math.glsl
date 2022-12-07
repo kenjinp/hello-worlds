@@ -21,7 +21,7 @@ vec2 sphere(
 
 // Thanks for IQ's ray sphere instruction
 // https://iquilezles.org/blog/?p=2411
-float iSphere(in vec3 ro, in vec3 rd, in vec3 sph, in float rad) {
+float intersectSphere(in vec3 ro, in vec3 rd, in vec3 sph, in float rad) {
 	// This is relating directly to parametric equation
     // where we define a function xyz = ro + t*rd
     // solving the quadradic equation below

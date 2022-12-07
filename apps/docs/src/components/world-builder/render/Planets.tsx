@@ -1,8 +1,6 @@
 import { Chunk as HelloChunk, remap } from "@hello-worlds/planets"
 import { Planet as HelloPlanet } from "@hello-worlds/react"
-import { Html } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { ChunkDebugger } from "@site/src/experiments/tectonics/ChunkDebugger"
 import * as React from "react"
 import { useStore } from "statery"
 import { Euler, Mesh, Object3D, Vector3 } from "three"
@@ -12,7 +10,7 @@ import {
   archetypes,
   AstronomicalObjectProperties,
   PlanetProperties,
-  store,
+  store
 } from "../WorldBuilder.state"
 import worker from "../WorldBuilder.worker"
 
@@ -137,7 +135,16 @@ export const PlanetRender = React.forwardRef<
   PlanetProperties & AstronomicalObjectProperties
 >(
   (
-    { position, radius = CERES_RADIUS, seed, focused, name, labelColor, type },
+    {
+      position,
+      radius = CERES_RADIUS,
+      seed,
+      focused,
+      name,
+      labelColor,
+      type,
+      children,
+    },
     ref,
   ) => {
     const camera = useThree(store => store.camera)
@@ -151,6 +158,8 @@ export const PlanetRender = React.forwardRef<
     )
     const state = useStore(store)
 
+    console.log({ children })
+
     return (
       <HelloPlanet
         ref={ref}
@@ -162,16 +171,17 @@ export const PlanetRender = React.forwardRef<
         worker={worker}
         data={initialData}
       >
-        {state.showPlanetLabels && (
+        {/* {state.showPlanetLabels && (
           <Html>
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
           </Html>
-        )}
-        <ChunkDebugger />
+        )} */}
+        {/* <ChunkDebugger /> */}
 
         <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
           {/* <PlanetShadow /> */}
-          <meshPhongMaterial vertexColors />
+          <meshPhongMaterial vertexColors color="green" reflectivity={0.2} />
+          {children}
         </React.Suspense>
       </HelloPlanet>
     )
@@ -184,12 +194,12 @@ export const Planets: React.FC = () => {
       {entity => {
         return (
           <mesh>
-            <PlanetRender {...entity} />
+            <PlanetRender {...entity} children={entity.camera} />
             {entity.children.map(moonEntity => (
               <mesh key={moonEntity.id} position={entity.position}>
-                <Spinner {...moonEntity}>
-                  <PlanetRender {...moonEntity} />
-                </Spinner>
+                {/* <Spinner {...moonEntity}> */}
+                <PlanetRender {...moonEntity} />
+                {/* </Spinner> */}
               </mesh>
             ))}
           </mesh>

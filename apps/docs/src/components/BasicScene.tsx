@@ -1,8 +1,7 @@
-import { useTexture } from "@react-three/drei"
+import { Stars, useTexture } from "@react-three/drei"
 import * as React from "react"
 import * as RC from "render-composer"
 import { Color, Quaternion, Vector3 } from "three"
-import { SpaceBox } from "./SpaceBox"
 
 const AU = 149_597_870_700
 
@@ -81,7 +80,9 @@ const cameraQuat = new Quaternion(
   0.38360921119467495,
 )
 
-const PostProcessing: React.FC = () => {
+const PostProcessing: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   // Move this somewhere
   return (
     <RC.RenderPipeline>
@@ -94,6 +95,7 @@ const PostProcessing: React.FC = () => {
           texture={useTexture("/img/lensdirt.jpg")}
           strength={0.3}
         />
+        {children}
       </RC.EffectPass>
     </RC.RenderPipeline>
   )
@@ -117,10 +119,14 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
       flat
     >
       <React.Suspense fallback={null}>
-        <SpaceBox />
-        <LightRig />
-        {children}
-        <PostProcessing />
+        <group
+          scale={new Vector3(1, 1, 1).multiplyScalar(AU).multiplyScalar(10)}
+        >
+          <Stars saturation={1} />
+        </group>
+        {/* <SpaceBox /> */}
+        {/* <LightRig /> */}
+        <PostProcessing>{children}</PostProcessing>
       </React.Suspense>
     </RC.Canvas>
   )

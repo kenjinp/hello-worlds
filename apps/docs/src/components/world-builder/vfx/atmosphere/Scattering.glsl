@@ -2,7 +2,7 @@
 #define MIE_BETA vec3(21e-6) /* mie, affects the color of the blob around the sun */
 #define AMBIENT_BETA vec3(0.0) /* ambient, affects the scattering color when there is no lighting from the sun */
 #define ABSORPTION_BETA vec3(2.04e-5, 4.97e-5, 1.95e-6) /* what color gets absorbed by the atmosphere (Due to things like ozone) */
-#define G 0.7 /* mie scattering direction, or how big the blob around the sun is */
+#define G 0.76 /* mie scattering direction, or how big the blob around the sun is */
 // and the heights (how far to go up before the scattering has no effect)
 #define HEIGHT_RAY 8e3 /* rayleigh height */
 #define HEIGHT_MIE 1.2e3 /* and mie */
@@ -11,10 +11,10 @@
 // and the steps (more looks better, but is slower)
 // the primary step has the most effect on looks
 // and these on desktop
-#define PRIMARY_STEPS 12 /* primary steps, affects quality the most */
-#define LIGHT_STEPS 10 /* light steps, how much steps in the light direction are taken */
+#define PRIMARY_STEPS 32 /* primary steps, affects quality the most */
+#define LIGHT_STEPS 12 /* light steps, how much steps in the light direction are taken */
 
-vec3 scatter(
+vec3 hello_calculate_scattering(
     vec3 start, 				// the start of the ray (the camera position)
     vec3 dir, 					// the direction of the ray (the camera vector)
     float max_dist, 			// the maximum distance the ray can travel (because something is in the way, like an object)
@@ -30,14 +30,14 @@ vec3 scatter(
     vec3 beta_ray = RAY_BETA; 				// the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
     vec3 beta_mie = MIE_BETA; 				// the amount mie scattering scatters colors
     vec3 beta_absorption = ABSORPTION_BETA;   	// how much air is absorbed
-    vec3 beta_ambient = ABSORPTION_BETA;			// the amount of scattering that always occurs, cna help make the back side of the atmosphere a bit brighter
+    vec3 beta_ambient = AMBIENT_BETA;			// the amount of scattering that always occurs, cna help make the back side of the atmosphere a bit brighter
     float g = G;					// the direction mie scatters the light in (like a cone). closer to -1 means more towards a single direction
     float height_ray = HEIGHT_RAY; 			// how high do you have to go before there is no rayleigh scattering?
     float height_mie = HEIGHT_MIE; 			// the same, but for mie
     float height_absorption = HEIGHT_ABSORPTION;	// the height at which the most absorption happens
     float absorption_falloff = ABSORPTION_FALLOFF;	// how fast the absorption falls off from the absorption height
     int steps_i = PRIMARY_STEPS; 				// the amount of steps along the 'primary' ray, more looks better but slower
-    int steps_l =LIGHT_STEPS;				// the amount of steps along the light ray, more looks better but slower
+    int steps_l = LIGHT_STEPS;				// the amount of steps along the light ray, more looks better but slower
     // add an offset to the camera position, so that the atmosphere is in the correct position
     start -= planet_position;
     // calculate the start and end position of the ray, as a distance along the ray
@@ -51,24 +51,24 @@ vec3 scatter(
     if (d <= 0.0) return scene_color;
     
     // calculate the ray length
-    // vec2 ray_length = vec2(
-    //     max((-b - sqrt(d)) / (2.0 * a), 0.0),
-    //     min((-b + sqrt(d)) / (2.0 * a), max_dist)
-    // );
-    float t0;
-    float t1;
-    float r0 = (-b - sqrt(d)) / (2.0 * a);
-    float r1 = (-b + sqrt(d)) / (2.0 * a);
-    t0 = min(r0, r1);
-    t1 = max(r0, r1);
+    vec2 ray_length = vec2(
+        max((-b - sqrt(d)) / (2.0 * a), 0.0),
+        min((-b + sqrt(d)) / (2.0 * a), max_dist)
+    );
+    // float t0;
+    // float t1;
+    // float r0 = (-b - sqrt(d)) / (2.0 * a);
+    // float r1 = (-b + sqrt(d)) / (2.0 * a);
+    // t0 = min(r0, r1);
+    // t1 = max(r0, r1);
     
-    vec2 ray_length = vec2(t0,t1);
+    // vec2 ray_length = vec2(t0,t1);
 
     // if the ray did not hit the atmosphere, return the scene color
-    // if (ray_length.x > ray_length.y) return scene_color;
-    if (!(ray_length.y >= 0.0)) {
-      return scene_color;
-    }
+   if (ray_length.x > ray_length.y) return scene_color;
+    // if (!(ray_length.y >= 0.0)) {
+    //   return scene_color;
+    // }
     // prevent the mie glow from appearing if there's an object in front of the camera
     bool allow_mie = max_dist > ray_length.y;
     // make sure the ray is no longer than allowed
@@ -111,6 +111,9 @@ vec3 scatter(
         // and how high we are above the surface
         float height_i = length(pos_i) - planet_radius;
         
+
+        // TODO we should introduce noise into this calcualtion :)
+
         // now calculate the density of the particles (both for rayleigh and mie)
         vec3 density = vec3(exp(-height_i / scale_height), 0.0);
         

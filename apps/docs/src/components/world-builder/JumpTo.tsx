@@ -2,6 +2,7 @@ import * as React from "react"
 
 import styled from "styled-components"
 import { ECS } from "./WorldBuilder.ecs"
+import { EARTH_RADIUS } from "./WorldBuilder.math"
 import { archetypes } from "./WorldBuilder.state"
 
 export const PlanetButton = styled.button`
@@ -113,7 +114,11 @@ export const JumpTo: React.FC = () => {
               <div>
                 <PlanetButton>
                   {entity.name} ({entity.satelliteOf?.name}{" "}
-                  {romanize(entity.index + 1)})
+                  {romanize(entity.index + 1)}) | {entity.type} |{" "}
+                  {(entity.radius / EARTH_RADIUS).toFixed(2)} Rₑ |{" "}
+                  {entity.atmosphereRadius &&
+                    (entity.atmosphereRadius / EARTH_RADIUS).toFixed(2) +
+                      "Atmoₑ"}
                 </PlanetButton>
                 <ol>
                   {entity.children.map((mEntity, index) => {
