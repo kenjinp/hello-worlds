@@ -89,9 +89,12 @@ vec3 hello_calculate_scattering(
     
     // initialize the optical depth. This is used to calculate how much air was in the ray
     vec3 opt_i = vec3(0.0);
+
+    // modulate the atmoshpere's density by this value
+    float densityMultiplier = 1.0;
     
     // also init the scale height, avoids some vec2's later on
-    vec2 scale_height = vec2(height_ray, height_mie);
+    vec2 scale_height = vec2(height_ray * densityMultiplier, height_mie * densityMultiplier);
     
     // Calculate the Rayleigh and Mie phases.
     // This is the color that will be scattered for this ray

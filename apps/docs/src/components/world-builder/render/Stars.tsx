@@ -3,6 +3,7 @@ import * as React from "react"
 import { DirectionalLight, Mesh, PerspectiveCamera } from "three"
 import { ECS } from "../WorldBuilder.ecs"
 import { SUN_RADIUS } from "../WorldBuilder.math"
+import { archetypes } from "../WorldBuilder.state"
 
 export const StarRender = React.forwardRef<Mesh>((props, ref) => {
   const {
@@ -55,8 +56,8 @@ export const StarRender = React.forwardRef<Mesh>((props, ref) => {
 
 export const Stars: React.FC = () => {
   return (
-    <ECS.Archetype with={["star"]}>
+    <ECS.Entities in={archetypes.star}>
       <StarRender />
-    </ECS.Archetype>
+    </ECS.Entities>
   )
 }

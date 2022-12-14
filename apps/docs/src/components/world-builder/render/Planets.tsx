@@ -1,16 +1,17 @@
 import { Chunk as HelloChunk, remap } from "@hello-worlds/planets"
-import { Planet as HelloPlanet } from "@hello-worlds/react"
+import { Planet as HelloPlanet, usePlanet } from "@hello-worlds/react"
+import { Html } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as React from "react"
 import { useStore } from "statery"
 import { Euler, Mesh, Object3D, Vector3 } from "three"
-import { ECS } from "../WorldBuilder.ecs"
+import { ECS, world } from "../WorldBuilder.ecs"
 import { CERES_RADIUS, MOON_DISTANCE } from "../WorldBuilder.math"
 import {
   archetypes,
   AstronomicalObjectProperties,
   PlanetProperties,
-  store
+  store,
 } from "../WorldBuilder.state"
 import worker from "../WorldBuilder.worker"
 
@@ -21,8 +22,6 @@ const Spinner: React.FC<React.PropsWithChildren<PlanetProperties>> = ({
   const ref = React.useRef<Mesh>(null)
   const dis = new Vector3().distanceTo(position)
   const speed = 0.00006 - remap(dis, 0, MOON_DISTANCE, 0.0000005, 0.00005)
-
-  console.log({ dis, speed })
 
   useFrame(() => {
     if (!ref.current) {
@@ -130,6 +129,17 @@ export const CorrectedChunk: React.FC<{
   )
 }
 
+export const EntityPlanetWrapper: React.FC = () => {
+  const entity = ECS.useCurrentEntity()
+  const planet = usePlanet()
+
+  React.useEffect(() => {
+    world.addComponent(entity, "helloPlanet", planet)
+  }, [planet, entity])
+
+  return null
+}
+
 export const PlanetRender = React.forwardRef<
   Mesh,
   PlanetProperties & AstronomicalObjectProperties
@@ -142,23 +152,25 @@ export const PlanetRender = React.forwardRef<
       focused,
       name,
       labelColor,
-      type,
+      planetType: type,
       children,
+      seaLevel,
     },
     ref,
   ) => {
     const camera = useThree(store => store.camera)
+    const entity = ECS.useCurrentEntity()
+    console.log("PlentRender")
 
     const initialData = React.useMemo(
       () => ({
         seed,
         type,
+        seaLevel,
       }),
       [],
     )
     const state = useStore(store)
-
-    console.log({ children })
 
     return (
       <HelloPlanet
@@ -171,16 +183,16 @@ export const PlanetRender = React.forwardRef<
         worker={worker}
         data={initialData}
       >
-        {/* {state.showPlanetLabels && (
+        {state.showPlanetLabels && (
           <Html>
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
           </Html>
-        )} */}
+        )}
         {/* <ChunkDebugger /> */}
-
+        <EntityPlanetWrapper />
         <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
           {/* <PlanetShadow /> */}
-          <meshPhongMaterial vertexColors color="green" reflectivity={0.2} />
+          <meshPhongMaterial vertexColors reflectivity={0.2} />
           {children}
         </React.Suspense>
       </HelloPlanet>
@@ -192,17 +204,39 @@ export const Planets: React.FC = () => {
   return (
     <ECS.Entities in={archetypes.planet}>
       {entity => {
+        console.log("render this planet entity", entity)
         return (
-          <mesh>
-            <PlanetRender {...entity} children={entity.camera} />
-            {entity.children.map(moonEntity => (
-              <mesh key={moonEntity.id} position={entity.position}>
-                {/* <Spinner {...moonEntity}> */}
-                <PlanetRender {...moonEntity} />
-                {/* </Spinner> */}
-              </mesh>
-            ))}
-          </mesh>
+          <ECS.Entity key={entity.id} entity={entity}>
+            <mesh>
+              {/* <mesh
+              visible={false}
+              onClick={() => doFocusObjectDescription(entity)}
+            >
+              <sphereGeometry args={[entity.radius]}></sphereGeometry>
+            </mesh> */}
+              <PlanetRender {...entity} children={[]} />
+              {/* {entity.seaLevel && (
+                  <PlanetRender
+                    {...{ ...entity, planetType: PLANET_TYPES.OCEAN }}
+                  >
+                    <meshPhysicalMaterial
+                      vertexColors
+                      reflectivity={0.0012}
+                      roughness={0.2}
+                    />
+                  </PlanetRender>
+                )} */}
+              {/* </PlanetRender> */}
+
+              {entity.children.map(moonEntity => (
+                <mesh key={moonEntity.id} position={entity.position}>
+                  {/* <Spinner {...moonEntity}> */}
+                  <PlanetRender {...moonEntity} children={null} />
+                  {/* </Spinner> */}
+                </mesh>
+              ))}
+            </mesh>
+          </ECS.Entity>
         )
       }}
     </ECS.Entities>

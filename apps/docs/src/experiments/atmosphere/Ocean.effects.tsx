@@ -1,26 +1,24 @@
+import { Sun } from "@site/src/components/world-builder/vfx/atmosphere/AtmosphereEffect"
 import {
-  AtmosphereEffect,
-  PlanetAtmosphere,
-  Sun,
-} from "@site/src/components/world-builder/vfx/atmosphere/AtmosphereEffect"
+  OceanEffect,
+  PlanetWithOcean,
+} from "@site/src/components/world-builder/vfx/ocean/ocean-effect/OceanEffect"
 import { archetypes } from "@site/src/components/world-builder/WorldBuilder.state"
 import { useEntities } from "miniplex/react"
 import * as React from "react"
 import { Vector3 } from "three"
 
-export const AtmosphereEffects: React.FC = () => {
-  const { entities: planetsWithAtmosphere } = useEntities(
-    archetypes.planetWithAtmosphere,
+export const OceanEffects: React.FC = () => {
+  const { entities: planetsWithOceans } = useEntities(
+    archetypes.planetWithOcean,
   )
   const { entities: suns } = useEntities(archetypes.star)
 
-  const mappedPlanets: PlanetAtmosphere[] = planetsWithAtmosphere.map(
-    entity => ({
-      origin: entity.position,
-      radius: entity.radius,
-      atmosphereRadius: entity.atmosphereRadius,
-    }),
-  )
+  const mappedPlanets: PlanetWithOcean[] = planetsWithOceans.map(entity => ({
+    origin: entity.position,
+    radius: entity.radius,
+    seaLevel: entity.seaLevel,
+  }))
 
   const mappedSuns: Sun[] = suns.map(entity => ({
     origin: entity.position,
@@ -29,7 +27,7 @@ export const AtmosphereEffects: React.FC = () => {
   }))
 
   return suns.length && mappedPlanets.length ? (
-    <AtmosphereEffect
+    <OceanEffect
       key={suns.length * Math.random()}
       planets={mappedPlanets}
       suns={mappedSuns}

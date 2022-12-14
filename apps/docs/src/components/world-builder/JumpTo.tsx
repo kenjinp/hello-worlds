@@ -54,7 +54,7 @@ function alphabetize(n: number) {
   return result.toUpperCase()
 }
 
-function romanize(num: number) {
+export function romanize(num: number) {
   if (isNaN(num)) return NaN
   var digits = String(+num).split(""),
     key = [
@@ -102,7 +102,7 @@ export const JumpTo: React.FC = () => {
         <h5>Stars</h5>
         <ECS.Entities in={archetypes.star}>
           {entity => {
-            return <PlanetButton>{entity.name}</PlanetButton>
+            return <PlanetButton key={entity.name}>{entity.name}</PlanetButton>
           }}
         </ECS.Entities>
       </div>
@@ -111,7 +111,7 @@ export const JumpTo: React.FC = () => {
         <ECS.Entities in={archetypes.planet}>
           {entity => {
             return (
-              <div>
+              <div key={entity.name}>
                 <PlanetButton>
                   {entity.name} ({entity.satelliteOf?.name}{" "}
                   {romanize(entity.index + 1)}) | {entity.type} |{" "}
@@ -120,10 +120,10 @@ export const JumpTo: React.FC = () => {
                     (entity.atmosphereRadius / EARTH_RADIUS).toFixed(2) +
                       "Atmoₑ"}
                 </PlanetButton>
-                <ol>
+                <ol type="I">
                   {entity.children.map((mEntity, index) => {
                     return (
-                      <li>
+                      <li key={mEntity.name}>
                         <PlanetButton>
                           {mEntity.name} ({entity.name} {romanize(index + 1)})
                         </PlanetButton>

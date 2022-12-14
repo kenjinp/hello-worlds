@@ -4,6 +4,7 @@ import {
   Lerp,
   LinearSpline,
   Noise,
+  remap,
 } from "@hello-worlds/planets"
 import { Color } from "three"
 import { ThreadParams } from "../WorldBuilder.worker"
@@ -76,9 +77,9 @@ colorSpline.addPoint(0.9, new Color(0xab7916))
 colorSpline.addPoint(1.0, new Color(0xbab3a2))
 export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = () => {
   return ({ height }) => {
-    return white
-    // return height > 0
-    //   ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
-    //   : oceanColor
+    // return white
+    return height > 0
+      ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
+      : oceanColor
   }
 }

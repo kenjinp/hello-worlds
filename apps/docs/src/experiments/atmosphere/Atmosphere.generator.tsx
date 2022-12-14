@@ -2,6 +2,7 @@ import {
   random,
   randomRange,
   randomRangeInt,
+  randomSign,
   setRandomSeed,
 } from "@site/../../packages/core/dist/esm"
 import { remap } from "@site/../../packages/planets/dist/esm"
@@ -14,21 +15,24 @@ import {
   MOON_RADIUS,
   SUN_RADIUS,
 } from "@site/src/components/world-builder/WorldBuilder.math"
-import { PlANET_TYPES } from "@site/src/components/world-builder/WorldBuilder.state"
-import * as React from "react"
+import {
+  Entity,
+  PLANET_TYPES,
+} from "@site/src/components/world-builder/WorldBuilder.state"
 import { Color, MathUtils, Vector3 } from "three"
-import FlyCamera from "./FlyCamera"
 
-setRandomSeed("AtmosphereExperiment")
-const language = new Language()
+setRandomSeed("fkjahsdfklahjfaklhj")
 
 export class AtmosphereGenerator {
+  language: Language = new Language()
+  root: Entity
   constructor() {
+    const language = this.language
+
     const makePlanetarySystem = () =>
       // distanceToSun: number,
       // sunMass: number,
       {
-        console.log("generating planets")
         // lets go simple for now
         const numberOfMoons = 4
         const radius = EARTH_RADIUS
@@ -36,10 +40,9 @@ export class AtmosphereGenerator {
           id: MathUtils.generateUUID(),
           radius,
           focused: true,
-          // camera: (<OrbitCamera />) as React.ReactElement,
-          camera: (<FlyCamera />) as React.ReactElement,
+          seaLevel: 2_500,
           planet: true,
-          planetType: PlANET_TYPES.TERRAN,
+          planetType: PLANET_TYPES.TERRAN,
           atmosphereRadius: radius * 1.2,
           position: new Vector3(),
           name: language.makeWord("planetA"),
@@ -47,6 +50,14 @@ export class AtmosphereGenerator {
           children: [],
         })
         for (let i = 0; i < numberOfMoons - 1; i++) {
+          const position = new Vector3()
+            .setX(random() * randomSign())
+            .setZ(random() * randomSign())
+            .setY(0)
+            .normalize()
+            .setY(0)
+            .multiplyScalar((MOON_DISTANCE * randomRange(0.5, 3)) / 10)
+
           const moon = world.add({
             id: MathUtils.generateUUID(),
             radius: MOON_RADIUS,
@@ -54,17 +65,13 @@ export class AtmosphereGenerator {
             name: language.makeWord(`moon ${i}`),
             satelliteOf: planet,
             labelColor: new Color(random() * 0xffffff),
-            planetType: PlANET_TYPES.LUNAR,
+            planetType: PLANET_TYPES.LUNAR,
+            parentIndex: i,
             atmosphereRadius:
               randomRangeInt(0, 2) >= 1
-                ? randomRange(radius * 1.01, radius * 1.25)
+                ? randomRange(MOON_RADIUS * 1.0, MOON_RADIUS * 1.05)
                 : undefined,
-            position: new Vector3()
-              .randomDirection()
-              .setY(0)
-              .normalize()
-              .multiplyScalar(MOON_DISTANCE / 10)
-              .multiplyScalar(randomRange(0.1, 3)),
+            position,
             children: [],
           })
           planet.children.push(moon)
@@ -75,43 +82,36 @@ export class AtmosphereGenerator {
 
     const sunPosition = new Vector3(-1, 0, 1).multiplyScalar(AU)
     const root = world.add({
+      id: MathUtils.generateUUID(),
       name: language.makeWord("System"),
+      type: "system",
       position: sunPosition,
+      children: [],
     })
+    this.root = root
 
     const color = new Color(0x81cbf5)
-    // const color = new Color(0xffffff)
-    // const color = new Color(0xf48037)
 
-    world.add({
+    const sun = world.add({
       radius: SUN_RADIUS,
+      id: MathUtils.generateUUID(),
       name: root.name,
       labelColor: color,
       color: color,
       emissive: color,
-      lightIntensity: 0.4,
+      lightIntensity: 0.6,
       star: true,
       satelliteOf: root,
       children: [makePlanetarySystem()],
       position: sunPosition,
     })
 
-    const color2 = new Color(0xf48037)
+    root.children.push(sun)
 
-    // world.add({
-    //   radius: SUN_RADIUS * 0.18,
-    //   name: root.name,
-    //   labelColor: color2,
-    //   color: color2,
-    //   emissive: color2,
-    //   lightIntensity: 0.4,
-    //   star: true,
-    //   satelliteOf: root,
-    //   children: [],
-    //   position: new Vector3(-1, 0, 1.2).multiplyScalar(AU),
-    // })
-
-    console.log(world.entities)
+    sun.children.forEach((child, index) => {
+      child.satelliteOf = sun
+      child.parentIndex = index
+    })
   }
 
   destroy() {
@@ -119,12 +119,21 @@ export class AtmosphereGenerator {
   }
 
   randomizeSuns() {
+    const language = this.language
+    const root = this.root
+    const children = []
     // delete suns
-    world.entities.forEach(entity => {
+    world.with("star").entities.forEach(entity => {
       if (entity.star) {
+        if (entity.children) {
+          children.push(...entity.children)
+        }
         world.remove(entity)
       }
     })
+
+    root.children = []
+
     // randomize a new amount of suns
     const numberOfSuns = randomRangeInt(1, 3)
     for (let i = 0; i < numberOfSuns; i++) {
@@ -139,9 +148,10 @@ export class AtmosphereGenerator {
       // const color = new Color(0xf48037)
       const radius = randomRange(SUN_RADIUS * 0.12, SUN_RADIUS * 3)
 
-      world.add({
+      const newSun = world.add({
         radius,
         name: language.makeWord(`Sun ${i}`),
+        id: MathUtils.generateUUID(),
         labelColor: color,
         color: color,
         emissive: color,
@@ -156,6 +166,15 @@ export class AtmosphereGenerator {
         children: [],
         position: sunPosition,
       })
+      if (i === 0) {
+        children.forEach((child, index) => {
+          child.satelliteOf = newSun
+          child.parentIndex = index
+        })
+        newSun.children.push(...children)
+      }
+      root.children.push(newSun)
+      // world.update(root)
     }
   }
 }

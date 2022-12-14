@@ -1,4 +1,4 @@
-import { RingWorldProps } from "@hello-worlds/planets"
+import { Planet, RingWorldProps } from "@hello-worlds/planets"
 import { Strict, With } from "miniplex"
 import { makeStore } from "statery"
 import { Color, Mesh, Vector3 } from "three"
@@ -29,6 +29,7 @@ export type OrbitalCharacteristicProperties = {
   semiMajorAxis: number
   eccentricity: number
   inclination: number
+  parentIndex?: number
   orbitalPeriod: number // in days maybe
   satelliteOf?: Entity // everything is a satelite of something?
   axialTilt: number // by plane of the ecliptic or y = 0
@@ -43,6 +44,7 @@ export type AstronomicalObjectProperties = {
   name: string
   labelColor: Color
   mesh?: Mesh
+  focused?: boolean
 }
 
 export type ObjectProperties = {
@@ -58,7 +60,7 @@ export type StarProperties = {
   lightIntensity: number
 }
 
-export enum PlANET_TYPES {
+export enum PLANET_TYPES {
   TERRAN = "TERRAN",
   DWARF = "DWARF",
   LUNAR = "LUNAR",
@@ -72,11 +74,13 @@ export enum PlANET_TYPES {
 export type PlanetProperties = {
   radius: number
   seed: string
+  helloPlanet?: Planet
   planet?: Tag
   moon?: Tag
-  planetType: PlANET_TYPES
+  planetType: PLANET_TYPES
   atmosphereRadius?: number
   atmosphereDensity?: number
+  seaLevel?: number
 }
 
 export type RingWorldProperties = {
@@ -84,7 +88,6 @@ export type RingWorldProperties = {
   length
   seed: string
   mesh?: Mesh
-  focused?: boolean
 } & RingWorldProps<any>
 
 export type ExplorerProperties = {
@@ -99,6 +102,25 @@ export type ExplorerProperties = {
   connectionId: number
 }
 
+export type WindowProperties = {
+  id: number | string
+  window: Tag
+  header?: string
+  content?: React.ReactElement | string
+  previewContent?: React.ReactElement | string
+  previewing?: Tag
+  headerColor?: string
+  windowPosition?: { x: number; y: number }
+  minimized?: Tag
+  closed?: boolean
+  style?: React.CSSProperties
+  onClose: VoidFunction
+  onMinimize: VoidFunction
+  closable?: boolean
+  zIndex?: number
+  lastUpdated?: number
+}
+
 export type Entity = Partial<
   OrbitalCharacteristicProperties &
     AstronomicalObjectProperties &
@@ -106,7 +128,8 @@ export type Entity = Partial<
     StarProperties &
     PlanetProperties &
     RingWorldProperties &
-    ExplorerProperties
+    ExplorerProperties &
+    WindowProperties
 >
 
 export type Player = Strict<With<Entity, "explorer">>
@@ -120,8 +143,18 @@ export const archetypes = {
   >("star"),
   planet: world.archetype("planet"),
   planetWithAtmosphere: world.archetype("radius", "atmosphereRadius"),
+  planetWithOcean: world.archetype(
+    "radius",
+    "position",
+    "seaLevel",
+    "planetType",
+  ),
   planetOrMoon: world.archetype("planetType"),
   moon: world.archetype("moon"),
   ringWorld: world.archetype("ringWorld"),
   player: world.archetype("explorer"),
+  windows: world.archetype<WindowProperties>("window"),
+  minimizedWindows: world
+    .archetype<WindowProperties>("window", "minimized")
+    .where(value => value.minimized === true),
 }

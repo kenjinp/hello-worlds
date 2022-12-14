@@ -3,12 +3,12 @@ import { Effect, EffectAttribute, WebGLExtension } from "postprocessing"
 import * as React from "react"
 import { usePostProcessingEffect } from "render-composer"
 import { Camera, Uniform, Vector3 } from "three"
-import fragment from "./Atmosphere.frag.glsl"
+import fragment from "./OceanEffect.frag.glsl"
 
-export interface PlanetAtmosphere {
+export interface PlanetWithOcean {
   radius: number
   origin: Vector3
-  atmosphereRadius: number
+  seaLevel: number
 }
 
 export interface Sun {
@@ -18,10 +18,10 @@ export interface Sun {
 }
 
 // Effect implementation
-class MyCustomEffectImpl extends Effect {
+class OceanEffectImpl extends Effect {
   camera: Camera
   suns: Sun[]
-  planets: PlanetAtmosphere[]
+  planets: PlanetWithOcean[]
   constructor({
     camera,
     suns,
@@ -29,15 +29,15 @@ class MyCustomEffectImpl extends Effect {
   }: {
     camera: Camera
     suns: Sun[]
-    planets: PlanetAtmosphere[]
+    planets: PlanetWithOcean[]
   }) {
+    console.log({ planetsWithOceans: planets, suns })
     const cameraDirection = new Vector3()
     camera.getWorldDirection(cameraDirection)
-    console.log("I am rerendering the atmosphere shader")
     super(
       "MyCustomEffect",
       fragment
-        .replace(/<planetsLength>/g, planets.length)
+        .replace(/<planetsWithOceansLength>/g, planets.length)
         .replace(/<sunsLength>/g, suns.length),
       {
         uniforms: new Map<string, Uniform | { value: any }>([
@@ -85,14 +85,14 @@ class MyCustomEffectImpl extends Effect {
   }
 }
 
-export const AtmosphereEffect: React.FC<{
+export const OceanEffect: React.FC<{
   suns: Sun[]
-  planets: PlanetAtmosphere[]
+  planets: PlanetWithOcean[]
 }> = ({ suns, planets }) => {
   const camera = useThree(store => store.camera)
 
   usePostProcessingEffect(() => {
-    return new MyCustomEffectImpl({
+    return new OceanEffectImpl({
       camera,
       suns,
       planets,

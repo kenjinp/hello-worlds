@@ -19,7 +19,7 @@ import {
   MOON_RADIUS,
   SUN_RADIUS,
 } from "./WorldBuilder.math"
-import { PlANET_TYPES } from "./WorldBuilder.state"
+import { PLANET_TYPES } from "./WorldBuilder.state"
 
 setRandomSeed("WorldBuilder")
 const language = new Language()
@@ -79,7 +79,7 @@ export const makePlanetarySystem = () =>
       id: MathUtils.generateUUID(),
       radius,
       planet: true,
-      planetType: PlANET_TYPES.TERRAN,
+      planetType: PLANET_TYPES.TERRAN,
       atmosphereRadius:
         randomRangeInt(0, 2) >= 1
           ? randomRange(radius * 1.01, radius * 1.25)
@@ -102,7 +102,7 @@ export const makePlanetarySystem = () =>
         name: language.makeWord(`moon ${i}`),
         satelliteOf: planet,
         labelColor: new Color(random() * 0xffffff),
-        planetType: PlANET_TYPES.LUNAR,
+        planetType: PLANET_TYPES.LUNAR,
         position: new Vector3()
           .randomDirection()
           .setY(0)

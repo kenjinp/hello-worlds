@@ -6,11 +6,11 @@ import {
 } from "@hello-worlds/planets"
 import { Color } from "three"
 import { terra } from "./generators"
-import { PlANET_TYPES } from "./WorldBuilder.state"
+import { PLANET_TYPES } from "./WorldBuilder.state"
 
 export type ThreadParams = {
   seed: string
-  type: PlANET_TYPES
+  type: PLANET_TYPES
 }
 
 const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({

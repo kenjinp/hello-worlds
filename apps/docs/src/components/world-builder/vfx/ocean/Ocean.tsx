@@ -4,7 +4,7 @@ import * as React from "react"
 import { Vector3 } from "three"
 import GerstnerWaterMaterial from "./water/GerstnerWater"
 
-import { PlANET_TYPES } from "../../WorldBuilder.state"
+import { PLANET_TYPES } from "../../WorldBuilder.state"
 import worker from "../../WorldBuilder.worker"
 
 const Water: React.FC = () => {
@@ -29,7 +29,7 @@ const Ocean: React.FC<{ seaLevel: number; radius: number }> = ({
   const camera = useThree(s => s.camera)
 
   const data = React.useMemo(
-    () => ({ seaLevel, type: PlANET_TYPES.OCEAN }),
+    () => ({ seaLevel, type: PLANET_TYPES.OCEAN }),
     [seaLevel],
   )
 
