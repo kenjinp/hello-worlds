@@ -21,6 +21,7 @@
     "prettier-plugin-glsl": "^0.0.5"
   },
   "workspaces": [
+    "infra/*",
     "packages/*",
     "apps/*"
   ]

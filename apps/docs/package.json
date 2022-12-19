@@ -25,6 +25,7 @@
     "@react-three/postprocessing": "^2.6.2",
     "@react-three/rapier": "^0.9.0",
     "leva": "^0.9.27",
+    "miniplex": "2.0.0-beta.3",
     "next": "^13.0.6",
     "nextra": "2.0.1",
     "nextra-theme-docs": "2.0.1",
@@ -38,7 +39,8 @@
     "styled-components": "^5.3.5",
     "three": "0.143.0",
     "three-csm": "^3.0.0",
-    "three-custom-shader-material": "^4.0.0"
+    "three-custom-shader-material": "^4.0.0",
+    "ts-pattern": "^4.0.5"
   },
   "devDependencies": {
     "@types/node": "18.11.10",
