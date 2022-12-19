@@ -1,23 +1,14 @@
 {
+  "private": true,
   "name": "docs",
   "version": "0.0.13",
-  "private": true,
   "scripts": {
-    "docusaurus": "docusaurus",
-    "start": "docusaurus start --hot-only",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
-    "clear": "docusaurus clear",
-    "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
+  "homepage": "https://worlds.kenny.wtf",
   "dependencies": {
-    "@codesandbox/sandpack-react": "^1.17.0",
-    "@docusaurus/core": "2.2.0",
-    "@docusaurus/preset-classic": "2.2.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
@@ -29,76 +20,29 @@
     "@hello-worlds/react": "workspace:*",
     "@liveblocks/client": "^0.17.11",
     "@liveblocks/react": "^0.17.11",
-    "@mdx-js/react": "^1.6.22",
     "@react-three/drei": "9.30.1",
     "@react-three/fiber": "8.8.2",
     "@react-three/postprocessing": "^2.6.2",
     "@react-three/rapier": "^0.9.0",
-    "@tanstack/react-table": "^8.7.0",
-    "animejs": "^3.2.1",
-    "clsx": "^1.2.1",
-    "d3-geo-voronoi": "^2.0.1",
-    "fp-ts": "^2.12.3",
-    "gl-noise": "^1.6.1",
     "leva": "^0.9.27",
-    "material-composer-r3f": "^0.2.4",
-    "miniplex": "2.0.0-beta.3",
-    "postprocessing": "^6.28.7",
-    "prism-react-renderer": "^1.3.5",
-    "r3f-perf": "^6.4.4",
-    "randomish": "^0.1.4",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "next": "^13.0.6",
+    "nextra": "2.0.1",
+    "nextra-theme-docs": "2.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
-    "react-hyper-tree": "^0.3.12",
-    "react-is": "^18.2.0",
-    "react-resizable": "^3.0.4",
-    "react-tabs": "^5.1.0",
-    "react-toastify": "^9.0.8",
-    "react-tooltip": "^4.2.21",
-    "recharts": "^2.1.16",
     "render-composer": "0.2.4",
     "shader-composer": "^0.4.4",
     "shader-composer-r3f": "^0.4.0",
     "shader-composer-toybox": "^0.1.3",
-    "statery": "^0.6.2",
     "styled-components": "^5.3.5",
     "three": "0.143.0",
     "three-csm": "^3.0.0",
-    "three-custom-shader-material": "^4.0.0",
-    "ts-pattern": "^4.0.5",
-    "vfx-composer-r3f": "^0.3.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "@react-three/drei": "9.30.1",
-      "@react-three/fiber": "8.8.2"
-    }
+    "three-custom-shader-material": "^4.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "2.2.0",
-    "@tsconfig/docusaurus": "^1.0.5",
-    "@types/animejs": "^3.1.6",
-    "@types/react-resizable": "^3.0.1",
+    "@types/node": "18.11.10",
     "@types/three": "^0.141.0",
-    "dotenv-webpack": "^8.0.1",
-    "typescript": "^4.7.4",
-    "webpack-glsl-loader": "^1.0.1",
-    "worker-loader": "^3.0.8"
-  },
-  "browserslist": {
-    "production": [
-      ">0.5%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "engines": {
-    "node": ">=16.14"
+    "typescript": "^4.9.3"
   }
 }
