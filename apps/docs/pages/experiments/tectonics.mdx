@@ -1,0 +1,37 @@
+import TectoncisExample from "@examples/tectonics"
+
+# Plate Tectonics
+
+Combining various techniques it's possible to generate a beleiveable (more or less) geology for your world.
+
+<TectoncisExample />
+
+<br />
+
+:::caution
+This will take a long time to load, and is in need of some updates. I'm working on it :)
+:::
+
+## Features
+
+Using a simple model of plate tectonics, we can simulate a snapshot of the Planet's
+surface. This will provide us a number of terrain features that we can use to create a more beleiveable world, such as:
+
+- volanic island chains
+- rift vallies
+- mountain ranges
+
+Expanding on the cellular approach, we could even assign temperature, climates, biomes, and polities. Isn't that cool? Yes! Yes it is!
+
+## Method
+
+We'll chop the world into cells using voronoi.
+
+1. Createa a "jittered" array of points around the surface of the Planet.
+2. Create a Voronoi diagram from the points.
+3. Create a list of defined Plates
+4. Assign each Voronoi cell to a Plate using a floodfill algorithm
+5. Assign each voronoi cell edge a value that represents the violence that occurs when
+   the plates collide.
+6. Assign each voronoi cell a value that represents the elevation of the cell.
+7. Pass the voronoi data to the heigh generator to assign the elevations to each vertex.

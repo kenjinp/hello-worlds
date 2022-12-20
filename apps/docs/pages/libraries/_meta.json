@@ -1,0 +1,13 @@
+{
+  "*": {
+    "theme": {
+      "layout": "default"
+    }
+  },
+  "index": { "title": "Libraries" },
+  "core": { "title": "@hello-worlds/core" },
+  "planets": { "title": "@hello-worlds/planets" },
+  "react": { "title": "@hello-worlds/react" },
+  "cultures": { "title": "@hello-worlds/cultures" },
+  "tongues": { "title": "@hello-worlds/tongues" }
+}

@@ -1,22 +1,19 @@
 {
-  "index": {
-    "title": "Introduction",
+  "*": {
     "theme": {
-      "layout": "raw",
-      "typesetting": "article"
+      "layout": "default"
     }
   },
-  "another": "Another Page",
-  "api": "API",
-  "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
+  "index": {
+    "title": "Hello Worlds - A collection of Hello World examples",
+    "theme": {
+      "layout": "full"
+    },
+    "display": "hidden"
   },
-  "contact": {
-    "title": "Contact ↗",
-    "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
-  }
+  "intro": { "title": "Introduction" },
+  "getting-started": { "title": "Getting Started" },
+  "libraries": { "title": "API" },
+  "experiments": { "title": "Experiments" },
+  "roadmap": { "title": "Roadmap" }
 }
