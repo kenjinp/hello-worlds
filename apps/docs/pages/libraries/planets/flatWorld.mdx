@@ -11,31 +11,30 @@ other worlds.
 
 ## Usage
 
-<Tabs>
-<Tab value="ts" label="Three.js">
-
-```ts
-import { FlatWorld } from "@hello-worlds/planet"
-import worker from "./flatWorld.worker"
+<Tabs items={[ 'Three.js', 'React', 'FlatWorld.worker.ts' ]}>
+<Tab>
+  ```tsx
+  import { FlatWorld } from "@hello-worlds/planet"
+  import worker from "./flatWorld.worker"
 
 // ...some threejs scene above
 const myWorld = new FlatWorld({
-  size: 10_000,
-  minCellSize: 32,
-  minCellResolution: 48,
-  workerProps: {
-    numWorkers: 8,
-    worker,
-  },
-  data: {
-    seed: "My Cool Seed!",
-  },
+size: 10_000,
+minCellSize: 32,
+minCellResolution: 48,
+workerProps: {
+numWorkers: 8,
+worker,
+},
+data: {
+seed: "My Cool Seed!",
+},
 })
 scene.add(myWorld)
-```
 
+````
 </Tab>
-<Tab value="jsx" label="React">
+<Tab>
 
 ```tsx
 import { useThree } from "@react-three/fiber"
@@ -43,32 +42,32 @@ import { FlatWorld } from "@hello-worlds/react"
 import worker from "./FlatWorld.worker"
 
 const MyWorld: React.FC = () => {
-  const camera = useThree(s => s.camera)
-  return (
-    // Rotate World so it's along the x axis
-    <group
-      rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
+const camera = useThree(s => s.camera)
+return (
+  // Rotate World so it's along the x axis
+  <group
+    rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
+  >
+    <FlatWorld
+      position={new Vector3()}
+      size={10_000}
+      minCellSize={32}
+      minCellResolution={32 * 2}
+      lodOrigin={camera.position}
+      worker={worker}
+      data={{
+        seed: "My Cool Seed!"
+      }}
     >
-      <FlatWorld
-        position={new Vector3()}
-        size={10_000}
-        minCellSize={32}
-        minCellResolution={32 * 2}
-        lodOrigin={camera.position}
-        worker={worker}
-        data={{
-          seed: "My Cool Seed!",
-        }}
-      >
-        <meshStandardMaterial vertexColors />
-      </FlatWorld>
-    </group>
-  )
+      <meshStandardMaterial vertexColors />
+    </FlatWorld>
+  </group>
+)
 }
-```
+````
 
 </Tab>
-<Tab value="worker" label="FlatWorld.worker.ts">
+<Tab>
 
 ```ts
 import {
@@ -144,7 +143,7 @@ createThreadedFlatWorldWorker<ThreadParams>({
 
 #### WorkerProps
 
-```typescript
+```ts
 export interface workerProps: {
   worker: new () => Worker
   numWorkers: number

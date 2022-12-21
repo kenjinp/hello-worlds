@@ -3,7 +3,11 @@ import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { Euler, Vector3 } from "three"
 import ExampleWrapper from "../ExampleWrapper"
-import worker from "./FlatWorld.worker"
+// import worker from "./FlatWorld.worker"
+
+const worker = () => new Worker(new URL("./FlatWorld.worker", import.meta.url))
+
+console.log(worker)
 
 const Example: React.FC = () => {
   const camera = useThree(s => s.camera)
@@ -31,7 +35,7 @@ const Example: React.FC = () => {
 
 export default function FlatWorldExample() {
   return (
-    <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/flat-world">
+    <ExampleWrapper>
       <group position={new Vector3(0, -1, 0).multiplyScalar(1000)}>
         <Example />
       </group>
