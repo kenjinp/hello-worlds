@@ -3,11 +3,8 @@ import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { Euler, Vector3 } from "three"
 import ExampleWrapper from "../ExampleWrapper"
-// import worker from "./FlatWorld.worker"
 
 const worker = () => new Worker(new URL("./FlatWorld.worker", import.meta.url))
-
-console.log(worker)
 
 const Example: React.FC = () => {
   const camera = useThree(s => s.camera)

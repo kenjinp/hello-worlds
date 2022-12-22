@@ -13,7 +13,12 @@
   },
   "intro": { "title": "Introduction" },
   "getting-started": { "title": "Getting Started" },
-  "libraries": { "title": "API" },
+  "libraries": { "title": "Libraries & API" },
   "experiments": { "title": "Experiments" },
-  "roadmap": { "title": "Roadmap" }
+  "roadmap": { "title": "Roadmap" },
+  "screenshots": { "title": "Screenshot Gallery" },
+  "Demo Planetarium": {
+    "title": "✨🌃 Demo Planetarium",
+    "href": "/"
+  }
 }

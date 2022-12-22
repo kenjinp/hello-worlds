@@ -23,6 +23,10 @@ module.exports = withNextra({
             value: "same-origin",
           },
           {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
             key: "Cross-Origin-Embedder-Policy",
             value: "require-corp",
           },

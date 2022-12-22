@@ -24,6 +24,8 @@
     "@react-three/fiber": "8.8.2",
     "@react-three/postprocessing": "^2.6.2",
     "@react-three/rapier": "^0.9.0",
+    "axios": "^1.2.1",
+    "image-size": "^1.0.2",
     "leva": "^0.9.27",
     "miniplex": "2.0.0-beta.3",
     "next": "^13.0.6",
@@ -32,6 +34,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
+    "react-photo-album": "^2.0.0",
     "render-composer": "0.2.4",
     "shader-composer": "^0.4.4",
     "shader-composer-r3f": "^0.4.0",
@@ -41,7 +44,8 @@
     "three": "0.143.0",
     "three-csm": "^3.0.0",
     "three-custom-shader-material": "^4.0.0",
-    "ts-pattern": "^4.0.5"
+    "ts-pattern": "^4.0.5",
+    "yet-another-react-lightbox": "^2.2.3"
   },
   "devDependencies": {
     "@types/node": "18.11.10",

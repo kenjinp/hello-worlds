@@ -13,26 +13,28 @@ other worlds.
 
 <Tabs items={[ 'Three.js', 'React', 'FlatWorld.worker.ts' ]}>
 <Tab>
-  ```tsx
-  import { FlatWorld } from "@hello-worlds/planet"
-  import worker from "./flatWorld.worker"
+
+```javascript
+import { FlatWorld } from "@hello-worlds/planet"
+import worker from "./flatWorld.worker"
 
 // ...some threejs scene above
+
 const myWorld = new FlatWorld({
-size: 10_000,
-minCellSize: 32,
-minCellResolution: 48,
-workerProps: {
-numWorkers: 8,
-worker,
-},
-data: {
-seed: "My Cool Seed!",
-},
+  size: 10_000,
+  minCellSize: 32,
+  minCellResolution: 48,
+  workerProps: {
+    numWorkers: 8,
+    worker,
+  },
+  data: {
+    seed: "My Cool Seed!",
+  },
 })
 scene.add(myWorld)
+```
 
-````
 </Tab>
 <Tab>
 
@@ -42,29 +44,29 @@ import { FlatWorld } from "@hello-worlds/react"
 import worker from "./FlatWorld.worker"
 
 const MyWorld: React.FC = () => {
-const camera = useThree(s => s.camera)
-return (
-  // Rotate World so it's along the x axis
-  <group
-    rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
-  >
-    <FlatWorld
-      position={new Vector3()}
-      size={10_000}
-      minCellSize={32}
-      minCellResolution={32 * 2}
-      lodOrigin={camera.position}
-      worker={worker}
-      data={{
-        seed: "My Cool Seed!"
-      }}
+  const camera = useThree(s => s.camera)
+  return (
+    // Rotate World so it's along the x axis
+    <group
+      rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
     >
-      <meshStandardMaterial vertexColors />
-    </FlatWorld>
-  </group>
-)
+      <FlatWorld
+        position={new Vector3()}
+        size={10_000}
+        minCellSize={32}
+        minCellResolution={32 * 2}
+        lodOrigin={camera.position}
+        worker={worker}
+        data={{
+          seed: "My Cool Seed!",
+        }}
+      >
+        <meshStandardMaterial vertexColors />
+      </FlatWorld>
+    </group>
+  )
 }
-````
+```
 
 </Tab>
 <Tab>
@@ -126,11 +128,11 @@ createThreadedFlatWorldWorker<ThreadParams>({
 </Tab>
 </Tabs>
 
-### Props
+## Props
 
 |            Prop            | Type                                                            | Default (if optional) | Description                                                                                                                                                                                      |
 | :------------------------: | --------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|          inverted          | boolean                                                         | false                 | If true, flips the terrain upside down                                                                                                                                                           |
+|          inverted          | boolean                                                         | false                 | If true flips the terrain upside down                                                                                                                                                            |
 |            size            | number                                                          | required              | The size of a side of the square FlatWorld                                                                                                                                                       |
 |        minCellSize         | number                                                          | required              | The smallest size that a terrain chunk will be                                                                                                                                                   |
 |     minCellResolution      | number                                                          | required              | The amount of subdivisions in a terrain chunk                                                                                                                                                    |
@@ -138,7 +140,7 @@ createThreadedFlatWorldWorker<ThreadParams>({
 |          position          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | The position to place the world                                                                                                                                                                  |
 |         lodOrigin          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | the position where to compare the lod algorithm against, typically your camera position. If the lodOrigin is close to a terrain chunk, it may decided to collapse into a higher level of detail. |
 |        workerProps         | [WorkerProps](#workerprops)                                     | required              | Config for the worker                                                                                                                                                                            |
-|            data            | Record<string, any>                                             | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
+|            data            | `Record<string, any>`                                           | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
 | lodDistanceComparisonValue | number                                                          | 1.25                  | The quadtree will resolve to a higher level of detail if the lodOrigin position is closer than distance \* lodDistanceComparisonValue, for thhis reason it must be greater than 0                |
 
 #### WorkerProps

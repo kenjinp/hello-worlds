@@ -1,0 +1,10 @@
+{
+  "index": {
+    "title": "Planets intro"
+  },
+  "*": {
+    "theme": {
+      "layout": "default"
+    }
+  }
+}

@@ -14,12 +14,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": "./",
     "paths": {
       "@components/*": ["components/*"],
       "@game/*": ["game/*"],
       "@pages/*": ["pages/*"],
       "@examples/*": ["examples/*"],
-      "@public/*": ["public/*"]
+      "@public/*": ["public/*"],
+      "@constants": ["constants.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

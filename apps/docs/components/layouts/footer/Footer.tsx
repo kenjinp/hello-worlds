@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import * as React from "react"
 import { FooterStyled } from "./Footer.style"
 
-const Footer: React.FC<
+export const Footer: React.FC<
   React.PropsWithChildren<{
     middle: string | React.ReactNode
   }>
@@ -40,5 +40,3 @@ const Footer: React.FC<
     </FooterStyled>
   )
 }
-
-export default Footer
