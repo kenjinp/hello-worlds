@@ -1,4 +1,4 @@
-import PlanetExample from "../../../src/components/examples/planet"
+import PlanetExample from "@examples/planet/Planet"
 import { Tab, Tabs } from "nextra-theme-docs"
 
 # Planets
@@ -11,8 +11,8 @@ or cloud layers, by layering Planet() components on top of eachother.
 
 ## Usage
 
-<Tabs>
-<Tab value="ts" label="Three.js">
+<Tabs items={[ 'Three.js', 'React', 'Planet.worker.ts' ]}>
+<Tab>
 
 ```ts
 import { Planet } from "@hello-worlds/planet"
@@ -35,7 +35,7 @@ scene.add(myWorld)
 ```
 
 </Tab>
-<Tab value="jsx" label="React">
+<Tab>
 
 ```tsx
 import { useThree } from "@react-three/fiber"
@@ -68,7 +68,7 @@ const MyWorld: React.FC = () => {
 ```
 
 </Tab>
-<Tab value="worker" label="Planet.worker.ts">
+<Tab>
 
 ```ts
 import {
@@ -139,8 +139,8 @@ createThreadedPlanetWorker<ThreadParams>({
 |          position          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | The position to place the world                                                                                                                                                                  |
 |         lodOrigin          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | the position where to compare the lod algorithm against, typically your camera position. If the lodOrigin is close to a terrain chunk, it may decided to collapse into a higher level of detail. |
 |        workerProps         | [WorkerProps](#workerprops)                                     | required              | Config for the worker                                                                                                                                                                            |
-|            data            | Record<string, any>                                             | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
-| lodDistanceComparisonValue | number                                                          | 1.25                  | The quadtree will resolve to a higher level of detail if the lodOrigin position is closer than distance \* lodDistanceComparisonValue, for thhis reason it must be greater than 0                |
+|            data            | `Record<string, any>`                                           | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
+| lodDistanceComparisonValue | number                                                          | 1.25                  | The quadtree will resolve to a higher level of detail if the lodOrigin position is closer than distance multiplied by lodDistanceComparisonValue, for this reason it must be greater than 0      |
 
 #### WorkerProps
 

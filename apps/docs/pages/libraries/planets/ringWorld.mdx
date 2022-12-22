@@ -1,22 +1,7 @@
-import {
-  RingWorldExampleThin,
-  RingWorldExampleLong,
-} from "../../../src/components/examples/ring-world"
+import RingWorldExample from "@examples/ring-world/RingWorld"
 import { Tab, Tabs } from "nextra-theme-docs"
 
 # Ring Worlds
-
-## Halo-like world
-
-<RingWorldExampleThin />
-
-<br />
-
-## O'Niell Cylinder
-
-<RingWorldExampleLong />
-
-<br />
 
 Generate a world wrapped along a cylinder. Useful for creating sci-fi
 megastructures like [O'Niell
@@ -25,10 +10,22 @@ Worlds](https://en.wikipedia.org/wiki/Ringworld)
 
 They can be long with a small diameter, or vast and narrow.
 
+## O'Niell Cylinder
+
+<RingWorldExample type="long" />
+
+<br />
+
+## Halo-like world
+
+<RingWorldExample type="thin" />
+
+<br />
+
 ## Usage
 
-<Tabs>
-<Tab value="ts" label="Three.js">
+<Tabs items={[ 'Three.js', 'React', 'RingWorld.worker.ts' ]}>
+<Tab>
 
 ```ts
 import { RingWorld } from "@hello-worlds/planet"
@@ -52,7 +49,7 @@ scene.add(myWorld)
 ```
 
 </Tab>
-<Tab value="jsx" label="React">
+<Tab>
 
 ```tsx
 import { useThree } from "@react-three/fiber"
@@ -86,7 +83,7 @@ const MyWorld: React.FC = () => {
 ```
 
 </Tab>
-<Tab value="worker" label="RingWorld.worker.ts">
+<Tab>
 
 ```ts
 import {
@@ -158,7 +155,7 @@ createThreadedRingWorldWorker<ThreadParams>({
 |          position          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | The position to place the world                                                                                                                                                                  |
 |         lodOrigin          | [Vector3](https://threejs.org/docs/?q=vect#api/en/math/Vector3) | required              | the position where to compare the lod algorithm against, typically your camera position. If the lodOrigin is close to a terrain chunk, it may decided to collapse into a higher level of detail. |
 |        workerProps         | [WorkerProps](#workerprops)                                     | required              | Config for the worker                                                                                                                                                                            |
-|            data            | Record<string, any>                                             | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
+|            data            | `Record<string, any>`                                           | required              | User datta that will be consumed by the worker threads' generator functions                                                                                                                      |
 | lodDistanceComparisonValue | number                                                          | 1.25                  | The quadtree will resolve to a higher level of detail if the lodOrigin position is closer than distance \* lodDistanceComparisonValue, for thhis reason it must be greater than 0                |
 
 #### WorkerProps

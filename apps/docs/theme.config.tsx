@@ -106,11 +106,7 @@ const config: DocsThemeConfig = {
   },
   banner: {
     key: "2.1-release",
-    text: (
-      <a href="https://nextra.site" target="_blank">
-        🎉 Hello Worlds v0.0.15 released!. Read more →
-      </a>
-    ),
+    text: <p>🎉 New docs site released! let me know what you think ~</p>,
   },
   project: null,
   chat: {

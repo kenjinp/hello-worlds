@@ -1,10 +1,11 @@
+import { NOISE_TYPES } from "@hello-worlds/planets"
 import { FlatWorld } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
-import { NOISE_TYPES } from "@site/../../packages/planets/dist/esm"
 import * as React from "react"
 import { Euler, Vector3 } from "three"
 import ExampleWrapper from "../ExampleWrapper"
-import worker from "./Noise.worker"
+
+const worker = () => new Worker(new URL("./Noise.worker", import.meta.url))
 
 const Example: React.FC<{ noiseType: NOISE_TYPES }> = ({ noiseType }) => {
   const camera = useThree(s => s.camera)
@@ -33,7 +34,7 @@ const Example: React.FC<{ noiseType: NOISE_TYPES }> = ({ noiseType }) => {
 
 export default function NoiseExample({ noiseType }) {
   return (
-    <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/noise">
+    <ExampleWrapper>
       <group position={new Vector3(0, -1, 0).multiplyScalar(1000)}>
         <Example noiseType={noiseType} />
       </group>

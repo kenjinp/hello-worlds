@@ -3,7 +3,8 @@ import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { Vector3 } from "three"
 import ExampleWrapper from "../ExampleWrapper"
-import worker from "./Planet.worker"
+
+const worker = () => new Worker(new URL("./Planet.worker", import.meta.url))
 
 const Example: React.FC = () => {
   const camera = useThree(s => s.camera)
@@ -28,10 +29,7 @@ const Example: React.FC = () => {
 
 export default function PlanetExample() {
   return (
-    <ExampleWrapper
-      link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/planet"
-      controls={null}
-    >
+    <ExampleWrapper controls={null}>
       <Example />
     </ExampleWrapper>
   )

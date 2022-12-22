@@ -3,14 +3,17 @@ import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { Euler, Vector3 } from "three"
 import ExampleWrapper from "../ExampleWrapper"
-import worker from "./RingWorld.worker"
+
+const worker = () => new Worker(new URL("./RingWorld.worker", import.meta.url))
 
 const Example1: React.FC = () => {
   const camera = useThree(s => s.camera)
   return (
     // Rotate World so it's along the x axis
     <group
-      rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
+      rotation={new Euler().setFromVector3(
+        new Vector3(-Math.PI / 2, -Math.PI / 2, 0),
+      )}
     >
       <RingWorld
         inverted
@@ -59,7 +62,7 @@ const Example2: React.FC = () => {
 
 export default function RingWorldExample({ type }: { type: "long" | "thin" }) {
   return (
-    <ExampleWrapper link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/components/examples/ring-world">
+    <ExampleWrapper>
       {type === "long" ? <Example2 /> : <Example1 />}
     </ExampleWrapper>
   )
