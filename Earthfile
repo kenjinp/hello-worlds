@@ -14,9 +14,6 @@ build:
   ENV NODE_ENV="development"
 
   RUN npm --global install pnpm@${PNPM_VERSION}
-  # Not sure why this step is necessary.
-  # Without it, the next step fails with tsc not found.
-  RUN npm --global install typescript 
   WORKDIR /root/monorepo
   RUN apk add --no-cache git
   COPY ./.npmrc .
