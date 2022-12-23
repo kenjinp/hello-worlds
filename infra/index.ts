@@ -177,25 +177,22 @@ const certificateValidation = new aws.acm.CertificateValidation(
 
 certificateArn = certificateValidation.certificateArn
 
-const headersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
-  "Headers for SharedArrayBuffer",
-  {
-    customHeadersConfig: {
-      items: [
-        {
-          header: "Cross-Origin-Opener-Policy",
-          override: true,
-          value: "same-origin",
-        },
-        {
-          header: "Cross-Origin-Embedder-Policy",
-          override: true,
-          value: "require-corp",
-        },
-      ],
-    },
+const headersPolicy = new aws.cloudfront.ResponseHeadersPolicy("cdnHeaders", {
+  customHeadersConfig: {
+    items: [
+      {
+        header: "Cross-Origin-Opener-Policy",
+        override: true,
+        value: "same-origin",
+      },
+      {
+        header: "Cross-Origin-Embedder-Policy",
+        override: true,
+        value: "require-corp",
+      },
+    ],
   },
-)
+})
 
 // Create a CloudFront CDN to distribute and cache the website.
 const cdn = new aws.cloudfront.Distribution("cdn", {
