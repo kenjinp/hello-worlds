@@ -12,7 +12,7 @@ const indexDocument = config.get("indexDocument") || "index.html"
 const errorDocument = config.get("errorDocument") || "error.html"
 
 // Create an S3 bucket and configure it as a website.
-const bucket = new aws.s3.Bucket("bucket", {
+const bucket = new aws.s3.Bucket(domainName, {
   acl: "public-read",
   website: {
     indexDocument: indexDocument,

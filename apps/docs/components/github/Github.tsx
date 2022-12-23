@@ -10,11 +10,6 @@ async function getStars(repoOwner, repoName) {
   try {
     const response = await axios.get(
       `https://api.github.com/repos/${repoOwner}/${repoName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
-        },
-      },
     )
     return response.data.stargazers_count
   } catch (error) {
