@@ -6,3 +6,4 @@ dist-ssr
 .log
 .env
 .next
+.github
