@@ -1,5 +1,9 @@
 @font-face {
   font-family: OsakaMono;
-  src: url("public/fonts//subset-Osaka-Mono.woff2");
+  src: url("/fonts/subset-Osaka-Mono.woff2");
   font-weight: 400;
+}
+
+html {
+  font-family: OsakaMono, monospace;
 }

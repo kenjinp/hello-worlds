@@ -6,6 +6,23 @@ import "../styles.css"
 import { ThemeProvider, useThemeUI } from "theme-ui"
 import theme from "../theme"
 
+function mouseEventToSphericalCoordinates(mouseEvent: MouseEvent): {
+  phi: number
+  theta: number
+} {
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+  // Calculate the normalized mouse position relative to the center of the viewport
+  const x = (mouseEvent.clientX - viewportWidth / 2) / (viewportWidth / 2)
+  const y = (mouseEvent.clientY - viewportHeight / 2) / (viewportHeight / 2)
+
+  // Convert the normalized mouse position to spherical coordinates
+  const phi = Math.atan2(y, x)
+  const theta = Math.sqrt(x ** 2 + y ** 2)
+
+  return { phi, theta }
+}
+
 const MouseWiggler: React.FC = () => {
   const context = useThemeUI()
 
@@ -14,9 +31,10 @@ const MouseWiggler: React.FC = () => {
       return
     }
     const onMouseMoveListener = (e: MouseEvent) => {
-      const max = Math.max(e.clientX, e.clientY)
+      // const max = Math.max(e.clientX, e.clientY)
 
-      const hue = max / 20 + 60
+      // const hue = max / 20 + 60
+      const hue = (mouseEventToSphericalCoordinates(e).phi * 180) / Math.PI
       document.documentElement.style.setProperty(
         "--nextra-primary-hue",
         hue + "deg",
@@ -36,9 +54,11 @@ export default function Nextra({
   pageProps,
 }: AppProps): ReactElement {
   return (
-    <ThemeProvider theme={theme}>
-      <MouseWiggler />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <MouseWiggler />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </>
   )
 }

@@ -28,7 +28,9 @@ export default function ExampleWrapper({
       </Canvas>
       <div style={{ position: "absolute", bottom: "1em", left: "1em" }}>
         <Button
-          onClick={() => document.getElementById("example").requestFullscreen()}
+          onClick={() =>
+            document.getElementById("windows-bounds").requestFullscreen()
+          }
         >
           Full Screen
         </Button>{" "}

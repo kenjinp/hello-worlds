@@ -1,9 +1,13 @@
 import { Callout } from "nextra-theme-docs"
+import Screenshots, {
+  getStaticProps as whatever,
+} from "@components/photo-gallery/Screenshots"
+export const getStaticProps = whatever
 
 # Wield the Warp of Worlds, Cosmos Crafter!
 
 <br />
-<img src="/img/preview.png" />
+<Screenshots numPhotos={6} />
 <br />
 
 ## Write Javascript, create huge worlds!

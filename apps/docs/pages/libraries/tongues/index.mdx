@@ -1,8 +1,161 @@
-import { Callout } from 'nextra-theme-docs'
+import { Callout } from "nextra-theme-docs"
 import { Badge } from "@components/badges/NPM"
- 
+import { LanguageExample } from "@examples/language/Langauge"
+import { Language } from "@hello-worlds/tongues"
+
 # @hello-worlds/Tongues <Badge project="@hello-worlds/tongues" />
 
-<Callout type="warning" emoji="ℹ">
-  Todo
-</Callout>
+Automatically generate a limited conlang and operate on it.
+
+## Example
+
+{<LanguageExample />}
+
+## Usage
+
+```ts
+import { Language } from "@hello-worlds/tongues"
+
+// generates a conlang, selecting a list of phonemse, assigning a sylable structure, and generating an orthography
+const conlang = new Langauge()
+
+// generates a valid syllable using the conlang's syllable structure
+// such as "CVC" or "C?VC"
+const syllable = conlang.makeSyllable()
+
+console.log(conlang.spell(syllable)) // spells out the syllable using the conlang's orthography.
+
+// compose a morpeme based on a number of valid syllables, adds to the conlang's morpheme lexicon
+const morpheme = conlang.makeMorheme()
+
+// compose a word based on a number of valid morphemes, adds to the conlang's word lexicon
+const word = conlang.makeWord("Banana")
+
+// generates a name using makeWord, but with the possible addition of genetives or definite articles
+// such as The Kingdom of Something
+const characterName = conlang.makeName()
+```
+
+### Syllable Structures
+
+Syllable structures are how syllables are composed. They're a string of characters, where each character represents a phoneme class (Consonant, Vowel, Fricative, Liquid).
+
+The following are the included syllable structures. Note that the selection is random and will not be sampled based on the observed distribution of syllable structures in the real world.
+
+```ts
+export const syllableStructures = [
+  "CVC",
+  "C?CVC?C",
+  "C?C?VC?C?C?C?",
+  "CVV?C",
+  "CVVC?",
+  "CVC?",
+  "CV",
+  "VC",
+  "CVF",
+  "C?VC",
+  "CVF?",
+  "CL?VC",
+  "CL?VF",
+  "S?CVC",
+  "S?CVF",
+  "S?CVC?",
+  "C?VF",
+  "C?VC?",
+  "C?VF?",
+  "C?L?VC",
+  "VC",
+  "CVL?C?",
+  "C?VL?C",
+  "C?VLC?",
+  "C?VLC?C?",
+]
+```
+
+It's possible to choose your own syllable structure.
+
+```ts
+const myConlang = new Langauge()
+
+// this will look goofy!
+myColang.structure = "?VC"
+```
+
+### Orhographies
+
+Orthographies are how phonemes are rendered into text. There's many ways to write a single phoneme, and these impart a great deal of flavor to a text a conlang.
+You can chose the orthography seperately for consonantOrthography and vowels, but they'll be generated automatically in the constructor.
+
+```ts
+
+const myConlang = new Langauge();
+
+myColang.consonantOrthography = {
+  name: "French",
+  orth: {
+    ʃ: "ch",
+    ʒ: "j",
+    ʧ: "tch",
+    ʤ: "dj",
+    x: "kh",
+  },
+},
+
+```
+
+```ts
+// An example of how orthographies are defined
+export const consonantOrthoSets = [
+  {
+    name: "Default",
+    orth: {},
+  },
+  {
+    name: "Slavic",
+    orth: {
+      ʃ: "š",
+      ʒ: "ž",
+      ʧ: "č",
+      ʤ: "ǧ",
+      j: "j",
+    },
+  },
+  {
+    name: "German",
+    orth: {
+      ʃ: "sch",
+      ʒ: "zh",
+      ʧ: "tsch",
+      ʤ: "dz",
+      j: "j",
+      x: "ch",
+    },
+  },
+  {
+    name: "French",
+    orth: {
+      ʃ: "ch",
+      ʒ: "j",
+      ʧ: "tch",
+      ʤ: "dj",
+      x: "kh",
+    },
+  },
+  {
+    name: "Chinese (pinyin)",
+    orth: {
+      ʃ: "x",
+      ʧ: "q",
+      ʤ: "j",
+    },
+  },
+]
+```
+
+## Future ideas
+
+Right now it's a simplistic model mostly useful for generating names. In the future, I'd like to add:
+
+- load word adaption from another `Language`
+- deterministically simulate `Language` change
+- generate a `Language` as a simulated offshoot branch from changes to a target `Language`'s phonology

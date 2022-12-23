@@ -23,6 +23,7 @@ importers:
       '@hello-worlds/cultures': workspace:*
       '@hello-worlds/planets': workspace:*
       '@hello-worlds/react': workspace:*
+      '@hello-worlds/tongues': workspace:*
       '@liveblocks/client': ^0.17.11
       '@liveblocks/react': ^0.17.11
       '@react-three/drei': 9.30.1
@@ -67,6 +68,7 @@ importers:
       '@hello-worlds/cultures': link:../../packages/cultures
       '@hello-worlds/planets': link:../../packages/planets
       '@hello-worlds/react': link:../../packages/react
+      '@hello-worlds/tongues': link:../../packages/tongues
       '@liveblocks/client': 0.17.11
       '@liveblocks/react': 0.17.11_g554a45gednjhhb3pqfawstgjq
       '@react-three/drei': 9.30.1_e3qimqrzok5dx2pqca3us4bkzm
@@ -107,15 +109,17 @@ importers:
     specifiers:
       '@pulumi/aws': 5.13.0
       '@pulumi/pulumi': ^3.0.0
-      '@pulumi/synced-folder': '*'
+      '@types/mime': ^3.0.1
       '@types/node': ^14
+      mime: ^3.0.0
       typescript: ^4.0.0
     dependencies:
       '@pulumi/aws': 5.13.0
       '@pulumi/pulumi': 3.50.0
-      '@pulumi/synced-folder': 0.0.9
+      mime: 3.0.0
       typescript: 4.9.3
     devDependencies:
+      '@types/mime': 3.0.1
       '@types/node': 14.18.35
 
   packages/core:
@@ -1501,15 +1505,6 @@ packages:
     resolution: {integrity: sha512-xfo+yLRM2zVjVEA4p23IjQWzyWl1ZhWOGobsBqRpIarzLvwNH/RAGaoehdxlhx4X92302DrpdIFgTICMN4P38w==}
     dev: false
 
-  /@pulumi/synced-folder/0.0.9:
-    resolution: {integrity: sha512-kih9dngzZrgBQpu8O8VraQw8IR96OoCHFoGynuKCZBL9/kV3noy23OyCo9OvGxbDOHrgsuROibt4jhmStEQXIA==}
-    requiresBuild: true
-    dependencies:
-      '@pulumi/pulumi': 3.50.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
   /@radix-ui/popper/0.1.0:
     resolution: {integrity: sha512-uzYeElL3w7SeNMuQpXiFlBhTT+JyaNMCwDfjKkrzugEcYrf5n52PHqncNdQPUtR42hJh8V9FsqyEDbDxkeNjJQ==}
     dependencies:
@@ -2133,6 +2128,10 @@ packages:
   /@types/mdx/2.0.3:
     resolution: {integrity: sha512-IgHxcT3RC8LzFLhKwP3gbMPeaK7BM9eBH46OdapPA7yvuIUJ8H6zHZV53J8hGZcTSnt95jANt+rTBNUUc22ACQ==}
     dev: false
+
+  /@types/mime/3.0.1:
+    resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
+    dev: true
 
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
@@ -4633,6 +4632,12 @@ packages:
   /mime/2.6.0:
     resolution: {integrity: sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==}
     engines: {node: '>=4.0.0'}
+    hasBin: true
+    dev: false
+
+  /mime/3.0.0:
+    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
+    engines: {node: '>=10.0.0'}
     hasBin: true
     dev: false
 

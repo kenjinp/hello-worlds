@@ -19,6 +19,7 @@
     "@hello-worlds/cultures": "workspace:*",
     "@hello-worlds/planets": "workspace:*",
     "@hello-worlds/react": "workspace:*",
+    "@hello-worlds/tongues": "workspace:*",
     "@liveblocks/client": "^0.17.11",
     "@liveblocks/react": "^0.17.11",
     "@react-three/drei": "9.30.1",

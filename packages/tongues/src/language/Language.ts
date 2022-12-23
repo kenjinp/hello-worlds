@@ -3,7 +3,7 @@ import {
   choose,
   random,
   randomRangeInt,
-  shuffle,
+  shuffle
 } from "@hello-worlds/core"
 import {
   consonantOrthoSets,
@@ -14,7 +14,7 @@ import {
   restrictionSets,
   sibilantSets,
   vowelOrthoSets,
-  vowelSets,
+  vowelSets
 } from "./Language.sets"
 import { syllableStructures } from "./Language.syllables"
 

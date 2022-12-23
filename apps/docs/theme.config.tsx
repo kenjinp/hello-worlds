@@ -84,7 +84,6 @@ const config: DocsThemeConfig = {
   },
   search: { placeholder: "Search" },
   sidebar: { defaultMenuCollapseLevel: 0 },
-  darkMode: true,
   docsRepositoryBase: `${socials.github}/apps/docs`,
   footer: {
     text: (

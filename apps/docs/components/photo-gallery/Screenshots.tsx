@@ -54,6 +54,7 @@ const loadImages = async (images: string[]) => {
 }
 
 export default function Screenshots(props) {
+  const numPhotos = props.numPhotos
   // Render posts...
   const ssg = useSSG()
   const [photos, setPhotos] = React.useState([])
@@ -63,7 +64,11 @@ export default function Screenshots(props) {
     loadImages(ssg.screenshots).then(setPhotos).catch(console.error)
   }, [ssg.screenshots])
 
-  console.log({ ssg, photos })
-
-  return <>{photos && <PhotoGallery photos={photos} />}</>
+  return (
+    <>
+      {photos && (
+        <PhotoGallery photos={photos.slice(0, numPhotos || photos.length)} />
+      )}
+    </>
+  )
 }

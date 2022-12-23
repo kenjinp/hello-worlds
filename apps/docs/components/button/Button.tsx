@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 const defaultHoverBackgroundColor = "#2f2f2f"
-const defaultHoverTextColor = "#2f2f2f"
+const defaultHoverTextColor = "#f4f4f4"
 const defaultTextColor = "#f4f4f4"
 export const Button = styled.button<{
   hoverBackgroundColor?: string
@@ -13,7 +13,8 @@ export const Button = styled.button<{
   background: transparent;
   border: 0;
   cursor: pointer;
-  color: ${({ textColor = defaultTextColor }) => textColor};
+  color: rgba(243, 244, 246, var(--tw-text-opacity));
+  // color: ${({ textColor = defaultTextColor }) => textColor};
   transition: all 0.25s ease;
   &:hover {
     color: ${({ hoverTextColor = defaultHoverTextColor }) => hoverTextColor};
