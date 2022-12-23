@@ -11,6 +11,8 @@ const path = config.get("path")!
 const indexDocument = config.get("indexDocument") || "index.html"
 const errorDocument = config.get("errorDocument") || "error.html"
 
+// TODO clean paths in s3 bucket with .html content type
+
 // Create an S3 bucket and configure it as a website.
 const bucket = new aws.s3.Bucket(domainName, {
   acl: "public-read",
@@ -24,6 +26,7 @@ const bucket = new aws.s3.Bucket(domainName, {
 const bucketFolder = new synced_folder.S3BucketFolder("bucket-folder", {
   path: path,
   bucketName: bucket.bucket,
+  managedObjects: false,
   acl: "public-read",
 })
 
@@ -119,6 +122,7 @@ certificateArn = certificateValidation.certificateArn
 // Create a CloudFront CDN to distribute and cache the website.
 const cdn = new aws.cloudfront.Distribution("cdn", {
   enabled: true,
+  isIpv6Enabled: true,
   aliases: [domainName],
   origins: [
     {

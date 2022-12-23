@@ -14,7 +14,13 @@ const MouseWiggler: React.FC = () => {
       return
     }
     const onMouseMoveListener = (e: MouseEvent) => {
-      context.theme.colors.primary = `hsl(${e.clientX}, 100%, 50%)`
+      const max = Math.max(e.clientX, e.clientY)
+
+      const hue = max / 20 + 60
+      document.documentElement.style.setProperty(
+        "--nextra-primary-hue",
+        hue + "deg",
+      )
     }
 
     window.addEventListener("mousemove", onMouseMoveListener)

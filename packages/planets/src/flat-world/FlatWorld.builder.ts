@@ -13,7 +13,7 @@ import WorkerThreadPool from "../worker/WorkerThreadPool"
 
 export interface FlatWorldBuilderProps<D> {
   workerProps: {
-    worker: new () => Worker
+    worker: () => Worker
     numWorkers: number
   }
   inverted: boolean
