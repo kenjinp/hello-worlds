@@ -1,13 +1,15 @@
 import * as aws from "@pulumi/aws"
 import * as pulumi from "@pulumi/pulumi"
-import * as synced_folder from "@pulumi/synced-folder"
+import * as fs from "fs"
+import * as mime from "mime"
+import * as path from "path"
 
 // Import the program's configuration settings.
 const config = new pulumi.Config()
 const includeWWW = config.get("includeWWW")
 const domainName = config.get("targetDomain")!
 const zoneName = config.get("zoneName")!
-const path = config.get("path")!
+const contentPath = config.get("path")!
 const indexDocument = config.get("indexDocument") || "index.html"
 const errorDocument = config.get("errorDocument") || "error.html"
 
@@ -16,6 +18,7 @@ const errorDocument = config.get("errorDocument") || "error.html"
 // Create an S3 bucket and configure it as a website.
 const bucket = new aws.s3.Bucket(domainName, {
   acl: "public-read",
+  bucket: domainName,
   website: {
     indexDocument: indexDocument,
     errorDocument: errorDocument,
@@ -23,11 +26,63 @@ const bucket = new aws.s3.Bucket(domainName, {
 })
 
 // Use a synced folder to manage the files of the website.
-const bucketFolder = new synced_folder.S3BucketFolder("bucket-folder", {
-  path: path,
-  bucketName: bucket.bucket,
-  managedObjects: false,
-  acl: "public-read",
+// const bucketFolder = new synced_folder.S3BucketFolder("bucket-folder", {
+//   path: path,
+//   bucketName: bucket.bucket,
+//   managedObjects: false,
+//   acl: "public-read",
+// })
+
+// contentBucket is the S3 bucket that the website's contents will be stored in.
+// const contentBucket = new aws.s3.Bucket("contentBucket",
+//     {
+//         bucket: config.targetDomain,
+//         // Configure S3 to serve bucket contents as a website. This way S3 will automatically convert
+//         // requests for "foo/" to "foo/index.html".
+//         website: {
+//             indexDocument: "index.html",
+//             errorDocument: "404.html",
+//         },
+//     });
+
+// crawlDirectory recursive crawls the provided directory, applying the provided function
+// to every file it contains. Doesn't handle cycles from symlinks.
+function crawlDirectory(dir: string, f: (_: string) => void) {
+  const files = fs.readdirSync(dir)
+  for (const file of files) {
+    const filePath = `${dir}/${file}`
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory()) {
+      crawlDirectory(filePath, f)
+    }
+    if (stat.isFile()) {
+      f(filePath)
+    }
+  }
+}
+
+// Sync the contents of the source directory with the S3 bucket, which will in-turn show up on the CDN.
+const webContentsRootPath = path.join(process.cwd(), contentPath)
+console.log("Syncing contents from local disk at", webContentsRootPath)
+crawlDirectory(webContentsRootPath, (filePath: string) => {
+  let relativeFilePath = filePath.replace(webContentsRootPath + "/", "")
+  if (relativeFilePath.includes(".html")) {
+    relativeFilePath = relativeFilePath.replace(".html", "")
+  }
+  const contentFile = new aws.s3.BucketObject(
+    relativeFilePath,
+    {
+      key: relativeFilePath,
+
+      acl: "public-read",
+      bucket,
+      contentType: mime.getType(filePath) || undefined,
+      source: new pulumi.asset.FileAsset(filePath),
+    },
+    {
+      parent: bucket,
+    },
+  )
 })
 
 let certificateArn: pulumi.Input<string>
