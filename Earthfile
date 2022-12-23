@@ -36,7 +36,8 @@ deploy:
   ARG STACK="dev"
   ARG APP="docs"
   FROM pulumi/pulumi-nodejs
-  COPY +build/apps/$APP/out ./_site
+  COPY +build/out ./_site
+  RUN ls ./_site
   COPY infra ./infra
   WORKDIR infra
   RUN npm install

@@ -5,5 +5,6 @@ dist-ssr
 *.local
 .log
 .env
+.env.*
 .next
 out
