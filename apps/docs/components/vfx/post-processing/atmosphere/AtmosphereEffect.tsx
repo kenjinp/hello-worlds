@@ -37,9 +37,10 @@ class MyCustomEffectImpl extends Effect {
     super(
       "MyCustomEffect",
       fragment
-        .replace(/<planetsLength>/g, planets.length)
-        .replace(/<sunsLength>/g, suns.length),
+        .replace(/<planetsLength>/g, planets.length.toString())
+        .replace(/<sunsLength>/g, suns.length.toString()),
       {
+        // @ts-ignore
         uniforms: new Map<string, Uniform | { value: any }>([
           ["uCameraPosition", new Uniform(camera.position)],
           ["uCameraWorldDirection", new Uniform(cameraDirection)],

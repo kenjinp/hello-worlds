@@ -1,24 +1,13 @@
-import BrowserOnly from "@docusaurus/BrowserOnly"
-import ExampleWrapper from "@site/src/components/examples/ExampleWrapper"
-import * as React from "react"
+import ExampleWrapper from "@examples/ExampleWrapper"
+import Example from "./Tectonics"
 
-const Example = React.lazy(() => import("./Tectonics.tsx"))
-
-export default function ({ noiseType }) {
+export default function () {
   return (
-    <BrowserOnly>
-      {() => {
-        return (
-          <React.Suspense>
-            <ExampleWrapper
-              link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/experiments/tectnonics"
-              controls={null}
-            >
-              <Example />
-            </ExampleWrapper>
-          </React.Suspense>
-        )
-      }}
-    </BrowserOnly>
+    <ExampleWrapper
+      link="https://github.com/kenjinp/hello-worlds/tree/main/apps/docs/src/experiments/tectnonics"
+      controls={null}
+    >
+      <Example />
+    </ExampleWrapper>
   )
 }

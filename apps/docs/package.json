@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "export": "next export"
   },
   "homepage": "https://worlds.kenny.wtf",
   "dependencies": {
@@ -25,6 +26,8 @@
     "@react-three/postprocessing": "^2.6.2",
     "@react-three/rapier": "^0.9.0",
     "axios": "^1.2.1",
+    "d3-geo-voronoi": "^2.0.1",
+    "gl-noise": "^1.6.1",
     "image-size": "^1.0.2",
     "leva": "^0.9.27",
     "miniplex": "2.0.0-beta.3",

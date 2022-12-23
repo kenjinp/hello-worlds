@@ -2,6 +2,7 @@ import { Stars } from "@react-three/drei"
 import * as React from "react"
 import * as RC from "render-composer"
 import { Color, Quaternion, Vector3 } from "three"
+import { SpaceBox } from "./space-box/SpaceBox"
 
 const AU = 149_597_870_700
 
@@ -130,7 +131,7 @@ export const BasicScene: React.FC<React.PropsWithChildren<{}>> = ({
         >
           <Stars saturation={1} />
         </group>
-        {/* <SpaceBox /> */}
+        <SpaceBox />
         {/* <LightRig /> */}
         <PostProcessing>{children}</PostProcessing>
       </React.Suspense>

@@ -1,10 +1,10 @@
 import { Button } from "@components/button/Button"
+import { SpaceBox } from "@components/space-box/SpaceBox"
+import { AU } from "@game/Math"
 import { OrbitControls, Stars } from "@react-three/drei"
+import { Canvas } from "game/Canvas"
 import * as React from "react"
 import { Color, Vector3 } from "three"
-// import { SpaceBox } from "../SpaceBox"
-import { AU } from "@game/Math"
-import { Canvas } from "game/Canvas"
 
 export default function ExampleWrapper({
   children,
@@ -12,11 +12,11 @@ export default function ExampleWrapper({
 }): React.ReactElement {
   return (
     <div
-      id="example"
+      id="windows-bounds"
       style={{ height: 800, borderRadius: "1em", position: "relative" }}
     >
       <Canvas style={{ borderRadius: "1em" }}>
-        {/* <SpaceBox /> */}
+        <SpaceBox />
         <directionalLight color={new Color("white")} intensity={0.4} />
         <group
           scale={new Vector3(1, 1, 1).multiplyScalar(AU).multiplyScalar(10)}

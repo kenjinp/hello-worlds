@@ -4,8 +4,9 @@ import * as React from "react"
 import { Vector3 } from "three"
 import GerstnerWaterMaterial from "./water/GerstnerWater"
 
-import { PLANET_TYPES } from "../../WorldBuilder.state"
-import worker from "../../WorldBuilder.worker"
+import { PLANET_TYPES } from "@game/Entity"
+
+const worker = () => new Worker(new URL("@game/Worker.ts", import.meta.url))
 
 const Water: React.FC = () => {
   const planet = usePlanet()

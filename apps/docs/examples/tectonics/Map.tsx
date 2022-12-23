@@ -1,9 +1,9 @@
 import { usePlanet } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { Planet, remap } from "@site/../../packages/planets/dist/esm"
-import { Container } from "@site/src/components/container/Container"
 import * as React from "react"
 import { Color, Mesh, Vector3 } from "three"
+import { Window } from "../../components/window/Window"
 import { plateColor, tectonicHeightGenerator } from "./Planet.generators"
 import { LatLonCoordinates } from "./polar-spatial-hash/LatLongCoordinates"
 import { SphericalSpatialHash } from "./polar-spatial-hash/SphericalSpatialHash"
@@ -299,7 +299,7 @@ export const Map: React.FC = () => {
         <meshBasicMaterial color="red" />
       </mesh>
       <Html>
-        <Container width={500}>
+        <Window width={500}>
           <PlanetMap
             planet={planet}
             onMapMove={cartesian => {
@@ -309,7 +309,7 @@ export const Map: React.FC = () => {
               pointerRef.current.rotateX(Math.PI / 2)
             }}
           />
-        </Container>
+        </Window>
       </Html>
     </>
   )

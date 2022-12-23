@@ -1,18 +1,22 @@
 VERSION 0.6
 
 build: 
-  FROM node:16.14-alpine AS base
-  ARG PNPM_VERSION=7.5.0
+  FROM node:18.12-alpine
+  ARG PNPM_VERSION=7.19.0
   ARG LIVEBLOCKS_API_KEY
+  ARG GITHUB_TOKEN
   ARG APP="docs"
-  ARG NODE_ENV="production"
 
   ENV APP=${APP}
   ENV NODE_OPTIONS="--max-old-space-size=1024"
-  ENV LIVEBLOCKS_API_KEY=${LIVEBLOCKS_API_KEY}
-  ENV NODE_ENV=${NODE_ENV}
+  ENV NEXT_PUBLIC_LIVEBLOCKS_API_KEY=${NEXT_PUBLIC_LIVEBLOCKS_API_KEY}
+  ENV NEXT_PUBLIC_GITHUB_TOKEN=${NEXT_PUBLIC_GITHUB_TOKEN}
+  ENV NODE_ENV="development"
 
   RUN npm --global install pnpm@${PNPM_VERSION}
+  # Not sure why this step is necessary.
+  # Without it, the next step fails with tsc not found.
+  RUN npm --global install typescript 
   WORKDIR /root/monorepo
   RUN apk add --no-cache git
   COPY ./.npmrc .
@@ -22,14 +26,17 @@ build:
   COPY . .
   RUN pnpm install --filter "$APP..." --frozen-lockfile --unsafe-perm --offline
   RUN pnpm test --if-present --filter $APP
-  RUN pnpm --filter "$APP..." build
-  SAVE ARTIFACT apps/$APP/dist
+  ENV NODE_ENV="production"
+  RUN pnpm --filter "$APP^..." build
+  RUN pnpm --filter "$APP" build
+  RUN pnpm --filter "$APP" export
+  SAVE ARTIFACT apps/$APP/out
 
 deploy:
   ARG STACK="dev"
   ARG APP="docs"
   FROM pulumi/pulumi-nodejs
-  COPY +build/apps/$APP/dist ./_site
+  COPY +build/apps/$APP/out ./_site
   COPY infra ./infra
   WORKDIR infra
   RUN npm install

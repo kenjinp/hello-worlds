@@ -213,7 +213,7 @@ const ContainerInner = (
   )
 }
 
-export const Container = React.forwardRef(ContainerInner) as (
+export const Window = React.forwardRef(ContainerInner) as (
   props: React.PropsWithChildren<ContainerProps> & {
     ref?: React.ForwardedRef<HTMLDivElement>
   },

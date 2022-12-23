@@ -4,7 +4,7 @@ import * as React from "react"
 import "../styles.css"
 
 import { ThemeProvider, useThemeUI } from "theme-ui"
-import theme from "./theme"
+import theme from "../theme"
 
 const MouseWiggler: React.FC = () => {
   const context = useThemeUI()

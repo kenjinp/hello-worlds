@@ -11,18 +11,19 @@ import {
   Float32BufferAttribute,
   Mesh,
   Sphere,
-  Vector3,
+  Vector3
 } from "three"
 import { ChunkDebugger } from "./ChunkDebugger"
 import { Map } from "./Map"
-import planetWorker from "./Planet.worker"
 import { PlateMovement } from "./tectonics/Movement"
 import { PlateLabels } from "./tectonics/PlateLabel"
 import {
   TectonicsComponent,
-  useTectonics,
+  useTectonics
 } from "./tectonics/TectonicsComponent"
 import { VoronoiSphere } from "./voronoi/Voronoi"
+
+const planetWorker = () => new Worker(new URL("./Planet.worker", import.meta.url))
 
 const TectonicPlanet: React.FC<
   React.PropsWithChildren<{ radius: number; seaLevel: number }>

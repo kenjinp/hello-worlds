@@ -6,4 +6,4 @@ dist-ssr
 .log
 .env
 .next
-test-stuff
+out

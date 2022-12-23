@@ -1,9 +1,9 @@
+import { AU } from "@game/Math"
 import { useFrame, useThree } from "@react-three/fiber"
 import { usePlanet, useRingWorld } from "@site/../../packages/react/dist/esm"
 import * as React from "react"
 import { PCFSoftShadowMap, PerspectiveCamera, Vector3 } from "three"
 import CSM from "three-csm"
-import { AU } from "../../../WorldBuilder.math"
 
 export const ShadowContext = React.createContext({} as CSM)
 
@@ -62,7 +62,7 @@ export const Shadows: React.FC<
       camera: camera,
       parent: scene,
       lightFar: camera.far,
-      shadowFar: camera.far,
+      // shadowFar: camera.far,
       lightMargin: AU / 1_000,
       lightIntensity: 0.2,
       maxFar: camera.far,
