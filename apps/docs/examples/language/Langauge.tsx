@@ -33,7 +33,7 @@ const mostCommonEnglishWords = [
 
 export const LanguageExample = () => {
   const [language, setLanguage] = React.useState(() => {
-    setRandomSeed("hello-worlds")
+    setRandomSeed("hello-worlds1")
     return new Language()
   })
 

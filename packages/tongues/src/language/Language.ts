@@ -3,7 +3,7 @@ import {
   choose,
   random,
   randomRangeInt,
-  shuffle
+  shuffle,
 } from "@hello-worlds/core"
 import {
   consonantOrthoSets,
@@ -14,7 +14,7 @@ import {
   restrictionSets,
   sibilantSets,
   vowelOrthoSets,
-  vowelSets
+  vowelSets,
 } from "./Language.sets"
 import { syllableStructures } from "./Language.syllables"
 
@@ -73,6 +73,7 @@ export class Language {
   }
 
   makeSyllable() {
+    let tries = 0
     while (true) {
       let syllable = ""
       for (let i = 0; i < this.structure.length; i++) {
@@ -92,7 +93,8 @@ export class Language {
           break
         }
       }
-      if (bad) continue
+      tries++
+      if (tries < 20 && bad) continue
       return this.spell(syllable)
     }
   }
@@ -119,6 +121,7 @@ export class Language {
     const list = this.morphemes[key] || []
     let extras = 10
     if (key) extras = 1
+    let tries = 0
     while (true) {
       const n = randomRangeInt(list.length + extras)
       if (list[n]) return list[n]
@@ -130,7 +133,8 @@ export class Language {
           break
         }
       }
-      if (bad) continue
+      tries++
+      if (tries < 20 && bad) continue
       list.push(morph)
       this.morphemes[key] = list
       return morph
@@ -160,7 +164,6 @@ export class Language {
     const definite = this.morphemes["the"]
       ? choose<string[]>(this.morphemes["the"])
       : this.makeMorpheme("the")
-
     while (true) {
       let name = null
       if (random() < 0.5) {

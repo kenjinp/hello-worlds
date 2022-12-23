@@ -26,7 +26,7 @@ const syllable = conlang.makeSyllable()
 console.log(conlang.spell(syllable)) // spells out the syllable using the conlang's orthography.
 
 // compose a morpeme based on a number of valid syllables, adds to the conlang's morpheme lexicon
-const morpheme = conlang.makeMorheme()
+const morpheme = conlang.makeMorpheme()
 
 // compose a word based on a number of valid morphemes, adds to the conlang's word lexicon
 const word = conlang.makeWord("Banana")
@@ -156,6 +156,5 @@ export const consonantOrthoSets = [
 
 Right now it's a simplistic model mostly useful for generating names. In the future, I'd like to add:
 
-- load word adaption from another `Language`
-- deterministically simulate `Language` change
-- generate a `Language` as a simulated offshoot branch from changes to a target `Language`'s phonology
+- loan word adaption from another `Language`
+- deterministically simulate `Language` drift
