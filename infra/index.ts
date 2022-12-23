@@ -66,7 +66,10 @@ const webContentsRootPath = path.join(process.cwd(), contentPath)
 console.log("Syncing contents from local disk at", webContentsRootPath)
 crawlDirectory(webContentsRootPath, (filePath: string) => {
   let relativeFilePath = filePath.replace(webContentsRootPath + "/", "")
-  if (relativeFilePath.includes(".html")) {
+  if (
+    relativeFilePath.includes(".html") &&
+    !relativeFilePath.includes("index.html")
+  ) {
     relativeFilePath = relativeFilePath.replace(".html", "")
   }
   const contentFile = new aws.s3.BucketObject(
@@ -174,6 +177,26 @@ const certificateValidation = new aws.acm.CertificateValidation(
 
 certificateArn = certificateValidation.certificateArn
 
+const headersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
+  "Headers for SharedArrayBuffer",
+  {
+    customHeadersConfig: {
+      items: [
+        {
+          header: "Cross-Origin-Opener-Policy",
+          override: true,
+          value: "same-origin",
+        },
+        {
+          header: "Cross-Origin-Embedder-Policy",
+          override: true,
+          value: "require-corp",
+        },
+      ],
+    },
+  },
+)
+
 // Create a CloudFront CDN to distribute and cache the website.
 const cdn = new aws.cloudfront.Distribution("cdn", {
   enabled: true,
@@ -192,6 +215,7 @@ const cdn = new aws.cloudfront.Distribution("cdn", {
     },
   ],
   defaultCacheBehavior: {
+    responseHeadersPolicyId: headersPolicy.id,
     targetOriginId: bucket.arn,
     viewerProtocolPolicy: "redirect-to-https",
     allowedMethods: ["GET", "HEAD", "OPTIONS"],
