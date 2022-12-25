@@ -1,10 +1,10 @@
+import { ThreadParams } from "@game/Worker"
 import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
   Noise,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
   ThreadParams,
@@ -16,7 +16,7 @@ export const heightGenerator: ChunkGenerator3Initializer<
 export const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
-> = ({ data: { seed1 }, radius }) => {
+> = ({ data, radius }) => {
   const seed = "banana"
   const noise = new Noise({
     height: 1,

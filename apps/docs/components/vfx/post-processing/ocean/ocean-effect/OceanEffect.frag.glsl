@@ -8,8 +8,8 @@ uniform float uPlanetScale;
 uniform float uAlphaMultiplier;
 uniform float uSmoothness;
 uniform float uDepthMultiplier;
-uniform vec4 uColorA;
-uniform vec4 uColorB;
+uniform vec3 uColorA;
+uniform vec3 uColorB;
 
 #define PLANETS_WITH_OCEAN_LENGTH <planetsWithOceansLength>
 #define SUNS_LENGTH <sunsLength>
@@ -105,10 +105,10 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
     float alphaMultiplier = uAlphaMultiplier;
     float smoothness = uSmoothness;
     float depthMultiplier = uDepthMultiplier;
-    // vec4 colA = uColorA;
-    // vec4 colB = uColorB;
-    vec4 colA = vec4(0.11, 0.97, 1., 1.);
-    vec4 colB = vec4(0.01, 0.05, 0.08, 1.);
+    vec4 colA = vec4(uColorA, 1.0);
+    vec4 colB = vec4(uColorB, 1.0);
+    // vec4 colA = vec4(0.11, 0.97, 1., 1.);
+    // vec4 colB = vec4(0.01, 0.05, 0.08, 1.);
 
 
   for (int i = 0; i < PLANETS_WITH_OCEAN_LENGTH; i++) {

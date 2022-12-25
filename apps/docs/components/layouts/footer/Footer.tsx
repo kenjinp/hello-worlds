@@ -1,11 +1,3 @@
-import {
-  faDiscord,
-  faGithub,
-  faTwitch,
-  faTwitter,
-} from "@fortawesome/free-brands-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-
 import * as React from "react"
 import { FooterStyled } from "./Footer.style"
 
@@ -19,7 +11,7 @@ export const Footer: React.FC<
       <div>{children}</div>
       <div>{middle}</div>
       <div>
-        <div>
+        {/* <div>
           <a href="https://github.com/kenjinp/hello-worlds" target="_blank">
             <FontAwesomeIcon icon={faGithub} />
           </a>{" "}
@@ -35,7 +27,7 @@ export const Footer: React.FC<
           <a href="https://www.twitch.tv/kennycreates" target="_blank">
             <FontAwesomeIcon icon={faTwitch} />
           </a>
-        </div>
+        </div> */}
       </div>
     </FooterStyled>
   )

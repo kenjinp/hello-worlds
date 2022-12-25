@@ -1,3 +1,4 @@
+import { windowBounds } from "@examples/ExampleWrapper"
 import {
   faWindowMaximize,
   faWindowMinimize,
@@ -130,7 +131,7 @@ const ContainerInner = (
     <Draggable
       ref={dragRef}
       handle=".dragger"
-      bounds="#window-bounds"
+      bounds={`#${windowBounds}`}
       onDrag={handleDrag}
       position={maximized ? { x: 0, y: 0 } : undefined}
       defaultPosition={

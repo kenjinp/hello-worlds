@@ -5,7 +5,7 @@ import { Language } from "@hello-worlds/tongues"
 
 # @hello-worlds/Tongues <Badge project="@hello-worlds/tongues" />
 
-Automatically generate a limited conlang and operate on it.
+Automatically generate a limited conlang, and operate on it.
 
 ## Example
 
@@ -38,7 +38,7 @@ const characterName = conlang.makeName()
 
 ### Syllable Structures
 
-Syllable structures are how syllables are composed. They're a string of characters, where each character represents a phoneme class (Consonant, Vowel, Fricative, Liquid).
+Syllable structures are how syllables are composed. They're a string of characters, where each character represents a phoneme class (Consonant, Vowel, Fricative, Liquid, Sonorant).
 
 The following are the included syllable structures. Note that the selection is random and will not be sampled based on the observed distribution of syllable structures in the real world.
 
@@ -84,7 +84,7 @@ myColang.structure = "?VC"
 ### Orhographies
 
 Orthographies are how phonemes are rendered into text, but here it's bassically used as the conlang's romanization. There's many ways to write a single phoneme, and these impart a great deal of flavor to a text.
-You can chose the orthography seperately for consonantOrthography and vowels, but they'll be generated automatically in the constructor.
+You can chose the orthography seperately for consonants and vowels, but they'll be generated automatically in the constructor.
 
 ```ts
 

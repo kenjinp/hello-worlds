@@ -51,28 +51,22 @@ class OceanEffectImpl extends Effect {
     colorA,
     colorB,
   }: OceanEffectImplProps) {
-    console.log("Ocean Effect rerender", {
-      planetsWithOceans: planets,
-      suns,
-      colorA,
-      colorB,
-    })
     const cameraDirection = new Vector3()
     camera.getWorldDirection(cameraDirection)
+    console.log(colorA, colorB, suns)
     super(
       "MyCustomEffect",
       fragment
-        .replace(/<planetsWithOceansLength>/g, planets.length)
-        .replace(/<sunsLength>/g, suns.length),
+        .replace(/<planetsWithOceansLength>/g, planets.length.toString())
+        .replace(/<sunsLength>/g, suns.length.toString()),
       {
         uniforms: new Map<string, Uniform | { value: any }>([
           ["uPlanetScale", new Uniform(planetScale)],
           ["uAlphaMultiplier", new Uniform(alphaMultiplier)],
           ["uSmoothness", new Uniform(smoothness)],
           ["uDepthMultiplier", new Uniform(depthMultiplier)],
-          ["uColorA", new Uniform([colorA.r, colorA.g, colorA.b, 1.0])],
-          ["uColorB", new Uniform([colorB.r, colorB.g, colorB.b, 1.0])],
-
+          ["uColorA", new Uniform(new Vector3(colorA.r, colorA.g, colorA.b))],
+          ["uColorB", new Uniform(new Vector3(colorB.r, colorB.g, colorB.b))],
           ["uCameraPosition", new Uniform(camera.position)],
           ["uCameraWorldDirection", new Uniform(cameraDirection)],
           [
@@ -125,18 +119,16 @@ class OceanEffectImpl extends Effect {
     this.uniforms.get("uAlphaMultiplier").value = this.alphaMultiplier
     this.uniforms.get("uSmoothness").value = this.smoothness
     this.uniforms.get("uDepthMultiplier").value = this.depthMultiplier
-    this.uniforms.get("uColorA").value = [
-      this.colorA.r,
-      this.colorA.g,
-      this.colorA.b,
-      1.0,
-    ]
-    this.uniforms.get("uColorB").value = [
-      this.colorB.r,
-      this.colorB.g,
-      this.colorB.b,
-      1.0,
-    ]
+    // this.uniforms.get("uColorA").value = new Vector3(
+    //   this.colorA.r,
+    //   this.colorA.g,
+    //   this.colorA.b,
+    // )
+    // this.uniforms.get("uColorB").value = new Vector3(
+    //   this.colorB.r,
+    //   this.colorB.g,
+    //   this.colorB.b,
+    // )
   }
 }
 

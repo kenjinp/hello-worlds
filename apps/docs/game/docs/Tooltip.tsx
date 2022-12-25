@@ -1,13 +1,13 @@
-import { capitalize } from "@site/../../packages/core/dist/esm"
-import { Entity } from "@site/src/components/world-builder/WorldBuilder.state"
+import { Entity } from "@game/Entity"
+import { capitalize } from "@hello-worlds/core"
 import * as React from "react"
 import { Color } from "three"
 import {
   doClosePreviewTooltip,
   doFocusObjectDescription,
   doPreviewTooltip,
-} from "./Actions"
-import docs from "./docs/index"
+} from "../Actions"
+import docs from "./index"
 
 // const query = world.archetype("window").without("closed", "minimized")
 // export const RenderWindows: React.FC = () => {

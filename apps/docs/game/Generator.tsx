@@ -1,29 +1,26 @@
-import {
-  random,
-  randomRange,
-  randomRangeInt,
-  randomSign,
-  setRandomSeed,
-} from "@site/../../packages/core/dist/esm"
-import { remap } from "@site/../../packages/planets/dist/esm"
-import { Language } from "@site/../../packages/tongues/dist/esm"
-import { world } from "@site/src/components/world-builder/WorldBuilder.ecs"
+import { world } from "@game/ECS"
+import { Entity, PLANET_TYPES } from "@game/Entity"
 import {
   AU,
   EARTH_RADIUS,
   MOON_DISTANCE,
   MOON_RADIUS,
   SUN_RADIUS,
-} from "@site/src/components/world-builder/WorldBuilder.math"
+} from "@game/Math"
 import {
-  Entity,
-  PLANET_TYPES,
-} from "@site/src/components/world-builder/WorldBuilder.state"
+  random,
+  randomRange,
+  randomRangeInt,
+  randomSign,
+  setRandomSeed,
+} from "@hello-worlds/core"
+import { remap } from "@hello-worlds/planets"
+import { Language } from "@hello-worlds/tongues"
 import { Color, MathUtils, Vector3 } from "three"
 
 setRandomSeed("fkjahsdfklahjfaklhj")
 
-export class AtmosphereGenerator {
+export class SystemGenerator {
   language: Language = new Language()
   root: Entity
   constructor() {
@@ -175,7 +172,6 @@ export class AtmosphereGenerator {
         newSun.children.push(...children)
       }
       root.children.push(newSun)
-      // world.update(root)
     }
   }
 }

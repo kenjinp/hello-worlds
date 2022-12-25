@@ -1,3 +1,4 @@
+import { ThreadParams } from "@game/Worker"
 import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
@@ -7,7 +8,6 @@ import {
 } from "@hello-worlds/planets"
 import { Color } from "three"
 import { terra } from "."
-import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
   ThreadParams,

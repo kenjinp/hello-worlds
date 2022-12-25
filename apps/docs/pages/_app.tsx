@@ -3,8 +3,7 @@ import type { ReactElement } from "react"
 import * as React from "react"
 import "../styles.css"
 
-import { ThemeProvider, useThemeUI } from "theme-ui"
-import theme from "../theme"
+import { useThemeUI } from "theme-ui"
 
 function mouseEventToSphericalCoordinates(mouseEvent: MouseEvent): {
   phi: number
@@ -31,9 +30,6 @@ const MouseWiggler: React.FC = () => {
       return
     }
     const onMouseMoveListener = (e: MouseEvent) => {
-      // const max = Math.max(e.clientX, e.clientY)
-
-      // const hue = max / 20 + 60
       const hue = (mouseEventToSphericalCoordinates(e).phi * 180) / Math.PI
       document.documentElement.style.setProperty(
         "--nextra-primary-hue",
@@ -53,12 +49,13 @@ export default function Nextra({
   Component,
   pageProps,
 }: AppProps): ReactElement {
+  console.log({ pageProps })
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <MouseWiggler />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      {/* <ThemeProvider theme={theme}> */}
+      <MouseWiggler />
+      <Component {...pageProps} />
+      {/* </ThemeProvider> */}
     </>
   )
 }

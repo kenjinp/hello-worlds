@@ -1,3 +1,4 @@
+import { ThreadParams } from "@game/Worker"
 import { setRandomSeed } from "@hello-worlds/core"
 import {
   ChunkGenerator3Initializer,
@@ -6,10 +7,9 @@ import {
   LinearSpline,
   Noise,
   NOISE_TYPES,
-  remap,
+  remap
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { ThreadParams } from "../WorldBuilder.worker"
 
 export const heightGenerator: ChunkGenerator3Initializer<
   ThreadParams,

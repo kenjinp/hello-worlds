@@ -1,9 +1,9 @@
+import { ECS } from "@game/ECS"
+import { archetypes } from "@game/Entity"
+import { SUN_RADIUS } from "@game/Math"
 import { useThree } from "@react-three/fiber"
 import * as React from "react"
 import { DirectionalLight, Mesh, PerspectiveCamera } from "three"
-import { ECS } from "../WorldBuilder.ecs"
-import { SUN_RADIUS } from "../WorldBuilder.math"
-import { archetypes } from "../WorldBuilder.state"
 
 export const StarRender = React.forwardRef<Mesh>((props, ref) => {
   const {
@@ -14,7 +14,6 @@ export const StarRender = React.forwardRef<Mesh>((props, ref) => {
     lightIntensity,
     name,
   } = ECS.useCurrentEntity()
-  console.log("star render!", { position, color, name })
   const lightRef = React.useRef<DirectionalLight>(null)
   const camera = useThree(s => s.camera) as PerspectiveCamera
 

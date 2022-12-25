@@ -14,6 +14,10 @@ module.exports = withNextra({
       fs: false,
       path: false,
     }
+    config.module.rules.push({
+      test: /\.(glsl)$/,
+      loader: "webpack-glsl-loader",
+    })
 
     return config
   },
@@ -27,9 +31,9 @@ module.exports = withNextra({
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
-  },
+  // images: {
+  //   unoptimized: true,
+  // },
   reactStrictMode: true,
   experimental: {
     esmExternals: "loose",

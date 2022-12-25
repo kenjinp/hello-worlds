@@ -1,16 +1,11 @@
-import { Button } from "@site/src/components/button/Button"
-import {
-  AU,
-  EARTH_RADIUS,
-  km,
-  SUN_RADIUS,
-} from "@site/src/components/world-builder/WorldBuilder.math"
-import { Entity } from "@site/src/components/world-builder/WorldBuilder.state"
+import { Button } from "@components/button/Button"
+import { doFocusPlanet } from "@game/Actions"
+import { Entity } from "@game/Entity"
+import { AU, EARTH_RADIUS, km, SUN_RADIUS } from "@game/Math"
 import * as React from "react"
 import { match } from "ts-pattern"
-import { doFocusPlanet } from "../Actions"
-import { getType } from "../SystemMap"
-import { Tooltip } from "../Tooltip"
+import { getType } from "./SystemMap"
+import { Tooltip } from "./Tooltip"
 
 export const EntityDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
   const type = getType(entity)

@@ -55,6 +55,8 @@
   "devDependencies": {
     "@types/node": "18.11.10",
     "@types/three": "^0.141.0",
-    "typescript": "^4.9.3"
+    "three-stdlib": "^2.12.1",
+    "typescript": "^4.9.3",
+    "webpack-glsl-loader": "^1.0.1"
   }
 }

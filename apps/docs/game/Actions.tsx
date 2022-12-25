@@ -1,6 +1,6 @@
-import { capitalize } from "@site/../../packages/core/dist/esm"
-import { world } from "@site/src/components/world-builder/WorldBuilder.ecs"
-import { Entity } from "@site/src/components/world-builder/WorldBuilder.state"
+import { world } from "@game/ECS"
+import { Entity } from "@game/Entity"
+import { capitalize } from "@hello-worlds/core"
 import * as React from "react"
 import docs from "./docs"
 

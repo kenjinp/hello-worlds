@@ -1,13 +1,8 @@
 {
-  "*": {
-    "theme": {
-      "layout": "default"
-    }
-  },
   "index": {
-    "title": "Hello Worlds - A collection of Hello World examples",
+    "title": "Planetarium",
     "theme": {
-      "layout": "full"
+      "layout": "raw"
     },
     "display": "hidden"
   },

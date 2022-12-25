@@ -1,19 +1,19 @@
+import { archetypes, PlanetProperties } from "@game/Entity"
 import { FlyControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useEntities } from "miniplex/react"
+import { useRouter } from "next/router"
 import * as React from "react"
 import "react-toastify/dist/ReactToastify.css"
 import { Group, MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
-import {
-  archetypes,
-  PlanetProperties,
-} from "../../components/world-builder/WorldBuilder.state"
 
 const FlyCamera: React.FC<{
   minSpeed?: number
   maxSpeed?: number
 }> = ({ minSpeed = 100, maxSpeed = 100_000_000_000 }) => {
+  const router = useRouter()
+
   const flyControls = React.useRef<FlyControlsImpl>(null)
   const groupRef = React.useRef<Group>(null)
   const altitude = React.useRef(0)
@@ -25,9 +25,20 @@ const FlyCamera: React.FC<{
 
   const [pause, setPause] = React.useState(false)
 
+  // sync camera position with url params
+  React.useEffect(() => {
+    const query = router.query
+    if (query.translation) {
+      const { rotation, position } = JSON.parse(
+        atob(query.translation as string),
+      )
+      camera.position.set(position.x, position.y, position.z)
+      camera.rotation.setFromQuaternion(rotation)
+    }
+  }, [camera])
+
   React.useEffect(() => {
     const listener = (e: KeyboardEvent) => {
-      console.log("click click click")
       if (e.key === "p") {
         setPause(!pause)
       }
@@ -96,16 +107,27 @@ const FlyCamera: React.FC<{
     )
     groupRef.current.position.copy(camera.position)
     groupRef.current.quaternion.copy(camera.quaternion)
+
+    // update url params
+    const translation = {
+      rotation: camera.quaternion,
+      position: camera.position,
+    }
+
+    const newUrl = new URL(window.location.href)
+    newUrl.searchParams.append("translation", btoa(JSON.stringify(translation)))
+
+    // window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
   })
 
   return (
     <>
       {!pause && <FlyControls ref={flyControls} rollSpeed={0.25} />}
       <group ref={groupRef}>
-        <mesh position={new Vector3(0, 0, -20)} castShadow receiveShadow>
+        {/* <mesh position={new Vector3(0, 0, -20)} castShadow receiveShadow>
           <capsuleGeometry args={[0.75, 1]} />
           <meshStandardMaterial color="pink" />
-        </mesh>
+        </mesh> */}
       </group>
     </>
   )

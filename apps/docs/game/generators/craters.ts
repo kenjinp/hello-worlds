@@ -1,5 +1,5 @@
+import { smoothMax, smoothMin } from "@hello-worlds/planets"
 import { Vector3 } from "three"
-import { smoothMax, smoothMin } from "../WorldBuilder.math"
 
 export type Crater = {
   floorHeight: number

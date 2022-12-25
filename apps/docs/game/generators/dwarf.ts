@@ -1,12 +1,13 @@
+import { ThreadParams } from "@game/Worker"
 import { randomRange, setRandomSeed } from "@hello-worlds/core"
 import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
+  getRandomBias,
   Noise,
+  randomSpherePoint,
 } from "@hello-worlds/planets"
 import { Color } from "three"
-import { getRndBias, randomSpherePoint } from "../WorldBuilder.math"
-import { ThreadParams } from "../WorldBuilder.worker"
 import { Crater, craterHeight } from "./craters"
 
 export const heightGenerator: ChunkGenerator3Initializer<
@@ -19,7 +20,7 @@ export const heightGenerator: ChunkGenerator3Initializer<
     .fill(0)
     .map(() => {
       const center = randomSpherePoint(0, 0, 0, radius)
-      const randomRadius = getRndBias(0.005, radius / 5, 3, 0.9)
+      const randomRadius = getRandomBias(0.005, radius / 5, 3, 0.9)
       return {
         floorHeight: randomRange(-0.05, 0),
         radius: randomRadius,

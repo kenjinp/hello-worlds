@@ -32,8 +32,8 @@ class MyCustomEffectImpl extends Effect {
     planets: PlanetAtmosphere[]
   }) {
     const cameraDirection = new Vector3()
+    console.log("rendering atmosphere")
     camera.getWorldDirection(cameraDirection)
-    console.log("I am rerendering the atmosphere shader")
     super(
       "MyCustomEffect",
       fragment

@@ -1,10 +1,9 @@
-import { Sun } from "@site/src/components/world-builder/vfx/atmosphere/AtmosphereEffect"
+import { Sun } from "@components/vfx/post-processing/atmosphere/AtmosphereEffect"
 import {
   OceanEffect,
   PlanetWithOcean,
-} from "@site/src/components/world-builder/vfx/ocean/ocean-effect/OceanEffect"
-import { world } from "@site/src/components/world-builder/WorldBuilder.ecs"
-import { archetypes } from "@site/src/components/world-builder/WorldBuilder.state"
+} from "@components/vfx/post-processing/ocean/ocean-effect/OceanEffect"
+import { archetypes } from "@game/Entity"
 import { useControls } from "leva"
 import { useEntities } from "miniplex/react"
 import * as React from "react"
@@ -43,26 +42,14 @@ export const OceanEffects: React.FC<React.PropsWithChildren<{}>> = ({
     orbitMode: true,
   })
 
-  React.useEffect(() => {
-    if (orbitMode) {
-      const planet = world.archetype("planet").first
-      if (planet) {
-        world.addComponent(planet, "focused", true)
-        world.update(planet)
-      }
-    } else {
-      const focused = world.archetype("focused").first
-      world.removeComponent(focused, "focused")
-      world.update(focused)
-    }
-  }, [orbitMode])
-
   return suns.length && mappedPlanets.length ? (
     <OceanEffect
       key={suns.length * Math.random()}
       planets={mappedPlanets}
       suns={mappedSuns}
       {...oceanProps}
+      colorA={new Color(oceanProps.colorA)}
+      colorB={new Color(oceanProps.colorB)}
     >
       {children}
     </OceanEffect>

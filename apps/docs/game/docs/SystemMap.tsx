@@ -1,15 +1,11 @@
-import { capitalize } from "@site/../../packages/core/dist/esm"
-import { Button } from "@site/src/components/button/Button"
-import { romanize } from "@site/src/components/world-builder/JumpTo"
-import { ECS } from "@site/src/components/world-builder/WorldBuilder.ecs"
-import {
-  archetypes,
-  Entity,
-} from "@site/src/components/world-builder/WorldBuilder.state"
+import { Button } from "@components/button/Button"
+import { ECS } from "@game/ECS"
+import { archetypes, Entity } from "@game/Entity"
+import { capitalize } from "@hello-worlds/core"
 import { useEntities } from "miniplex/react"
 import * as React from "react"
-import Tree, { useTreeState } from "react-hyper-tree"
 import { Tooltip } from "./Tooltip"
+import { romanize } from "./utils"
 
 const describeEntity = (entity: Entity) => {
   const parent = entity.satelliteOf
@@ -34,57 +30,56 @@ export const getType = (entity: Entity) => {
   return type
 }
 
-export const SystemExplorerTreeSlow: React.FC<{ entities: Entity[] }> = ({
-  entities,
-}) => {
-  const { required, handlers } = useTreeState({
-    data: entities,
-    id: "stystem Map",
-    defaultOpened: true,
-  })
+// export const SystemExplorerTreeSlow: React.FC<{ entities: Entity[] }> = ({
+//   entities,
+// }) => {
+//   const { required, handlers } = useTreeState({
+//     data: entities,
+//     id: "stystem Map",
+//     defaultOpened: true,
+//   })
 
-  return (
-    <Tree
-      {...required}
-      {...handlers}
-      verticalLineStyles={{
-        stroke: "black",
-        strokeWidth: 1,
-      }}
-      horizontalLineStyles={{
-        stroke: "black",
-        strokeWidth: 1,
-      }}
-      renderNode={treeNode => {
-        const {
-          node: { data: entity },
-        } = treeNode
-        const type = getType(entity)
-        return (
-          <div>
-            <Button>
-              <Tooltip name="entity" entity={entity}></Tooltip>{" "}
-              <span>{describeEntity(entity)}</span>{" "}
-              <Tooltip name={type}></Tooltip>{" "}
-              {!!treeNode.node.options.childrenCount && (
-                <span className="children-length">
-                  <span>
-                    ({treeNode.node.options.childrenCount} orbiting bodies)
-                  </span>
-                </span>
-              )}
-            </Button>
-          </div>
-        )
-      }}
-    />
-  )
-}
+//   return (
+//     <Tree
+//       {...required}
+//       {...handlers}
+//       verticalLineStyles={{
+//         stroke: "black",
+//         strokeWidth: 1,
+//       }}
+//       horizontalLineStyles={{
+//         stroke: "black",
+//         strokeWidth: 1,
+//       }}
+//       renderNode={treeNode => {
+//         const {
+//           node: { data: entity },
+//         } = treeNode
+//         const type = getType(entity)
+//         return (
+//           <div>
+//             <Button>
+//               <Tooltip name="entity" entity={entity}></Tooltip>{" "}
+//               <span>{describeEntity(entity)}</span>{" "}
+//               <Tooltip name={type}></Tooltip>{" "}
+//               {!!treeNode.node.options.childrenCount && (
+//                 <span className="children-length">
+//                   <span>
+//                     ({treeNode.node.options.childrenCount} orbiting bodies)
+//                   </span>
+//                 </span>
+//               )}
+//             </Button>
+//           </div>
+//         )
+//       }}
+//     />
+//   )
+// }
 
 export const SystemExplorerTree: React.FC<{ entities: Entity[] }> = ({
   entities,
 }) => {
-  console.log("rerender sysetm explorer tree")
   const RenderEntities = entity => {
     const type = getType(entity)
     return (
@@ -108,13 +103,11 @@ export const SystemExplorerTree: React.FC<{ entities: Entity[] }> = ({
 
 export const SystemExplorer: React.FC = () => {
   const { entities } = useEntities(archetypes.star)
-  console.log("I should like to re-render, you know")
 
   return <SystemExplorerTree entities={entities} key="nope" />
 }
 
 export const SystemMap: React.FC = () => {
-  console.log("System MAP RERENDER OMG!")
   return (
     <ECS.Entity>
       <ECS.Component name="id" data="system map" />

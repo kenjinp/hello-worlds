@@ -1,15 +1,33 @@
-import { Button } from "@components/button/Button"
 import { SmallScreenHidden } from "@components/media-queries/MediaQueries"
 import { helloWorldsPink, socials } from "@constants"
 import { faHeart } from "@fortawesome/free-regular-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useTheme } from "next-themes"
 import Link from "next/link"
+import { useTheme } from "nextra-theme-docs"
 import * as React from "react"
 import styled from "styled-components"
 
-const Heartthrob = styled(Button)`
+const defaultHoverBackgroundColor = "#2f2f2f"
+const defaultHoverTextColor = "#f4f4f4"
+const defaultTextColor = "#f4f4f4"
+export const Heartthrob = styled.button<{
+  hoverBackgroundColor?: string
+  hoverTextColor?: string
+  textColor?: string
+}>`
+  border-radius: 0.5em;
+  padding: 0.5em 1em 0.5em;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: rgba(243, 244, 246, var(--tw-text-opacity));
+  // color: ${({ textColor = defaultTextColor }) => textColor};
+  transition: all 0.25s ease;
   &:hover {
+    color: ${({ hoverTextColor = defaultHoverTextColor }) => hoverTextColor};
+    background: ${({ hoverBackgroundColor = defaultHoverBackgroundColor }) =>
+      hoverBackgroundColor};
+    box-shadow: 0 16px 40px -5px rgb(0 0 0 / 50%);
     .heart {
       animation: heartThrob 1.2s ease-in-out infinite;
     }

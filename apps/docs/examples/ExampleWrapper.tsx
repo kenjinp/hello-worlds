@@ -6,13 +6,15 @@ import { Canvas } from "game/Canvas"
 import * as React from "react"
 import { Color, Vector3 } from "three"
 
+export const windowBounds = "window-bounds"
+
 export default function ExampleWrapper({
   children,
   controls = <OrbitControls enablePan enableZoom maxDistance={100_000} />,
 }): React.ReactElement {
   return (
     <div
-      id="windows-bounds"
+      id={windowBounds}
       style={{ height: 800, borderRadius: "1em", position: "relative" }}
     >
       <Canvas style={{ borderRadius: "1em" }}>
@@ -29,7 +31,7 @@ export default function ExampleWrapper({
       <div style={{ position: "absolute", bottom: "1em", left: "1em" }}>
         <Button
           onClick={() =>
-            document.getElementById("windows-bounds").requestFullscreen()
+            document.getElementById(windowBounds).requestFullscreen()
           }
         >
           Full Screen

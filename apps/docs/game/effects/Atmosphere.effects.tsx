@@ -2,8 +2,8 @@ import {
   AtmosphereEffect,
   PlanetAtmosphere,
   Sun,
-} from "@site/src/components/world-builder/vfx/atmosphere/AtmosphereEffect"
-import { archetypes } from "@site/src/components/world-builder/WorldBuilder.state"
+} from "@components/vfx/post-processing/atmosphere/AtmosphereEffect"
+import { archetypes } from "@game/Entity"
 import { useControls } from "leva"
 import { useEntities } from "miniplex/react"
 import * as React from "react"
@@ -20,7 +20,7 @@ export const AtmosphereEffects: React.FC<React.PropsWithChildren<{}>> = ({
   )
   const { entities: suns } = useEntities(archetypes.star)
 
-  const { orbitMode, ...oceanProps } = useControls({
+  const blah = useControls({
     planetScale: 5000,
     alphaMultiplier: { value: 54, step: 0.0001 },
     smoothness: { value: 0.92, step: 0.0001 },
