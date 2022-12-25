@@ -21,6 +21,7 @@ const conlang = new Langauge()
 
 // generates a valid syllable using the conlang's syllable structure
 // such as "CVC" or "C?VC"
+// See Syllable Structures below for more details
 const syllable = conlang.makeSyllable()
 
 console.log(conlang.spell(syllable)) // spells out the syllable using the conlang's orthography.
@@ -38,7 +39,13 @@ const characterName = conlang.makeName()
 
 ### Syllable Structures
 
-Syllable structures are how syllables are composed. They're a string of characters, where each character represents a phoneme class (Consonant, Vowel, Fricative, Liquid, Sonorant).
+Syllable structures are how syllables are composed, which is an atomic component of morphemes. A syllable can have an onset, a nucleus, and a coda.
+
+In most cases, the nucleus will be a vowel, and the onset and coda may be optional.
+
+We can represent the syllable structure of a language as a series of characters, where each character represents a phoneme class (Consonant, Vowel, or further subdivisions such as Fricative, Liquid, Sonorant).
+
+A question mark may follow optional phonemes.
 
 The following are the included syllable structures. Note that the selection is random and will not be sampled based on the observed distribution of syllable structures in the real world.
 
@@ -46,7 +53,7 @@ The following are the included syllable structures. Note that the selection is r
 export const syllableStructures = [
   "CVC",
   "C?CVC?C",
-  "C?C?VC?C?C?C?",
+  "C?C?VC?C?C?C?", // This syllable structure represents English, which has a crazy amount of variety.
   "CVV?C",
   "CVVC?",
   "CVC?",
@@ -78,7 +85,7 @@ It's possible to choose your own syllable structure.
 const myConlang = new Langauge()
 
 // this will look goofy!
-myColang.structure = "?VC"
+myColang.structure = "V?C"
 ```
 
 ### Orhographies
@@ -104,7 +111,7 @@ myColang.consonantOrthography = {
 ```
 
 ```ts
-// The default orthographies shipped with this library
+// An example orthography set shipped with this library. You may provide your own :)
 export const consonantOrthoSets = [
   {
     name: "Default",
@@ -156,5 +163,8 @@ export const consonantOrthoSets = [
 
 Right now it's a simplistic model mostly useful for generating names. In the future, I'd like to add:
 
-- loan word adaption from another `Language`
+- better represent phoneme class restrictions in syllable structures.
+- loan word adaption from another `Language` - transform a load word, such as `Christmas` turns into `Kalikimaka` (English to Hawaiian)
 - deterministically simulate `Language` drift
+- expand phonetic inventory
+- create simple grammar rules

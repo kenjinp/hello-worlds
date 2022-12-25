@@ -7,5 +7,15 @@ export const SafeHydrate: React.FC<React.PropsWithChildren<{}>> = ({
   React.useEffect(() => {
     setRender(true)
   })
-  return <div suppressHydrationWarning>{render && children}</div>
+  return (
+    <div
+      suppressHydrationWarning
+      style={{
+        height: "100%",
+        width: "100%",
+      }}
+    >
+      {render && children}
+    </div>
+  )
 }

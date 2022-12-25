@@ -117,7 +117,6 @@ export const Explorers: React.FC = () => {
   return (
     <ECS.ManagedEntities tag="explorer">
       {entity => {
-        console.log("someone else is here!", { entity })
         return (
           <ECS.Component name="mesh" key={entity.connectionId}>
             <ExplorerRender {...entity} />

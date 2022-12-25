@@ -88,7 +88,8 @@ export class SystemGenerator {
     })
     this.root = root
 
-    const color = new Color(0x81cbf5)
+    // const color = new Color(0x81cbf5)
+    const color = new Color(0xffffff)
 
     const sun = world.add({
       radius: SUN_RADIUS,

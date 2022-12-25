@@ -26,20 +26,6 @@ const FlyCamera: React.FC<{
 
   const [pause, setPause] = React.useState(false)
 
-  // sync camera position with url params at start
-  // React.useEffect(() => {
-  //   console.log("camera sync first")
-  //   const query = router.query
-  //   if (query.translation) {
-  //     const { rotation, position } = JSON.parse(
-  //       atob(query.translation as string),
-  //     )
-  //     console.log({ rotation, position })
-  //     camera.position.set(position.x, position.y, position.z)
-  //     camera.rotation.setFromQuaternion(rotation)
-  //   }
-  // }, [camera])
-
   React.useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       if (e.key === "p") {
@@ -65,13 +51,11 @@ const FlyCamera: React.FC<{
     )
     camera.lookAt(closestPlanet.position)
 
-    console.log("camera sync first")
     const query = router.query
     if (query.translation) {
       const { rotation, position } = JSON.parse(
         atob(query.translation as string),
       )
-      console.log({ rotation, position })
       camera.position.set(position.x, position.y, position.z)
       camera.rotation.setFromQuaternion(rotation)
     }
@@ -129,26 +113,22 @@ const FlyCamera: React.FC<{
     }
 
     if (clock.getElapsedTime() - lastTime >= 0.5) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: {
-            ...router.query,
-            translation: btoa(JSON.stringify(translation)),
+      queueMicrotask(() => {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: {
+              ...router.query,
+              translation: btoa(JSON.stringify(translation)),
+            },
           },
-        },
-        undefined,
-        { shallow: true },
-      )
+          undefined,
+          { shallow: true },
+        )
+      })
 
       lastTime = clock.getElapsedTime()
     }
-
-
-    // const newUrl = new URL(window.location.href)
-    // newUrl.searchParams.append("translation", btoa(JSON.stringify(translation)))
-
-    // window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
   })
 
   return (

@@ -205,7 +205,6 @@ function PlanetMapInner(
     const canvasRef = ref.current
     if (canvasRef) {
       const rect = e.currentTarget.getBoundingClientRect()
-      console.log(e, rect)
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
       const width = rect.width

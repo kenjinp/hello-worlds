@@ -1,7 +1,7 @@
 // Smooth minimum of two values, controlled by smoothing factor k
 
 import { random } from "@hello-worlds/core"
-import { Vector3 } from "three"
+import { Mesh, Quaternion, Vector3 } from "three"
 import { tempVector3 } from "../utils"
 
 // When k = 0, this behaves identically to min(a, b)
@@ -27,6 +27,18 @@ export function randomSpherePoint(
   z0: number,
   radius: number,
 ) {
+  let u = random()
+  let v = random()
+  let theta = 2 * Math.PI * u
+  let phi = Math.acos(2 * v - 1)
+  let x = x0 + radius * Math.sin(phi) * Math.cos(theta)
+  let y = y0 + radius * Math.sin(phi) * Math.sin(theta)
+  let z = z0 + radius * Math.cos(phi)
+  return new Vector3(x, y, z)
+}
+
+export function randomSpherePointVector3(origin: Vector3, radius: number) {
+  const { x: x0, y: y0, z: z0 } = origin
   let u = random()
   let v = random()
   let theta = 2 * Math.PI * u
@@ -96,4 +108,18 @@ export function normalizeAsCylinder(input: Vector3, radius: number) {
   input.divide(tempVector3.set(cylinderLength, 1, cylinderLength))
   // push out the points across the circle at radius
   return input.multiply(tempVector3.set(radius, 1, radius))
+}
+
+export function orientMesh(mesh: Mesh, targetDirection: Vector3) {
+  // Get the current direction of the mesh
+  const currentDirection = mesh.getWorldDirection(new Vector3())
+
+  // Calculate the rotation needed to align the mesh with the target direction
+  const quaternion = new Quaternion().setFromUnitVectors(
+    currentDirection,
+    targetDirection,
+  )
+
+  // Rotate the mesh to the target direction
+  mesh.applyQuaternion(quaternion)
 }

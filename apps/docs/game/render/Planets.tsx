@@ -28,6 +28,48 @@ export const EntityPlanetWrapper: React.FC = () => {
   return null
 }
 
+// const WeeBoat: React.FC = () => {
+//   const entity = ECS.useCurrentEntity()
+//   const meshRef = React.useRef<Mesh>(null)
+//   const [position] = React.useState(
+//     randomSpherePointVector3(
+//       new Vector3(),
+//       entity.radius + entity.seaLevel + 5,
+//     ),
+//   )
+
+//   React.useEffect(() => {
+//     if (!meshRef.current) return
+//     meshRef.current.lookAt(entity.position)
+//     // meshRef.current.rotation.set(new Vector3(0, 0, Math.PI / 2))
+//     meshRef.current.rotateX((Math.PI / 2) * 3)
+//     // getDirectionFromSphere(meshRef.current, entity.position)
+//     // orientMeshFromSphere(meshRef.current, entity.position)
+//     // meshRef.current.rotation.set(new Vector3(0, 0, Math.PI / 2))
+//     // convertMeshToYUp(meshRef.current)
+//   }, [meshRef, entity])
+
+//   return (
+//     <group position={position}>
+//       <mesh ref={meshRef}>
+//         {/* <cylinderGeometry
+//           args={[
+//             (entity.radius / 100) * 0.95,
+//             entity.radius / 100,
+//             entity.radius / 10,
+//             32,
+//           ]}
+//         />
+//         <meshBasicMaterial color="red" opacity={0.1} /> */}
+//         <Boat />
+//       </mesh>
+//       <Html style={{ color: "white" }}>
+//         <i>Boat :)</i>
+//       </Html>
+//     </group>
+//   )
+// }
+
 export const PlanetRender = React.forwardRef<
   Mesh,
   PlanetProperties & AstronomicalObjectProperties
@@ -74,6 +116,7 @@ export const PlanetRender = React.forwardRef<
         <Html>
           <i style={{ color: labelColor.getStyle() }}>{name}</i>
         </Html>
+
         {false && <OrbitCamera />}
         {/* <ChunkDebugger /> */}
         <EntityPlanetWrapper />
@@ -101,11 +144,13 @@ export const Planets: React.FC = () => {
               <PlanetRender {...entity} children={[]} />
 
               {entity.children.map(moonEntity => (
-                <mesh key={moonEntity.id} position={entity.position}>
-                  {/* <Spinner {...moonEntity}> */}
-                  <PlanetRender {...moonEntity} children={null} />
-                  {/* </Spinner> */}
-                </mesh>
+                <ECS.Entity key={moonEntity.id} entity={moonEntity}>
+                  <mesh key={moonEntity.id} position={entity.position}>
+                    {/* <Spinner {...moonEntity}> */}
+                    <PlanetRender {...moonEntity} children={null} />
+                    {/* </Spinner> */}
+                  </mesh>
+                </ECS.Entity>
               ))}
             </mesh>
           </ECS.Entity>
