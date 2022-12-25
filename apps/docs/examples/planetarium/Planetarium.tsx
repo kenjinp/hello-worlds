@@ -108,7 +108,7 @@ export const Planetarium: React.FC = () => {
           >
             <FarStars saturation={1} />
           </group>
-          <SpaceBox hideBackground />
+          <SpaceBox />
           <FlyCamera />
           <PostProcessing>
             <Stars />

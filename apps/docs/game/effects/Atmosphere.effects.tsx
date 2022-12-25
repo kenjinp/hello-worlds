@@ -20,6 +20,8 @@ export const AtmosphereEffects: React.FC<React.PropsWithChildren<{}>> = ({
   )
   const { entities: suns } = useEntities(archetypes.star)
 
+  // TODO This should 'watch' the entitites' ocean values as well
+
   const blah = useControls({
     planetScale: 5000,
     alphaMultiplier: { value: 54, step: 0.0001 },
@@ -29,6 +31,9 @@ export const AtmosphereEffects: React.FC<React.PropsWithChildren<{}>> = ({
     colorB,
     orbitMode: true,
   })
+
+  // TODO we should provide a sorting index buffer for the planets by distance to the camera
+  // right now we can ugly shadows because the planets are rendered in the order they are in the array
 
   const mappedPlanets: PlanetAtmosphere[] = planetsWithAtmosphere.map(
     entity => ({
