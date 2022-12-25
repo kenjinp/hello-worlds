@@ -31,9 +31,9 @@ module.exports = withNextra({
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  // images: {
-  //   unoptimized: true,
-  // },
+  images: {
+    unoptimized: true,
+  },
   reactStrictMode: true,
   experimental: {
     esmExternals: "loose",
