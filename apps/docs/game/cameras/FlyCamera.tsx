@@ -4,7 +4,6 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useEntities } from "miniplex/react"
 import { useRouter } from "next/router"
 import * as React from "react"
-import "react-toastify/dist/ReactToastify.css"
 import { Group, MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
 
