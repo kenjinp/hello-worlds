@@ -49,7 +49,6 @@ export default function Nextra({
   Component,
   pageProps,
 }: AppProps): ReactElement {
-  console.log({ pageProps })
   return (
     <>
       {/* <ThemeProvider theme={theme}> */}

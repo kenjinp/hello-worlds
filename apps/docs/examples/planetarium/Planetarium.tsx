@@ -18,8 +18,11 @@ import * as React from "react"
 import { Vector3 } from "three"
 
 let fired = false
-export const Planetarium: React.FC = () => {
+export const PlanetariumInner: React.FC = () => {
   const [showLeva, setShowLeva] = React.useState(false)
+
+  console.log("rerendering planetarium")
+
   React.useEffect(() => {
     const system = new SystemGenerator()
     return () => void system.destroy()
@@ -64,7 +67,6 @@ export const Planetarium: React.FC = () => {
                 justifyContent: "center",
               }}
             >
-              <RenderMinimizedWindows />
               <span>Pause Camera (P)</span>
             </div> 
             */}
@@ -78,10 +80,11 @@ export const Planetarium: React.FC = () => {
               {/* <Button onClick={() => setShowLeva(!showLeva)}>
                 show ocean config
               </Button>{" "} */}
-              <div style={{ marginRight: "1em" }}>
-                Press C to show Ocean config
-              </div>
-              <div>Press P to pause camera</div>
+              {/* <div style={{ marginRight: "1em" }}>
+                <RenderMinimizedWindows />
+              </div> */}
+              <div style={{ marginRight: "1em" }}>Ocean config (C)</div>
+              <div>Pause camera (P)</div>
             </div>
             <div
               id="window-bounds"
@@ -122,3 +125,5 @@ export const Planetarium: React.FC = () => {
     </SafeHydrate>
   )
 }
+
+export const Planetarium = React.memo(PlanetariumInner)

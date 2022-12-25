@@ -17,8 +17,16 @@ export interface Sun {
   intensity: number
 }
 
+export interface AtmosphereEffectImplProps {
+  camera: Camera
+  suns: Sun[]
+  planets: PlanetAtmosphere[]
+  primarySteps: number
+  lightSteps: number
+}
+
 // Effect implementation
-class MyCustomEffectImpl extends Effect {
+class AtmosphereEffectImpl extends Effect {
   camera: Camera
   suns: Sun[]
   planets: PlanetAtmosphere[]
@@ -26,11 +34,9 @@ class MyCustomEffectImpl extends Effect {
     camera,
     suns,
     planets,
-  }: {
-    camera: Camera
-    suns: Sun[]
-    planets: PlanetAtmosphere[]
-  }) {
+    primarySteps,
+    lightSteps,
+  }: AtmosphereEffectImplProps) {
     const cameraDirection = new Vector3()
     console.log("rendering atmosphere")
     camera.getWorldDirection(cameraDirection)
@@ -43,6 +49,9 @@ class MyCustomEffectImpl extends Effect {
         // @ts-ignore
         uniforms: new Map<string, Uniform | { value: any }>([
           ["uCameraPosition", new Uniform(camera.position)],
+          ["uCameraWorldDirection", new Uniform(cameraDirection)],
+          ["uPrimarySteps", new Uniform(primarySteps)],
+          ["uLightSteps", new Uniform(lightSteps)],
           ["uCameraWorldDirection", new Uniform(cameraDirection)],
           [
             "uPlanets",
@@ -87,19 +96,15 @@ class MyCustomEffectImpl extends Effect {
 }
 
 export const AtmosphereEffect: React.FC<
-  React.PropsWithChildren<{
-    suns: Sun[]
-    planets: PlanetAtmosphere[]
-  }>
-> = ({ suns, planets, children }) => {
+  React.PropsWithChildren<Omit<AtmosphereEffectImplProps, "camera">>
+> = ({ children, ...props }) => {
   const camera = useThree(store => store.camera)
 
   usePostProcessingEffect(() => {
-    return new MyCustomEffectImpl({
+    return new AtmosphereEffectImpl({
       camera,
-      suns,
-      planets,
+      ...props,
     })
-  }, [camera, suns, planets])
+  }, [camera, props])
   return children
 }

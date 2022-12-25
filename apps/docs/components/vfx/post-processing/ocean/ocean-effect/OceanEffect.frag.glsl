@@ -107,15 +107,12 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
     float depthMultiplier = uDepthMultiplier;
     vec4 colA = vec4(uColorA, 1.0);
     vec4 colB = vec4(uColorB, 1.0);
-    // vec4 colA = vec4(0.11, 0.97, 1., 1.);
-    // vec4 colB = vec4(0.01, 0.05, 0.08, 1.);
 
 
   for (int i = 0; i < PLANETS_WITH_OCEAN_LENGTH; i++) {
     PlanetWithOcean currentPlanet = uPlanetsWithOceans[i];
       OceanSun sun = uSuns[0];
 
-      // for some reason currentPlanet.radius doesnt work
       vec2 sphereIntersection = sphere(rayOrigin, rayDirection, currentPlanet.origin,  currentPlanet.radius + currentPlanet.seaLevel);
       float dstToOcean = sphereIntersection.x;
       float distThroughOcean = sphereIntersection.y;
@@ -134,30 +131,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
         float diffuseLighting = saturate(dot(oceanNormal, lightDirection));
         vec4 oceanCol = lerp(colA, colB, opticalDepth01) * diffuseLighting + specularHighlight;
         addColor = lerp(addColor, oceanCol * diffuseLighting, alpha);
-        // addColor = vec3(0.11, 0.33, 0.49);
-        // addColor = mix(addColor, vec3(0.11, 0.33, 0.49), 1.0);
       }
-      //   addColor =  vec3(0.11, 0.33, 0.49);
-      // if (sphereIntersection.x > sphereIntersection.y) {
-      //   continue;
-      //   // addColor = mix(addColor, vec3(0.11, 0.33, 0.49), 1.0);
-      // }
-      //   addColor =  vec3(0.11, 0.33, 0.49);
-
-    // for (int s = 0; s < SUNS_LENGTH; s++) {
-    //   Sun sun = uSuns[s];
-
-    //   vec3 lightDirection = normalize(sun.origin - rayOrigin);
-
-    //   bool maybeSphereIntersects = sphereIntersect(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.radius + currentPlanet.seaLevel);
-
-    //   vec2 sphereIntersection = sphere(rayOrigin, rayDirection, currentPlanet.origin, currentPlanet.radius + 50000.0);
-
-    //   if (maybeSphereIntersects) {
-    //     // addColor = mix(addColor, vec3(0.11, 0.33, 0.49), 1.0);
-    //     addColor = vec3(0.11, 0.33, 0.49);
-    //   }
-    // }
   }
 
   outputColor = addColor;

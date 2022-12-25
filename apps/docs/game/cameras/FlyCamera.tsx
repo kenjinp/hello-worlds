@@ -7,6 +7,8 @@ import * as React from "react"
 import { Group, MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
 
+let lastTime = 0
+
 const FlyCamera: React.FC<{
   minSpeed?: number
   maxSpeed?: number
@@ -24,17 +26,19 @@ const FlyCamera: React.FC<{
 
   const [pause, setPause] = React.useState(false)
 
-  // sync camera position with url params
-  React.useEffect(() => {
-    const query = router.query
-    if (query.translation) {
-      const { rotation, position } = JSON.parse(
-        atob(query.translation as string),
-      )
-      camera.position.set(position.x, position.y, position.z)
-      camera.rotation.setFromQuaternion(rotation)
-    }
-  }, [camera])
+  // sync camera position with url params at start
+  // React.useEffect(() => {
+  //   console.log("camera sync first")
+  //   const query = router.query
+  //   if (query.translation) {
+  //     const { rotation, position } = JSON.parse(
+  //       atob(query.translation as string),
+  //     )
+  //     console.log({ rotation, position })
+  //     camera.position.set(position.x, position.y, position.z)
+  //     camera.rotation.setFromQuaternion(rotation)
+  //   }
+  // }, [camera])
 
   React.useEffect(() => {
     const listener = (e: KeyboardEvent) => {
@@ -60,6 +64,17 @@ const FlyCamera: React.FC<{
       new Vector3(closestPlanet.radius * 3, 0, closestPlanet.radius * 3),
     )
     camera.lookAt(closestPlanet.position)
+
+    console.log("camera sync first")
+    const query = router.query
+    if (query.translation) {
+      const { rotation, position } = JSON.parse(
+        atob(query.translation as string),
+      )
+      console.log({ rotation, position })
+      camera.position.set(position.x, position.y, position.z)
+      camera.rotation.setFromQuaternion(rotation)
+    }
   }, [entities])
 
   React.useEffect(() => {
@@ -74,7 +89,7 @@ const FlyCamera: React.FC<{
     _closestPlanet.focused = true
   }, [_closestPlanet])
 
-  useFrame((_, deltaTime) => {
+  useFrame(({ clock }, deltaTime) => {
     if (!flyControls.current) {
       return
     }
@@ -113,8 +128,25 @@ const FlyCamera: React.FC<{
       position: camera.position,
     }
 
-    const newUrl = new URL(window.location.href)
-    newUrl.searchParams.append("translation", btoa(JSON.stringify(translation)))
+    if (clock.getElapsedTime() - lastTime >= 0.5) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: {
+            ...router.query,
+            translation: btoa(JSON.stringify(translation)),
+          },
+        },
+        undefined,
+        { shallow: true },
+      )
+
+      lastTime = clock.getElapsedTime()
+    }
+
+
+    // const newUrl = new URL(window.location.href)
+    // newUrl.searchParams.append("translation", btoa(JSON.stringify(translation)))
 
     // window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
   })

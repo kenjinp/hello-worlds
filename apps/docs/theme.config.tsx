@@ -75,8 +75,13 @@ const config: DocsThemeConfig = {
     ),
   },
   banner: {
-    key: "2.1-release",
-    text: <p>🎉 New docs site released! let me know what you think ~</p>,
+    key: "Sharable urls",
+    text: (
+      <p>
+        🌐 Added sharable URLS; your location around the planetarium will be
+        synced to the URL bar! Share nice views with your friends!
+      </p>
+    ),
   },
   project: null,
   chat: {

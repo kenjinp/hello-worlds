@@ -3,6 +3,9 @@ uniform mat4 uViewMatrixInverse; // camera.matrixWorld
 uniform vec3 uCameraPosition;
 uniform vec3 uCameraWorldDirection;
 
+uniform int uPrimarySteps;
+uniform int uLightSteps;
+
 #define PLANETS_LENGTH <planetsLength>
 #define SUNS_LENGTH <sunsLength>
 #define saturate(a) clamp( a, 0.0, 1.0 )
@@ -91,7 +94,9 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
         sun.color,
         currentPlanet.origin,
         currentPlanet.radius,
-        currentPlanet.atmosphereRadius
+        currentPlanet.atmosphereRadius,
+        uPrimarySteps,
+        uLightSteps
       );
     }
   }

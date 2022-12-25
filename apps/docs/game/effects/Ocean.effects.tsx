@@ -10,7 +10,7 @@ import * as React from "react"
 import { Color, Vector3 } from "three"
 
 const colorA = new Color(0x1df7ff).getStyle()
-const colorB = new Color(0x02040a).getStyle()
+const colorB = new Color(0x0d1b24).getStyle()
 
 export const OceanEffects: React.FC<React.PropsWithChildren<{}>> = ({
   children,

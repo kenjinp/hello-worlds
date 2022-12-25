@@ -79,7 +79,11 @@ export const PlanetRender = React.forwardRef<
         <EntityPlanetWrapper />
         <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
           {/* <PlanetShadow /> */}
-          <meshPhongMaterial vertexColors reflectivity={0.2} />
+          <meshPhysicalMaterial
+            vertexColors
+            metalness={0}
+            reflectivity={0.01}
+          />
           {children}
         </React.Suspense>
       </HelloPlanet>

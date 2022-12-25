@@ -81,15 +81,15 @@ export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
   const warp = new Noise({
     octaves: 8,
     seed: "apple", // <-important
-    height: 10000.0,
-    scale: radius / 2,
+    height: 2000.0,
+    scale: 1000,
   })
 
   return ({ height, input }) => {
     const warpedHeight = height + warp.getFromVector(input)
     // return white
     return warpedHeight > 0
-      ? colorSpline.get(remap(height, 0, 5_000, 0, 1))
+      ? colorSpline.get(remap(warpedHeight, 0, 5_000, 0, 1))
       : oceanColor
   }
 }

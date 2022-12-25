@@ -53,7 +53,7 @@ class OceanEffectImpl extends Effect {
   }: OceanEffectImplProps) {
     const cameraDirection = new Vector3()
     camera.getWorldDirection(cameraDirection)
-    console.log(colorA, colorB, suns)
+    console.log("rendering ocean")
     super(
       "MyCustomEffect",
       fragment

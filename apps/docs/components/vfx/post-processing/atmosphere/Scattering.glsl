@@ -11,8 +11,8 @@
 // and the steps (more looks better, but is slower)
 // the primary step has the most effect on looks
 // and these on desktop
-#define PRIMARY_STEPS 32 /* primary steps, affects quality the most */
-#define LIGHT_STEPS 12 /* light steps, how much steps in the light direction are taken */
+// #define PRIMARY_STEPS 32 /* primary steps, affects quality the most */
+// #define LIGHT_STEPS 12 /* light steps, how much steps in the light direction are taken */
 
 vec3 hello_calculate_scattering(
     vec3 start, 				// the start of the ray (the camera position)
@@ -24,7 +24,9 @@ vec3 hello_calculate_scattering(
     vec3 light_color,
     vec3 planet_position, 		// the position of the planet
     float planet_radius, 		// the radius of the planet
-    float atmo_radius 			// the radius of the atmosphere
+    float atmo_radius, 			// the radius of the atmosphere
+    int PRIMARY_STEPS,
+    int LIGHT_STEPS
 ) {
 
     vec3 beta_ray = RAY_BETA; 				// the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
