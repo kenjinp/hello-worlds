@@ -65,6 +65,10 @@ export const ContainerDiv = styled.div<{ headerColor?: string }>`
       width: 4em;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      svg {
+        height: 1em;
+      }
     }
   }
   .content {
@@ -87,7 +91,10 @@ export type ContainerProps = PropsWithChildren<{
 }>
 
 const ContainerInner = (
-  {
+  props: ContainerProps,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>,
+) => {
+  const {
     id,
     style,
     children,
@@ -98,9 +105,7 @@ const ContainerInner = (
     onMinimize,
     center,
     defaultPosition,
-  }: ContainerProps,
-  forwardedRef: React.ForwardedRef<HTMLDivElement>,
-) => {
+  } = props
   const [maximized, setMaximized] = React.useState(false)
   const posRef = React.useRef<{ x: number; y: number }>(null)
   const dragRef = React.useRef<Draggable>(null)
@@ -127,26 +132,32 @@ const ContainerInner = (
     posRef.current = data
   }
 
+  const position = maximized ? { x: 0, y: 0 } : undefined
+  const defaultPositionWhatever = center
+    ? {
+        x: document.body.clientWidth / 2 - 500 / 2,
+        y: document.body.clientHeight / 2 + 500 / 2,
+      }
+    : defaultPosition || { x: 0, y: 0 }
+
+  console.log("Window Props Stuff", props, {
+    defaultPositionWhatever,
+    position,
+  })
+
   return (
     <Draggable
       ref={dragRef}
       handle=".dragger"
       bounds={`#${windowBounds}`}
       onDrag={handleDrag}
-      position={maximized ? { x: 0, y: 0 } : undefined}
-      defaultPosition={
-        center
-          ? {
-              x: document.body.clientWidth / 2 - 500 / 2,
-              y: document.body.clientHeight / 2 - 500 / 2,
-            }
-          : defaultPosition || { x: 0, y: 0 }
-      }
+      onMouseDown={onClick}
+      position={position}
+      defaultPosition={defaultPositionWhatever}
     >
       <ContainerDiv
         ref={forwardedRef}
         id={id}
-        onMouseDown={onClick}
         headerColor={headerColor}
         style={{
           width: "500px",

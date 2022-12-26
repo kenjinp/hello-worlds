@@ -1,9 +1,11 @@
 import { Button } from "@components/button/Button"
 import { Window as Container } from "@components/window/Window"
-import { ECS, world } from "@game/ECS"
+import { world } from "@game/ECS"
 import { Entity } from "@game/Entity"
+import theme from "@theme"
 import { useEntities } from "miniplex/react"
 import * as React from "react"
+import { ThemeProvider } from "theme-ui"
 import { doBringToFront } from "../Actions"
 
 export const RenderWindow: React.FC<{ entity: Entity }> = ({
@@ -45,12 +47,28 @@ const renderWindowsQuery = world
   .without("closed")
   .without("minimized")
 export const RenderWindows: React.FC = () => {
+  const { entities } = useEntities(renderWindowsQuery)
   return (
-    <ECS.Entities in={renderWindowsQuery}>
-      {window => {
-        return <RenderWindow key={window.id} entity={window} />
-      }}
-    </ECS.Entities>
+    <ThemeProvider theme={theme}>
+      <div
+        id="window-bounds"
+        style={{
+          zIndex: 101,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          pointerEvents: "none",
+          overflow: "hidden",
+          color: "white",
+        }}
+      >
+        {entities.map(window => {
+          return <RenderWindow key={window.id} entity={window} />
+        })}
+      </div>
+    </ThemeProvider>
   )
 }
 

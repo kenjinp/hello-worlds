@@ -11,7 +11,7 @@ import { AU } from "@game/Math"
 import { PostProcessing } from "@game/Postprocessing"
 import { Planets } from "@game/render/Planets"
 import { Stars } from "@game/render/Stars"
-import { RenderWindows } from "@game/render/Window"
+import { RenderMinimizedWindows, RenderWindows } from "@game/render/Window"
 import { Stars as FarStars } from "@react-three/drei"
 import { Leva } from "leva"
 import * as React from "react"
@@ -20,8 +20,6 @@ import { Vector3 } from "three"
 let fired = false
 export const PlanetariumInner: React.FC = () => {
   const [showLeva, setShowLeva] = React.useState(false)
-
-  console.log("rerendering planetarium")
 
   React.useEffect(() => {
     const system = new SystemGenerator()
@@ -51,6 +49,8 @@ export const PlanetariumInner: React.FC = () => {
 
   return (
     <SafeHydrate>
+      <SystemMap />
+      <RenderWindows />
       <Leva hidden={!showLeva} />
       <ExampleLayout
         middle={
@@ -80,27 +80,11 @@ export const PlanetariumInner: React.FC = () => {
               {/* <Button onClick={() => setShowLeva(!showLeva)}>
                 show ocean config
               </Button>{" "} */}
-              {/* <div style={{ marginRight: "1em" }}>
+              <div style={{ marginRight: "1em" }}>
                 <RenderMinimizedWindows />
-              </div> */}
+              </div>
               <div style={{ marginRight: "1em" }}>Ocean config (C)</div>
               <div>Pause camera (P)</div>
-            </div>
-            <div
-              id="window-bounds"
-              style={{
-                zIndex: 101,
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100vw",
-                height: "100vh",
-                pointerEvents: "none",
-                overflow: "hidden",
-              }}
-            >
-              <SystemMap />
-              <RenderWindows />
             </div>
           </>
         }

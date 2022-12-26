@@ -60,8 +60,8 @@ export const doBringToFront = (entity: Entity) => {
   })
   entity.zIndex = 100
   world.addComponent(entity, "zIndex", 100)
+  // world.update(entity)
   // world.update(entity, e => void (e.zIndex = 100))
-  console.log("bring me to front", entity)
 }
 
 export const doPreviewTooltip = (
@@ -73,6 +73,7 @@ export const doPreviewTooltip = (
   const Content = docs[name]
   const objectDescriptionKey = `${label}-description`
   let tooltipEntity: Entity
+
   // does window already exist?
   tooltipEntity = world
     .archetype("window")

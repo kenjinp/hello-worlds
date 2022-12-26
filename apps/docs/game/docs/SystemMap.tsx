@@ -112,7 +112,7 @@ export const SystemMap: React.FC = () => {
     <ECS.Entity>
       <ECS.Component name="id" data="system map" />
       <ECS.Component name="window" data={true} />
-      <ECS.Component name="header" data="System Map (m)" />
+      <ECS.Component name="header" data="System Map" />
       <ECS.Component name="minimized" data={true} />
       <ECS.Component name="content" data={<SystemExplorer />} />
     </ECS.Entity>

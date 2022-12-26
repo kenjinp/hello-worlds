@@ -1,5 +1,3 @@
-import { Button } from "@components/button/Button"
-import { doFocusPlanet } from "@game/Actions"
 import { Entity } from "@game/Entity"
 import { AU, EARTH_RADIUS, km, SUN_RADIUS } from "@game/Math"
 import * as React from "react"
@@ -69,14 +67,16 @@ export const PlanetDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         , the {stringifyNumber(entity.parentIndex + 1)} satellite of{" "}
         <Tooltip name="entity" entity={entity.satelliteOf} />
       </p>
-      <Button
+      {/* <Button
         onClick={() => {
           doFocusPlanet(entity)
         }}
       >
         Focus Object
-      </Button>
+      </Button> */}
+      <br />
       <hr />
+      <br />
       <p>Terrain generation type: {entity.planetType}</p>
       <p>
         Orbital distance:{" "}
@@ -113,14 +113,16 @@ export const MoonDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         the {stringifyNumber(entity.parentIndex + 1)} moon of{" "}
         <Tooltip name="entity" entity={entity.satelliteOf} />
       </p>
-      <Button
+      {/* <Button
         onClick={() => {
           doFocusPlanet(entity)
         }}
       >
         Focus Object
-      </Button>
+      </Button> */}
+      <br />
       <hr />
+      <br />
       <p>Terrain generation type: {entity.planetType}</p>
       <p>
         Orbital distance:{" "}
