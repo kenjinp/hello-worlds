@@ -20,6 +20,7 @@ export interface ChunkRebuildProps {
   colors: ArrayBuffer
   normals: ArrayBuffer
   uvs: ArrayBuffer
+  indices: ArrayBuffer
   textureSplatIndices: ArrayBuffer
   textureSplatStrengths: ArrayBuffer
   material?: Material
@@ -103,6 +104,8 @@ export class Chunk extends Mesh {
       "uv",
       new THREE.Float32BufferAttribute(data.uvs, 2),
     )
+    // @ts-ignore
+    this.geometry.setIndex(new THREE.BufferAttribute(data.indices, 1))
     if (!!data.textureSplatIndices && !!data.textureSplatStrengths) {
       this.geometry.setAttribute(
         "textureSplatIndices",
@@ -113,6 +116,11 @@ export class Chunk extends Mesh {
         new THREE.Float32BufferAttribute(data.textureSplatStrengths, 4),
       )
     }
+
+    this.geometry.attributes.position.needsUpdate = true
+    this.geometry.attributes.normal.needsUpdate = true
+    this.geometry.attributes.color.needsUpdate = true
+    // this.geometry.attributes.coords.needsUpdate = true;
 
     // swap materials if requested
     if (data.material) {

@@ -4,7 +4,7 @@ import {
   ChunkGenerator3Initializer,
   ColorArrayWithAlpha,
 } from "../chunk/types"
-import { buildPlanetChunk } from "./Planet.chunk"
+import { buildPlanetChunk } from "./Planet.chunk.new"
 
 export function createThreadedPlanetWorker<D>({
   heightGenerator,

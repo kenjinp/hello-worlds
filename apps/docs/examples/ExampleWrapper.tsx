@@ -10,12 +10,13 @@ export const windowBounds = "window-bounds"
 
 export default function ExampleWrapper({
   children,
+  style,
   controls = <OrbitControls enablePan enableZoom maxDistance={100_000} />,
 }): React.ReactElement {
   return (
     <div
       id={windowBounds}
-      style={{ height: 800, borderRadius: "1em", position: "relative" }}
+      style={{ height: 800, borderRadius: "1em", position: "relative", ...style }}
     >
       <Canvas style={{ borderRadius: "1em" }}>
         <SpaceBox />

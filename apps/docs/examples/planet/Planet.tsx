@@ -1,3 +1,4 @@
+import { ChunkDebugger } from "@components/ChunkDebugger"
 import { OrbitCamera, Planet } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
 import * as React from "react"
@@ -12,8 +13,8 @@ const Example: React.FC = () => {
     <Planet
       position={new Vector3()}
       radius={10_000}
-      minCellSize={32}
-      minCellResolution={32 * 2}
+      minCellSize={32 * 8}
+      minCellResolution={32}
       lodOrigin={camera.position}
       lodDistanceComparisonValue={3}
       worker={worker}
@@ -21,15 +22,16 @@ const Example: React.FC = () => {
         seed: "Flat Worlds Example",
       }}
     >
+      <ChunkDebugger />
       <OrbitCamera />
-      <meshStandardMaterial vertexColors side={2} />
+      <meshStandardMaterial vertexColors side={2} wireframe />
     </Planet>
   )
 }
 
-export default function PlanetExample() {
+export default function PlanetExample({ style = {} }) {
   return (
-    <ExampleWrapper controls={null}>
+    <ExampleWrapper controls={null} style={style}>
       <Example />
     </ExampleWrapper>
   )

@@ -5,6 +5,7 @@ import {
   Lerp,
   LinearSpline,
   Noise,
+  NOISE_TYPES,
   remap,
 } from "@hello-worlds/planets"
 import { Color } from "three"
@@ -17,6 +18,7 @@ export const heightGenerator: ChunkGenerator3Initializer<
     seed: "blip",
     height: 20_000,
     scale: radius / 75,
+    noiseType: NOISE_TYPES.BILLOWING,
   })
 
   const noise = new Noise({
@@ -45,13 +47,22 @@ export const heightGenerator: ChunkGenerator3Initializer<
     scale: radius,
   })
 
+  const warp2 = new Noise({
+    octaves: 8,
+    seed: "apple", // <-important
+    height: 2000.0,
+    scale: 1000,
+  })
+
   return ({ input }) => {
     const w = warp.get(input.x, input.y, input.z)
-    const m = mountains.get(input.x + w, input.y + w, input.z + w)
-    const n = noise.get(input.x + w, input.y + w, input.z + w)
+    const w2 = warp2.getFromVector(input)
+    const m = mountains.get(input.x, input.y, input.z)
+    const n = noise.get(input.x + w2 + w, input.y + w2 + w, input.z + w2 + w)
     const msk = mask.get(input.x + w, input.y + w, input.z + w)
     const mskh = maskh.get(input.x + w, input.y + w, input.z + w)
-    return msk + (n + m) * mskh * (n / 100)
+    const whatever = msk + (n + m) * mskh * (n / 100)
+    return whatever
   }
 }
 

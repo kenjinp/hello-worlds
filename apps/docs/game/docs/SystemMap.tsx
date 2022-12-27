@@ -35,7 +35,7 @@ export const getType = (entity: Entity) => {
 // }) => {
 //   const { required, handlers } = useTreeState({
 //     data: entities,
-//     id: "stystem Map",
+//     id: "System-Map Tree",
 //     defaultOpened: true,
 //   })
 
@@ -83,7 +83,7 @@ export const SystemExplorerTree: React.FC<{ entities: Entity[] }> = ({
   const RenderEntities = entity => {
     const type = getType(entity)
     return (
-      <div key={entity.id}>
+      <li key={entity.id}>
         <Button>
           <Tooltip name="entity" entity={entity}></Tooltip>{" "}
           <span>{describeEntity(entity)}</span> <Tooltip name={type}></Tooltip>{" "}
@@ -94,7 +94,7 @@ export const SystemExplorerTree: React.FC<{ entities: Entity[] }> = ({
           )}
         </Button>
         <ul>{entity.children?.map(RenderEntities)}</ul>
-      </div>
+      </li>
     )
   }
 

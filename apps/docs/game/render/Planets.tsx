@@ -118,7 +118,6 @@ export const PlanetRender = React.forwardRef<
         </Html>
 
         {false && <OrbitCamera />}
-        {/* <ChunkDebugger /> */}
         <EntityPlanetWrapper />
         <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
           {/* <PlanetShadow /> */}

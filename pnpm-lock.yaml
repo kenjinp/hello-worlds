@@ -44,6 +44,7 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
       react-draggable: ^4.4.5
+      react-hyper-tree: ^0.3.12
       react-photo-album: ^2.0.0
       render-composer: 0.2.4
       shader-composer: ^0.4.4
@@ -89,6 +90,7 @@ importers:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
+      react-hyper-tree: 0.3.12_biqbaboplfbrettd7655fr4n2y
       react-photo-album: 2.0.0_react@18.2.0
       render-composer: 0.2.4_ub227zdobn6iggznqo2i47eyxq
       shader-composer: 0.4.9_three@0.143.0
@@ -3534,6 +3536,10 @@ packages:
     dependencies:
       function-bind: 1.1.1
 
+  /hash-sum/2.0.0:
+    resolution: {integrity: sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==}
+    dev: false
+
   /hast-util-to-estree/2.1.0:
     resolution: {integrity: sha512-Vwch1etMRmm89xGgz+voWXvVHba2iiMdGMKmaMfYt35rbVtFDq8JNwwAIvi8zHMkO6Gvqo9oTMwJTmzVRfXh4g==}
     dependencies:
@@ -5316,6 +5322,18 @@ packages:
       file-selector: 0.5.0
       prop-types: 15.8.1
       react: 18.2.0
+    dev: false
+
+  /react-hyper-tree/0.3.12_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-g3jtAPoU60P3ZYwO98QQmxaAzeE/BE2p12L7UXTAXytpu4CxnGSPgDFSepLrC1Wsb3iV0gxRB2pdWvksvGrI6A==}
+    engines: {node: '>=14', npm: '>=5'}
+    peerDependencies:
+      react: ^15.0.0 || ^16 || ^17 || ^18
+      react-dom: ^15.0.0 || ^16 || ^17 || ^18
+    dependencies:
+      hash-sum: 2.0.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react-is/16.13.1:

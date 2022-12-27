@@ -38,6 +38,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
+    "react-hyper-tree": "^0.3.12",
     "react-photo-album": "^2.0.0",
     "render-composer": "0.2.4",
     "shader-composer": "^0.4.4",
