@@ -24,7 +24,7 @@ const Example: React.FC = () => {
     >
       <ChunkDebugger />
       <OrbitCamera />
-      <meshStandardMaterial vertexColors side={2} wireframe />
+      <meshStandardMaterial vertexColors side={2} />
     </Planet>
   )
 }
