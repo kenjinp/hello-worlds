@@ -4,7 +4,7 @@ import {
   ChunkPendingEvent,
   ChunkWillBeDisposedEvent,
   Planet as HelloPlanet,
-  PlanetProps as HelloPlanetProps,
+  PlanetProps as HelloPlanetProps
 } from "@hello-worlds/planets"
 import { useRerender } from "@hmans/use-rerender"
 import { useFrame } from "@react-three/fiber"
@@ -25,6 +25,7 @@ export type PlanetProps<D> = React.PropsWithChildren<
   Omit<HelloPlanetProps<D>, "material" | "workerProps"> &
     PartialBy<HelloPlanetProps<D>["workerProps"], "numWorkers"> & {
       lodOrigin: Vector3
+      autoUpdate?: boolean;
     }
 >
 
@@ -96,6 +97,7 @@ function PlanetInner<D>(
     lodOrigin,
     position,
     worker,
+    autoUpdate = true
   } = props
 
   const workerProps = React.useMemo(
@@ -144,7 +146,7 @@ function PlanetInner<D>(
   ])
 
   useFrame(() => {
-    helloPlanet.update(lodOrigin)
+    autoUpdate && helloPlanet.update(lodOrigin)
   })
 
   return (

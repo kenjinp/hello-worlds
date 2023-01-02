@@ -28,7 +28,6 @@ export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {
   const {
-    // resolution,
     radius,
     worldMatrix,
     offset,

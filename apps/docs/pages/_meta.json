@@ -7,7 +7,7 @@
     "display": "hidden"
   },
   "intro": { "title": "Introduction" },
-  "playground": { "title": "Playground" },
+  "playground": { "title": "Playground", "display": "hidden" },
   "getting-started": { "title": "Getting Started" },
   "libraries": { "title": "Libraries & API" },
   "experiments": { "title": "Examples & Experiments" },

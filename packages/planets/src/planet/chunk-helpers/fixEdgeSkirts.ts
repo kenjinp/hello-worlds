@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { MathUtils, Vector3 } from "three"
 
 const _D = new Vector3()
 const _P = new Vector3()
@@ -8,6 +8,9 @@ export const fixEdgeSkirt = (
   positions: number[],
   up: number[],
   normals: number[],
+  width: number,
+  radius: number,
+  inverted: boolean,
 ) => {
   const effectiveResolution = resolution + 2
 
@@ -17,13 +20,17 @@ export const fixEdgeSkirt = (
 
     _P.fromArray(positions, proxyIndex * 3)
     _D.fromArray(up, proxyIndex * 3)
-    _D.multiplyScalar(0)
+
+    // pull skirt down
+    // The skirt size is set by the size of the chunk, but experimentally it creates crazy spikes if it's not clamped.
+    const skirtSize = MathUtils.clamp(width, 0, radius / 10)
+    _D.multiplyScalar(inverted ? skirtSize : -skirtSize)
     _P.add(_D)
+
     positions[skirtIndex * 3 + 0] = _P.x
     positions[skirtIndex * 3 + 1] = _P.y
     positions[skirtIndex * 3 + 2] = _P.z
 
-    // Normal will be fucked, copy it from proxy point
     normals[skirtIndex * 3 + 0] = normals[proxyIndex * 3 + 0]
     normals[skirtIndex * 3 + 1] = normals[proxyIndex * 3 + 1]
     normals[skirtIndex * 3 + 2] = normals[proxyIndex * 3 + 2]
