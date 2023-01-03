@@ -15,7 +15,7 @@ If you're interested in using this library and want to keep up to date, please [
 
 ## Docs 📄
 
-Visit https://worlds.kenny.wtf/docs/intro to learn more.
+Visit https://worlds.kenny.wtf/intro to learn more.
 
 ## Demo 🚀
 
