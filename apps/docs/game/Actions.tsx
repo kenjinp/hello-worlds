@@ -1,5 +1,5 @@
 import { world } from "@game/ECS"
-import { Entity } from "@game/Entity"
+import { archetypes, Entity } from "@game/Entity"
 import { capitalize } from "@hello-worlds/core"
 import * as React from "react"
 import docs from "./docs"
@@ -39,13 +39,20 @@ export const doFocusObjectDescription = (
 }
 
 export const doFocusPlanet = (entity: Entity) => {
+  const camera = world.archetype("isCamera", "sceneObject").entities[0]
+    .sceneObject
   world.archetype("planet").entities.forEach(e => {
-    world.removeComponent(e, "focused")
+    world.removeComponent(e, "isFocused")
   })
   world.archetype("moon").entities.forEach(e => {
-    world.removeComponent(e, "focused")
+    world.removeComponent(e, "isFocused")
   })
-  world.addComponent(entity, "focused", true)
+  world.addComponent(entity, "isFocused", true)
+  archetypes.godCamera.entities.forEach(cameraEntity => {
+    cameraEntity.target = entity
+    camera.lookAt(entity.position)
+  })
+  world.update(entity)
 }
 
 export const doSetWindowPosition = (entity: Entity, x: number, y: number) => {

@@ -56,7 +56,9 @@ export const StarRender = React.forwardRef<Mesh>((props, ref) => {
 export const Stars: React.FC = () => {
   return (
     <ECS.Entities in={archetypes.star}>
-      <StarRender />
+      <ECS.Component name="sceneObject">
+        <StarRender />
+      </ECS.Component>
     </ECS.Entities>
   )
 }

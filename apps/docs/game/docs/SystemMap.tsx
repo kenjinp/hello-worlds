@@ -1,4 +1,5 @@
 import { Button } from "@components/button/Button"
+import { doFocusPlanet } from "@game/Actions"
 import { ECS } from "@game/ECS"
 import { archetypes, Entity } from "@game/Entity"
 import { capitalize } from "@hello-worlds/core"
@@ -84,7 +85,7 @@ export const SystemExplorerTree: React.FC<{ entities: Entity[] }> = ({
     const type = getType(entity)
     return (
       <li key={entity.id}>
-        <Button>
+        <Button onClick={() => doFocusPlanet(entity)}>
           <Tooltip name="entity" entity={entity}></Tooltip>{" "}
           <span>{describeEntity(entity)}</span> <Tooltip name={type}></Tooltip>{" "}
           {!!entity.children?.length && (

@@ -18,12 +18,11 @@ import { remap } from "@hello-worlds/planets"
 import { Language } from "@hello-worlds/tongues"
 import { Color, MathUtils, Vector3 } from "three"
 
-setRandomSeed("fkjahsdfklahjfaklhj")
-
 export class SystemGenerator {
   language: Language = new Language()
   root: Entity
   constructor() {
+    setRandomSeed("hello world again")
     const language = this.language
 
     const makePlanetarySystem = () =>

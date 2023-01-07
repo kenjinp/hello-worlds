@@ -140,11 +140,6 @@ const ContainerInner = (
       }
     : defaultPosition || { x: 0, y: 0 }
 
-  console.log("Window Props Stuff", props, {
-    defaultPositionWhatever,
-    position,
-  })
-
   return (
     <Draggable
       ref={dragRef}

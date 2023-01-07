@@ -1,12 +1,12 @@
-import { GodCamera } from "@game/cameras/GodCamera"
 import { ECS, world } from "@game/ECS"
 import { archetypes } from "@game/Entity"
 import { CERES_RADIUS } from "@game/Math"
+import { useWatchComponent } from "@game/player/Player"
 import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
   PlanetChunks,
-  usePlanet
+  usePlanet,
 } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
@@ -175,7 +175,6 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
       position,
       radius = CERES_RADIUS,
       seed,
-      isFocused,
       clouds,
       gravity,
       name,
@@ -183,6 +182,7 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
       planetType: type,
       seaLevel,
     } = entity
+    const isFocused = useWatchComponent("isFocused")
 
     const initialData = React.useMemo(
       () => ({
@@ -192,6 +192,8 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
       }),
       [],
     )
+
+    console.log("PlanetRender", entity.name, isFocused)
 
     return (
       <ECS.Component name="sceneObject">
@@ -206,12 +208,10 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
           worker={worker}
           data={initialData}
         >
-          {isFocused && <GodCamera initialLatLong={[0, 90]} />}
           <Html>
             <i style={{ color: labelColor.getStyle() }}>{name}</i>
           </Html>
           {/* <PlanetPhysics /> */}
-          {/* {false && <OrbitCamera />} */}
           <EntityPlanetWrapper />
           <React.Suspense fallback={<meshStandardMaterial color="orange" />}>
             {/* <PlanetShadow /> */}
@@ -233,19 +233,19 @@ export const Planets: React.FC = () => {
     <ECS.Entities in={archetypes.planet}>
       {entity => {
         return (
-          <ECS.Entity key={entity.id} entity={entity}>
-            <>
-              <PlanetRender />
-
-              {entity.children.map(moonEntity => (
-                <ECS.Entity key={moonEntity.id} entity={moonEntity}>
-                  <mesh key={moonEntity.id} position={entity.position}>
-                    <PlanetRender />
-                  </mesh>
-                </ECS.Entity>
-              ))}
-            </>
-          </ECS.Entity>
+          <>
+            <ECS.Entity key={entity.id} entity={entity}>
+              <PlanetRender>
+                {entity.children.map(moonEntity => (
+                  <ECS.Entity key={moonEntity.id} entity={moonEntity}>
+                    <mesh key={moonEntity.id} position={entity.position}>
+                      <PlanetRender />
+                    </mesh>
+                  </ECS.Entity>
+                ))}
+              </PlanetRender>
+            </ECS.Entity>
+          </>
         )
       }}
     </ECS.Entities>

@@ -9,13 +9,28 @@ function getObjectProps<Entity, Key extends keyof Entity>(
   obj: Entity,
   key: Key,
 ): Entity[Key] {
-  return obj[key]
+  return obj && obj[key]
 }
 
 // TODO fix types
 export function useWatchComponent<T>(value: keyof Entity): T {
   const entity = ECS.useCurrentEntity()
 
+  const [state, setState] = React.useState(getObjectProps(entity, value))
+
+  // Do something better here
+  useFrame(() => {
+    if (getObjectProps(entity, value) !== state) {
+      setState(getObjectProps(entity, value))
+    }
+  })
+  return state
+}
+
+export function useWatchEntityComponent<T>(
+  entity: Entity,
+  value: keyof Entity,
+): T {
   const [state, setState] = React.useState(getObjectProps(entity, value))
 
   // Do something better here
@@ -76,7 +91,6 @@ export const CurrentPlayer: React.FC = () => {
       world.removeComponent(entity, "isFlyable")
       world.addComponent(entity, "affectedByGravity", true)
     }
-    console.log("flyMode", flyMode, entity)
   }, [flyMode])
 
   return (

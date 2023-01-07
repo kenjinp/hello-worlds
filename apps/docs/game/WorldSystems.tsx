@@ -1,6 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber"
 import { useEntities } from "miniplex/react"
 import { damp } from "three/src/math/MathUtils"
+import { useGodCamera } from "./cameras/GodCamera"
 import { archetypes } from "./Entity"
 import { vec3Pool } from "./Pools"
 import { useFly } from "./systems/Fly"
@@ -113,6 +114,7 @@ export function WorldSystems() {
   useVelocity()
   useCamera()
   useFly()
+  useGodCamera()
 
   return null
 }

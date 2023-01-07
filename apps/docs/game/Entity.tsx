@@ -1,4 +1,4 @@
-import { LatLong } from "@examples/tectonics/voronoi/math"
+import { LongLat } from "@examples/tectonics/voronoi/math"
 import { Planet, RingWorldProps } from "@hello-worlds/planets"
 import { RigidBodyApi } from "@react-three/rapier"
 import { Strict, With } from "miniplex"
@@ -152,9 +152,9 @@ export type SyncPosition = {
 
 export type GodCamera = {
   isGodCameraTarget: Tag
-  latLong: LatLong
+  longLat: LongLat
   target: Entity
-  altitude: number
+  scale: number
 }
 
 // export type OrbitCamera = {
@@ -189,9 +189,12 @@ export const archetypes = {
   camera: world.archetype("isCamera", "sceneObject"),
   cameraFollow: world.archetype("cameraFollow", "sceneObject"),
   focusedPlanet: world.archetype("isFocused", "sceneObject"),
+  godCameraNoTarget: world
+    .archetype("isGodCameraTarget", "sceneObject")
+    .without("target"),
   godCamera: world.archetype(
     "isGodCameraTarget",
-    "latLong",
+    "longLat",
     "target",
     "sceneObject",
   ),

@@ -26,7 +26,6 @@ export const PointerLockCamera: React.FC<{ up: Quaternion }> = ({ up }) => {
   }, [plc])
 
   React.useEffect(() => {
-    console.log("oh no")
     plc.up = up
   }, [up, plc])
 

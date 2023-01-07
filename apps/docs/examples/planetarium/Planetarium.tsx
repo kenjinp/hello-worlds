@@ -1,6 +1,7 @@
 import ExampleLayout from "@components/layouts/example/Example"
 import { SafeHydrate } from "@components/safe-render/SafeRender"
 import { SpaceBox } from "@components/space-box/SpaceBox"
+import { GodCamera } from "@game/cameras/GodCamera"
 import { Canvas } from "@game/Canvas"
 import { SystemMap } from "@game/docs/SystemMap"
 import { AtmosphereEffects } from "@game/effects/Atmosphere.effects"
@@ -21,14 +22,22 @@ import { Leva } from "leva"
 import * as React from "react"
 import { Vector3 } from "three"
 
+const System = () => {
+  const [system, setSystem] = React.useState(() => new SystemGenerator())
+
+  React.useEffect(() => {
+    setSystem(new SystemGenerator())
+    return () => {
+      system && system.destroy()
+    }
+  }, [])
+
+  return null
+}
+
 let fired = false
 export const PlanetariumInner: React.FC = () => {
   const [showLeva, setShowLeva] = React.useState(false)
-
-  React.useEffect(() => {
-    const system = new SystemGenerator()
-    return () => void system.destroy()
-  }, [])
 
   React.useEffect(() => {
     const listener = (e: KeyboardEvent) => {
@@ -53,6 +62,7 @@ export const PlanetariumInner: React.FC = () => {
 
   return (
     <SafeHydrate>
+      <System />
       <SystemMap />
       <RenderWindows />
       <Leva hidden={!showLeva} />
@@ -118,6 +128,7 @@ export const PlanetariumInner: React.FC = () => {
                       strength={10000000000000}
                       position={new Vector3()}
                     /> */}
+                      <GodCamera initialLongLat={[0, 0]} />
                       <CameraEntity />
                       {/* <Players /> */}
                       <Stars />
