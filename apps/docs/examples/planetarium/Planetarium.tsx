@@ -22,18 +22,7 @@ import { Leva } from "leva"
 import * as React from "react"
 import { Vector3 } from "three"
 
-const System = () => {
-  const [system, setSystem] = React.useState(() => new SystemGenerator())
-
-  React.useEffect(() => {
-    setSystem(new SystemGenerator())
-    return () => {
-      system && system.destroy()
-    }
-  }, [])
-
-  return null
-}
+new SystemGenerator()
 
 let fired = false
 export const PlanetariumInner: React.FC = () => {
@@ -62,7 +51,6 @@ export const PlanetariumInner: React.FC = () => {
 
   return (
     <SafeHydrate>
-      <System />
       <SystemMap />
       <RenderWindows />
       <Leva hidden={!showLeva} />
