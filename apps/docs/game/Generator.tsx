@@ -8,6 +8,7 @@ import {
   SUN_RADIUS,
 } from "@game/Math"
 import {
+  capitalize,
   random,
   randomRange,
   randomRangeInt,
@@ -42,7 +43,7 @@ export class SystemGenerator {
           planetType: PLANET_TYPES.TERRAN,
           atmosphereRadius: radius * 1.2,
           position: new Vector3(),
-          name: language.makeWord("planetA"),
+          name: capitalize(language.makeWord("planetA")),
           labelColor: new Color(random() * 0xffffff),
           children: [],
           gravity: 9.8,
@@ -61,7 +62,7 @@ export class SystemGenerator {
             radius: MOON_RADIUS,
             gravity: 1.62,
             moon: true,
-            name: language.makeWord(`moon ${i}`),
+            name: capitalize(language.makeWord(`moon ${i}`)),
             satelliteOf: planet,
             labelColor: new Color(random() * 0xffffff),
             planetType: PLANET_TYPES.LUNAR,
@@ -82,7 +83,7 @@ export class SystemGenerator {
     const sunPosition = new Vector3(-1, 0, 1).multiplyScalar(AU)
     const root = world.add({
       id: MathUtils.generateUUID(),
-      name: language.makeWord("System"),
+      name: capitalize(language.makeWord("System")),
       type: "system",
       position: sunPosition,
       children: [],
@@ -95,7 +96,7 @@ export class SystemGenerator {
     const sun = world.add({
       radius: SUN_RADIUS,
       id: MathUtils.generateUUID(),
-      name: root.name,
+      name: capitalize(root.name),
       labelColor: color,
       color: color,
       emissive: color,
@@ -173,7 +174,7 @@ export class SystemGenerator {
 
       const newSun = world.add({
         radius,
-        name: language.makeWord(`Sun ${i}`),
+        name: capitalize(language.makeWord(`Sun ${i}`)),
         id: MathUtils.generateUUID(),
         labelColor: color,
         color: color,

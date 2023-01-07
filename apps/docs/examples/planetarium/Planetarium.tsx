@@ -85,8 +85,6 @@ export const PlanetariumInner: React.FC = () => {
               <div style={{ marginRight: "1em" }}>
                 <RenderMinimizedWindows />
               </div>
-              <div style={{ marginRight: "1em" }}>Ocean config (C)</div>
-              <div>Pause camera (P)</div>
             </div>
           </>
         }

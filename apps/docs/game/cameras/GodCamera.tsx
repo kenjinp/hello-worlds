@@ -289,6 +289,7 @@ export function useGodCamera() {
 export const GodCamera: React.FC<
   React.PropsWithChildren<{ initialLongLat: LongLat }>
 > = ({ initialLongLat }) => {
+  useGodCamera()
   return (
     <>
       <ECS.Entity>
