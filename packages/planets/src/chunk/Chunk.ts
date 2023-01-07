@@ -104,8 +104,9 @@ export class Chunk extends Mesh {
       "uv",
       new THREE.Float32BufferAttribute(data.uvs, 2),
     )
-    // @ts-ignore
-    this.geometry.setIndex(new THREE.BufferAttribute(data.indices, 1))
+    this.geometry.setIndex(
+      new THREE.BufferAttribute(new Uint32Array(data.indices), 1),
+    )
     if (!!data.textureSplatIndices && !!data.textureSplatStrengths) {
       this.geometry.setAttribute(
         "textureSplatIndices",

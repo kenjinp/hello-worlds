@@ -37,7 +37,7 @@ export class SystemGenerator {
           id: MathUtils.generateUUID(),
           radius,
           clouds: true,
-          focused: true,
+          isFocused: true,
           seaLevel: 2_500,
           planet: true,
           planetType: PLANET_TYPES.TERRAN,
@@ -46,6 +46,7 @@ export class SystemGenerator {
           name: language.makeWord("planetA"),
           labelColor: new Color(random() * 0xffffff),
           children: [],
+          gravity: 9.8,
         })
         for (let i = 0; i < numberOfMoons - 1; i++) {
           const position = new Vector3()
@@ -59,6 +60,7 @@ export class SystemGenerator {
           const moon = world.add({
             id: MathUtils.generateUUID(),
             radius: MOON_RADIUS,
+            gravity: 1.62,
             moon: true,
             name: language.makeWord(`moon ${i}`),
             satelliteOf: planet,
@@ -111,6 +113,29 @@ export class SystemGenerator {
       child.satelliteOf = sun
       child.parentIndex = index
     })
+
+    // create Player
+    // Put the character between the planet and the sun
+    // So that I don't go crazy thinking I didn't set up the lighting right :D
+
+    const mainPlanetPosition = sun.children[0].position
+
+    // const position = mainPlanetPosition
+    //   .clone()
+    //   .sub(sun.position)
+    //   .normalize()
+    //   .negate()
+    //   .multiplyScalar(EARTH_RADIUS * 1.1)
+
+    // world.add({
+    //   isPlayer: true,
+    //   isCurrentPlayer: true,
+    //   affectedByGravity: true,
+    //   position,
+    //   closestAstronomicalObject: null,
+    //   velocity: new Vector3(),
+    //   focused: true,
+    // })
   }
 
   destroy() {

@@ -22,8 +22,6 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
   colorGenerator?: ColorGenerator<D>
 }
 
-;<T>(x: T) => x
-
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {

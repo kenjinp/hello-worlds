@@ -123,3 +123,10 @@ export function orientMesh(mesh: Mesh, targetDirection: Vector3) {
   // Rotate the mesh to the target direction
   mesh.applyQuaternion(quaternion)
 }
+
+export function moduloVector3(vec3: Vector3, value: number) {
+  vec3.x = vec3.x - value * Math.floor(vec3.x / value)
+  vec3.y = vec3.y - value * Math.floor(vec3.y / value)
+  vec3.z = vec3.z - value * Math.floor(vec3.z / value)
+  return vec3
+}

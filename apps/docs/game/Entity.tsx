@@ -1,6 +1,8 @@
+import { LatLong } from "@examples/tectonics/voronoi/math"
 import { Planet, RingWorldProps } from "@hello-worlds/planets"
+import { RigidBodyApi } from "@react-three/rapier"
 import { Strict, With } from "miniplex"
-import { Color, Mesh, Vector3 } from "three"
+import { Color, Mesh, Object3D, Quaternion, Vector3 } from "three"
 import { world } from "./ECS"
 export type Tag = true
 
@@ -26,7 +28,12 @@ export type AstronomicalObjectProperties = {
   name: string
   labelColor: Color
   mesh?: Mesh
-  focused?: boolean
+  cameraFollow?: boolean
+  gravity?: number
+}
+
+export type Velocity = {
+  velocity: Vector3
 }
 
 export type ObjectProperties = {
@@ -64,6 +71,7 @@ export type PlanetProperties = {
   atmosphereRadius?: number
   atmosphereDensity?: number
   seaLevel?: number
+  isFocused: Tag
 }
 
 export type RingWorldProperties = {
@@ -73,9 +81,11 @@ export type RingWorldProperties = {
   mesh?: Mesh
 } & RingWorldProps<any>
 
-export type ExplorerProperties = {
-  explorer: Tag
+export type PlayerProperties = {
+  isPlayer: Tag
+  isCurrentPlayer: Tag
   position: Vector3
+  rotation: Quaternion
   lastUpdateMeta: {
     positions: {
       time: number
@@ -104,6 +114,54 @@ export type WindowProperties = {
   lastUpdated?: number
 }
 
+export type PhysicsBox = {
+  isPhysicsBox: Tag
+  mass: number
+  position: Vector3
+  color: Color
+  size: number
+}
+
+export type Camera = {
+  isCamera: Tag
+}
+
+export type Physics = {
+  rigidBody: RigidBodyApi
+}
+
+export type AffectedByGravity = {
+  affectedByGravity: Tag
+}
+
+export type TrackClosestAstronomicalObject = {
+  closestAstronomicalObject: Entity | null
+}
+
+export type SceneObject = {
+  sceneObject: Object3D
+}
+
+export type Flyable = {
+  isFlyable: Tag
+}
+
+export type SyncPosition = {
+  isFlyable: Tag
+}
+
+export type GodCamera = {
+  isGodCameraTarget: Tag
+  latLong: LatLong
+  target: Entity
+  altitude: number
+}
+
+// export type OrbitCamera = {
+//   isOrbitCameraTarget: Tag
+//   target: PlanetProperties
+// }
+
 export type Entity = Partial<
   OrbitalCharacteristicProperties &
     AstronomicalObjectProperties &
@@ -111,14 +169,44 @@ export type Entity = Partial<
     StarProperties &
     PlanetProperties &
     RingWorldProperties &
-    ExplorerProperties &
-    WindowProperties
+    PlayerProperties &
+    WindowProperties &
+    PhysicsBox &
+    Camera &
+    SceneObject &
+    TrackClosestAstronomicalObject &
+    AffectedByGravity &
+    Velocity &
+    Flyable &
+    GodCamera
+  // OrbitCamera
 >
 
-export type Player = Strict<With<Entity, "explorer">>
+export type Player = Strict<With<Entity, "isPlayer">>
 
 /* Create some archetype queries: */
 export const archetypes = {
+  camera: world.archetype("isCamera", "sceneObject"),
+  cameraFollow: world.archetype("cameraFollow", "sceneObject"),
+  focusedPlanet: world.archetype("isFocused", "sceneObject"),
+  godCamera: world.archetype(
+    "isGodCameraTarget",
+    "latLong",
+    "target",
+    "sceneObject",
+  ),
+  flyable: world.archetype("velocity", "sceneObject", "isFlyable"),
+  affectedByGravity: world.archetype(
+    "affectedByGravity",
+    "closestAstronomicalObject",
+    "sceneObject",
+    "velocity",
+  ),
+  trackingClosestAstroObject: world.archetype(
+    "closestAstronomicalObject",
+    "sceneObject",
+  ),
+  physics: world.archetype("velocity", "sceneObject"),
   star: world.archetype<
     StarProperties &
       AstronomicalObjectProperties &
@@ -126,7 +214,6 @@ export const archetypes = {
   >("star"),
   planet: world.archetype("planet"),
   planetWithAtmosphere: world.archetype("radius", "atmosphereRadius"),
-  focused: world.archetype("focused"),
   planetWithOcean: world.archetype(
     "radius",
     "position",
@@ -136,7 +223,9 @@ export const archetypes = {
   planetOrMoon: world.archetype("planetType"),
   moon: world.archetype("moon"),
   ringWorld: world.archetype("ringWorld"),
-  player: world.archetype("explorer"),
+  player: world.archetype("isPlayer").without("isCurrentPlayer"),
+  currentPlayer: world.archetype("isPlayer").with("isCurrentPlayer"),
+  physicsBox: world.archetype("isPhysicsBox"),
   windows: world.archetype<WindowProperties>("window"),
   minimizedWindows: world
     .archetype<WindowProperties>("window", "minimized")

@@ -28,7 +28,7 @@ uniform Planet uPlanets[<planetsLength>];
 uniform AtmosphereSun uSuns[<sunsLength>];
 
 @import ./Math;
-@import ./Scattering;
+@import ./Scatter;
 
 // float logDepthBufFC () {
 //   float logDepthBufFC = 2.0 / ( log( cameraFar + 1.0 ) / log(2.0) );

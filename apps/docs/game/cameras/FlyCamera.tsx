@@ -77,6 +77,7 @@ const FlyCamera: React.FC<{
     if (!flyControls.current) {
       return
     }
+    camera.userData.previousPosition = flyControls.current.lastPosition.clone()
     const newClosestPlanet = entities.sort((a, b) => {
       return (
         camera.position.distanceToSquared(a.position) -
@@ -98,11 +99,14 @@ const FlyCamera: React.FC<{
       camera.position.distanceTo(closestPlanet.position) -
         closestPlanet.radius || 0
 
-    flyControls.current.movementSpeed = MathUtils.clamp(
+    const movementSpeed = MathUtils.clamp(
       Math.abs(altitude.current),
       minSpeed,
       maxSpeed,
     )
+    camera.userData.movementSpeed = movementSpeed
+    flyControls.current.movementSpeed = movementSpeed
+
     groupRef.current.position.copy(camera.position)
     groupRef.current.quaternion.copy(camera.quaternion)
 
@@ -112,7 +116,7 @@ const FlyCamera: React.FC<{
       position: camera.position,
     }
 
-    if (clock.getElapsedTime() - lastTime >= 0.5) {
+    if (clock.getElapsedTime() - lastTime >= 1) {
       queueMicrotask(() => {
         router.replace(
           {
@@ -133,7 +137,8 @@ const FlyCamera: React.FC<{
 
   return (
     <>
-      {!pause && <FlyControls ref={flyControls} rollSpeed={0.25} />}
+      {!pause && <FlyControls ref={flyControls} rollSpeed={0.25}></FlyControls>}
+      {/* <ParticleField /> */}
       <group ref={groupRef}>
         {/* <mesh position={new Vector3(0, 0, -20)} castShadow receiveShadow>
           <capsuleGeometry args={[0.75, 1]} />
