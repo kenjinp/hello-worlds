@@ -1,5 +1,5 @@
-import PlanetExample from "@examples/planet/Planet"
+import TectonicsExample from "@examples/tectonics"
 
 export default function Playground() {
-  return <PlanetExample style={{ height: "100vh" }} />
+  return <TectonicsExample style={{ height: "100vh" }} />
 }

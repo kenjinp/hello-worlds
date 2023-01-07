@@ -88,6 +88,7 @@ colorSpline.addPoint(0.9, new Color(0xab7916))
 colorSpline.addPoint(1.0, new Color(0xbab3a2))
 export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
   radius,
+  data: { seaLevel },
 }) => {
   const warp = new Noise({
     octaves: 8,
@@ -98,6 +99,9 @@ export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
 
   return ({ height, input }) => {
     const warpedHeight = height + warp.getFromVector(input)
+    if (seaLevel && height < seaLevel) {
+      return oceanColor
+    }
     // return white
     return warpedHeight > 0
       ? colorSpline.get(remap(warpedHeight, 0, 5_000, 0, 1))

@@ -74,7 +74,7 @@ const TectonicPlanet: React.FC<
   ) : null
 }
 
-export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const TectonicsExample: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const planet = useControls("planet", {
     planetRadius: {
       value: EARTH_RADIUS,
@@ -282,4 +282,4 @@ export const Planet: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   )
 }
 
-export default Planet
+export default TectonicsExample
