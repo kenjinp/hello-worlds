@@ -1,10 +1,12 @@
 import { LatLonCoordinates } from "@examples/tectonics/polar-spatial-hash/LatLongCoordinates"
 import { polarToCartesian } from "@examples/tectonics/voronoi/math"
+import { doFocusPlanet } from "@game/Actions"
 import { world } from "@game/ECS"
-import { Entity } from "@game/Entity"
+import { archetypes, Entity } from "@game/Entity"
 import { terra } from "@game/generators"
 import { heightGenerator } from "@game/generators/all"
 import { remap } from "@hello-worlds/planets"
+import { useEntities } from "miniplex/react"
 import * as React from "react"
 import { Color, Vector3 } from "three"
 
@@ -17,6 +19,7 @@ function PlanetMapInner(
   },
   forwardedRef: React.ForwardedRef<HTMLCanvasElement>,
 ) {
+  const { entities } = useEntities(archetypes.planetOrMoon)
   const { entity } = props
   const planet = entity.helloPlanet
   const ref = React.useRef<HTMLCanvasElement>(null)
@@ -194,8 +197,10 @@ function PlanetMapInner(
   }
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // const entity = entities.find(e => (e.helloPlanet.uuid = planet.uuid))
+
     const canvasRef = ref.current
-    if (canvasRef && entity.isFocused) {
+    if (canvasRef) {
       const rect = e.currentTarget.getBoundingClientRect()
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
@@ -204,9 +209,12 @@ function PlanetMapInner(
       const xPolar = remap(x, 0, width, -180, 180)
       const yPolar = remap(height - y, 0, height, -90, 90)
       const latlong = new LatLonCoordinates(yPolar, xPolar)
-      entity.longLat = [latlong.lon, latlong.lat]
-      console.log("click", entity)
-      world.update(entity)
+      console.log("click", entity.longLat)
+      world.removeComponent(entity, "longLat")
+      world.addComponent(entity, "longLat", [latlong.lon, latlong.lat])
+      if (!entity.isFocused) {
+        doFocusPlanet(entity)
+      }
     }
   }
   // const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {

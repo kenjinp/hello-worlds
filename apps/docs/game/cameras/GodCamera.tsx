@@ -63,7 +63,7 @@ export function useGodCamera() {
       )
       target.sceneObject.getWorldPosition(worldPosition)
       const longLatPosition = longLatToCartesian(
-        entity.longLat,
+        entity.longLat || [0, 0],
         currentAltitude,
       ).add(worldPosition)
       entity.sceneObject.position.copy(longLatPosition)
@@ -106,6 +106,7 @@ export function useGodCamera() {
     if (!targetPlanet) return
     for (const entity of noTargets) {
       world.addComponent(entity, "target", targetPlanet)
+      world.addComponent(entity, "longLat", [0, 0])
       camera.lookAt(targetPlanet.position)
     }
   }, [noTargets, planets])
@@ -189,13 +190,13 @@ export function useGodCamera() {
       camera.quaternion.copy(_quat)
     }
 
-    window.addEventListener("mousemove", mouseMoveListener)
-    window.addEventListener("wheel", scrollWheelListener)
+    domElement.addEventListener("mousemove", mouseMoveListener)
+    domElement.addEventListener("wheel", scrollWheelListener)
     return () => {
-      window.removeEventListener("mousemove", mouseMoveListener)
-      window.removeEventListener("wheel", scrollWheelListener)
+      domElement.removeEventListener("mousemove", mouseMoveListener)
+      domElement.removeEventListener("wheel", scrollWheelListener)
     }
-  }, [isLocked, childReferenceObject, referenceObject])
+  }, [isLocked, childReferenceObject, referenceObject, domElement])
 
   useFrame((_s, dl) => {
     camera.getWorldQuaternion(_quat)
@@ -294,7 +295,7 @@ export const GodCamera: React.FC<
     <>
       <ECS.Entity>
         <ECS.Component name="isGodCameraTarget" data={true} />
-        <ECS.Component name="longLat" data={initialLongLat} />
+        {/* <ECS.Component name="longLat" data={initialLongLat} /> */}
         {/* <ECS.Component name="target" data={entity} /> */}
         <ECS.Component name="cameraFollow" data={true} />
         <ECS.Component name="scale" data={0.5} />

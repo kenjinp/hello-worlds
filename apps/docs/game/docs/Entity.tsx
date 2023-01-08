@@ -58,6 +58,7 @@ function stringifyNumber(n) {
 }
 
 export const PlanetDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
+  const [showMap, setShowMap] = React.useState(false)
   return (
     <div>
       <h1>
@@ -76,12 +77,21 @@ export const PlanetDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         }}
       >
         Focus
+      </Button>{" "}
+      <Button
+        onClick={() => {
+          setShowMap(!showMap)
+        }}
+      >
+        {!showMap ? "Show Map" : "Hide Map"}
       </Button>
       <br />
       <hr />
-      <div>
-        <PlanetMap entity={entity} />
-      </div>
+      {showMap && (
+        <div>
+          <PlanetMap entity={entity} />
+        </div>
+      )}
       <hr />
       <br />
       <p>Terrain generation type: {entity.planetType}</p>
@@ -108,6 +118,7 @@ export const PlanetDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
 }
 
 export const MoonDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
+  const [showMap, setShowMap] = React.useState(false)
   return (
     <div>
       <h1>
@@ -126,12 +137,21 @@ export const MoonDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         }}
       >
         Focus
+      </Button>{" "}
+      <Button
+        onClick={() => {
+          setShowMap(!showMap)
+        }}
+      >
+        {!showMap ? "Show Map" : "Hide Map"}
       </Button>
       <br />
       <hr />
-      <div>
-        <PlanetMap entity={entity} />
-      </div>
+      {showMap && (
+        <div>
+          <PlanetMap entity={entity} />
+        </div>
+      )}
       <hr />
       <br />
       <p>Terrain generation type: {entity.planetType}</p>
