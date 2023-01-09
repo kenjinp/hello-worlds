@@ -66,7 +66,7 @@ export const heightGenerator: ChunkGenerator3Initializer<
   }
 }
 
-const oceanColor = new Color(0x2b65ec)
+const oceanColor = new Color(0x33495d)
 
 const colorLerp: Lerp<THREE.Color> = (
   t: number,
@@ -88,7 +88,7 @@ colorSpline.addPoint(0.9, new Color(0xab7916))
 colorSpline.addPoint(1.0, new Color(0xbab3a2))
 export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
   radius,
-  data: { seaLevel },
+  data: { seaLevel, isMap },
 }) => {
   const warp = new Noise({
     octaves: 8,
@@ -99,10 +99,9 @@ export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
 
   return ({ height, input }) => {
     const warpedHeight = height + warp.getFromVector(input)
-    if (seaLevel && height < seaLevel) {
+    if (isMap && seaLevel && height < seaLevel) {
       return oceanColor
     }
-    // return white
     return warpedHeight > 0
       ? colorSpline.get(remap(warpedHeight, 0, 5_000, 0, 1))
       : oceanColor

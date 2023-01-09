@@ -1,7 +1,6 @@
 import { LatLonCoordinates } from "@examples/tectonics/polar-spatial-hash/LatLongCoordinates"
 import { polarToCartesian } from "@examples/tectonics/voronoi/math"
 import { doFocusPlanet } from "@game/Actions"
-import { world } from "@game/ECS"
 import { archetypes, Entity } from "@game/Entity"
 import { terra } from "@game/generators"
 import { heightGenerator } from "@game/generators/all"
@@ -19,7 +18,7 @@ function PlanetMapInner(
   },
   forwardedRef: React.ForwardedRef<HTMLCanvasElement>,
 ) {
-  const { entities } = useEntities(archetypes.planetOrMoon)
+  const { entities } = useEntities(archetypes.godCamera)
   const { entity } = props
   const planet = entity.helloPlanet
   const ref = React.useRef<HTMLCanvasElement>(null)
@@ -36,13 +35,6 @@ function PlanetMapInner(
       ctx.clearRect(0, 0, width, height)
       const image = ctx.getImageData(0, 0, width, height)
       const data = image.data
-      console.log("BLIP", {
-        data,
-        r: color.r,
-        g: color.g,
-        b: color.b,
-      })
-
       const labels = [
         {
           label: "Arctic Circle",
@@ -70,12 +62,12 @@ function PlanetMapInner(
         const generators = {
           heightGenerator: heightGenerator({
             radius: planet.radius,
-            data: planet.data,
+            data:{ ...planet.data, seaLevel: entity.seaLevel, isMap: true },
             inverted: planet.inverted,
           }),
           colorGenerator: terra.colorGenerator({
             radius: planet.radius,
-            data: { ...planet.data, seaLevel: entity.seaLevel },
+            data: { ...planet.data, seaLevel: entity.seaLevel, isMap: true },
             inverted: planet.inverted,
           }),
         }
@@ -197,7 +189,7 @@ function PlanetMapInner(
   }
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // const entity = entities.find(e => (e.helloPlanet.uuid = planet.uuid))
+    const cameraEntity = entities[0]
 
     const canvasRef = ref.current
     if (canvasRef) {
@@ -208,10 +200,10 @@ function PlanetMapInner(
       const height = rect.height
       const xPolar = remap(x, 0, width, -180, 180)
       const yPolar = remap(height - y, 0, height, -90, 90)
-      const latlong = new LatLonCoordinates(yPolar, xPolar)
-      console.log("click", entity.longLat)
-      world.removeComponent(entity, "longLat")
-      world.addComponent(entity, "longLat", [latlong.lon, latlong.lat])
+      const latlong = new LatLonCoordinates(xPolar, yPolar)
+      console.log(latlong)
+      cameraEntity.lat = latlong.lat
+      cameraEntity.long = latlong.lon
       if (!entity.isFocused) {
         doFocusPlanet(entity)
       }

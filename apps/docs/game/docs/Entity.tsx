@@ -84,7 +84,7 @@ export const PlanetDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         }}
       >
         {!showMap ? "Show Map" : "Hide Map"}
-      </Button>
+      </Button>{" "}
       <br />
       <hr />
       {showMap && (
@@ -144,7 +144,7 @@ export const MoonDoc: React.FC<{ entity: Entity }> = ({ entity }) => {
         }}
       >
         {!showMap ? "Show Map" : "Hide Map"}
-      </Button>
+      </Button>{" "}
       <br />
       <hr />
       {showMap && (

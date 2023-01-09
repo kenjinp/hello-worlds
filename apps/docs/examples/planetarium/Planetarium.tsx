@@ -6,7 +6,7 @@ import { Canvas } from "@game/Canvas"
 import { SystemMap } from "@game/docs/SystemMap"
 import { AtmosphereEffects } from "@game/effects/Atmosphere.effects"
 import { OceanEffects } from "@game/effects/Ocean.effects"
-import { SystemGenerator } from "@game/Generator"
+import { System } from "@game/Generator"
 import { AU } from "@game/Math"
 import { KeyboardController } from "@game/player/KeyboardController"
 import { PostProcessing } from "@game/Postprocessing"
@@ -18,42 +18,15 @@ import { RenderMinimizedWindows, RenderWindows } from "@game/render/Window"
 import { WorldSystems } from "@game/WorldSystems"
 import { Stars as FarStars } from "@react-three/drei"
 import { Debug, Physics } from "@react-three/rapier"
-import { Leva } from "leva"
 import * as React from "react"
 import { Vector3 } from "three"
 
-new SystemGenerator()
-
-let fired = false
 export const PlanetariumInner: React.FC = () => {
-  const [showLeva, setShowLeva] = React.useState(false)
-
-  React.useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
-      if (!fired) {
-        fired = true
-        if (e.key === "c") {
-          setShowLeva(!showLeva)
-        }
-      }
-    }
-    const onUpListener = (e: KeyboardEvent) => {
-      fired = false
-    }
-
-    document.addEventListener("keydown", listener)
-    document.addEventListener("keyup", onUpListener)
-    return () => {
-      document.removeEventListener("keydown", listener)
-      document.removeEventListener("keyup", onUpListener)
-    }
-  }, [showLeva])
-
   return (
     <SafeHydrate>
+      <System />
       <SystemMap />
       <RenderWindows />
-      <Leva hidden={!showLeva} />
       <ExampleLayout
         middle={
           <>

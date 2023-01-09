@@ -5,7 +5,7 @@ import {
   EARTH_RADIUS,
   MOON_DISTANCE,
   MOON_RADIUS,
-  SUN_RADIUS,
+  SUN_RADIUS
 } from "@game/Math"
 import {
   capitalize,
@@ -13,17 +13,29 @@ import {
   randomRange,
   randomRangeInt,
   randomSign,
-  setRandomSeed,
+  setRandomSeed
 } from "@hello-worlds/core"
 import { remap } from "@hello-worlds/planets"
 import { Language } from "@hello-worlds/tongues"
+import * as React from "react"
 import { Color, MathUtils, Vector3 } from "three"
+
+setRandomSeed("hello world again")
+
+export function System() {
+  React.useLayoutEffect(() => {
+    const system = new SystemGenerator()
+    return () => {
+      system.destroy()
+    }
+  }, [])
+  return null
+}
 
 export class SystemGenerator {
   language: Language = new Language()
   root: Entity
   constructor() {
-    setRandomSeed("hello world again")
     const language = this.language
 
     const makePlanetarySystem = () =>

@@ -74,15 +74,15 @@ const config: DocsThemeConfig = {
       </div>
     ),
   },
-  banner: {
-    key: "Sharable urls",
-    text: (
-      <p>
-        🌐 Added sharable URLS; your location around the planetarium will be
-        synced to the URL bar! Share nice views with your friends!
-      </p>
-    ),
-  },
+  // banner: {
+  //   key: "Sharable urls",
+  //   text: (
+  //     <p>
+  //       🌐 Added sharable URLS; your location around the planetarium will be
+  //       synced to the URL bar! Share nice views with your friends!
+  //     </p>
+  //   ),
+  // },
   project: null,
   chat: {
     link: socials.discord,

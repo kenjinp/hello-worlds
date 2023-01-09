@@ -1,4 +1,8 @@
-import { LongLat, longLatToCartesian } from "@examples/tectonics/voronoi/math"
+import {
+  cartesianToPolar,
+  LongLat,
+  longLatToCartesian,
+} from "@examples/tectonics/voronoi/math"
 import { ECS, world } from "@game/ECS"
 import { archetypes } from "@game/Entity"
 import { Controls } from "@game/player/KeyboardController"
@@ -63,7 +67,7 @@ export function useGodCamera() {
       )
       target.sceneObject.getWorldPosition(worldPosition)
       const longLatPosition = longLatToCartesian(
-        entity.longLat || [0, 0],
+        [entity.long, entity.lat] || [0, 0],
         currentAltitude,
       ).add(worldPosition)
       entity.sceneObject.position.copy(longLatPosition)
@@ -106,16 +110,17 @@ export function useGodCamera() {
     if (!targetPlanet) return
     for (const entity of noTargets) {
       world.addComponent(entity, "target", targetPlanet)
-      world.addComponent(entity, "longLat", [0, 0])
+      world.addComponent(entity, "long", 0)
+      world.addComponent(entity, "lat", 0)
       camera.lookAt(targetPlanet.position)
     }
   }, [noTargets, planets])
 
-  React.useEffect(() => {
-    for (const entity of entities) {
-      camera.lookAt(entity.target.sceneObject.position)
-    }
-  }, [camera, entities[0]])
+  // React.useEffect(() => {
+  //   for (const entity of entities) {
+  //     camera.lookAt(entity.target.sceneObject.position)
+  //   }
+  // }, [camera, entities[0]])
 
   React.useEffect(() => {
     const lockChange = () => {
@@ -220,7 +225,7 @@ export function useGodCamera() {
 
       target.sceneObject.getWorldPosition(worldPosition)
       const longLatPosition = longLatToCartesian(
-        entity.longLat,
+        [entity.long, entity.lat],
         currentAltitude,
       ).add(worldPosition)
       entity.sceneObject.position.copy(longLatPosition)
@@ -271,8 +276,15 @@ export function useGodCamera() {
 
       if (_velocity.length) {
         _velocity.applyQuaternion(_quat)
-        // entity.sceneObject.position.addScaledVector(_velocity, speed * dl)
-
+        entity.sceneObject.position.addScaledVector(_velocity, speed * dl)
+        const ll = cartesianToPolar(
+          worldPosition
+            .copy(entity.sceneObject.position)
+            .sub(entity.target.sceneObject.position),
+        )
+        entity.long = ll[0]
+        entity.lat = ll[1]
+        //
         // entity.sceneObject.getWorldPosition(blah)
 
         // const newLongLat = cartesianToPolar(blah)
