@@ -1,10 +1,14 @@
-import { choose, shuffle } from "@hello-worlds/core"
+import { shuffle } from "@hello-worlds/core"
 import { gridDisk, latLngToCell } from "h3-js"
 import { Queue } from "./Queue"
 import { Plate, Tectonics } from "./Tectonics"
 
 export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
-  const assignedIndices = new Map<string, string>()
+  const assignedIndices = new Map<
+    string,
+    { occupyingPlateIndex: string; index: string }
+  >()
+  const floodfillIndices = new Map<string, string>()
   const { plates } = tectonics
   // We have already established our plate starting regions
   // We will treat these as "fronts" each of which will be a queue
@@ -15,11 +19,12 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
   }
 
   const assignCellToPlate = (index: string, plate: Plate) => {
-    plate.indices.push(index)
-    assignedIndices.set(index, plate.uuid)
+    plate.indices.add(index)
+    assignedIndices.set(index, { occupyingPlateIndex: plate.uuid, index })
+    floodfillIndices.set(index, plate.uuid)
   }
 
-  const fronts: Queue<{ plate: Plate; cellIndex: string }>[] = new Array(
+  let fronts: Queue<{ plate: Plate; cellIndex: string }>[] = new Array(
     plates.size,
   )
     .fill(0)
@@ -36,10 +41,12 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
     assignCellToPlate(originCell, plate)
     // we will prime the fronts by the starting cell
     const neighborIndices = gridDisk(originCell, 1)
-    fronts[index].enqueue({
-      plate,
-      cellIndex: choose<string[]>(neighborIndices),
-    })
+    for (let i = 0; i < neighborIndices.length; i++) {
+      fronts[index].enqueue({
+        plate,
+        cellIndex: neighborIndices[i],
+      })
+    }
     index++
   })
 
@@ -50,7 +57,7 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
     // iterate through all the fronts randomly
 
     // shuffle our fronts
-    shuffle<typeof fronts>(fronts)
+    fronts = shuffle<typeof fronts>(fronts)
 
     // deal our fronts
     for (let i = 0; i < fronts.length; i++) {
@@ -66,20 +73,35 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
       }
 
       if (!isCellAlreadyAssigned(cellIndex)) {
+        // Cell is up for grabs, give it to the plate that belongs to this front
         assignCellToPlate(cellIndex, plate)
 
         const neighborIndices = gridDisk(cellIndex, 1)
-        // enqueue the first n indices
         for (let i = 0; i < neighborIndices.length; i++) {
           queue.enqueue({
             plate,
             cellIndex: neighborIndices[i],
           })
         }
+      } else {
+        // Cell is already assigned, which means we are touching an edge!
+        // We will add this cell to the plate's edge list
+        // we might want to make a set or map from this instead
+        if (!plate.indices.has(cellIndex)) {
+          plate.externalEdges.add(cellIndex)
+          const occupyingPlateUuid =
+            assignedIndices.get(cellIndex)?.occupyingPlateIndex
+          const occupyingPlate = tectonics.plates.get(occupyingPlateUuid)
+          plate.neighbors.add(occupyingPlateUuid)
+          if (occupyingPlate) {
+            occupyingPlate.neighbors.add(plate.uuid)
+            occupyingPlate.internalEdges.add(cellIndex)
+          }
+        }
       }
     }
   }
 
   console.timeEnd("flood fill")
-  return assignedIndices
+  return floodfillIndices
 }

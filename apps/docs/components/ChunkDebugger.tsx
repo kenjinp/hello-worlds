@@ -10,31 +10,18 @@ import { Event } from "three"
 export const ChunkDebugger: React.FC = () => {
   const planet = usePlanet()
 
-  const map = React.useMemo(() => new Map<number, Date>(), [])
-
   React.useEffect(() => {
-    if (!map || !planet) return
+    if (!planet) return
     const pendingListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkPendingEvent
-      map.set(chunk.id, new Date())
+      console.time(chunk.id.toString())
     }
     const createdListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkGeneratedEvent
-      if (map.has(chunk.id)) {
-        console.log(
-          "chunk",
-          chunk.id,
-          "took",
-          new Date().getTime() - map.get(chunk.id)!.getTime(),
-          "ms",
-        )
-      } else {
-        console.log("chunk", chunk.id, "was never pending")
-      }
+      console.timeEnd(chunk.id.toString())
     }
     const willDisposeListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkWillBeDisposedEvent
-      map.delete(chunk.id)
     }
     planet.addEventListener(ChunkPendingEvent.type, pendingListener)
     planet.addEventListener(ChunkGeneratedEvent.type, createdListener)
@@ -47,6 +34,6 @@ export const ChunkDebugger: React.FC = () => {
         willDisposeListener,
       )
     }
-  }, [planet, map])
+  }, [planet])
   return null
 }

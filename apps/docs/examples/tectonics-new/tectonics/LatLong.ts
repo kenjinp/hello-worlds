@@ -22,8 +22,33 @@ export class LatLong {
     return Math.sqrt((this.lat - other.lat) ** 2 + (this.lon - other.lon) ** 2)
   }
 
+  copy() {
+    return new LatLong(this.lat, this.lon)
+  }
+
+  clone(latLong: LatLong) {
+    this.lat = latLong.lat
+    this.lon = latLong.lon
+  }
+
+  set(lat: number, lon: number) {
+    this.lat = lat
+    this.lon = lon
+  }
+
   static random() {
     return getRandomLatLong()
+  }
+
+  cartesianToLatLong(coordinates: Vector3): LatLong {
+    const longitude = Math.atan2(coordinates.x, coordinates.z) * RAD2DEG
+    const length = Math.sqrt(
+      coordinates.x * coordinates.x + coordinates.z * coordinates.z,
+    )
+    const latitude = Math.atan2(coordinates.y, length) * RAD2DEG
+    this.lat = latitude
+    this.lon = longitude
+    return this
   }
 
   static cartesianToLatLong(coordinates: Vector3): LatLong {

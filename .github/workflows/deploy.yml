@@ -2,8 +2,6 @@ name: GitHub Actions CI
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 jobs:
   deploy:
     name: Deploy to the World-Net

@@ -4,7 +4,7 @@ import { OrbitCamera, Planet, usePlanet } from "@hello-worlds/react"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useControls } from "leva"
 import * as React from "react"
-import { Vector3 } from "three"
+import { Color, MathUtils, Vector3 } from "three"
 import { Tectonics } from "./tectonics/Tectonics"
 
 const worker = () => new Worker(new URL("./Planet.worker", import.meta.url))
@@ -53,11 +53,29 @@ export const ExamplePlanet: React.FC = () => {
     numberOfPlates: 21,
   })
 
-  const tectonics = React.useMemo(
-    () =>
-      new Tectonics(numberOfPlates, new Vector3(), EARTH_RADIUS, resolution),
-    [numberOfPlates, resolution],
-  )
+  const tectonics = React.useMemo(() => {
+    const oceanicRate = 0.75
+    return new Tectonics({
+      numberOfPlates,
+      origin: new Vector3(),
+      radius: EARTH_RADIUS,
+      resolution,
+      createPlateData: () => {
+        const oceanic = MathUtils.randFloat(0, 1) < oceanicRate
+
+        return {
+          color: new Color(Math.random() * 0xffffff),
+          driftAxis: new Vector3().randomDirection(),
+          driftRate: MathUtils.randFloat(-Math.PI / 30, Math.PI / 30),
+          spinRate: MathUtils.randFloat(-Math.PI / 30, Math.PI / 30),
+          elevation: oceanic
+            ? MathUtils.randFloat(-0.8, -0.3)
+            : MathUtils.randFloat(0.1, 0.5),
+          oceanic,
+        }
+      },
+    })
+  }, [numberOfPlates, resolution])
 
   console.log({ tectonics })
 
