@@ -14,14 +14,14 @@ export const ChunkDebugger: React.FC = () => {
     if (!planet) return
     const pendingListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkPendingEvent
-      console.time(chunk.id.toString())
+      console.time(`chunk: ${chunk.id.toString()}`)
     }
     const createdListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkGeneratedEvent
-      console.timeEnd(chunk.id.toString())
+      console.timeEnd(`chunk: ${chunk.id.toString()}`)
     }
     const willDisposeListener = (e: Event) => {
-      const { chunk } = e as unknown as ChunkWillBeDisposedEvent
+      // const { chunk } = e as unknown as ChunkWillBeDisposedEvent
     }
     planet.addEventListener(ChunkPendingEvent.type, pendingListener)
     planet.addEventListener(ChunkGeneratedEvent.type, createdListener)

@@ -22,7 +22,7 @@
     "@hello-worlds/tongues": "workspace:*",
     "@liveblocks/client": "^0.17.11",
     "@liveblocks/react": "^0.17.11",
-    "@react-three/drei": "9.51.2",
+    "@react-three/drei": "9.52.4",
     "@react-three/fiber": "8.8.2",
     "@react-three/postprocessing": "^2.6.2",
     "@react-three/rapier": "0.11.2",

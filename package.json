@@ -7,6 +7,7 @@
   "license": "MIT",
   "repository": "git@github.com:kenjinp/hello-worlds",
   "scripts": {
+    "start": "pnpm --filter=docs dev",
     "build-deps": "pnpm --filter=@hello-worlds/* build",
     "preinstall": "npx only-allow pnpm",
     "test": "jest --passWithNoTests",

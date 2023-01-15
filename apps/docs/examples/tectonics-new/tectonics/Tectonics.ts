@@ -1,55 +1,11 @@
-import { cellsToMultiPolygon, CoordPair, latLngToCell } from "h3-js"
+import { latLngToCell } from "h3-js"
 import { MathUtils, Vector3 } from "three"
+import Edge from "./Edge"
 import { LatLong } from "./LatLong"
+import Plate from "./Plate"
 import { randomFloodFill } from "./Tectonics.floodfill"
 
 export const HEX_GRID_RESOLUTION = 3
-
-export class PlateBoundary {
-  constructor(public readonly plateA: Plate, public readonly plateB: Plate) {}
-}
-
-export class Plate<T = any> {
-  neighbors = new Set<string>()
-  name: string
-  indices = new Set<string>()
-  uuid = MathUtils.generateUUID()
-  polygon: CoordPair[][][]
-  externalEdges = new Set<string>()
-  internalEdges = new Set<string>()
-  constructor(public readonly origin: LatLong, public data: T) {
-    // console.log(cellsToMultiPolygon(hexagons, true))
-  }
-  static generatePolygon(plate: Plate) {
-    plate.polygon = cellsToMultiPolygon(Array.from(plate.indices))
-  }
-  // static getEdgesAtPosition(plate: Plate, position: Vector3) {
-  //   const latLong = LatLong.cartesianToLatLong(position)
-  //   const cell = latLngToCell(latLong.lat, latLong.lon, HEX_GRID_RESOLUTION)
-  //   const parent = cellToParent(cell, Math.max(1, HEX_GRID_RESOLUTION - 1))
-  //   const children = cellToChildren(parent, HEX_GRID_RESOLUTION)
-
-  //   const edgesToCheck = []
-  //   // for (const child of children) {
-  //   //   if (plate.internalEdges.has(child)) {
-  //   //     const ll = cellToLatLng(child, HEX_GRID_RESOLUTION)
-  //   //     position.distanceTo()
-  //   //   }
-  //   // }
-
-  //   // const edges = Plate.getEdges(cell)
-  //   // const edge = edges[0]
-  //   return edge
-  // }
-  // getPolygon() {
-  //   const set = new Set(this.indices)
-  //   const cells = cellsToMultiPolygon(Array.from(set))
-  //   return cells
-  // }
-  // static getPolygon<T = any>(plate: Plate<T>) {
-  //   return cellsToMultiPolygon(plate.indices)
-  // }
-}
 
 export interface TectonicsProps<T> {
   numberOfPlates: number
@@ -67,13 +23,20 @@ export class Tectonics<T = any> {
   origin: Vector3
   radius: number
   resolution: number
+  edges = new Map<string, Edge>()
   constructor(props: TectonicsProps<T>) {
     this.numberOfPlates = props.numberOfPlates
     this.origin = props.origin
     this.radius = props.radius
     this.resolution = props.resolution || HEX_GRID_RESOLUTION
 
+    console.time("Generating Plates")
     this.generatePlates(props.createPlateData)
+    console.timeEnd("Generating Plates")
+
+    console.time("Calculating Edge Forces")
+    this.calculateEdgeForces()
+    console.timeEnd("Calculating Edge Forces")
   }
 
   generatePlates(createPlateData: (latLong: LatLong) => T) {
@@ -84,6 +47,10 @@ export class Tectonics<T = any> {
       this.plates.set(plate.uuid, plate)
     }
     this.indices = randomFloodFill(this, this.resolution)
+  }
+
+  calculateEdgeForces() {
+    // TODO
   }
 
   getPlateFromVector3(vector: Vector3): Plate<T> | undefined {

@@ -26,7 +26,7 @@ importers:
       '@hello-worlds/tongues': workspace:*
       '@liveblocks/client': ^0.17.11
       '@liveblocks/react': ^0.17.11
-      '@react-three/drei': 9.51.2
+      '@react-three/drei': 9.52.4
       '@react-three/fiber': 8.8.2
       '@react-three/postprocessing': ^2.6.2
       '@react-three/rapier': 0.11.2
@@ -76,7 +76,7 @@ importers:
       '@hello-worlds/tongues': link:../../packages/tongues
       '@liveblocks/client': 0.17.11
       '@liveblocks/react': 0.17.11_g554a45gednjhhb3pqfawstgjq
-      '@react-three/drei': 9.51.2_e3qimqrzok5dx2pqca3us4bkzm
+      '@react-three/drei': 9.52.4_znowp54c66hedaukj7zz4rfp4u
       '@react-three/fiber': 8.8.2_f72olm6mn3unzgg4exeiaoxanm
       '@react-three/postprocessing': 2.7.0_xoluxttg6hva4uw736b2fbnf6a
       '@react-three/rapier': 0.11.2_xoluxttg6hva4uw736b2fbnf6a
@@ -1866,8 +1866,8 @@ packages:
       zustand: 3.7.2_react@18.2.0
     dev: true
 
-  /@react-three/drei/9.51.2_e3qimqrzok5dx2pqca3us4bkzm:
-    resolution: {integrity: sha512-yXFj1gNXndhioKtaz+eQOfPp0a23OXMAb47R4jAiN6eFcmernrtIm9I0QRSnmLSESkZPmL+l/dXE/zGM8kFWcQ==}
+  /@react-three/drei/9.52.4_znowp54c66hedaukj7zz4rfp4u:
+    resolution: {integrity: sha512-VroKnKgBqEB1dsOvNCEcbikel/9qA+CobRY9BOEMdKRZHAboaBdw1y1fGDOT4SXbRnfW/EOZ4HoYEek+KWQo5w==}
     peerDependencies:
       '@react-three/fiber': '>=8.0'
       react: '>=18.0'
@@ -1886,6 +1886,7 @@ packages:
       lodash.clamp: 4.0.3
       lodash.omit: 4.5.0
       lodash.pick: 4.4.0
+      maath: 0.5.1_vduzdnezrh2zncenssny4pekqa
       meshline: 3.1.6_three@0.143.0
       react: 18.2.0
       react-composer: 5.0.3_react@18.2.0
@@ -1899,6 +1900,8 @@ packages:
       troika-three-text: 0.47.1_three@0.143.0
       utility-types: 3.10.0
       zustand: 3.7.2_react@18.2.0
+    transitivePeerDependencies:
+      - '@types/three'
     dev: false
 
   /@react-three/fiber/8.8.2_f72olm6mn3unzgg4exeiaoxanm:
@@ -2250,7 +2253,6 @@ packages:
     resolution: {integrity: sha512-OJdKDgTPVBUgc+s74DYoy4aLznbFFC38Xm4ElmU1YwGNgR7GGFVvFCX7lpVgOsT6S1zSJtGdajTsOYE8/xY9nA==}
     dependencies:
       '@types/webxr': 0.5.0
-    dev: true
 
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
@@ -2258,7 +2260,6 @@ packages:
 
   /@types/webxr/0.5.0:
     resolution: {integrity: sha512-IUMDPSXnYIbEO2IereEFcgcqfDREOgmbGqtrMpVPpACTU6pltYLwHgVkrnYv0XhWEcjio9sYEfIEzgn3c7nDqA==}
-    dev: true
 
   /@use-gesture/core/10.2.22:
     resolution: {integrity: sha512-Ek0JZFYfk+hicLmoG094gm3YOuDMBNckHb988e59YOZoAkETT8dQSzT+g3QkSHSiP1m5wFXAGPSgxvOuwvGKHQ==}
@@ -4098,6 +4099,16 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+    dev: false
+
+  /maath/0.5.1_vduzdnezrh2zncenssny4pekqa:
+    resolution: {integrity: sha512-qSyiavNFnB957lGQiGvHr+fEgG3ZXrk2upniCAAMsZb54NaZfMLMFakHqp+22OKlix5UNwYqJ8vFeO4hAq0U1Q==}
+    peerDependencies:
+      '@types/three': '>=0.144.0'
+      three: '>=0.144.0'
+    dependencies:
+      '@types/three': 0.141.0
+      three: 0.143.0
     dev: false
 
   /make-error/1.3.6:

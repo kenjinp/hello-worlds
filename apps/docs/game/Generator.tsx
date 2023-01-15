@@ -5,7 +5,7 @@ import {
   EARTH_RADIUS,
   MOON_DISTANCE,
   MOON_RADIUS,
-  SUN_RADIUS
+  SUN_RADIUS,
 } from "@game/Math"
 import {
   capitalize,
@@ -13,7 +13,7 @@ import {
   randomRange,
   randomRangeInt,
   randomSign,
-  setRandomSeed
+  setRandomSeed,
 } from "@hello-worlds/core"
 import { remap } from "@hello-worlds/planets"
 import { Language } from "@hello-worlds/tongues"
@@ -53,7 +53,7 @@ export class SystemGenerator {
           seaLevel: 2_500,
           planet: true,
           planetType: PLANET_TYPES.TERRAN,
-          atmosphereRadius: radius * 1.2,
+          atmosphereRadius: radius * 1.01,
           position: new Vector3(),
           name: capitalize(language.makeWord("planetA")),
           labelColor: new Color(random() * 0xffffff),
@@ -81,7 +81,7 @@ export class SystemGenerator {
             parentIndex: i,
             atmosphereRadius:
               randomRangeInt(0, 2) >= 1
-                ? randomRange(MOON_RADIUS * 1.0, MOON_RADIUS * 1.05)
+                ? randomRange(MOON_RADIUS * 1.01, MOON_RADIUS * 1.05)
                 : undefined,
             position,
             children: [],

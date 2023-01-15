@@ -10,7 +10,9 @@ import { latLngToCell } from "h3-js"
 import { Color, Line3, Vector3 } from "three"
 import { LatLong } from "./tectonics/LatLong"
 
-import { HEX_GRID_RESOLUTION, Plate, Tectonics } from "./tectonics/Tectonics"
+import { HEX_GRID_RESOLUTION, Tectonics } from "./tectonics/Tectonics"
+
+import Plate from "./tectonics/Plate"
 
 export type ThreadParams = {
   size: number

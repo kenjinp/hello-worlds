@@ -1,7 +1,9 @@
 import { shuffle } from "@hello-worlds/core"
 import { gridDisk, latLngToCell } from "h3-js"
+import Edge from "./Edge"
+import Plate from "./Plate"
 import { Queue } from "./Queue"
-import { Plate, Tectonics } from "./Tectonics"
+import { Tectonics } from "./Tectonics"
 
 export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
   const assignedIndices = new Map<
@@ -9,6 +11,13 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
     { occupyingPlateIndex: string; index: string }
   >()
   const floodfillIndices = new Map<string, string>()
+  const edgeMap = new Map<
+    string,
+    {
+      plateA: string
+      plateB: string
+    }
+  >()
   const { plates } = tectonics
   // We have already established our plate starting regions
   // We will treat these as "fronts" each of which will be a queue
@@ -91,8 +100,16 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
           plate.externalEdges.add(cellIndex)
           const occupyingPlateUuid =
             assignedIndices.get(cellIndex)?.occupyingPlateIndex
+
           const occupyingPlate = tectonics.plates.get(occupyingPlateUuid)
           plate.neighbors.add(occupyingPlateUuid)
+
+          // Mark edges to be generated later
+          edgeMap.set(Edge.makeEdgeKey(plate, occupyingPlate), {
+            plateA: plate.uuid,
+            plateB: occupyingPlateUuid,
+          })
+
           if (occupyingPlate) {
             occupyingPlate.neighbors.add(plate.uuid)
             occupyingPlate.internalEdges.add(cellIndex)
@@ -101,6 +118,18 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
       }
     }
   }
+
+  console.time("Generate Edges")
+  // iterate through edgeMap and generate edges
+  edgeMap.forEach(({ plateA, plateB }, key) => {
+    const plateAInstance = tectonics.plates.get(plateA)
+    const plateBInstance = tectonics.plates.get(plateB)
+    if (plateAInstance && plateBInstance) {
+      const edge = new Edge(plateAInstance, plateBInstance)
+      tectonics.edges.set(edge.key, edge)
+    }
+  })
+  console.timeEnd("Generate Edges")
 
   console.timeEnd("flood fill")
   return floodfillIndices
