@@ -53,7 +53,7 @@ export class SystemGenerator {
           seaLevel: 2_500,
           planet: true,
           planetType: PLANET_TYPES.TERRAN,
-          atmosphereRadius: radius * 1.01,
+          atmosphereRadius: radius * 1.02,
           position: new Vector3(),
           name: capitalize(language.makeWord("planetA")),
           labelColor: new Color(random() * 0xffffff),

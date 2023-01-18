@@ -31,6 +31,7 @@ importers:
       '@react-three/postprocessing': ^2.6.2
       '@react-three/rapier': 0.11.2
       '@types/node': 18.11.10
+      '@types/react': ^18.0.0
       '@types/three': ^0.141.0
       axios: ^1.2.1
       d3-geo-voronoi: ^2.0.1
@@ -110,6 +111,7 @@ importers:
       yet-another-react-lightbox: 2.2.3_biqbaboplfbrettd7655fr4n2y
     devDependencies:
       '@types/node': 18.11.10
+      '@types/react': 18.0.25
       '@types/three': 0.141.0
       three-stdlib: 2.19.0_three@0.143.0
       typescript: 4.9.3
@@ -718,7 +720,7 @@ packages:
     resolution: {integrity: sha512-G/YwXTkv7Den9mXDO7AhLWkE3q+I92B+VqAE+dYG4NGPaHZGvt3G8Q0p9vmE+sq7rTGphUbAvmQ9YpbfMQGGlA==}
     dev: false
 
-  /@emotion/react/11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u:
+  /@emotion/react/11.10.5_cuziicjcvwawlf5iuhzacuhqcy:
     resolution: {integrity: sha512-TZs6235tCJ/7iF6/rvTaOH4oxQg2gMAcdHemjwLKIjKz4rRuYe1HJ2TQJKnAcRAfOUDdU8XoDadCe1rl72iv8A==}
     peerDependencies:
       '@babel/core': ^7.0.0
@@ -738,6 +740,7 @@ packages:
       '@emotion/use-insertion-effect-with-fallbacks': 1.0.0_react@18.2.0
       '@emotion/utils': 1.2.0
       '@emotion/weak-memoize': 0.3.0
+      '@types/react': 18.0.25
       hoist-non-react-statics: 3.3.2
       react: 18.2.0
     dev: false
@@ -2074,7 +2077,7 @@ packages:
       '@emotion/react': ^11
       react: '>=18'
     dependencies:
-      '@emotion/react': 11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u
+      '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       '@theme-ui/core': 0.15.4_hp5f5nkljdiwilp4rgxyefcplu
       '@theme-ui/css': 0.15.4_@emotion+react@11.10.5
       deepmerge: 4.2.2
@@ -2087,7 +2090,7 @@ packages:
       '@emotion/react': ^11
       react: '>=18'
     dependencies:
-      '@emotion/react': 11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u
+      '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       '@styled-system/color': 5.1.2
       '@styled-system/should-forward-prop': 5.1.5
       '@styled-system/space': 5.1.2
@@ -2102,7 +2105,7 @@ packages:
       '@emotion/react': ^11
       react: '>=18'
     dependencies:
-      '@emotion/react': 11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u
+      '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       '@theme-ui/css': 0.15.4_@emotion+react@11.10.5
       deepmerge: 4.2.2
       react: 18.2.0
@@ -2113,7 +2116,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11
     dependencies:
-      '@emotion/react': 11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u
+      '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       csstype: 3.1.1
     dev: false
 
@@ -2123,7 +2126,7 @@ packages:
       '@emotion/react': ^11
       react: '>=18'
     dependencies:
-      '@emotion/react': 11.10.5_3lzqd2prgnu7gkxqqdmtvzna5u
+      '@emotion/react': 11.10.5_cuziicjcvwawlf5iuhzacuhqcy
       '@theme-ui/color-modes': 0.15.4_hp5f5nkljdiwilp4rgxyefcplu
       '@theme-ui/core': 0.15.4_hp5f5nkljdiwilp4rgxyefcplu
       '@theme-ui/css': 0.15.4_@emotion+react@11.10.5

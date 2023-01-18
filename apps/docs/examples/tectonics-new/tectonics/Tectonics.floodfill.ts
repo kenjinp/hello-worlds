@@ -1,4 +1,3 @@
-import { shuffle } from "@hello-worlds/core"
 import { gridDisk, latLngToCell } from "h3-js"
 import Edge from "./Edge"
 import Plate from "./Plate"
@@ -66,7 +65,7 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
     // iterate through all the fronts randomly
 
     // shuffle our fronts
-    fronts = shuffle<typeof fronts>(fronts)
+    // fronts = shuffle<typeof fronts>(fronts)
 
     // deal our fronts
     for (let i = 0; i < fronts.length; i++) {

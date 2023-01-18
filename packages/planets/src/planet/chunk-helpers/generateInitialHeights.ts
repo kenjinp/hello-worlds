@@ -63,23 +63,6 @@ export const generateInitialHeights = <D>(
       _W.copy(_P)
       _W.applyMatrix4(localToWorld)
 
-      // Compute position
-      // _P.set(xp - half, yp - half, radius)
-      // _P.add(offset)
-      // _P.normalize()
-      // _D.copy(_P)
-      // _D.transformDirection(localToWorld)
-
-      // _P.multiplyScalar(radius)
-      // _P.z -= radius
-
-      // // Keep the absolute world space position to sample noise
-      // _W.copy(_P)
-      // _W.applyMatrix4(localToWorld)
-
-      // Move the position relative to the origin
-      // _P.sub(origin)
-
       // Purturb height along z-vector
       const heightInput = _W.clone()
       const height = heightGenerator({

@@ -2,7 +2,8 @@ import { cellToLatLng } from "h3-js"
 import * as React from "react"
 import { Color, Float32BufferAttribute, Mesh, Vector3 } from "three"
 import { LatLong } from "./tectonics/LatLong"
-import { Plate, Tectonics } from "./tectonics/Tectonics"
+import Plate from "./tectonics/Plate"
+import { Tectonics } from "./tectonics/Tectonics"
 
 function buildArrow(
   verts: number[],

@@ -56,7 +56,6 @@ export default class Edge {
   }
 
   calculateEdgeForces() {
-    console.log(this.points.size)
     for (const [key, point] of this.points) {
       this.boundaryPoints.set(point.hash, new BoundaryPoint(this, point))
     }

@@ -1,4 +1,3 @@
-import { ChunkDebugger } from "@components/ChunkDebugger"
 import { EARTH_RADIUS } from "@game/Math"
 import { OrbitCamera, Planet, usePlanet } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
@@ -6,7 +5,7 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useControls } from "leva"
 import * as React from "react"
 import { Color, MathUtils, Vector3 } from "three"
-import { PlateMovement } from "./Movement"
+import { PlateEdges } from "./Edges"
 import { Plate, Tectonics } from "./tectonics/Tectonics"
 
 const tempVector3 = new Vector3()
@@ -42,8 +41,6 @@ const ToggleLodOriginHelper: React.FC = () => {
 }
 
 const PlateLabels = ({ tectonics }) => {
-  const planet = usePlanet()
-
   return (
     <>
       {Array.from(tectonics.plates.values()).map((plate: Plate, index) => {
@@ -53,7 +50,8 @@ const PlateLabels = ({ tectonics }) => {
               EARTH_RADIUS + 10_000,
               tempVector3,
             )}
-            occlude="blending"
+            occlude
+            // occlude="blending"
             style={{
               width: "400px",
               height: "200px",
@@ -72,22 +70,29 @@ const PlateLabels = ({ tectonics }) => {
 
 export const ExamplePlanet: React.FC = () => {
   const camera = useThree(s => s.camera)
-  const { size, resolution, numberOfPlates, showMovement, showPlanet } =
-    useControls({
-      size: {
-        min: 0,
-        max: 20,
-        value: 3,
-      },
-      resolution: {
-        min: 0,
-        max: 20,
-        value: 3,
-      },
-      numberOfPlates: 21,
-      showMovement: true,
-      showPlanet: true,
-    })
+  const {
+    size,
+    resolution,
+    numberOfPlates,
+    showMovement,
+    showPlanet,
+    showPlateBoundaries,
+  } = useControls({
+    size: {
+      min: 0,
+      max: 20,
+      value: 3,
+    },
+    resolution: {
+      min: 0,
+      max: 20,
+      value: 3,
+    },
+    numberOfPlates: 21,
+    showPlateBoundaries: true,
+    showMovement: true,
+    showPlanet: true,
+  })
 
   const tectonics = React.useMemo(() => {
     console.log("generating tectonics")
@@ -134,12 +139,15 @@ export const ExamplePlanet: React.FC = () => {
         }}
         autoUpdate={false}
       >
-        <ChunkDebugger />
+        {/* <PlateLabels tectonics={tectonics} /> */}
+        <PlateEdges tectonics={tectonics} />
+        {/* <ChunkDebugger /> */}
         <OrbitCamera />
         <ToggleLodOriginHelper />
         <meshStandardMaterial vertexColors side={2} visible={showPlanet} />
       </Planet>
-      {showMovement && <PlateMovement tectonics={tectonics} />}
+      {/* {showPlateBoundaries && <PlateBoundaries tectonics={tectonics} />} */}
+      {/* {showMovement && <PlateMovement tectonics={tectonics} />} */}
     </>
   )
 }

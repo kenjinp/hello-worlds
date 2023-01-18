@@ -32,11 +32,11 @@ export class LatLong {
     return Math.sqrt((this.lat - other.lat) ** 2 + (this.lon - other.lon) ** 2)
   }
 
-  copy() {
+  clone() {
     return new LatLong(this.lat, this.lon)
   }
 
-  clone(latLong: LatLong) {
+  copy(latLong: LatLong) {
     this.lat = latLong.lat
     this.lon = latLong.lon
     return this

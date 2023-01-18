@@ -1,5 +1,5 @@
 import { latLngToCell } from "h3-js"
-import { MathUtils, Vector3 } from "three"
+import { EventDispatcher, MathUtils, Vector3 } from "three"
 import Edge from "./Edge"
 import { LatLong } from "./LatLong"
 import Plate from "./Plate"
@@ -15,7 +15,13 @@ export interface TectonicsProps<T> {
   createPlateData: (latLong: LatLong) => T
 }
 
-export class Tectonics<T = any> {
+export class TectonicsGeneratedEvent {
+  type = "tectonics-generated"
+  static type = "tectonics-generated"
+  constructor() {}
+}
+
+export class Tectonics<T = any> extends EventDispatcher {
   plates: Map<string, Plate<T>> = new Map()
   indices: Map<string, string> = new Map()
   uuid = MathUtils.generateUUID()
@@ -24,7 +30,9 @@ export class Tectonics<T = any> {
   radius: number
   resolution: number
   edges = new Map<string, Edge>()
+
   constructor(props: TectonicsProps<T>) {
+    super()
     this.numberOfPlates = props.numberOfPlates
     this.origin = props.origin
     this.radius = props.radius
@@ -33,10 +41,15 @@ export class Tectonics<T = any> {
     console.time("Generating Plates")
     this.generatePlates(props.createPlateData)
     console.timeEnd("Generating Plates")
+    this.dispatchEvent(new TectonicsGeneratedEvent())
 
-    console.time("Calculating Edge Forces")
-    this.calculateEdgeForces()
-    console.timeEnd("Calculating Edge Forces")
+    this.plates.forEach(plate => {
+      Plate.generatePolygon(plate)
+    })
+
+    console.time("Generate Region Elevations")
+    //
+    console.timeEnd("Generate Region Elevations")
   }
 
   generatePlates(createPlateData: (latLong: LatLong) => T) {
@@ -47,10 +60,6 @@ export class Tectonics<T = any> {
       this.plates.set(plate.uuid, plate)
     }
     this.indices = randomFloodFill(this, this.resolution)
-  }
-
-  calculateEdgeForces() {
-    // TODO
   }
 
   getPlateFromVector3(vector: Vector3): Plate<T> | undefined {
