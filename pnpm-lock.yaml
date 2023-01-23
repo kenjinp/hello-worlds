@@ -43,6 +43,7 @@ importers:
       next: ^13.0.6
       nextra: 2.0.1
       nextra-theme-docs: 2.0.1
+      r3f-perf: ^6.6.3
       react: ^18.2.0
       react-dom: ^18.2.0
       react-draggable: ^4.4.5
@@ -91,6 +92,7 @@ importers:
       next: 13.0.7_mqvh5p7ejg4taogoj6tpk3gd5a
       nextra: 2.0.1_gvvct4imq5upoiloat43sswrza
       nextra-theme-docs: 2.0.1_gvvct4imq5upoiloat43sswrza
+      r3f-perf: 6.6.3_vtqndhihml5ry2en7ganqoalm4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
@@ -1556,6 +1558,14 @@ packages:
       react: ^16.8 || ^17.0
     dependencies:
       '@babel/runtime': 7.20.1
+      react: 18.2.0
+    dev: false
+
+  /@radix-ui/react-icons/1.1.1_react@18.2.0:
+    resolution: {integrity: sha512-xc3wQC59rsFylVbSusQCrrM+6695ppF730Q6yqzhRdqDcRNWIm2R6ngpzBoSOQMcwnq4p805F+Gr7xo4fmtN1A==}
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+    dependencies:
       react: 18.2.0
     dev: false
 
@@ -5334,6 +5344,29 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /r3f-perf/6.6.3_vtqndhihml5ry2en7ganqoalm4:
+    resolution: {integrity: sha512-qP/bNKpVDG5eZC0eBx/a8p6Y1Y9ZoxySYFyqVwcR/ci9DtDd4hFEahNgWvN8nIRD2t5BQ0wsxkJ5RXDssICC8w==}
+    peerDependencies:
+      '@react-three/drei': '*'
+      '@react-three/fiber': '*'
+      react: '>=18.0'
+      react-dom: '>=18.0'
+      three: '*'
+      three-stdlib: '*'
+    dependencies:
+      '@radix-ui/react-icons': 1.1.1_react@18.2.0
+      '@react-three/drei': 9.52.4_znowp54c66hedaukj7zz4rfp4u
+      '@react-three/fiber': 8.8.2_f72olm6mn3unzgg4exeiaoxanm
+      '@stitches/react': 1.2.8_react@18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      three: 0.143.0
+      three-stdlib: 2.19.0_three@0.143.0
+      zustand: 4.3.2_react@18.2.0
+    transitivePeerDependencies:
+      - immer
+    dev: false
+
   /rand-seed/1.0.2:
     resolution: {integrity: sha512-Nu4jxelXx2hKyZJQvkRcUyc1n1ZDQk/VUYmY3hxYfXYGrMfCFqsJ9O6r5jtpt8KjqbllCB8qnIB86Oqy4s5gdw==}
     dev: false
@@ -6681,6 +6714,14 @@ packages:
       react: 18.2.0
     dev: false
 
+  /use-sync-external-store/1.2.0_react@18.2.0:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
@@ -6965,6 +7006,22 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
+
+  /zustand/4.3.2_react@18.2.0:
+    resolution: {integrity: sha512-rd4haDmlwMTVWVqwvgy00ny8rtti/klRoZjFbL/MAcDnmD5qSw/RZc+Vddstdv90M5Lv6RPgWvm1Hivyn0QgJw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
 
   /zwitch/2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

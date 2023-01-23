@@ -1,4 +1,4 @@
-import { Planet, RingWorldProps } from "@hello-worlds/planets"
+import { Planet, RingWorld, RingWorldProps } from "@hello-worlds/planets"
 import { RigidBodyApi } from "@react-three/rapier"
 import { Strict, With } from "miniplex"
 import { Color, Mesh, Object3D, Quaternion, Vector3 } from "three"
@@ -20,6 +20,7 @@ export type OrbitalCharacteristicProperties = {
 }
 
 export type AstronomicalObjectProperties = {
+  helloPlanet?: Planet | RingWorld
   id: number | string
   index?: number
   radius: number
@@ -62,7 +63,6 @@ export enum PLANET_TYPES {
 export type PlanetProperties = {
   radius: number
   seed: string
-  helloPlanet?: Planet
   clouds?: Tag
   planet?: Tag
   moon?: Tag
@@ -74,7 +74,7 @@ export type PlanetProperties = {
 }
 
 export type RingWorldProperties = {
-  ringWorld: Tag
+  isRingWorld: Tag
   length
   seed: string
   mesh?: Mesh
@@ -155,6 +155,15 @@ export type GodCamera = {
   lat: number
   target: Entity
   scale: number
+  pointerLocked: boolean
+}
+
+export type FlyCamera = {
+  isFlyCameraTarget: Tag
+  minSpeed: number
+  maxSpeed: number
+  rollSpeed: number
+  targetSpeed: number
 }
 
 // export type OrbitCamera = {
@@ -178,7 +187,8 @@ export type Entity = Partial<
     AffectedByGravity &
     Velocity &
     Flyable &
-    GodCamera
+    GodCamera &
+    FlyCamera
   // OrbitCamera
 >
 
@@ -199,6 +209,7 @@ export const archetypes = {
     "target",
     "sceneObject",
   ),
+  flyCamera: world.archetype("isFlyCameraTarget", "sceneObject"),
   flyable: world.archetype("velocity", "sceneObject", "isFlyable"),
   affectedByGravity: world.archetype(
     "affectedByGravity",
@@ -224,7 +235,8 @@ export const archetypes = {
     "seaLevel",
     "planetType",
   ),
-  planetOrMoon: world.archetype("planetType"),
+  planetOrMoon: world.archetype("helloPlanet"),
+  helloPlanet: world.archetype("helloPlanet"),
   moon: world.archetype("moon"),
   ringWorld: world.archetype("ringWorld"),
   player: world.archetype("isPlayer").without("isCurrentPlayer"),

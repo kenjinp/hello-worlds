@@ -56,7 +56,7 @@ export const useVelocity = () => {
 }
 
 export const useClosestPlanet = () => {
-  const { entities: planets } = useEntities(archetypes.planetOrMoon)
+  const { entities: planets } = useEntities(archetypes.helloPlanet)
   const { entities: tracking } = useEntities(
     archetypes.trackingClosestAstroObject,
   )
@@ -64,12 +64,12 @@ export const useClosestPlanet = () => {
   useFrame(() => {
     for (const tracker of tracking) {
       const closestPlanetToEntity = planets.sort((a, b) => {
-        return (
-          tracker.sceneObject.position.distanceToSquared(a.position) -
-          tracker.sceneObject.position.distanceToSquared(b.position)
-        )
+        const distA =  tracker.sceneObject.position.distanceToSquared(
+          a.helloPlanet.position,
+        );
+        const distB = tracker.sceneObject.position.distanceToSquared(b.helloPlanet.position);
+        return distA - distB
       })[0]
-      if (tracker.closestAstronomicalObject === closestPlanetToEntity) return
       tracker.closestAstronomicalObject = closestPlanetToEntity
     }
   })
@@ -90,7 +90,7 @@ function useCamera() {
   // The last element is considered the target.
 
   useFrame((_, delta) => {
-    if (!target) {
+    if (!target || !target.sceneObject) {
       return
     }
 

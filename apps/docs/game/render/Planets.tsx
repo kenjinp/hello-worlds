@@ -1,7 +1,6 @@
 import { ECS, world } from "@game/ECS"
 import { archetypes } from "@game/Entity"
 import { CERES_RADIUS } from "@game/Math"
-import { useWatchComponent } from "@game/player/Player"
 import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
@@ -26,48 +25,6 @@ export const EntityPlanetWrapper: React.FC = () => {
 
   return null
 }
-
-// const WeeBoat: React.FC = () => {
-//   const entity = ECS.useCurrentEntity()
-//   const meshRef = React.useRef<Mesh>(null)
-//   const [position] = React.useState(
-//     randomSpherePointVector3(
-//       new Vector3(),
-//       entity.radius + entity.seaLevel + 5,
-//     ),
-//   )
-
-//   React.useEffect(() => {
-//     if (!meshRef.current) return
-//     meshRef.current.lookAt(entity.position)
-//     // meshRef.current.rotation.set(new Vector3(0, 0, Math.PI / 2))
-//     meshRef.current.rotateX((Math.PI / 2) * 3)
-//     // getDirectionFromSphere(meshRef.current, entity.position)
-//     // orientMeshFromSphere(meshRef.current, entity.position)
-//     // meshRef.current.rotation.set(new Vector3(0, 0, Math.PI / 2))
-//     // convertMeshToYUp(meshRef.current)
-//   }, [meshRef, entity])
-
-//   return (
-//     <group position={position}>
-//       <mesh ref={meshRef}>
-//         {/* <cylinderGeometry
-//           args={[
-//             (entity.radius / 100) * 0.95,
-//             entity.radius / 100,
-//             entity.radius / 10,
-//             32,
-//           ]}
-//         />
-//         <meshBasicMaterial color="red" opacity={0.1} /> */}
-//         <Boat />
-//       </mesh>
-//       <Html style={{ color: "white" }}>
-//         <i>Boat :)</i>
-//       </Html>
-//     </group>
-//   )
-// }
 
 export const CorrectedChunkTranslation: React.FC<{
   chunk: HelloChunk
@@ -175,14 +132,11 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
       position,
       radius = CERES_RADIUS,
       seed,
-      clouds,
-      gravity,
       name,
       labelColor,
       planetType: type,
       seaLevel,
     } = entity
-    const isFocused = useWatchComponent("isFocused")
 
     const initialData = React.useMemo(
       () => ({
@@ -193,14 +147,11 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
       [],
     )
 
-    console.log("PlanetRender", entity.name, isFocused)
-
     return (
       <ECS.Component name="sceneObject">
         <HelloPlanet
           ref={ref}
           position={position}
-          // inverted
           radius={radius}
           minCellSize={32 * 8}
           minCellResolution={32 * 2}
@@ -209,7 +160,7 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
           data={initialData}
         >
           <Html>
-            <i style={{ color: labelColor.getStyle() }}>{name}</i>
+            <h1 style={{ color: labelColor.getStyle() }}>{name}</h1>
           </Html>
           {/* <PlanetPhysics /> */}
           <EntityPlanetWrapper />

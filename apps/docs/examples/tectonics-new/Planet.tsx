@@ -5,7 +5,6 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { useControls } from "leva"
 import * as React from "react"
 import { Color, MathUtils, Vector3 } from "three"
-import { PlateEdges } from "./Edges"
 import { Plate, Tectonics } from "./tectonics/Tectonics"
 
 const tempVector3 = new Vector3()
@@ -140,7 +139,7 @@ export const ExamplePlanet: React.FC = () => {
         autoUpdate={false}
       >
         {/* <PlateLabels tectonics={tectonics} /> */}
-        <PlateEdges tectonics={tectonics} />
+        {/* <PlateEdges tectonics={tectonics} /> */}
         {/* <ChunkDebugger /> */}
         <OrbitCamera />
         <ToggleLodOriginHelper />

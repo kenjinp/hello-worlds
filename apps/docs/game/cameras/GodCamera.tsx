@@ -1,6 +1,6 @@
+import { useCanvasPointerLock } from "@components/hooks/usePointerLock"
 import {
   cartesianToPolar,
-  LongLat,
   longLatToCartesian,
 } from "@examples/tectonics/voronoi/math"
 import { ECS, world } from "@game/ECS"
@@ -38,14 +38,18 @@ const _quat = new Quaternion()
 export function useGodCamera() {
   const { entities: noTargets } = useEntities(archetypes.godCameraNoTarget)
   const { entities: planets } = useEntities(archetypes.planetOrMoon)
+
   const { entities } = useEntities(archetypes.godCamera)
+  // currentGodCamera singleton (there should only ever be one)
+  const godCameraEntity = ECS.useCurrentEntity()
+
   const camera = useThree(s => s.camera)
   const domElement = useThree(state => state.gl.domElement)
   const scene = useThree(state => state.scene)
   const [, get] = useKeyboardControls<Controls>()
   const _euler = new Euler(0, 0, 0, "YXZ")
-  const [isLocked, setLisLocked] = React.useState(false)
-  const target = useWatchEntityComponent(entities[0], "target")
+  const target = useWatchEntityComponent(godCameraEntity, "target")
+  const { isLocked, exitPointerLock } = useCanvasPointerLock()
 
   const { childReferenceObject, referenceObject } = React.useMemo(() => {
     const referenceObject = new Object3D()
@@ -123,25 +127,10 @@ export function useGodCamera() {
   // }, [camera, entities[0]])
 
   React.useEffect(() => {
-    const lockChange = () => {
-      if (isLocked) return
-      domElement.requestPointerLock()
-    }
-    domElement.addEventListener("click", lockChange)
     return () => {
-      domElement.removeEventListener("click", lockChange)
+      exitPointerLock()
     }
-  }, [isLocked])
-
-  React.useEffect(() => {
-    const onPointerLockChange = () => {
-      setLisLocked(document.pointerLockElement === domElement)
-    }
-    document.addEventListener("pointerlockchange", onPointerLockChange)
-    return () => {
-      document.removeEventListener("pointerlockchange", onPointerLockChange)
-    }
-  }, [domElement])
+  }, [])
 
   React.useEffect(() => {
     const scrollWheelListener = (e: WheelEvent) => {
@@ -299,13 +288,16 @@ export function useGodCamera() {
   })
 }
 
-export const GodCamera: React.FC<
-  React.PropsWithChildren<{ initialLongLat: LongLat }>
-> = ({ initialLongLat }) => {
+export const GodCameraSingletonSystem: React.FC = () => {
   useGodCamera()
+  return null
+}
+
+export const GodCamera: React.FC<React.PropsWithChildren<{}>> = () => {
   return (
     <>
       <ECS.Entity>
+        <GodCameraSingletonSystem />
         <ECS.Component name="isGodCameraTarget" data={true} />
         {/* <ECS.Component name="longLat" data={initialLongLat} /> */}
         {/* <ECS.Component name="target" data={entity} /> */}

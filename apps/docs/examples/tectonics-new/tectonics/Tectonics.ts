@@ -52,6 +52,26 @@ export class Tectonics<T = any> extends EventDispatcher {
     console.timeEnd("Generate Region Elevations")
   }
 
+  closestPlateToLatLongPosition(
+    latLong: LatLong,
+  ): { plate: Plate<T>; distance: number } | undefined {
+    let closestPlate: Plate<T> | undefined
+    let closestDistance = Infinity
+    for (const plate of this.plates.values()) {
+      const distance = plate.origin.distanceTo(latLong)
+      if (distance < closestDistance) {
+        closestPlate = plate
+        closestDistance = distance
+      }
+    }
+    return closestPlate
+      ? {
+          plate: closestPlate,
+          distance: closestDistance,
+        }
+      : undefined
+  }
+
   generatePlates(createPlateData: (latLong: LatLong) => T) {
     while (this.plates.size < this.numberOfPlates) {
       const latLong = LatLong.random()

@@ -79,7 +79,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
 
     // const influence = remap(distance, 0, radius / 2, 0, 1)
 
-    distance = remap(distance, 0, radius / 6, 0, 80_000) * m
+    distance = remap(distance, 0, radius / 6, 0, 80_000)
 
     // remap(distance, 0, 1000, 0, 1)
 

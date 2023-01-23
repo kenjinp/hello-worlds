@@ -60,8 +60,15 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
 
   console.time("flood fill")
 
+  let isAllEmpty = false
+  for (let i = 0; i < fronts.length; i++) {
+    const queue = fronts[i]
+    isAllEmpty = isAllEmpty || !queue.isEmpty
+  }
+
   // while the fronts still have enqueued cells to process, we will continue
-  while (fronts.reduce((memo, q) => memo || !q.isEmpty, false)) {
+  while (isAllEmpty) {
+    isAllEmpty = false
     // iterate through all the fronts randomly
 
     // shuffle our fronts
@@ -115,6 +122,8 @@ export function randomFloodFill(tectonics: Tectonics, gridResolution: number) {
           }
         }
       }
+
+      isAllEmpty = isAllEmpty || !queue.isEmpty
     }
   }
 

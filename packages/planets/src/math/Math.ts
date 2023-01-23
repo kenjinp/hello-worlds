@@ -37,7 +37,20 @@ export function randomSpherePoint(
   return new Vector3(x, y, z)
 }
 
-export function randomSpherePointVector3(origin: Vector3, radius: number) {
+function randomPointOnSphere(radius: number, origin: Vector3): Vector3 {
+  const angle1 = Math.random() * 2 * Math.PI
+  const angle2 = Math.random() * Math.PI
+  const x = radius * Math.sin(angle2) * Math.cos(angle1)
+  const y = radius * Math.sin(angle2) * Math.sin(angle1)
+  const z = radius * Math.cos(angle2)
+  return new Vector3(x, y, z).add(origin)
+}
+
+export function randomSpherePointVector3(
+  origin: Vector3,
+  radius: number,
+  target: Vector3 = new Vector3(),
+): Vector3 {
   const { x: x0, y: y0, z: z0 } = origin
   let u = random()
   let v = random()
@@ -46,7 +59,8 @@ export function randomSpherePointVector3(origin: Vector3, radius: number) {
   let x = x0 + radius * Math.sin(phi) * Math.cos(theta)
   let y = y0 + radius * Math.sin(phi) * Math.sin(theta)
   let z = z0 + radius * Math.cos(phi)
-  return new Vector3(x, y, z)
+  target.set(x, y, z)
+  return target
 }
 
 // from https://spin.atomicobject.com/2019/09/30/skew-normal-prng-javascript/

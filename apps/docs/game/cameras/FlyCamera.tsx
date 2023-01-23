@@ -1,152 +1,160 @@
-import { archetypes, PlanetProperties } from "@game/Entity"
-import { FlyControls } from "@react-three/drei"
+import { ECS } from "@game/ECS"
+import { C } from "@game/Math"
+import { Controls } from "@game/player/KeyboardController"
+import { useWatchComponent } from "@game/player/Player"
+import { LatLong, Planet, RingWorld, WORLD_TYPES } from "@hello-worlds/planets"
+import { FlyControls, useKeyboardControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { useEntities } from "miniplex/react"
-import { useRouter } from "next/router"
 import * as React from "react"
-import { Group, MathUtils, Vector3 } from "three"
+import { MathUtils, Object3D, Raycaster, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
+import { match } from "ts-pattern"
 
-let lastTime = 0
-
-const FlyCamera: React.FC<{
-  minSpeed?: number
-  maxSpeed?: number
-}> = ({ minSpeed = 100, maxSpeed = 100_000_000_000 }) => {
-  const router = useRouter()
-
-  const flyControls = React.useRef<FlyControlsImpl>(null)
-  const groupRef = React.useRef<Group>(null)
-  const altitude = React.useRef(0)
-  const { entities } = useEntities(archetypes.planetOrMoon)
-
-  const { camera } = useThree()
-  const [_closestPlanet, setClosestPlanet] =
-    React.useState<PlanetProperties>(null)
-
-  const [pause, setPause] = React.useState(false)
-
-  React.useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
-      if (e.key === "p") {
-        setPause(!pause)
-      }
-    }
-    document.body.addEventListener("keyup", listener)
-    return () => {
-      document.body.removeEventListener("keyup", listener)
-    }
-  }, [pause])
-
-  React.useEffect(() => {
-    const closestPlanet = entities.sort((a, b) => {
-      return (
-        camera.position.distanceToSquared(a.position) -
-        camera.position.distanceToSquared(b.position)
-      )
-    })[0]
-    setClosestPlanet(closestPlanet)
-    camera.position.copy(
-      new Vector3(closestPlanet.radius * 3, 0, closestPlanet.radius * 3),
-    )
-    camera.lookAt(closestPlanet.position)
-
-    const query = router.query
-    if (query.translation) {
-      const { rotation, position } = JSON.parse(
-        atob(query.translation as string),
-      )
-      camera.position.set(position.x, position.y, position.z)
-      camera.rotation.setFromQuaternion(rotation)
-    }
-  }, [entities])
-
-  React.useEffect(() => {
-    if (!_closestPlanet?.name) {
-      return
-    }
-    entities.forEach(entity => {
-      if (entity) {
-        entity.focused = false
-      }
-    })
-    _closestPlanet.focused = true
-  }, [_closestPlanet])
-
-  useFrame(({ clock }, deltaTime) => {
-    if (!flyControls.current) {
-      return
-    }
-    camera.userData.previousPosition = flyControls.current.lastPosition.clone()
-    const newClosestPlanet = entities.sort((a, b) => {
-      return (
-        camera.position.distanceToSquared(a.position) -
-        camera.position.distanceToSquared(b.position)
-      )
-    })[0]
-    if (!newClosestPlanet) {
-      return
-    }
-    if (newClosestPlanet.id !== _closestPlanet?.id) {
-      setClosestPlanet(newClosestPlanet)
-    }
-    const closestPlanet = newClosestPlanet
-    if (!closestPlanet) {
-      return
-    }
-
-    altitude.current =
-      camera.position.distanceTo(closestPlanet.position) -
-        closestPlanet.radius || 0
-
-    const movementSpeed = MathUtils.clamp(
-      Math.abs(altitude.current),
-      minSpeed,
-      maxSpeed,
-    )
-    camera.userData.movementSpeed = movementSpeed
-    flyControls.current.movementSpeed = movementSpeed
-
-    groupRef.current.position.copy(camera.position)
-    groupRef.current.quaternion.copy(camera.quaternion)
-
-    // update url params
-    const translation = {
-      rotation: camera.quaternion,
-      position: camera.position,
-    }
-
-    if (clock.getElapsedTime() - lastTime >= 1) {
-      queueMicrotask(() => {
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: {
-              ...router.query,
-              translation: btoa(JSON.stringify(translation)),
-            },
-          },
-          undefined,
-          { shallow: true },
-        )
-      })
-
-      lastTime = clock.getElapsedTime()
-    }
-  })
-
+// TODO put into Math utils of the hello worlds library
+const getApproximateAltitudeOfSpheroid = (
+  object: Object3D,
+  helloPlanet: Planet | RingWorld,
+) => {
   return (
-    <>
-      {!pause && <FlyControls ref={flyControls} rollSpeed={0.25}></FlyControls>}
-      {/* <ParticleField /> */}
-      <group ref={groupRef}>
-        {/* <mesh position={new Vector3(0, 0, -20)} castShadow receiveShadow>
-          <capsuleGeometry args={[0.75, 1]} />
-          <meshStandardMaterial color="pink" />
-        </mesh> */}
-      </group>
-    </>
+    object.position.distanceTo(helloPlanet.position) - helloPlanet.radius || 0
   )
 }
 
-export default FlyCamera
+// const getApproximateAltitudeOfRing = (object: Object3D, helloRingWorld: RingWorld) => {
+
+// }
+
+// const getApproximateAltitudeOfFlatWorld = (object3D: Object3D, helloFlatWorld: FlatWorld) => {
+//   // distance to XZ plane
+
+// }
+
+const raycaster = new Raycaster()
+
+export function useFlyCameraSystem() {
+  const camera = useThree(s => s.camera)
+  const entity = ECS.useCurrentEntity()
+  const [sub, get] = useKeyboardControls<Controls>()
+  const closestAstronomicalObject = useWatchComponent(
+    "closestAstronomicalObject",
+  )
+
+  const getApproximateAltitude = () => {
+    // get closest world
+    const closestAstroObject = entity.closestAstronomicalObject
+    if (!closestAstroObject) {
+      return Infinity
+    }
+
+    // get closest world type
+    const worldType = closestAstroObject.helloPlanet.worldType
+
+    const _getAltitude = match(worldType)
+      .with(WORLD_TYPES.PLANET, () => getApproximateAltitudeOfSpheroid)
+      .otherwise(() => getApproximateAltitudeOfSpheroid)
+
+    return _getAltitude(camera, closestAstroObject.helloPlanet)
+  }
+
+  const getExactAltitude = () => {
+    const closestAstroObject = entity.closestAstronomicalObject
+    if (!closestAstroObject) {
+      return Infinity
+    }
+    const dir = closestAstroObject.position.sub(camera.position).normalize()
+    raycaster.set(camera.position, dir)
+    const hit = raycaster.intersectObject(closestAstroObject.helloPlanet, true)
+    const firstHit = hit[0]
+    if (firstHit) {
+      return firstHit.distance
+    }
+    return getApproximateAltitude()
+  }
+
+  React.useEffect(() => {
+    const alt = getExactAltitude()
+
+    // Fix initialization of camera
+    if (alt < entity.closestAstronomicalObject?.radius) {
+      const ll = new LatLong()
+      const pos = ll.toCartesian(
+        entity.closestAstronomicalObject?.radius * 5,
+        new Vector3(),
+      )
+      camera.position.set(pos.x, pos.y, pos.z)
+    }
+  }, [closestAstronomicalObject])
+
+  React.useEffect(() => {
+    return sub(
+      state => state.jump,
+      pressed => {
+        const flyControls = entity.sceneObject as unknown as FlyControlsImpl
+        if (pressed) {
+          flyControls.autoForward = !flyControls.autoForward
+        }
+      },
+    )
+  }, [entity])
+
+  useFrame((_s, dl) => {
+    const keyboardState = get()
+    const speedBoost = keyboardState.run
+    const speedModifier = speedBoost ? 2 : 1
+    const alt = getExactAltitude()
+
+    const flyControls = entity.sceneObject as unknown as FlyControlsImpl
+
+    const isMoving =
+      Object.values(flyControls.moveState).reduce(
+        (memo, entry) => memo || entry,
+        0,
+      ) || flyControls.autoForward
+
+    // apply speed to fly camera controls based on distance to ground
+    entity.targetSpeed = !!isMoving
+      ? MathUtils.clamp(
+          Math.abs(alt * speedModifier),
+          entity.minSpeed,
+          entity.maxSpeed,
+        )
+      : 0
+
+    const currentMovement = flyControls.movementSpeed || 0
+
+    flyControls.movementSpeed = MathUtils.lerp(
+      currentMovement,
+      entity.targetSpeed,
+      0.1,
+    )
+
+    flyControls.rollSpeed = entity.rollSpeed
+    entity.sceneObject.position.copy(camera.position)
+  })
+}
+
+export const FlyCameraSingletonSystem: React.FC = () => {
+  useFlyCameraSystem()
+  return null
+}
+
+export const FlyCamera: React.FC<React.PropsWithChildren<{}>> = ({}) => {
+  const camera = useThree(s => s.camera)
+  return (
+    <>
+      <ECS.Entity>
+        <FlyCameraSingletonSystem />
+        <ECS.Component name="isFlyCameraTarget" data={true} />
+        <ECS.Component name="minSpeed" data={2} />
+        <ECS.Component name="maxSpeed" data={C} />
+        <ECS.Component name="rollSpeed" data={0.25} />
+        <ECS.Component name="fullStopTimer" data={0} />
+        <ECS.Component name="targetSpeed" data={0} />
+        <ECS.Component name="sceneObject">
+          <FlyControls position={camera.position} dragToLook />
+        </ECS.Component>
+        <ECS.Component name="closestAstronomicalObject" data={null} />
+      </ECS.Entity>
+    </>
+  )
+}

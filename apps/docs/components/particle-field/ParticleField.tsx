@@ -2,37 +2,25 @@ import { Noise } from "@hello-worlds/planets"
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as React from "react"
-import { Material, MathUtils, Object3D, Points, Vector3 } from "three"
+import { Camera, Material, Points, Vector3 } from "three"
 import { randFloat } from "three/src/math/MathUtils"
-
-export class ParticleFieldImpl extends Object3D {
-  constructor() {
-    super()
-  }
-
-  update() {}
-}
 
 const tempVec3 = new Vector3()
 const tempVec32 = new Vector3()
-
-const SETTINGS = {
-  amount: 8000,
-  radius: 80,
-  speed: 5,
-  fogEnabled: true,
-  elapsedTime: 0,
-  // trails: true,
-}
+const previousPosition = new Vector3()
 
 export const ParticleField: React.FC<{
-  count: number
-  size: number
-  speed: number
+  count?: number
+  size?: number
+  speed?: number
 }> = ({ count = 5_000, size = 10_000, speed = 3 }) => {
   const ref = React.useRef<Points>()
   const pointsMatRef = React.useRef<Material>()
   const camera = useThree(state => state.camera)
+
+  React.useEffect(() => {
+    previousPosition.copy(camera.position)
+  }, [camera])
 
   const [noise] = React.useState(
     () =>
@@ -42,41 +30,33 @@ export const ParticleField: React.FC<{
       }),
   )
 
-  useFrame(() => {
-    const points = ref.current as Points
-    if (points) {
-      points.position.copy(camera.position)
-      const positions = points.geometry.getAttribute("position")
-      positions.needsUpdate = true
-    }
-  })
-
-  function getCameraVelocity(delta: number) {
-    // Assume the camera's position is updated every frame using a constant time step
+  function getCameraVelocity(delta: number, camera: Camera) {
     const position = camera.getWorldPosition(tempVec3)
-    const previousPosition = camera.userData.previousPosition
-      ? camera.userData.previousPosition
-      : position
-
     const velocity = position.clone().distanceTo(previousPosition) / delta
-
-    return MathUtils.clamp(velocity, -100, 100)
+    return velocity
   }
 
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     const points = ref.current as Points
     if (points) {
+      points.parent.position.copy(camera.position)
       const positions = points.geometry.getAttribute("position")
+      const cameraVelocity = getCameraVelocity(delta, camera)
       const velocity = camera
         .getWorldDirection(tempVec32)
         .negate()
-        .multiplyScalar(getCameraVelocity(delta))
+        .multiplyScalar(cameraVelocity)
 
       for (let i = 0; i < positions.count; i++) {
         const x = positions.getX(i)
         const y = positions.getY(i)
         const z = positions.getZ(i)
         tempVec3.set(x, y, z)
+        const noiseValue = noise.getFromVector(tempVec3)
+
+        tempVec3.x += noiseValue + velocity.x
+        tempVec3.y += noiseValue + velocity.y
+        tempVec3.z += noiseValue + velocity.z
 
         // moduloVector3(tempVec3, size * 2.0).subScalar(size)
 
@@ -88,18 +68,12 @@ export const ParticleField: React.FC<{
         if (tempVec3.y < -halfSize) tempVec3.y = halfSize
         if (tempVec3.z < -halfSize) tempVec3.z = halfSize
 
-        const noiseValue = noise.getFromVector(tempVec3)
-
-        positions.setXYZ(
-          i,
-          tempVec3.x + noiseValue + velocity.x,
-          tempVec3.y + noiseValue + velocity.y,
-          tempVec3.z + noiseValue + velocity.z,
-        )
+        positions.setXYZ(i, tempVec3.x, tempVec3.y, tempVec3.z)
 
         positions.needsUpdate = true
       }
     }
+    previousPosition.copy(camera.position)
   })
 
   const CircleImg = useTexture("/img/circle.png")
@@ -117,26 +91,32 @@ export const ParticleField: React.FC<{
   }, [count, size])
 
   return (
-    <points ref={ref}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="attributes-position"
-          array={positions}
-          count={positions.length / 3}
-          itemSize={3}
+    <object3D position={camera.position}>
+      <points ref={ref}>
+        <bufferGeometry attach="geometry">
+          <bufferAttribute
+            attach="attributes-position"
+            array={positions}
+            count={positions.length / 3}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          ref={pointsMatRef}
+          attach="material"
+          map={CircleImg}
+          color={0x00aaff}
+          size={10}
+          sizeAttenuation
+          transparent={false}
+          alphaTest={0.5}
+          opacity={1.0}
         />
-      </bufferGeometry>
-      <pointsMaterial
-        ref={pointsMatRef}
-        attach="material"
-        map={CircleImg}
-        color={0x00aaff}
-        size={10}
-        sizeAttenuation
-        transparent={false}
-        alphaTest={0.5}
-        opacity={1.0}
-      />
-    </points>
+        <mesh>
+          <boxGeometry args={[size, size, size]} />
+          <meshBasicMaterial color="yellow" wireframe />
+        </mesh>
+      </points>
+    </object3D>
   )
 }

@@ -38,6 +38,7 @@ export const doFocusObjectDescription = (
   }
 }
 
+// TODO if current camera is FlyCamera, switch to GodCamera
 export const doFocusPlanet = (entity: Entity) => {
   const camera = world.archetype("isCamera", "sceneObject").entities[0]
     .sceneObject
