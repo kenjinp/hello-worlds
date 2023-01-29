@@ -166,6 +166,11 @@ export type FlyCamera = {
   targetSpeed: number
 }
 
+export type SettingsSingleton = {
+  isSettings: Tag
+  godCameraEnabled: Tag
+}
+
 // export type OrbitCamera = {
 //   isOrbitCameraTarget: Tag
 //   target: PlanetProperties
@@ -188,7 +193,8 @@ export type Entity = Partial<
     Velocity &
     Flyable &
     GodCamera &
-    FlyCamera
+    FlyCamera &
+    SettingsSingleton
   // OrbitCamera
 >
 
@@ -197,6 +203,7 @@ export type Player = Strict<With<Entity, "isPlayer">>
 /* Create some archetype queries: */
 export const archetypes = {
   camera: world.archetype("isCamera", "sceneObject"),
+  settings: world.archetype("isSettings"),
   cameraFollow: world.archetype("cameraFollow", "sceneObject"),
   focusedPlanet: world.archetype("isFocused", "sceneObject"),
   godCameraNoTarget: world

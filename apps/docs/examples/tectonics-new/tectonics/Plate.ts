@@ -23,6 +23,23 @@ export default class Plate<T = any> {
   constructor(public readonly origin: LatLong, public data: T) {
     // Plate.generatePolygon(this)
   }
+  static getDistancesToPlateEdge(plate: Plate, input: Vector3) {
+    let minDistance = Infinity
+    let maxDistance = Infinity
+
+    // Distance from PolyLine
+    for (let line of plate.linePolygon) {
+      const closestPointToLine = line.closestPointToPoint(
+        input,
+        true,
+        _tempVec3,
+      )
+
+      minDistance = Math.min(minDistance, closestPointToLine.distanceTo(input))
+      maxDistance = Math.max(maxDistance, closestPointToLine.distanceTo(input))
+    }
+    return [minDistance, maxDistance]
+  }
   static generatePolygon(plate: Plate): void {
     plate.linePolygon = []
     plate.polygon = []

@@ -9,12 +9,7 @@ export const PostProcessing: React.FC<React.PropsWithChildren<{}>> = ({
     <RC.RenderPipeline>
       <RC.EffectPass>
         <RC.SMAAEffect />
-        {/* <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.8} /> */}
-        {/* <ECS.ArchetypeEntities archetype={["star"]}>
-          {entity => {
-            return entity.mesh && <RC.GodRaysEffect lightSource={entity.mesh} />
-          }}
-        </ECS.ArchetypeEntities> */}
+        <RC.SelectiveBloomEffect intensity={5} luminanceThreshold={0.8} />
         <RC.VignetteEffect />
         <RC.LensDirtEffect
           texture={useTexture("/img/effects/lensdirt.jpg")}

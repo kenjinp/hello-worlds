@@ -144,3 +144,12 @@ export function moduloVector3(vec3: Vector3, value: number) {
   vec3.z = vec3.z - value * Math.floor(vec3.z / value)
   return vec3
 }
+
+export function clampPointToSphereSurface(
+  point: Vector3,
+  sphereCenter: Vector3,
+  sphereRadius: number,
+) {
+  const direction = point.clone().sub(sphereCenter).normalize()
+  return direction.multiplyScalar(sphereRadius).add(sphereCenter)
+}

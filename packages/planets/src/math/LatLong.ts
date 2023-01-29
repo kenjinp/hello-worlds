@@ -55,13 +55,12 @@ export class LatLong {
     const phi = ((90 - this.lat) * Math.PI) / 180
     const theta = ((90 - this.lon) * Math.PI) / 180
 
+    vec3.set(
+      radius * Math.sin(phi) * Math.cos(theta), // x
+      radius * Math.cos(phi), // y
+      radius * Math.sin(phi) * Math.sin(theta), // z
+    )
     return vec3
-      .set(
-        radius * Math.sin(phi) * Math.cos(theta), // x
-        radius * Math.cos(phi), // y
-        radius * Math.sin(phi) * Math.sin(theta), // z
-      )
-      .clone()
   }
 
   cartesianToLatLong(coordinates: Vector3): LatLong {
@@ -75,12 +74,17 @@ export class LatLong {
     return this
   }
 
-  static cartesianToLatLong(coordinates: Vector3): LatLong {
+  static cartesianToLatLong(
+    coordinates: Vector3,
+    latLong: LatLong = new LatLong(),
+  ): LatLong {
     const longitude = Math.atan2(coordinates.x, coordinates.z) * RAD2DEG
     const length = Math.sqrt(
       coordinates.x * coordinates.x + coordinates.z * coordinates.z,
     )
     const latitude = Math.atan2(coordinates.y, length) * RAD2DEG
-    return new LatLong(latitude, longitude)
+    latLong.lat = latitude
+    latLong.lon = longitude
+    return latLong
   }
 }

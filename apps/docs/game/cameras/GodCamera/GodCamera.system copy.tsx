@@ -264,12 +264,12 @@ export function useGodCamera() {
       if (state.run) speed *= 2
 
       if (_velocity.length) {
-        _velocity.applyQuaternion(_quat)
+        _velocity.applyQuaternion(_quat).normalize()
         entity.sceneObject.position.addScaledVector(_velocity, speed * dl)
         const ll = cartesianToPolar(
           worldPosition
             .copy(entity.sceneObject.position)
-            .sub(entity.target.sceneObject.position),
+            .sub(entity.target.helloPlanet.position),
         )
         entity.long = ll[0]
         entity.lat = ll[1]
@@ -291,23 +291,4 @@ export function useGodCamera() {
 export const GodCameraSingletonSystem: React.FC = () => {
   useGodCamera()
   return null
-}
-
-export const GodCamera: React.FC<React.PropsWithChildren<{}>> = () => {
-  return (
-    <>
-      <ECS.Entity>
-        <GodCameraSingletonSystem />
-        <ECS.Component name="isGodCameraTarget" data={true} />
-        {/* <ECS.Component name="longLat" data={initialLongLat} /> */}
-        {/* <ECS.Component name="target" data={entity} /> */}
-        <ECS.Component name="cameraFollow" data={true} />
-        <ECS.Component name="scale" data={0.5} />
-        {/* <ECS.Component name="altitude" data={initialAltitude} /> */}
-        <ECS.Component name="sceneObject">
-          <object3D name="godCameraTarget" />
-        </ECS.Component>
-      </ECS.Entity>
-    </>
-  )
 }

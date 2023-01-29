@@ -9,7 +9,7 @@ export enum Controls {
   jump = "jump",
   run = "run",
   camera = "camera",
-  use = "use"
+  use = "use",
 }
 
 export const KeyboardController: React.FC<React.PropsWithChildren<{}>> = ({
@@ -24,11 +24,10 @@ export const KeyboardController: React.FC<React.PropsWithChildren<{}>> = ({
       { name: Controls.jump, keys: ["Space", " "] },
       { name: Controls.run, keys: ["Shift", "Control"] },
       { name: Controls.camera, keys: ["C", "c"] },
-      { name: Controls.camera, keys: ["F", "f"] },
+      { name: Controls.use, keys: ["F", "f"] },
     ],
     [],
   )
 
   return <KeyboardControls map={map}>{children}</KeyboardControls>
 }
- 

@@ -8,7 +8,7 @@ import {
   remap,
 } from "@hello-worlds/planets"
 import { latLngToCell } from "h3-js"
-import { Color, Line3, Vector3 } from "three"
+import { Color, Line3, MathUtils, Vector3 } from "three"
 import { LatLong } from "./tectonics/LatLong"
 
 import { HEX_GRID_RESOLUTION, Tectonics } from "./tectonics/Tectonics"
@@ -22,6 +22,7 @@ export type ThreadParams = {
 }
 const tempLine3 = new Line3()
 const tempVector3 = new Vector3()
+const _tempVector3 = new Vector3()
 const _tempLatLong = new LatLong()
 
 function round(number, increment, offset) {
@@ -55,35 +56,28 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
 
   const mountains = new Noise({
     seed: "banana",
-    height: 3,
-    scale: radius / 2,
+    height: 1000000,
+    scale: radius / 20,
   })
 
   return ({ input }) => {
-    const w = warp.get(input.x, input.y, input.z)
+    const w = warp.getFromVector(input)
     const m = mountains.get(input.x + w, input.y + w, input.z + w)
+    const warpedVector = _tempVector3.copy(input).addScalar(m)
 
     const plate = Tectonics.getPlateFromVector3(tectonics, input)
-    let distance = Infinity
-
-    // Distance from PolyLine
-    for (let line of plate.linePolygon) {
-      const closestPointToLine = line.closestPointToPoint(
-        input,
-        true,
-        tempVector3,
-      )
-
-      distance = Math.min(distance, closestPointToLine.distanceTo(input))
-    }
-
+    const wplate = Tectonics.getPlateFromVector3(tectonics, warpedVector)
+    const [min, max] = Plate.getDistancesToPlateEdge(plate, warpedVector)
+    // const [wmin,wmax] = Plate.getDistancesToPlateEdge(plate, warpedVector)
     // const influence = remap(distance, 0, radius / 2, 0, 1)
-
-    distance = remap(distance, 0, radius / 6, 0, 80_000)
+    const arbitraryMaxDistanceValue = 80_000
+    const distance = remap(min, 0, radius / 6, 0, arbitraryMaxDistanceValue)
+    const alpha = remap(min, 80_000, 0, 1, 0)
+    const biasedDistance = MathUtils.lerp(distance + m, distance, alpha)
 
     // remap(distance, 0, 1000, 0, 1)
 
-    return plate.data.oceanic ? -distance : distance
+    return wplate.data.oceanic ? 0 : distance
   }
 }
 
@@ -98,8 +92,8 @@ const colorGenerator: ChunkGenerator3Initializer<
   const tempLatLong = new LatLong()
   return ({ worldPosition, height }) => {
     const plate = Tectonics.getPlateFromVector3(tectonics, worldPosition)
-    const latLong = tempLatLong.cartesianToLatLong(worldPosition)
-    const region = latLngToCell(latLong.lat, latLong.lon, HEX_GRID_RESOLUTION)
+    // const latLong = tempLatLong.cartesianToLatLong(worldPosition)
+    // const region = latLngToCell(latLong.lat, latLong.lon, HEX_GRID_RESOLUTION)
     // const isBoundary = plate.internalEdges.has(region)
     // let distance = Infinity
 
@@ -109,8 +103,8 @@ const colorGenerator: ChunkGenerator3Initializer<
     //   )
     // }
 
-    setRandomSeed(region)
-    regionColor.set(random() * 0xffffff)
+    // setRandomSeed(region)
+    // regionColor.set(random() * 0xffffff)
     // return isBoundary
     //   ? color.set(0xff6666)
     //   : plate?.data.color
@@ -122,6 +116,10 @@ const colorGenerator: ChunkGenerator3Initializer<
     //     : groundColor
     //   : color
     // return endColor //endColor.lerp(regionColor, 0.15)
+
+    const oceanOffsetColor = plate.data.oceanic ? oceanColor : groundColor
+
+    // return oceanOffsetColor
 
     return height > 0 ? groundColor : oceanColor
   }

@@ -1,7 +1,8 @@
 import { FlyCamera } from "@game/cameras/FlyCamera"
-import { GodCamera } from "@game/cameras/GodCamera"
+import { GodCamera } from "@game/cameras/GodCamera/GodCamera.entity"
 import { ECS } from "@game/ECS"
-import { PerspectiveCamera } from "@react-three/drei"
+import { Controls } from "@game/player/KeyboardController"
+import { PerspectiveCamera, useKeyboardControls } from "@react-three/drei"
 import * as React from "react"
 
 export function CameraEntity() {
@@ -17,17 +18,17 @@ export function CameraEntity() {
 
 export function AllCameras() {
   const [useGodCamera, setUseGodCamera] = React.useState(false)
+  const [sub] = useKeyboardControls<Controls>()
 
   React.useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "c") {
-        setUseGodCamera(!useGodCamera)
-      }
-    }
-    document.body.addEventListener("keydown", onKeyDown)
-    return () => {
-      document.body.removeEventListener("keydown", onKeyDown)
-    }
+    return sub(
+      state => state.camera,
+      pressed => {
+        if (pressed) {
+          setUseGodCamera(!useGodCamera)
+        }
+      },
+    )
   }, [useGodCamera])
 
   return (

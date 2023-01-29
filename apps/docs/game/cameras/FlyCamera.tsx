@@ -2,74 +2,25 @@ import { ECS } from "@game/ECS"
 import { C } from "@game/Math"
 import { Controls } from "@game/player/KeyboardController"
 import { useWatchComponent } from "@game/player/Player"
-import { LatLong, Planet, RingWorld, WORLD_TYPES } from "@hello-worlds/planets"
+import { LerpDuration } from "@game/utils/LerpDuration"
+import { LatLong } from "@hello-worlds/planets"
 import { FlyControls, useKeyboardControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import { useAltitude } from "hooks/useAltitude"
 import * as React from "react"
-import { MathUtils, Object3D, Raycaster, Vector3 } from "three"
+import { MathUtils, Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
-import { match } from "ts-pattern"
-
-// TODO put into Math utils of the hello worlds library
-const getApproximateAltitudeOfSpheroid = (
-  object: Object3D,
-  helloPlanet: Planet | RingWorld,
-) => {
-  return (
-    object.position.distanceTo(helloPlanet.position) - helloPlanet.radius || 0
-  )
-}
-
-// const getApproximateAltitudeOfRing = (object: Object3D, helloRingWorld: RingWorld) => {
-
-// }
-
-// const getApproximateAltitudeOfFlatWorld = (object3D: Object3D, helloFlatWorld: FlatWorld) => {
-//   // distance to XZ plane
-
-// }
-
-const raycaster = new Raycaster()
 
 export function useFlyCameraSystem() {
   const camera = useThree(s => s.camera)
+  const lerpDuration = React.useRef(new LerpDuration())
   const entity = ECS.useCurrentEntity()
   const [sub, get] = useKeyboardControls<Controls>()
   const closestAstronomicalObject = useWatchComponent(
     "closestAstronomicalObject",
   )
 
-  const getApproximateAltitude = () => {
-    // get closest world
-    const closestAstroObject = entity.closestAstronomicalObject
-    if (!closestAstroObject) {
-      return Infinity
-    }
-
-    // get closest world type
-    const worldType = closestAstroObject.helloPlanet.worldType
-
-    const _getAltitude = match(worldType)
-      .with(WORLD_TYPES.PLANET, () => getApproximateAltitudeOfSpheroid)
-      .otherwise(() => getApproximateAltitudeOfSpheroid)
-
-    return _getAltitude(camera, closestAstroObject.helloPlanet)
-  }
-
-  const getExactAltitude = () => {
-    const closestAstroObject = entity.closestAstronomicalObject
-    if (!closestAstroObject) {
-      return Infinity
-    }
-    const dir = closestAstroObject.position.sub(camera.position).normalize()
-    raycaster.set(camera.position, dir)
-    const hit = raycaster.intersectObject(closestAstroObject.helloPlanet, true)
-    const firstHit = hit[0]
-    if (firstHit) {
-      return firstHit.distance
-    }
-    return getApproximateAltitude()
-  }
+  const { getExactAltitude } = useAltitude(camera)
 
   React.useEffect(() => {
     const alt = getExactAltitude()
@@ -98,6 +49,7 @@ export function useFlyCameraSystem() {
   }, [entity])
 
   useFrame((_s, dl) => {
+    const lerpy = lerpDuration.current
     const keyboardState = get()
     const speedBoost = keyboardState.run
     const speedModifier = speedBoost ? 2 : 1
@@ -105,14 +57,19 @@ export function useFlyCameraSystem() {
 
     const flyControls = entity.sceneObject as unknown as FlyControlsImpl
 
-    const isMoving =
+    const isMoving = !!(
       Object.values(flyControls.moveState).reduce(
         (memo, entry) => memo || entry,
         0,
       ) || flyControls.autoForward
+    )
+
+    if (lerpy.lastValue !== isMoving) {
+      lerpy.reset()
+    }
 
     // apply speed to fly camera controls based on distance to ground
-    entity.targetSpeed = !!isMoving
+    entity.targetSpeed = isMoving
       ? MathUtils.clamp(
           Math.abs(alt * speedModifier),
           entity.minSpeed,
@@ -122,14 +79,12 @@ export function useFlyCameraSystem() {
 
     const currentMovement = flyControls.movementSpeed || 0
 
-    flyControls.movementSpeed = MathUtils.lerp(
-      currentMovement,
-      entity.targetSpeed,
-      0.1,
-    )
+    const lerpedMovementSpeed = lerpy.lerp(currentMovement, entity.targetSpeed)
+    flyControls.movementSpeed = lerpedMovementSpeed
 
     flyControls.rollSpeed = entity.rollSpeed
     entity.sceneObject.position.copy(camera.position)
+    lerpy.lastValue = isMoving
   })
 }
 
