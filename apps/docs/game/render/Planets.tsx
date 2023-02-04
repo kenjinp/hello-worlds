@@ -5,7 +5,7 @@ import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
   PlanetChunks,
-  usePlanet,
+  usePlanet
 } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
