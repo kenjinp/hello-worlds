@@ -147,8 +147,8 @@ importers:
 
   packages/cultures:
     specifiers:
-      '@hello-worlds/core': 0.0.7
-      '@hello-worlds/tongues': 0.0.8
+      '@hello-worlds/core': 0.0.8
+      '@hello-worlds/tongues': 0.0.9
       '@types/roll': ^1.2.0
       roll: ^1.3.1
       typescript: ^4.7.4
@@ -162,7 +162,7 @@ importers:
 
   packages/planets:
     specifiers:
-      '@hello-worlds/core': 0.0.7
+      '@hello-worlds/core': 0.0.8
       '@types/three': ^0.141.0
       simplex-noise: ^3.0.1
       three: 0.143.0
@@ -177,8 +177,8 @@ importers:
 
   packages/react:
     specifiers:
-      '@hello-worlds/core': 0.0.7
-      '@hello-worlds/planets': 0.0.15
+      '@hello-worlds/core': 0.0.8
+      '@hello-worlds/planets': 0.0.16
       '@hmans/use-rerender': ^0.0.2
       '@react-three/drei': 9.30.1
       '@react-three/fiber': 8.8.2
@@ -206,7 +206,7 @@ importers:
 
   packages/tongues:
     specifiers:
-      '@hello-worlds/core': 0.0.7
+      '@hello-worlds/core': 0.0.8
       typescript: ^4.7.4
     devDependencies:
       '@hello-worlds/core': link:../core
