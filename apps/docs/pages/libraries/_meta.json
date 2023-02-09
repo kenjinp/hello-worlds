@@ -1,0 +1,13 @@
+{
+  "*": {
+    "theme": {
+      "layout": "default"
+    }
+  },
+  "index": { "title": "Libraries", "display": "hidden" },
+  "core": { "title": "Core" },
+  "planets": { "title": "Planets" },
+  "react": { "title": "React" },
+  "cultures": { "title": "Cultures" },
+  "tongues": { "title": "Tongues" }
+}

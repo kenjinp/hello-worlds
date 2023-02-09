@@ -5,8 +5,8 @@ export default class WorkerThreadPool<T> {
   #busyWorkers: Record<string, WorkerThread<T>> = {}
   #queue: [any, (data: T) => void][] = []
   #workers: WorkerThread<T>[] = []
-  constructor(size: number, worker: new () => Worker) {
-    this.#workers = [...Array(size)].map(_ => new WorkerThread(new worker()))
+  constructor(size: number, worker: () => Worker) {
+    this.#workers = [...Array(size)].map(_ => new WorkerThread(worker()))
     this.#freeWorkers = [...this.#workers]
   }
 

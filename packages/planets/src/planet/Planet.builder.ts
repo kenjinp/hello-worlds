@@ -13,7 +13,7 @@ import WorkerThreadPool from "../worker/WorkerThreadPool"
 
 export interface PlanetBuilderProps<D> {
   workerProps: {
-    worker: new () => Worker
+    worker: () => Worker
     numWorkers: number
   }
   radius: number

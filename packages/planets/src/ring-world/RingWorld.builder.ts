@@ -14,7 +14,7 @@ import WorkerThreadPool from "../worker/WorkerThreadPool"
 
 export interface RingWorldBuilderProps<D> {
   workerProps: {
-    worker: new () => Worker
+    worker: () => Worker
     numWorkers: number
   }
   radius: number

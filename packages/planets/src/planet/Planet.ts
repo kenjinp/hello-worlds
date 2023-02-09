@@ -1,6 +1,10 @@
-import { Group, Material, Object3D, Vector2, Vector3 } from "three"
+import { Group, Material, Object3D, Sphere, Vector2, Vector3 } from "three"
 import { makeRootChunkKey } from "../chunk/Chunk.helpers"
-import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "../chunk/Events"
+import {
+  ChunkGeneratedEvent,
+  ChunkPendingEvent,
+  ChunkWillBeDisposedEvent,
+} from "../chunk/Events"
 import {
   ChunkMap,
   ChunkTypes,
@@ -35,6 +39,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
   radius: number
   inverted: boolean
   lodDistanceComparisonValue: number
+  sphere: Sphere
   readonly worldType = WORLD_TYPES.PLANET
   constructor({
     radius,
@@ -48,6 +53,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
     inverted = false,
   }: PlanetProps<D>) {
     super()
+    this.sphere = new Sphere(position, radius)
     this.position.copy(position)
     this.#builder = new PlanetBuilder<D>({
       workerProps,
@@ -169,6 +175,12 @@ export class Planet<D = Record<string, any>> extends Object3D {
         const { chunk } = e as unknown as ChunkWillBeDisposedEvent
         this.dispatchEvent(new ChunkWillBeDisposedEvent(chunk))
       })
+      allocatedChunk.addEventListener(ChunkPendingEvent.type, e => {
+        const { chunk } = e as unknown as ChunkPendingEvent
+        this.dispatchEvent(new ChunkPendingEvent(chunk))
+      })
+      this.dispatchEvent(new ChunkPendingEvent(allocatedChunk))
+
       newChunkMap[key] = {
         type: ChunkTypes.CHILD,
         position: new Vector2(offset.x, offset.z),

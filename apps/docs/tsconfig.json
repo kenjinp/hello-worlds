@@ -1,9 +1,31 @@
 {
-  // This file is not used in compilation. It is here just for a nice editor experience.
-  "extends": "@tsconfig/docusaurus/tsconfig.json",
   "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "downlevelIteration": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
     "baseUrl": ".",
-    "jsx": "react-jsx",
-    "esModuleInterop": true
-  }
+    "paths": {
+      "@components/*": ["components/*"],
+      "@game/*": ["game/*"],
+      "@pages/*": ["pages/*"],
+      "@examples/*": ["examples/*"],
+      "@public/*": ["public/*"],
+      "@constants": ["constants.ts"],
+      "@theme": ["theme.ts"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types.d.ts"],
+  "exclude": ["node_modules"]
 }

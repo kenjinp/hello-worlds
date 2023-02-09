@@ -1,7 +1,7 @@
 // Smooth minimum of two values, controlled by smoothing factor k
 
 import { random } from "@hello-worlds/core"
-import { Vector3 } from "three"
+import { Mesh, Quaternion, Vector3 } from "three"
 import { tempVector3 } from "../utils"
 
 // When k = 0, this behaves identically to min(a, b)
@@ -26,6 +26,7 @@ export function randomSpherePoint(
   y0: number,
   z0: number,
   radius: number,
+  vector = new Vector3(),
 ) {
   let u = random()
   let v = random()
@@ -34,7 +35,24 @@ export function randomSpherePoint(
   let x = x0 + radius * Math.sin(phi) * Math.cos(theta)
   let y = y0 + radius * Math.sin(phi) * Math.sin(theta)
   let z = z0 + radius * Math.cos(phi)
-  return new Vector3(x, y, z)
+  return vector.set(x, y, z)
+}
+
+export function randomSpherePointVector3(
+  origin: Vector3,
+  radius: number,
+  target: Vector3 = new Vector3(),
+): Vector3 {
+  const { x: x0, y: y0, z: z0 } = origin
+  let u = random()
+  let v = random()
+  let theta = 2 * Math.PI * u
+  let phi = Math.acos(2 * v - 1)
+  let x = x0 + radius * Math.sin(phi) * Math.cos(theta)
+  let y = y0 + radius * Math.sin(phi) * Math.sin(theta)
+  let z = z0 + radius * Math.cos(phi)
+  target.set(x, y, z)
+  return target
 }
 
 // from https://spin.atomicobject.com/2019/09/30/skew-normal-prng-javascript/
@@ -96,4 +114,34 @@ export function normalizeAsCylinder(input: Vector3, radius: number) {
   input.divide(tempVector3.set(cylinderLength, 1, cylinderLength))
   // push out the points across the circle at radius
   return input.multiply(tempVector3.set(radius, 1, radius))
+}
+
+export function orientMesh(mesh: Mesh, targetDirection: Vector3) {
+  // Get the current direction of the mesh
+  const currentDirection = mesh.getWorldDirection(new Vector3())
+
+  // Calculate the rotation needed to align the mesh with the target direction
+  const quaternion = new Quaternion().setFromUnitVectors(
+    currentDirection,
+    targetDirection,
+  )
+
+  // Rotate the mesh to the target direction
+  mesh.applyQuaternion(quaternion)
+}
+
+export function moduloVector3(vec3: Vector3, value: number) {
+  vec3.x = vec3.x - value * Math.floor(vec3.x / value)
+  vec3.y = vec3.y - value * Math.floor(vec3.y / value)
+  vec3.z = vec3.z - value * Math.floor(vec3.z / value)
+  return vec3
+}
+
+export function clampPointToSphereSurface(
+  point: Vector3,
+  sphereCenter: Vector3,
+  sphereRadius: number,
+) {
+  const direction = point.clone().sub(sphereCenter).normalize()
+  return direction.multiplyScalar(sphereRadius).add(sphereCenter)
 }

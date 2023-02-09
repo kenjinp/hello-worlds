@@ -1,0 +1,8 @@
+config:
+  aws:region: us-west-2
+  worlds.kenny.wtf:path: ../_site
+  worlds.kenny.wtf:zoneName: kenny.wtf
+  worlds.kenny.wtf:targetDomain: worlds.kenny.wtf
+  worlds.kenny.wtf:includeWWW: true
+  worlds.kenny.wtf:errorDocument: 404.html
+  worlds.kenny.wtf:indexDocument: index.html

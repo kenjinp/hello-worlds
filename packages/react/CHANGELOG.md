@@ -1,5 +1,18 @@
 # @hello-worlds/react
 
+## 0.0.17
+
+### Patch Changes
+
+- 70a2f0e: Refactor
+- 94cd2d3: Terrain Chunk Skirts
+- Changes in chunk generation allowing for chunk skirts
+- Updated dependencies [70a2f0e]
+- Updated dependencies [94cd2d3]
+- Updated dependencies
+  - @hello-worlds/core@0.0.8
+  - @hello-worlds/planets@0.0.16
+
 ## 0.0.16
 
 ### Patch Changes

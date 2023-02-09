@@ -58,6 +58,10 @@ export const randomRange = (min: number, max: number) => {
   return random() * (max - min) + min
 }
 
+export const randomSign = () => {
+  return randomRange(0, 1) > 0.5 ? 1 : -1
+}
+
 export function capitalize(word: string) {
   return word[0].toUpperCase() + word.slice(1)
 }

@@ -7,6 +7,7 @@
   "license": "MIT",
   "repository": "git@github.com:kenjinp/hello-worlds",
   "scripts": {
+    "start": "pnpm --filter=docs dev",
     "build-deps": "pnpm --filter=@hello-worlds/* build",
     "preinstall": "npx only-allow pnpm",
     "test": "jest --passWithNoTests",
@@ -17,10 +18,11 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.2",
-    "prettier": "^2.7.1",
+    "prettier": "^2.8.1",
     "prettier-plugin-glsl": "^0.0.5"
   },
   "workspaces": [
+    "infra/*",
     "packages/*",
     "apps/*"
   ]

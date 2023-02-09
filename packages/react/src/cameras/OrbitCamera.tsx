@@ -16,10 +16,9 @@ function easeOutExpo(x: number): number {
   return x === 1 ? 1 : 1 - Math.pow(4, -10 * x)
 }
 
-export const OrbitCamera: React.FC<OrbitCameraProps> = ({
-  maxAltitudeOffset = 100,
-  maxDistanceMultiplier = 10,
-}) => {
+export const OrbitCamera: React.FC<
+  React.PropsWithChildren<OrbitCameraProps>
+> = ({ maxAltitudeOffset = 100, maxDistanceMultiplier = 10, children }) => {
   const planet = usePlanet()
   const orbitControls = React.useRef<OrbitControlsImpl>(null)
   const altitude = React.useRef(0)
@@ -54,6 +53,8 @@ export const OrbitCamera: React.FC<OrbitCameraProps> = ({
       enableZoom
       maxDistance={planet.radius * maxDistanceMultiplier}
       minDistance={planet.radius + maxAltitudeOffset}
-    />
+    >
+      {children}
+    </OrbitControls>
   )
 }

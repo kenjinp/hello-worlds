@@ -11,3 +11,9 @@ export class ChunkGeneratedEvent {
   static type = "ChunkGenerated"
   constructor(public chunk: Chunk) {}
 }
+
+export class ChunkPendingEvent {
+  type = "ChunkPending"
+  static type = "ChunkPending"
+  constructor(public chunk: Chunk) {}
+}

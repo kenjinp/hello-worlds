@@ -1,5 +1,15 @@
 # @hello-worlds/cultures
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies [70a2f0e]
+- Updated dependencies [94cd2d3]
+- Updated dependencies
+  - @hello-worlds/core@0.0.8
+  - @hello-worlds/tongues@0.0.9
+
 ## 0.0.8
 
 ### Patch Changes
