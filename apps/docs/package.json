@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "docs",
-  "version": "0.0.13",
+  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -29,7 +29,7 @@
     "axios": "^1.2.1",
     "d3-geo-voronoi": "^2.0.1",
     "gl-noise": "^1.6.1",
-    "h3-js": "^4.0.1",
+    "h3-js": "^4.1.0",
     "image-size": "^1.0.2",
     "leva": "^0.9.27",
     "miniplex": "2.0.0-beta.3",

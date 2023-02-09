@@ -20,8 +20,9 @@ const _PI_2 = Math.PI / 2
 
 const minPolarAngle = 0 // radians
 const maxPolarAngle = Math.PI // radians
-const pointerSpeed = 0.5
+const pointerSpeed = 0.5 * 0.002
 const _quat = new Quaternion()
+const _tempQuat = new Quaternion()
 const _euler = new Euler(0, 0, 0, "YXZ")
 const _tempEuler = new Euler(0, 0, 0, "YXZ")
 const _tempLatLong = new LatLong()
@@ -68,23 +69,46 @@ export function useGodCamera() {
       const movementX = e.movementX || 0
       const movementY = e.movementY || 0
 
-      // _tempObject.quaternion.copy(camera.quaternion)
+      // This tempEuler has the orientation pointing from center of planet to camera
       _tempEuler.setFromQuaternion(_tempObject.quaternion)
+
+      // // this is the direction of the camera
       _euler.setFromQuaternion(camera.quaternion)
 
-      console.log(_tempEuler, _euler)
+      const my = -movementX * pointerSpeed
+      const mx = -movementY * pointerSpeed
 
-      _euler.y -= movementX * 0.002 * pointerSpeed
-      _euler.x -= movementY * 0.002 * pointerSpeed
+      _euler.x += mx
+      _euler.y += my
 
-      _euler.x = Math.max(
-        _PI_2 - maxPolarAngle,
-        Math.min(_PI_2 - minPolarAngle, _euler.x),
-      )
+      // _euler.z += my
 
-      _tempObject.quaternion.setFromEuler(_euler)
-      _tempObject.getWorldQuaternion(_quat)
-      camera.quaternion.copy(_quat)
+      // }
+
+      const newRotation = camera.rotation.x + mx
+      if (newRotation > 0) {
+        camera.rotation.x += mx
+      }
+
+      console.log(_euler.x, _tempEuler.x)
+
+      // const tempMaxX = Math.max(
+      //   _PI_2 - maxPolarAngle,
+      //   Math.min(_PI_2 - minPolarAngle, _tempEuler.x),
+      // )
+
+      // if (
+      //   _PI_2 - maxPolarAngle > _tempEuler.x &&
+      //   _tempEuler.x > _PI_2 - minPolarAngle
+      // ) {
+      //   _euler.x += mx
+      // }
+      // _euler.y += my
+      // console.log(_tempEuler.x, tempMaxX)
+
+      // _tempObject.quaternion.setFromEuler(_euler)
+      // _tempObject.getWorldQuaternion(_quat)
+      camera.setRotationFromEuler(_euler)
     },
     [isLocked, target],
   )
@@ -126,7 +150,7 @@ export function useGodCamera() {
   }, [closestAstronomicalObject])
 
   useFrame((_s, dl) => {
-    // camera.getWorldQuaternion(_quat)
+    camera.getWorldQuaternion(_quat)
     const lookAtDirection = vec3Pool.get()
     const targetPosition = vec3Pool.get()
     const latLongPosition = vec3Pool.get()
@@ -136,6 +160,7 @@ export function useGodCamera() {
     if (!target) {
       return
     }
+
     const minAltitude = target.radius
     const maxAltitude = target.radius * 5
     const currentAltitude = remap(entity.scale, 0, 1, minAltitude, maxAltitude)
@@ -159,7 +184,7 @@ export function useGodCamera() {
       .sub(entity.sceneObject.position)
 
     const up = targetDirection.clone().normalize()
-
+    _tempObject.position.copy(entity.sceneObject.position)
     _tempObject.lookAt(up)
     _tempObject.rotateX(-_PI_2)
     // _tempObject.getWorldQuaternion(_quat)
@@ -178,8 +203,6 @@ export function useGodCamera() {
     if (state.back && !state.forward) _velocity.z = 1
     if (!state.forward && !state.back) _velocity.z = 0
     if (state.run) speed *= 2
-
-    // _tempObject.position.copy(entity.sceneObject.position)
 
     _velocity.applyQuaternion(_quat)
 

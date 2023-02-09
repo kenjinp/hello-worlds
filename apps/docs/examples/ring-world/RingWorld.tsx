@@ -12,13 +12,13 @@ const Example1: React.FC = () => {
     // Rotate World so it's along the x axis
     <group
       rotation={new Euler().setFromVector3(
-        new Vector3(-Math.PI / 2, -Math.PI / 2, 0),
+        new Vector3(-Math.PI / 2, 0, -Math.PI / 2),
       )}
     >
       <RingWorld
         inverted
         position={new Vector3()}
-        radius={10_000}
+        radius={20_000}
         length={100}
         minCellSize={32}
         minCellResolution={32 * 2}

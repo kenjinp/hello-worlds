@@ -1,5 +1,13 @@
 # @hello-worlds/core
 
+## 0.0.8
+
+### Patch Changes
+
+- 70a2f0e: Refactor
+- 94cd2d3: Terrain Chunk Skirts
+- Changes in chunk generation allowing for chunk skirts
+
 ## 0.0.7
 
 ### Patch Changes

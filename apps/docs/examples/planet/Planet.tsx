@@ -56,7 +56,7 @@ const Example: React.FC = () => {
       <ChunkDebugger />
       <OrbitCamera />
       <ToggleLodOriginHelper />
-      <meshStandardMaterial vertexColors side={2} wireframe />
+      <meshStandardMaterial vertexColors side={2} />
     </Planet>
   )
 }

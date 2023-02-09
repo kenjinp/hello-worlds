@@ -11,7 +11,7 @@ export const GodCamera: React.FC<React.PropsWithChildren<{}>> = () => {
         <ECS.Component name="scale" data={0.5} />
         <ECS.Component name="closestAstronomicalObject" data={null} />
         <ECS.Component name="sceneObject">
-          <object3D name="godCameraTarget" />
+          <object3D name="godCameraTarget"></object3D>
         </ECS.Component>
         <GodCameraSingletonSystem />
       </ECS.Entity>

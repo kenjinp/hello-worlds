@@ -6,7 +6,7 @@ import {
   Noise,
   NOISE_TYPES,
 } from "@hello-worlds/planets"
-import { Color, MathUtils } from "three"
+import { Color } from "three"
 
 export type ThreadParams = {
   seed: string
@@ -42,7 +42,6 @@ const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
 > = props => {
-  const colorA = new Color(MathUtils.randFloat(0, 1) * 0xffffff)
   const color = new Color(0x9fc164)
   return () => {
     return color

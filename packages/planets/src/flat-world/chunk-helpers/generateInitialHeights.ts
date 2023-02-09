@@ -52,19 +52,14 @@ export const generateInitialHeights = <D>(
     for (let y = -1; y <= effectiveResolution + 1; y++) {
       const yp = (width * y) / effectiveResolution
 
-      _P.set(xp - half, yp - half, radius)
+      _P.set(xp - half, yp - half, 0)
       _P.add(offset)
-      _P.normalize()
-      _D.copy(_P)
-      _P.multiplyScalar(radius)
-      _P.z -= radius
-
       // Compute a world space position to sample noise
       _W.copy(_P)
       _W.applyMatrix4(localToWorld)
 
       // Purturb height along z-vector
-      const heightInput = _W
+      const heightInput = _W.clone()
       const height = heightGenerator({
         input: heightInput,
         worldPosition: heightInput,
@@ -79,8 +74,8 @@ export const generateInitialHeights = <D>(
       })
       const color = colorGenerator
         ? colorGenerator({
-            input: colorInputVector.set(_W.x, _W.y, height),
-            worldPosition: _W,
+            input: colorInputVector.set(_W.x, _W.y, height).clone(),
+            worldPosition: _W.clone(),
             radius,
             offset,
             width,
@@ -91,7 +86,10 @@ export const generateInitialHeights = <D>(
             height,
             data: params.data,
           })
-        : tempColor.set(0xffffff)
+        : tempColor.set(0xffffff).clone()
+
+      // Purturb height along z-vector
+      _P.z += height * (params.inverted ? -1 : 1)
 
       // color has alpha from array
       if ("length" in color) {
@@ -109,7 +107,7 @@ export const generateInitialHeights = <D>(
       _C.copy(_W)
       _C.add(_H)
       coords.push(_C.x, _C.y, _C.z)
-      up.push(_D.x, _D.y, _D.z)
+      up.push(0, 0, 1)
     }
   }
 
