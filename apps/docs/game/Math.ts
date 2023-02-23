@@ -8,3 +8,12 @@ export const MARS_RADIUS = 3_389.5 * km
 export const MOON_RADIUS = 1_737.4 * km
 export const CERES_RADIUS = 469.73 * km
 export const C = 299_792_458
+
+const INIT_NUMBER = 271
+
+export function hashUuid(uuid, n?: number) {
+  const x = uuid
+    .split("-")
+    .reduce((a, b) => a ^ Number.parseInt(b, 16), INIT_NUMBER)
+  return n ? x % n : x
+}

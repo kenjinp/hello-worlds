@@ -88,6 +88,8 @@ export class Planet<D = Record<string, any>> extends Object3D {
     this.#material = material
   }
 
+  async buildMap(buildMapProps: { width: number; height: number }) {}
+
   // this will cause all the chunks to reform
   // use this to update planet parameters
   rebuild() {
