@@ -55,9 +55,9 @@ export class CityModel {
 		// Relaxing central wards
 		console.time('relaxing central wards')
 		// for (let i = 0; i < 3; i++) {
-			const toRelax = [voronoi.points[0], voronoi.points[1], voronoi.points[2], voronoi.points[3]];
-			toRelax.push( voronoi.points[this.nPatches] );
-			voronoi = Voronoi.relax( voronoi, toRelax );
+			// const toRelax = [voronoi.points[0], voronoi.points[1], voronoi.points[2], voronoi.points[3]];
+			// toRelax.push( voronoi.points[this.nPatches] );
+			// voronoi = Voronoi.relax( voronoi, toRelax );
 		// }
 		console.timeEnd('relaxing central wards')
 
