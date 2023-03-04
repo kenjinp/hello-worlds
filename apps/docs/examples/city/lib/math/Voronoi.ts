@@ -184,7 +184,7 @@ export class Voronoi {
 
     let points = [...voronoi.points]
     for (let p of voronoi.frame) {
-      points.filter(v => v !== p)
+      points = points.filter(v => v !== p)
     }
 
     if (toRelax == null) {
