@@ -30,7 +30,6 @@ export class Tectonics {
     public readonly numberOfPlates: number,
   ) {
     let i = 0
-    
     // const diameter = voronoiSphere.radius * 2
     // const partitions = 50
     // this.cellSpacePartition = new CellSpacePartitioning(

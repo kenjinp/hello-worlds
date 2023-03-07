@@ -1,8 +1,10 @@
 import { Vector3 } from "three"
 import { sign } from "../math/helpers"
+import { Polygon } from "../math/Polgygon"
 import { Random } from "../math/Random"
 import { Voronoi } from "../math/Voronoi"
 import { Patch } from "./Patch"
+import { CityWall } from "./Wall"
 
 export class CityModel {
   random: Random
@@ -17,6 +19,7 @@ export class CityModel {
   citadel?: Patch
   plaza?: Patch
   center?: Vector3
+  border: CityWall
 
   constructor(
     private nPatches = 15,
@@ -60,13 +63,15 @@ export class CityModel {
 
   buildPatches() {
     const sa = this.random.float() * 2 * Math.PI
+
     const points = new Array(this.nPatches * 8).fill(0).map((_, i) => {
       let a = sa + Math.sqrt(i) * 5
       let r = i == 0 ? 0 : 10 + i * (2 + this.random.float())
-      const x = Math.cos(a) * r + this.offset.x
-      const y = Math.sin(a) * r + this.offset.y
+      const x = Math.cos(a) * r  + this.offset.x
+      const y = Math.sin(a) * r  + this.offset.y
       return new Vector3(x, y, 0)
     })
+
     let voronoi = Voronoi.build(points)
     this.voronoi = voronoi
     console.log({ voronoi })
@@ -125,7 +130,31 @@ export class CityModel {
     console.timeEnd("generating patches")
   }
 
-  private buildWalls() {}
+  private buildWalls() {
+    const reservedShape =
+      this.citadel != null ? this.citadel.shape.copy() : new Polygon([])
+    this.border = new CityWall(
+      this.wallsNeeded,
+      this,
+      this.inner,
+      reservedShape.vertices,
+    )
+    // if (wallsNeeded) {
+    // 	wall = border;
+    // 	wall.buildTowers();
+    // }
+    // 	var radius = border.getRadius();
+    // 	patches = patches.filter( function( p:Patch ) return p.shape.distance( center ) < radius * 3 );
+    // 	gates = border.gates;
+    // 	if (citadel != null) {
+    // 		var castle = new Castle( this, citadel );
+    // 		castle.wall.buildTowers();
+    // 		citadel.ward = castle;
+    // 		if (citadel.shape.compactness < 0.75)
+    // 			throw new Error( "Bad citadel shape!" );
+    // 		gates = gates.concat( castle.wall.gates );
+    // 	}
+  }
 
   private optimizeJunctions() {
     const patchesToOptimize: Array<Patch> =
@@ -169,5 +198,70 @@ export class CityModel {
 
   public patchByVertex(v: Vector3) {
     return this.patches.filter(patch => patch.shape.contains(v))
+  }
+
+  public static findCircumference(patch: Patch[]): Polygon {
+    console.log("findCircumference", patch)
+    if (patch.length == 0) {
+      return new Polygon()
+    } else if (patch.length == 1) {
+      return new Polygon(patch[0].shape.vertices)
+    }
+
+    const verticesA: Array<Vector3> = []
+    const verticesB: Array<Vector3> = []
+
+    for (let p1 of patch) {
+      p1.shape.forEdge((a, b) => {
+        let outerEdge = true
+        let backwards = false
+        for (let p2 of patch) {
+          if (p1 === p2) {
+            continue
+          }
+          if (p2.shape.sharesEdges(b, a)) {
+            outerEdge = false
+            break
+          }
+          if (p2.shape.sharesEdges(a, b)) {
+            backwards = true
+            outerEdge = false
+            break
+          }
+        }
+        if (outerEdge && !backwards) {
+          verticesA.push(a)
+          verticesB.push(b)
+        }
+        if (outerEdge && backwards) {
+          verticesA.push(b)
+          verticesB.push(a)
+        }
+      })
+    }
+
+    const sharedEdges = []
+    let index = 0
+    let tries = 0
+    // do {
+    //   sharedEdges.push(verticesA[index])
+    //   index = verticesA.findIndex(v => {
+    //     if (!v || verticesB[index]) {
+    //       throw new Error("I am confused")
+    //     }
+    //     return Polygon.matchPoint(v, verticesB[index])
+    //   })
+    //   console.log("lastIndex", index)
+    //   tries++
+    // } while (index !==)
+    console.log("END findCircumference", { verticesA, verticesB, sharedEdges })
+
+    const result = new Polygon(
+      verticesA,
+      // get intersection between edgeA and edgeB
+      // verticesA.filter(a => verticesB.some(b => a.equals(b))),
+    )
+
+    return result
   }
 }

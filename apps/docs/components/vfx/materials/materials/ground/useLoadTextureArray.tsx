@@ -45,6 +45,8 @@ export const useLoadTextureArray = (
       dimensions,
       atlas.length,
     )
+
+    // Don't do this here
     texture.minFilter = NearestMipMapNearestFilter
     texture.magFilter = NearestFilter
     texture.wrapS = RepeatWrapping

@@ -6,7 +6,7 @@ import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
   PlanetChunks,
-  usePlanet
+  usePlanet,
 } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
@@ -57,8 +57,8 @@ export const CorrectedChunkTranslation: React.FC<
 //     <RigidBody key={chunk.uuid} mass={0}>
 //       {/* <MeshCollider type="trimesh"> */}
 //       <CorrectedChunkTranslation chunk={chunk}>
-//         <bufferGeometry attach="geometry" {...chunk.geometry} />
-//         <meshBasicMaterial wireframe color="red" />
+// <bufferGeometry attach="geometry" {...chunk.geometry} />
+// <meshBasicMaterial wireframe color="red" />
 //       </CorrectedChunkTranslation>
 //       {/* </MeshCollider> */}
 //     </RigidBody>
@@ -197,7 +197,7 @@ export const Planets: React.FC = () => {
           <>
             <ECS.Entity key={entity.id} entity={entity}>
               <PlanetRender>
-              <TerrainScatter />
+                <TerrainScatter />
                 {entity.children.map(moonEntity => (
                   <ECS.Entity key={moonEntity.id} entity={moonEntity}>
                     <mesh key={moonEntity.id} position={entity.position}>
