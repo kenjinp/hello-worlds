@@ -66,8 +66,8 @@ export class CityWall {
     console.log({ entrances })
 
     if (!entrances.length) {
-      // throw new Error("Bad walled area shape!")
       console.warn("bad walled area shape")
+      throw new Error("Bad walled area shape!")
     }
 
     do {
@@ -77,6 +77,7 @@ export class CityWall {
 
       if (real) {
         try {
+          console.log("doing outer ward stuff", gate)
           let outerWards = model
             .patchByVertex(gate)
             .filter(ward => !this.patches.includes(ward))
@@ -123,13 +124,18 @@ export class CityWall {
       } else entrances.splice(index - 1, 3)
     } while (entrances.length >= 3)
 
-    if (this.gates.length == 0) throw new Error("Bad walled area shape!")
+    if (!this.gates.length) throw new Error("Bad walled area shape!")
 
     console.log({ gates: this.gates })
 
     // // Smooth further sections of the wall with gates
     if (real) {
       for (let gate of this.gates) {
+        console.log({ gate })
+        if (!gate) {
+          console.log("no gate", gate)
+          throw new Error("no gate")
+        }
         gate.copy(this.shape.smoothVertex(gate))
       }
     }
@@ -161,7 +167,7 @@ export class CityWall {
     let index = this.patches.includes(p)
       ? this.shape.findEdge(v0, v1)
       : this.shape.findEdge(v1, v0)
-    if (index != -1 && this.segments[index]) {
+    if (index !== -1 && this.segments[index]) {
       return true
     }
 

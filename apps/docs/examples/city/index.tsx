@@ -102,12 +102,11 @@ function ShowPatches({ city }: { city: CityModel }) {
 }
 
 function WallDebug({ city }: { city: CityModel }) {
-  const wall = city.border.shape
-  const points = wall.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
-  const innerPoints = city.border.patches
+  const wall = city.border?.shape
+  const points = wall?.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
   return(
     <>
-      {wall.vertices.map(({ x, y }) => {
+      {wall?.vertices.map(({ x, y }) => {
         return <circle cx={x} cy={y} r="3" fill="purple" />
       })}
       <polygon
@@ -118,10 +117,10 @@ function WallDebug({ city }: { city: CityModel }) {
           stroke: !!city.wall ? "purple" : 'none',
         }}
       />
-      {city.gates.map(({ x, y }) => {
+      {city.gates?.map(({ x, y }) => {
         return <circle cx={x} cy={y} r="4" fill="red" />
       })}
-      {city.border.towers?.map(({ x, y }) => {
+      {city.border?.towers?.map(({ x, y }) => {
         return <circle cx={x} cy={y} r="3" fill="green" />
       })}
       {/* {innerPoints.map(patch => <ShowPatch patch={patch} color={new Color("green")}/>)} */}
@@ -166,7 +165,7 @@ function StreetDebug({ city }: { city: CityModel }) {
 function WardDebug({ city }: { city: CityModel }) {
   return(
     <>
-      {city.patches.map((patch) => {
+      {city.border ? city.patches.map((patch) => {
         const w = patch.ward
         const point = patch.shape.centroid
         const points = patch.shape.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
@@ -181,7 +180,7 @@ function WardDebug({ city }: { city: CityModel }) {
           <text x={point.x} y={point.y}>{w.getLabel()}</text>
           </>
            : null
-      })}
+      }) : null}
     </>,
   );
 }
@@ -207,6 +206,7 @@ function CityDebug() {
   console.log({ city })
 
   return (
+    <>
     <svg
       viewBox="-500 -500 1000 1000"
       ref={handleRect}
@@ -232,6 +232,9 @@ function CityDebug() {
         </>
       )}
     </svg>
+        {city && <header style={{ position: "fixed", top:0}}>{city.wallsNeeded && "walls"} | {city.citadelNeeded && "citadel"} | {city.plazaNeeded && "plaza"}</header>}
+    </>
+
   )
 }
 

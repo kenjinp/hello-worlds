@@ -21,12 +21,14 @@ export class Graph {
     goal: Node,
     exclude: Array<Node> = null,
   ): Array<Node> {
-    const closedSet: Array<Node> = !exclude ? [...exclude] : []
+    const closedSet: Array<Node> = exclude ? [...exclude] : []
     let openSet: Array<Node> = [start]
     const cameFrom: Map<Node, Node> = new Map()
 
     const gScore: Map<Node, number> = new Map()
     gScore.set(start, 0)
+
+    console.log({ closedSet, openSet, cameFrom, gScore })
 
     while (openSet.length > 0) {
       let current = openSet.shift()

@@ -41,8 +41,6 @@ export class Topology {
         let n0 = n1
         n1 = this.processPoint(v1)
 
-        console.log({ n0, n1, v1, v0 })
-
         if (n0 && !border.contains(v0)) {
           if (withinCity) this.inner.add(n0)
           else this.outer.add(n0)

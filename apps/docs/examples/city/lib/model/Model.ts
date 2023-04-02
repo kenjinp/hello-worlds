@@ -55,8 +55,8 @@ export class CityModel {
 
     this.plazaNeeded = this.random.bool()
     // citadel stuff is a bit borked atm
-    this.citadelNeeded = false //, this.random.bool()
-    this.wallsNeeded = false // this.random.bool()
+    this.citadelNeeded = this.random.bool()
+    this.wallsNeeded = this.random.bool()
     this.build()
 
     // errors can sometimes happen when building the city
@@ -90,9 +90,9 @@ export class CityModel {
     this.buildStreets()
     console.timeEnd("buildStreets")
 
-    console.time("createWards")
-    this.createWards()
-    console.timeEnd("createWards")
+    // console.time("createWards")
+    // this.createWards()
+    // console.timeEnd("createWards")
 
     // createWards();
     // buildGeometry();
@@ -214,26 +214,27 @@ export class CityModel {
   }
 
   private optimizeJunctions() {
-    const patchesToOptimize: Array<Patch> =
-      this.citadel == null ? this.inner : this.inner.concat([this.citadel])
+    const patchesToOptimize: Array<Patch> = !this.citadel
+      ? this.inner
+      : this.inner.concat([this.citadel])
 
     const wardsToClean: Array<Patch> = []
     for (let w of patchesToOptimize) {
       let index = 0
       while (index < w.shape.length) {
-        const v0 = w.shape[index]
-        const v1 = w.shape[(index + 1) % w.shape.length]
+        const v0 = w.shape.vertices[index]
+        const v1 = w.shape.vertices[(index + 1) % w.shape.length]
 
-        if (v0 != v1 && v0.distanceTo(v1) < 8) {
+        if (v0 !== v1 && v0.distanceTo(v1) < 8) {
           for (let w1 of this.patchByVertex(v1)) {
-            if (w1 != w) {
-              w1.shape[w1.shape.vertices.indexOf(v1)] = v0
+            if (w1 !== w) {
+              w1.shape.vertices[w1.shape.vertices.indexOf(v1)] = v0
               wardsToClean.push(w1)
             }
           }
 
-          v0.addEq(v1)
-          v0.scaleEq(0.5)
+          v0.add(v1)
+          v0.multiplyScalar(0.5)
 
           w.shape.remove(v1)
         }
@@ -244,9 +245,9 @@ export class CityModel {
     // Removing duplicate vertices
     for (let w of wardsToClean) {
       for (let i = 0; i < w.shape.length; i++) {
-        let v = w.shape[i]
+        let v = w.shape.vertices[i]
         let dupIdx
-        while ((dupIdx = w.shape.vertices.indexOf(v, i + 1)) != -1) {
+        while ((dupIdx = w.shape.vertices.indexOf(v, i + 1)) !== -1) {
           w.shape.vertices.splice(dupIdx, 1)
         }
       }
