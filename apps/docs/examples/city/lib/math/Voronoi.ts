@@ -84,9 +84,14 @@ export class Voronoi {
       }
 
       let index = 0
+      let tries = 0
       do {
         this.triangles.push(new Triangle(p, a[index], b[index]))
         index = a.indexOf(b[index])
+        tries++
+        if (tries > 1000) {
+          throw new Error("Infinite loop")
+        }
       } while (index != 0)
 
       for (let tr of toSplit) {
