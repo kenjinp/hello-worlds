@@ -21,6 +21,10 @@ export class Graph {
     goal: Node,
     exclude: Array<Node> = null,
   ): Array<Node> {
+    if (!start) {
+      throw new Error("no start!")
+    }
+
     const closedSet: Array<Node> = exclude ? [...exclude] : []
     let openSet: Array<Node> = [start]
     const cameFrom: Map<Node, Node> = new Map()
@@ -28,10 +32,11 @@ export class Graph {
     const gScore: Map<Node, number> = new Map()
     gScore.set(start, 0)
 
-    console.log({ closedSet, openSet, cameFrom, gScore })
+    console.log({ start, closedSet, openset: [...openSet], cameFrom, gScore })
 
     while (openSet.length > 0) {
       let current = openSet.shift()
+      console.log("while openset", openSet, current)
       if (current === goal) {
         return this.buildPath(cameFrom, current)
       }

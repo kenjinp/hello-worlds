@@ -32,7 +32,9 @@ export class Ward {
 
     const isInnerPatch = !this.model.wall || this.patch.withinWalls
     this.patch.shape.forEdge((v0, v1) => {
-      if (!!this.model.wall && this.model.wall.bordersBy(this.patch, v0, v1)) {
+      const bordersWall =
+        !!this.model.wall && this.model.wall.bordersBy(this.patch, v0, v1)
+      if (bordersWall) {
         // Not too close to the wall
         insetDist.push(Ward.MAIN_STREET / 2)
       } else {
@@ -57,6 +59,8 @@ export class Ward {
         )
       }
     })
+
+    console.log(insetDist, this.patch.shape.isConvex())
 
     return this.patch.shape.isConvex()
       ? this.patch.shape.shrink(insetDist)
@@ -183,7 +187,9 @@ export class Ward {
         half.square <
         minSq * Math.pow(2, 4 * sizeChaos * (random.float() - 0.5))
       ) {
-        if (!random.bool(emptyProb)) buildings.push(half)
+        if (!random.bool(emptyProb)) {
+          buildings.push(half)
+        }
       } else {
         buildings = buildings.concat(
           Ward.createAlleys(

@@ -2,10 +2,78 @@ import { Vector3 } from "three"
 
 const EPSILON = 0.1
 
+// might be useful
+// https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
+
+function splitPolygonAlongLine(
+  polygon: Polygon,
+  start: Vector3,
+  end: Vector3,
+): Polygon[] {
+  // Compute the intersection points between the line segment and each edge of the polygon
+  const intersections: Vector3[] = []
+
+  for (let i = 0; i < polygon.length; i++) {
+    const p1 = polygon[i]
+    const p2 = polygon[(i + 1) % polygon.length]
+    const intersection = lineSegmentIntersection(start, end, p1, p2)
+
+    if (intersection !== null) {
+      intersections.push(intersection)
+    }
+  }
+
+  // Sort the intersection points by distance from the start point
+  intersections.sort((a, b) => start.distanceTo(a) - start.distanceTo(b))
+
+  // If there are no intersections, return the original polygon and an empty array
+  if (intersections.length === 0) {
+    return [polygon]
+  }
+
+  // Split the polygon into two polygons along the line segment
+  const newPolygon1: Vector3[] = []
+  const newPolygon2: Vector3[] = []
+  let currentPolygon = newPolygon1
+
+  for (let i = 0; i < polygon.length; i++) {
+    const point = polygon[i]
+
+    if (intersections.length === 1 && point === intersections[0]) {
+      currentPolygon = newPolygon2
+      currentPolygon.push(point)
+    } else if (intersections.length === 2 && point === intersections[0]) {
+      currentPolygon = newPolygon2
+      currentPolygon.push(point, intersections[1])
+    } else if (intersections.length === 2 && point === intersections[1]) {
+      currentPolygon = newPolygon1
+      currentPolygon.push(point, intersections[0])
+    } else {
+      currentPolygon.push(point)
+    }
+  }
+
+  // Add the intersection points to each polygon
+  newPolygon1.push(intersections[0], intersections[1])
+  newPolygon2.push(intersections[1], intersections[0])
+
+  return [new Polygon(newPolygon1), new Polygon(newPolygon2)]
+}
+
 export const rotate90 = (v: Vector3) => new Vector3(-v.y, v.x, v.z)
 
 export function cross(x1: number, y1: number, x2: number, y2: number) {
   return x1 * y2 - y1 * x2
+}
+
+function crossProduct(p1: Vector3, p2: Vector3): number {
+  return p1.x * p2.y - p1.y * p2.x
+}
+
+export function normalize(v: Vector3, thickness: number) {
+  const { x, y, z } = v.clone()
+  const norm = thickness / Math.sqrt(x * x + y * y)
+  return new Vector3(x * norm, y * norm, z)
 }
 
 const removeElementFromArray = (array: any[], element: any) => {
@@ -38,7 +106,7 @@ export function intersectLines(
   if (d == 0) return null
 
   let t2 = (dy1 * (x2 - x1) - dx1 * (y2 - y1)) / d
-  let t1 = dx1 != 0 ? (x2 - x1 + dx2 * t2) / dx1 : (y2 - y1 + dy2 * t2) / dy1
+  let t1 = dx1 !== 0 ? (x2 - x1 + dx2 * t2) / dx1 : (y2 - y1 + dy2 * t2) / dy1
 
   return new Vector3(t1, t2, 0)
 }
@@ -62,7 +130,15 @@ export const DELTA = 0.000001
 export class Polygon {
   public static DELTA = DELTA
 
-  constructor(public vertices: Vector3[] = []) {}
+  constructor(public vertices: Vector3[] = []) {
+    if (vertices.length < 3) {
+      throw new Error("Polygon must have at least 3 vertices")
+    }
+  }
+
+  clone() {
+    return new Polygon(this.vertices.map(v => v.clone()))
+  }
 
   // Faster approximation of centroid
   public get center(): Vector3 {
@@ -79,7 +155,7 @@ export class Polygon {
     let y = 0.0
     let a = 0.0
     this.forEdge((v0, v1) => {
-      let f = cross(v0.x, v0.y, v1.x, v1.y)
+      let f = crossProduct(v0, v1)
       a += f
       x += (v0.x + v1.x) * f
       y += (v0.y + v1.y) * f
@@ -236,16 +312,35 @@ export class Polygon {
     )
   }
 
-  public isConvexVertex(v1: Vector3): boolean {
-    let v0 = this.prev(v1)
-    let v2 = this.next(v1)
-    return cross(v1.x - v0.x, v1.y - v0.y, v2.x - v1.x, v2.y - v1.y) > 0
+  public isConvexVertex(p2: Vector3): boolean {
+    let p1 = this.prev(p2)
+    let p3 = this.next(p2)
+    return (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x) > 0
   }
 
   public isConvex(): boolean {
-    for (let v of this.vertices) {
-      if (!this.isConvexVertex(v)) return false
+    const n = this.vertices.length
+
+    if (n < 3) {
+      return false // A polygon must have at least 3 points
     }
+
+    let prevCrossProduct = 0
+    for (let i = 0; i < n; i++) {
+      const p1 = this.vertices[i]
+      const p2 = this.vertices[(i + 1) % n]
+      const p3 = this.vertices[(i + 2) % n]
+
+      const crossProduct =
+        (p2.x - p1.x) * (p3.y - p2.y) - (p2.y - p1.y) * (p3.x - p2.x)
+
+      if (i > 0 && crossProduct * prevCrossProduct < 0) {
+        return false // If the cross products have different signs, the polygon is not convex
+      }
+
+      prevCrossProduct = crossProduct
+    }
+
     return true
   }
 
@@ -323,7 +418,8 @@ export class Polygon {
       let dd = d[i++]
       if (dd > 0) {
         let v = v2.sub(v1)
-        let n = rotate90(v.clone()).normalize().multiplyScalar(dd)
+        let n = normalize(rotate90(v), dd)
+        console.log({ n })
         q = q.cut(v1.add(n), v2.add(n), 0)[0]
       }
     })
@@ -378,12 +474,13 @@ export class Polygon {
     let v2 = this.vertices[i2]
 
     let v = v2.sub(v1)
-    let n = rotate90(v.clone()).normalize().multiplyScalar(d)
+    let n = normalize(rotate90(v), d)
 
     return this.cut(v1.add(n), v2.add(n), 0)[0]
   }
 
   public cut(p1: Vector3, p2: Vector3, gap = 0): Array<Polygon> {
+    console.log("cut", p1, p2, gap)
     let x1 = p1.x
     let y1 = p1.y
     let dx1 = p2.x - x1
@@ -406,6 +503,7 @@ export class Polygon {
       let dy2 = v1.y - y2
 
       let t = intersectLines(x1, y1, dx1, dy1, x2, y2, dx2, dy2)
+      console.log({ t })
       if (t != null && t.y >= 0 && t.y <= 1) {
         switch (count) {
           case 0:
@@ -419,18 +517,31 @@ export class Polygon {
       }
     }
 
+    console.log({
+      oldPoly: this.clone(),
+      count,
+      ratio1,
+      ratio2,
+      edge1,
+      edge2,
+    })
+
     if (count == 2) {
-      let point1 = p1.add(p2.sub(p1).multiplyScalar(ratio1))
-      let point2 = p1.add(p2.sub(p1).multiplyScalar(ratio2))
+      let d1 = new Vector3().subVectors(p1, p2)
+      // .multiplyScalar(ratio1) //  p1.add(p2.sub(p1).multiplyScalar(ratio1))
+      let d2 = new Vector3().subVectors(p2, p1)
+      // .multiplyScalar(ratio2) // p1.add(p2.sub(p1).multiplyScalar(ratio2))
+      const point1 = p1 // p1.add(d1.multiplyScalar(ratio1))
+      const point2 = p2 //.add(d2.multiplyScalar(ratio2))
+
+      console.log({ point1, point2 })
 
       let half1 = new Polygon(this.vertices.slice(edge1 + 1, edge2 + 1))
       half1.vertices.unshift(point1)
       half1.vertices.push(point2)
 
       let half2 = new Polygon(
-        this.vertices
-          .slice(edge2 + 1)
-          .concat(this.vertices.slice(0, edge1 + 1)),
+        this.vertices.slice(edge2).concat(this.vertices.slice(0, edge1 + 1)),
       )
       half2.vertices.unshift(point2)
       half2.vertices.push(point1)
@@ -461,7 +572,7 @@ export class Polygon {
       } else {
         // here we may want to do something fancier for nicer joints
         let v = v1.sub(v0)
-        let n = rotate90(v.clone()).normalize().multiplyScalar(dd)
+        let n = normalize(rotate90(v), dd)
         q.vertices.push(v0.add(n))
         q.vertices.push(v1.add(n))
       }

@@ -1,17 +1,8 @@
-import ExampleLayout from "@components/layouts/example/Example"
+import { Button } from "@components/button/Button"
 import { SafeHydrate } from "@components/safe-render/SafeRender"
-import { SpaceBox } from "@components/space-box/SpaceBox"
-import { Canvas } from "@game/Canvas"
-import { AtmosphereEffects } from "@game/effects/Atmosphere.effects"
-import { OceanEffects } from "@game/effects/Ocean.effects"
-import { AU } from "@game/Math"
-import { KeyboardController } from "@game/player/KeyboardController"
-import { PostProcessing } from "@game/Postprocessing"
-import { Stars as FarStars } from "@react-three/drei"
-import { Debug, Physics } from "@react-three/rapier"
 import * as React from "react"
-import { Color, Euler, Vector3 } from "three"
-import { ExampleLand } from "./Land"
+import { Color, Vector3 } from "three"
+import { Polygon } from "./lib/math/Polgygon"
 import { Voronoi } from "./lib/math/Voronoi"
 import { CityModel } from "./lib/model/Model"
 import { Patch } from "./lib/model/Patch"
@@ -238,11 +229,118 @@ function CityDebug() {
   )
 }
 
+
+export function PolygonPlayground () {
+  const [points, setPoints] = React.useState<Vector3[]>([])
+  const [polygons, setPolygons] = React.useState<Polygon[]>([])
+  const [svg, setSvg] = React.useState<SVGSVGElement>(null)
+  const [placingPolygons, setPlacingPolygons] = React.useState(false)
+  const [cutting, setCutting] = React.useState(false)
+  const [cuttingPoints, setCuttingPoints] = React.useState<Vector3[]>([])
+
+  const handlePlacePolygonPoints = () => {
+    if (!svg) { return; }
+    if (placingPolygons) {
+
+      setPlacingPolygons(false)
+      setPolygons([new Polygon(points)])      
+    } else {
+      setPlacingPolygons(true)
+      setPolygons([])
+      setPoints([])
+    }
+  }
+
+  const handleCutPolygon = () => {
+    if (!svg) { return; }
+    if (cutting) {
+      setCutting(false)
+      setCuttingPoints([])
+    } else {
+      setCutting(true)
+      setCuttingPoints([])
+    }
+  }
+
+  const handleCanvasClick = (e) => {
+    if (!svg) { return; }
+    if (placingPolygons) {
+      const rect = e.currentTarget.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      setPoints([...points, new Vector3(x, y, 0)])
+    }
+    if (cutting) {
+      if (cuttingPoints.length === 2) {
+        setCutting(false)
+        setCuttingPoints([])
+        setPolygons(polygons[0].cut(cuttingPoints[0], cuttingPoints[1]))
+        
+      } else {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const y = e.clientY - rect.top
+        setCuttingPoints([...cuttingPoints, new Vector3(x, y, 0)])
+      }
+    }
+  }
+
+  const handleRect = React.useCallback(node => {
+    setSvg(node)
+  }, [])
+
+  console.log({ polygons })
+
+  return <>
+    <header style={{ position: "fixed", top:0}}>
+      <Button
+        onClick={handlePlacePolygonPoints}
+        >{placingPolygons ? "Stop Placing Points" : "Place Polygon Points"}
+      </Button>{" | "}
+      <Button
+        onClick={handleCutPolygon}
+        >{cutting ? "Cutting in progress" : "Cut Polygon"}
+      </Button>
+    </header>
+  <svg
+  // viewBox="-500 -500 1000 1000"
+  ref={handleRect}
+  onClick={handleCanvasClick}
+  style={{ width: "100vw", height: "100vh" }}
+>
+  {polygons.map((polygon, i) => {
+    const points = polygon.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
+    return (
+      <>
+      <polyline
+        points={points}
+        className="triangle"
+        style={{
+          fill: polygon.isConvex() ?  i === 0 ? "green": "palegreen" : "red",
+          stroke: "blue",
+        }}
+      />
+      {polygon.vertices.map(({ x, y }, i) => {
+        return <circle cx={x} cy={y} r={5} fill="blue" key={i} />
+      })}
+      </>
+      )
+  })}
+  {points.map(({ x, y }, i) => {
+    return <circle cx={x} cy={y} r={5} fill="green" key={i} />
+  })}
+  {cuttingPoints.map(({ x, y }, i) => {
+    return <circle cx={x} cy={y} r={5} fill="red" key={i} />
+  })}
+</svg>
+</>
+}
+
 export const ExampleInner: React.FC = () => {
   const [showCanvas, setShowCanvas] = React.useState(false)
   return (
     <SafeHydrate>
-      {showCanvas && (
+      {/* {showCanvas && (
         <ExampleLayout middle={<>Hexagon Spatial Hashing</>}>
           <Canvas>
             <React.Suspense fallback={null}>
@@ -282,8 +380,9 @@ export const ExampleInner: React.FC = () => {
             </React.Suspense>
           </Canvas>
         </ExampleLayout>
-      )}
-      <CityDebug />
+      )} */}
+      {/* <CityDebug /> */}
+      <PolygonPlayground />
     </SafeHydrate>
   )
 }

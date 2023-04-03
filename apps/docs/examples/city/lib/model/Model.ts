@@ -1,3 +1,4 @@
+import { sample } from "@hello-worlds/core"
 import { Vector3 } from "three"
 import { sign } from "../math/helpers"
 import { Polygon } from "../math/Polgygon"
@@ -8,6 +9,7 @@ import { Voronoi } from "../math/Voronoi"
 import { Castle } from "../ward/Castle"
 import { GateWard } from "../ward/GateWard"
 import { Market } from "../ward/Market"
+import { Slum } from "../ward/Slum"
 import { Patch } from "./Patch"
 import { CityWall } from "./Wall"
 
@@ -55,8 +57,8 @@ export class CityModel {
 
     this.plazaNeeded = this.random.bool()
     // citadel stuff is a bit borked atm
-    this.citadelNeeded = this.random.bool()
-    this.wallsNeeded = this.random.bool()
+    this.citadelNeeded = false //this.random.bool()
+    this.wallsNeeded = false //this.random.bool()
     this.build()
 
     // errors can sometimes happen when building the city
@@ -90,12 +92,13 @@ export class CityModel {
     this.buildStreets()
     console.timeEnd("buildStreets")
 
-    // console.time("createWards")
-    // this.createWards()
-    // console.timeEnd("createWards")
+    console.time("createWards")
+    this.createWards()
+    console.timeEnd("createWards")
 
-    // createWards();
-    // buildGeometry();
+    console.time("buildGeometry")
+    this.buildGeometry()
+    console.timeEnd("buildGeometry")
   }
 
   buildPatches() {
@@ -333,28 +336,29 @@ export class CityModel {
       console.log("street", street)
       if (street) {
         this.streets.push(new Polygon(street))
+        // TODO build roads that lead outwards to the countryside
 
-        if (this.border.gates.includes(gate)) {
-          let dir = gate.normalize().multiplyScalar(1000)
-          let start = null
-          let dist = Infinity
-          for (let point of this.topology.nodeToVector3.values()) {
-            let d = point.distanceTo(dir)
-            if (d < dist) {
-              dist = d
-              start = point
-            }
-          }
+        // if (this.border.gates.includes(gate)) {
+        //   let dir = gate.normalize().multiplyScalar(1000)
+        //   let start = null
+        //   let dist = Infinity
+        //   for (let point of this.topology.nodeToVector3.values()) {
+        //     let d = point.distanceTo(dir)
+        //     if (d < dist) {
+        //       dist = d
+        //       start = point
+        //     }
+        //   }
 
-          let road = this.topology.buildPath(
-            start,
-            gate,
-            Array.from(this.topology.inner.values()),
-          )
-          if (road) {
-            this.roads.push(new Polygon(road))
-          }
-        }
+        //   let road = this.topology.buildPath(
+        //     start,
+        //     gate,
+        //     Array.from(this.topology.inner.values()),
+        //   )
+        //   if (road) {
+        //     this.roads.push(new Polygon(road))
+        //   }
+        // }
       } else {
         throw new Error("Unable to build a street!")
       }
@@ -457,25 +461,26 @@ export class CityModel {
     // }
 
     // // Assigning inner city wards
-    // while (unassigned.length > 0) {
-    // 	let bestPatch:Patch = null;
+    while (unassigned.length > 0) {
+      // 	let bestPatch:Patch = null;
 
-    // 	let wardClass = wards.length > 0 ? wards.shift() : Slum;
-    // 	let rateFunc = Reflect.field( wardClass, "rateLocation" );
+      // 	let wardClass = wards.length > 0 ? wards.shift() : Slum;
+      // 	let rateFunc = Reflect.field( wardClass, "rateLocation" );
 
-    // 	if (rateFunc == null)
-    // 		do
-    // 			bestPatch = unassigned.random()
-    // 		while (bestPatch.ward != null);
-    // 	else
-    // 		bestPatch = unassigned.min( function( patch:Patch ) {
-    // 			return patch.ward == null ? Reflect.callMethod( wardClass, rateFunc, [this, patch] ) : Math.POSITIVE_INFINITY;
-    // 		} );
+      // 	if (rateFunc == null)
+      // 		do
+      // 			bestPatch = unassigned.random()
+      // 		while (bestPatch.ward != null);
+      // 	else
+      // 		bestPatch = unassigned.min( function( patch:Patch ) {
+      // 			return patch.ward == null ? Reflect.callMethod( wardClass, rateFunc, [this, patch] ) : Math.POSITIVE_INFINITY;
+      // 		} );
 
-    // 	bestPatch.ward = Type.createInstance( wardClass, [this, bestPatch] );
-
-    // 	unassigned.remove( bestPatch );
-    // }
+      // 	bestPatch.ward = Type.createInstance( wardClass, [this, bestPatch] );
+      const bestPatch = sample(unassigned)[0]
+      bestPatch.ward = new Slum(this, bestPatch)
+      removeUnassignedPatch(bestPatch)
+    }
 
     // // Outskirts
     // if (wall != null)
