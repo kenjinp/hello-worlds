@@ -5,62 +5,170 @@ const EPSILON = 0.1
 // might be useful
 // https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm
 
-function splitPolygonAlongLine(
+// This implementation uses the cross product of two vectors to determine if the line segments are parallel, and then solves for the intersection point using the parametric equations of the lines. The t and u variables represent the distances along the line segments where the intersection point occurs, and are checked to ensure that the intersection point is within both line segments.
+interface LineSegment {
+  start: Vector3
+  end: Vector3
+}
+
+function lineIntersection(
+  line1: LineSegment,
+  line2: LineSegment,
+): Vector3 | null {
+  const x1 = line1.start.x,
+    y1 = line1.start.y
+  const x2 = line1.end.x,
+    y2 = line1.end.y
+  const x3 = line2.start.x,
+    y3 = line2.start.y
+  const x4 = line2.end.x,
+    y4 = line2.end.y
+
+  const denominator = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)
+
+  if (denominator === 0) {
+    // lines are parallel or coincident
+    return null
+  }
+
+  const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominator
+  const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator
+
+  if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+    // intersection point is outside of at least one line segment
+    return null
+  }
+
+  // calculate and return the point of intersection
+  const intersectionX = x1 + ua * (x2 - x1)
+  const intersectionY = y1 + ua * (y2 - y1)
+  return new Vector3(intersectionX, intersectionY, 0)
+}
+
+function isPointOnLineSegment(
+  point: Vector3,
+  segmentStart: Vector3,
+  segmentEnd: Vector3,
+): boolean {
+  const distanceStartToPoint = segmentStart.distanceTo(point)
+  const distanceEndToPoint = segmentEnd.distanceTo(point)
+  const segmentLength = segmentStart.distanceTo(segmentEnd)
+  const epsilon = DELTA // A small value to account for floating-point errors
+  return (
+    Math.abs(distanceStartToPoint + distanceEndToPoint - segmentLength) <
+      epsilon &&
+    distanceStartToPoint < segmentLength + epsilon &&
+    distanceEndToPoint < segmentLength + epsilon
+  )
+}
+
+function splitPolygon(
   polygon: Polygon,
-  start: Vector3,
-  end: Vector3,
+  lineSegment: LineSegment,
+  gap,
 ): Polygon[] {
-  // Compute the intersection points between the line segment and each edge of the polygon
-  const intersections: Vector3[] = []
+  const intersectionPoints: {
+    edgeIndex: number
+    point: Vector3
+  }[] = []
 
-  for (let i = 0; i < polygon.length; i++) {
-    const p1 = polygon[i]
-    const p2 = polygon[(i + 1) % polygon.length]
-    const intersection = lineSegmentIntersection(start, end, p1, p2)
-
+  // Find all intersection points between the polygon and the line segment
+  for (let i = 0; i < polygon.vertices.length; i++) {
+    const currentPoint = polygon.vertices[i]
+    const nextPoint = polygon.vertices[(i + 1) % polygon.vertices.length]
+    const polygonEdge: LineSegment = {
+      start: currentPoint,
+      end: nextPoint,
+    }
+    const intersection = lineIntersection(polygonEdge, lineSegment)
     if (intersection !== null) {
-      intersections.push(intersection)
+      intersectionPoints.push({
+        edgeIndex: i,
+        point: intersection,
+      })
     }
   }
 
-  // Sort the intersection points by distance from the start point
-  intersections.sort((a, b) => start.distanceTo(a) - start.distanceTo(b))
+  // Sort intersection points by their distance to the first point of the line segment
+  // const sortedPoints = intersectionPoints.sort((a, b) => {
+  //   const distanceA = lineSegment.start.distanceTo(a)
+  //   const distanceB = lineSegment.start.distanceTo(b)
+  //   return distanceA - distanceB
+  // })
 
-  // If there are no intersections, return the original polygon and an empty array
-  if (intersections.length === 0) {
+  if (intersectionPoints.length !== 2) {
+    // The polygon is either not intersecting the line segment, or is intersecting it at more than two points
     return [polygon]
   }
 
-  // Split the polygon into two polygons along the line segment
-  const newPolygon1: Vector3[] = []
-  const newPolygon2: Vector3[] = []
-  let currentPolygon = newPolygon1
+  // Split the polygon into multiple parts using the intersection points
+  // const polygons: Polygon[] = []
+  // let currentPolygonPoints: Vector3[] = []
+  // for (let i = 0; i < polygon.vertices.length; i++) {
+  //   const currentPoint = polygon.vertices[i]
+  //   currentPolygonPoints.push(currentPoint)
 
-  for (let i = 0; i < polygon.length; i++) {
-    const point = polygon[i]
+  //   // Check if the next intersection point is on this edge of the polygon
+  //   const nextPoint = polygon.vertices[(i + 1) % polygon.vertices.length]
+  //   const nextIntersectionIndex = intersectionPoints.findIndex(p =>
+  //     isPointOnLineSegment(p, currentPoint, nextPoint),
+  //   )
 
-    if (intersections.length === 1 && point === intersections[0]) {
-      currentPolygon = newPolygon2
-      currentPolygon.push(point)
-    } else if (intersections.length === 2 && point === intersections[0]) {
-      currentPolygon = newPolygon2
-      currentPolygon.push(point, intersections[1])
-    } else if (intersections.length === 2 && point === intersections[1]) {
-      currentPolygon = newPolygon1
-      currentPolygon.push(point, intersections[0])
-    } else {
-      currentPolygon.push(point)
-    }
+  //   console.log({ nextIntersectionIndex, currentPoint, nextPoint })
+  //   if (nextIntersectionIndex !== -1) {
+  //     // Add the intersection point and create a new polygon
+  //     currentPolygonPoints.push(intersectionPoints[nextIntersectionIndex])
+  //     console.log({ currentPolygonPoints })
+  //     polygons.push(new Polygon(currentPolygonPoints))
+  //     currentPolygonPoints = [intersectionPoints[nextIntersectionIndex]]
+  //   }
+  // }
+
+  // let d1 = new Vector3().subVectors(p1, p2)
+  // // .multiplyScalar(ratio1) //  p1.add(p2.sub(p1).multiplyScalar(ratio1))
+  // let d2 = new Vector3().subVectors(p2, p1)
+  // // .multiplyScalar(ratio2) // p1.add(p2.sub(p1).multiplyScalar(ratio2))
+  // const point1 = p1 // p1.add(d1.multiplyScalar(ratio1))
+  // const point2 = p2 //.add(d2.multiplyScalar(ratio2))
+
+  // console.log({ point1, point2 })
+
+  const point1 = intersectionPoints[0]
+  const point2 = intersectionPoints[1]
+
+  let half1 = new Polygon(
+    polygon.vertices.slice(point1.edgeIndex + 1, point2.edgeIndex + 1),
+  )
+  half1.vertices.unshift(point1.point)
+  half1.vertices.push(point2.point)
+
+  let half2 = new Polygon(
+    polygon.vertices
+      .slice(point2.edgeIndex)
+      .concat(polygon.vertices.slice(0, point1.edgeIndex + 1)),
+  )
+  half2.vertices.unshift(point2.point)
+  half2.vertices.push(point1.point)
+  half2.vertices.splice(1, 1)
+
+  if (gap > 0) {
+    // @ts-ignore
+    point2.point.data = "half"
+    half1 = half1.peel(point2.point, gap / 2)
+    half2 = half2.peel(point1.point, gap / 2)
   }
 
-  // Add the intersection points to each polygon
-  newPolygon1.push(intersections[0], intersections[1])
-  newPolygon2.push(intersections[1], intersections[0])
+  let v = polygon.vectorByIndex(point1.edgeIndex)
+  let dx1 = lineSegment.end.x - lineSegment.start.x
+  let dy1 = lineSegment.end.y - lineSegment.start.y
+  return cross(dx1, dy1, v.x, v.y) > 0 ? [half1, half2] : [half2, half1]
 
-  return [new Polygon(newPolygon1), new Polygon(newPolygon2)]
+  // Add the final polygon
+  // polygons.push(new Polygon(currentPolygonPoints))
+  // return [half1, half2]
 }
 
-export const rotate90 = (v: Vector3) => new Vector3(-v.y, v.x, v.z)
+export const perpendicular = (v: Vector3) => new Vector3(-v.y, v.x, v.z)
 
 export function cross(x1: number, y1: number, x2: number, y2: number) {
   return x1 * y2 - y1 * x2
@@ -131,9 +239,9 @@ export class Polygon {
   public static DELTA = DELTA
 
   constructor(public vertices: Vector3[] = []) {
-    if (vertices.length < 3) {
-      throw new Error("Polygon must have at least 3 vertices")
-    }
+    // if (vertices.length < 3) {
+    //   throw new Error("Polygon must have at least 3 vertices")
+    // }
   }
 
   clone() {
@@ -217,12 +325,15 @@ export class Polygon {
     return new Polygon(this.vertices.map(v => v.clone()))
   }
 
-  public forEdge(callback: (a: Vector3, b: Vector3) => void | boolean) {
+  public forEdge(
+    callback: (a: Vector3, b: Vector3, edgeIndex: number) => void | boolean,
+  ) {
     for (let i = 0; i < this.vertices.length; i++) {
       if (
         callback(
           this.vertices[i],
           this.vertices[(i + 1) % this.vertices.length],
+          i,
         ) === false
       ) {
         break
@@ -345,13 +456,13 @@ export class Polygon {
   }
 
   public vector(v: Vector3) {
-    return this.next(v).sub(v)
+    return this.next(v).clone().sub(v)
   }
 
   public vectorByIndex(i: number) {
-    return this.vertices[i == this.vertices.length - 1 ? 0 : i + 1].sub(
-      this.vertices[i],
-    )
+    return this.vertices[i == this.vertices.length - 1 ? 0 : i + 1]
+      .clone()
+      .sub(this.vertices[i])
   }
 
   public get square() {
@@ -418,8 +529,7 @@ export class Polygon {
       let dd = d[i++]
       if (dd > 0) {
         let v = v2.sub(v1)
-        let n = normalize(rotate90(v), dd)
-        console.log({ n })
+        let n = normalize(perpendicular(v), dd)
         q = q.cut(v1.add(n), v2.add(n), 0)[0]
       }
     })
@@ -466,94 +576,102 @@ export class Polygon {
     }
   }
 
+  public insetPolygonEdgeByVertex(v1: Vector3, gapSize: number): Polygon {
+    const startVertexIndex = this.vertices.indexOf(v1)
+    const vertices = [...this.vertices] // Make a copy of the original vertices to avoid modifying the original polygon
+
+    // Find the indices of the previous and next vertices
+    const prevIndex =
+      startVertexIndex === 0 ? vertices.length - 1 : startVertexIndex - 1
+    const nextIndex =
+      startVertexIndex === vertices.length - 1 ? 0 : startVertexIndex + 1
+
+    // Calculate the vectors representing the previous and next edges
+    const prevEdge = v1.clone().sub(this.prev(v1))
+
+    // this.prev(v1)
+    // {
+    //   x: vertices[startVertexIndex].x - vertices[prevIndex].x,
+    //   y: vertices[startVertexIndex].y - vertices[prevIndex].y,
+    // }
+    const nextEdge = v1.clone().sub(this.next(v1))
+
+    // {
+    //   x: vertices[nextIndex].x - vertices[startVertexIndex].x,
+    //   y: vertices[nextIndex].y - vertices[startVertexIndex].y,
+    // }
+
+    // Calculate the perpendicular vectors to the previous and next edges
+    const prevPerpendicular = { x: -prevEdge.y, y: prevEdge.x }
+    const nextPerpendicular = { x: -nextEdge.y, y: nextEdge.x }
+
+    // Normalize the perpendicular vectors to unit length
+    const prevPerpLength = Math.sqrt(
+      prevPerpendicular.x * prevPerpendicular.x +
+        prevPerpendicular.y * prevPerpendicular.y,
+    )
+    const nextPerpLength = Math.sqrt(
+      nextPerpendicular.x * nextPerpendicular.x +
+        nextPerpendicular.y * nextPerpendicular.y,
+    )
+    const prevUnit = {
+      x: prevPerpendicular.x / prevPerpLength,
+      y: prevPerpendicular.y / prevPerpLength,
+    }
+    const nextUnit = {
+      x: nextPerpendicular.x / nextPerpLength,
+      y: nextPerpendicular.y / nextPerpLength,
+    }
+
+    // Calculate the gap vectors for the previous and next edges
+    const prevGap = { x: prevUnit.x * gapSize, y: prevUnit.y * gapSize }
+    const nextGap = { x: nextUnit.x * gapSize, y: nextUnit.y * gapSize }
+
+    // Calculate the new vertices for the start vertex, previous vertex, and next vertex
+    vertices[startVertexIndex] = new Vector3(
+      vertices[startVertexIndex].x + prevGap.x + nextGap.x,
+      vertices[startVertexIndex].y + prevGap.y + nextGap.y,
+      0,
+    )
+    vertices[prevIndex] = new Vector3(
+      vertices[prevIndex].x + prevGap.x,
+      vertices[prevIndex].y + prevGap.y,
+    )
+    vertices[nextIndex] = new Vector3(
+      vertices[nextIndex].x + nextGap.x,
+      vertices[nextIndex].y + nextGap.y,
+    )
+
+    // Return the new polygon with the inset edge
+    return new Polygon(vertices)
+  }
+
   // A version of "shrink" function for insetting just one edge.
   // It effectively cuts a peel along the edge.
+  // TODO this should be more accurate instead of using the silly multiply scalar hack
   public peel(v1: Vector3, d: number): Polygon {
-    let i1 = this.vertices.indexOf(v1)
-    let i2 = i1 === this.vertices.length - 1 ? 0 : i1 + 1
-    let v2 = this.vertices[i2]
+    const v2 = this.next(v1)
 
-    let v = v2.sub(v1)
-    let n = normalize(rotate90(v), d)
+    const v = v2.clone().sub(v1)
+    const n = normalize(perpendicular(v), d)
 
-    return this.cut(v1.add(n), v2.add(n), 0)[0]
+    const start = v1.clone().add(n)
+    const end = v2.clone().add(n)
+
+    const startDirection = new Vector3().subVectors(start, end).normalize()
+    const endDirection = new Vector3().subVectors(end, start).normalize()
+
+    // add some extra room to flubb the calculations, otherwise because of the angle the may end up inside the polygon
+    start.add(startDirection.multiplyScalar(100))
+    end.add(endDirection.multiplyScalar(100))
+
+    const polygons = this.cut(start, end, 0)
+
+    return polygons[0]
   }
 
   public cut(p1: Vector3, p2: Vector3, gap = 0): Array<Polygon> {
-    console.log("cut", p1, p2, gap)
-    let x1 = p1.x
-    let y1 = p1.y
-    let dx1 = p2.x - x1
-    let dy1 = p2.y - y1
-
-    let len = this.vertices.length
-    let edge1 = 0,
-      ratio1 = 0.0
-    let edge2 = 0,
-      ratio2 = 0.0
-    let count = 0
-
-    for (let i = 0; i < len; i++) {
-      let v0 = this.vertices[i]
-      let v1 = this.vertices[(i + 1) % len]
-
-      let x2 = v0.x
-      let y2 = v0.y
-      let dx2 = v1.x - x2
-      let dy2 = v1.y - y2
-
-      let t = intersectLines(x1, y1, dx1, dy1, x2, y2, dx2, dy2)
-      console.log({ t })
-      if (t != null && t.y >= 0 && t.y <= 1) {
-        switch (count) {
-          case 0:
-            edge1 = i
-            ratio1 = t.x
-          case 1:
-            edge2 = i
-            ratio2 = t.x
-        }
-        count++
-      }
-    }
-
-    console.log({
-      oldPoly: this.clone(),
-      count,
-      ratio1,
-      ratio2,
-      edge1,
-      edge2,
-    })
-
-    if (count == 2) {
-      let d1 = new Vector3().subVectors(p1, p2)
-      // .multiplyScalar(ratio1) //  p1.add(p2.sub(p1).multiplyScalar(ratio1))
-      let d2 = new Vector3().subVectors(p2, p1)
-      // .multiplyScalar(ratio2) // p1.add(p2.sub(p1).multiplyScalar(ratio2))
-      const point1 = p1 // p1.add(d1.multiplyScalar(ratio1))
-      const point2 = p2 //.add(d2.multiplyScalar(ratio2))
-
-      console.log({ point1, point2 })
-
-      let half1 = new Polygon(this.vertices.slice(edge1 + 1, edge2 + 1))
-      half1.vertices.unshift(point1)
-      half1.vertices.push(point2)
-
-      let half2 = new Polygon(
-        this.vertices.slice(edge2).concat(this.vertices.slice(0, edge1 + 1)),
-      )
-      half2.vertices.unshift(point2)
-      half2.vertices.push(point1)
-
-      if (gap > 0) {
-        half1 = half1.peel(point2, gap / 2)
-        half2 = half2.peel(point1, gap / 2)
-      }
-
-      let v = this.vectorByIndex(edge1)
-      return cross(dx1, dy1, v.x, v.y) > 0 ? [half1, half2] : [half2, half1]
-    } else return [new Polygon(this.vertices)]
+    return splitPolygon(this, { start: p1, end: p2 }, gap)
   }
 
   // This function insets all edges by distances defined in an array.
@@ -572,7 +690,7 @@ export class Polygon {
       } else {
         // here we may want to do something fancier for nicer joints
         let v = v1.sub(v0)
-        let n = normalize(rotate90(v), dd)
+        let n = normalize(perpendicular(v), dd)
         q.vertices.push(v0.add(n))
         q.vertices.push(v1.add(n))
       }

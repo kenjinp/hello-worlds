@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { bisect } from "../math/Cutter"
-import { distance2line, Polygon, rotate90, scalar } from "../math/Polgygon"
+import { distance2line, perpendicular, Polygon, scalar } from "../math/Polygon"
 import { Random } from "../math/Random"
 import { CityModel } from "../model/Model"
 import { Patch } from "../model/Patch"
@@ -60,11 +60,12 @@ export class Ward {
       }
     })
 
-    console.log(insetDist, this.patch.shape.isConvex())
+    console.log(insetDist, this.patch.shape.isConvex(), this.getLabel())
 
-    return this.patch.shape.isConvex()
-      ? this.patch.shape.shrink(insetDist)
-      : this.patch.shape.insetAllEdgesByDistances(insetDist)
+    return this.patch.shape
+    // return this.patch.shape.isConvex()
+    //   ? this.patch.shape.shrink(insetDist)
+    //   : this.patch.shape.insetAllEdgesByDistances(insetDist)
   }
 
   public filterOutskirts() {
@@ -148,12 +149,12 @@ export class Ward {
     })
   }
 
-  private static findLongestEdge(poly: Polygon) {
+  private static findLongestEdge(poly: Polygon): Vector3 {
     return poly.minPredicate(v => -poly.vector(v).length())
   }
 
   public static createAlleys(
-    p: Polygon,
+    polygon: Polygon,
     minSq: number,
     gridChaos: number,
     sizeChaos: number,
@@ -161,25 +162,25 @@ export class Ward {
     split = true,
   ): Array<Polygon> {
     // Looking for the longest edge to cut it
-    let v: Vector3 = null
-    let length = -1.0
-    p.forEdge((p0, p1) => {
-      let len = p0.distanceTo(p1)
-      if (len > length) {
-        length = len
-        v = p0
-      }
-    })
+    const longestEdgeVector = polygon.minPredicate(
+      v => -polygon.vector(v).length(),
+    )
 
-    let spread = 0.8 * gridChaos
-    let ratio = (1 - spread) / 2 + random.float() * spread
+    const spread = 0.8 * gridChaos
+    const ratio = (1 - spread) / 2 + random.float() * spread
 
     // Trying to keep buildings rectangular even in chaotic wards
-    let angleSpread =
-      (Math.PI / 6) * gridChaos * (p.square < minSq * 4 ? 0.0 : 1)
-    let b = (random.float() - 0.5) * angleSpread
+    const angleSpread =
+      (Math.PI / 6) * gridChaos * (polygon.square < minSq * 4 ? 0.0 : 1)
+    const b = (random.float() - 0.5) * angleSpread
 
-    let halves = bisect(p, v, ratio, b, split ? Ward.ALLEY : 0.0)
+    const halves = bisect(
+      polygon,
+      longestEdgeVector,
+      ratio,
+      b,
+      split ? Ward.ALLEY : 0.0,
+    )
 
     let buildings = []
     for (let half of halves) {
@@ -213,12 +214,12 @@ export class Ward {
     fill: number,
   ) {
     function slice(poly: Polygon, c1: Vector3, c2: Vector3) {
-      let v0 = this.findLongestEdge(poly)
+      let v0 = Ward.findLongestEdge(poly)
       let v1 = poly.next(v0)
-      let v = v1.sub(v0)
+      let v = v1.clone().sub(v0)
 
-      let ratio = 0.4 + this.model.random.float() * 0.2
-      let p1 = v0.lerp(v1, ratio)
+      let ratio = 0.4 + random.float() * 0.2
+      let p1 = v0.clone().lerp(v1, ratio)
 
       let c: Vector3 =
         Math.abs(scalar(v.x, v.y, v.z, c1.x, c1.y, c1.z)) <
@@ -227,13 +228,10 @@ export class Ward {
           : c2
 
       let halves = poly.cut(p1, p1.add(c))
-      let buildings = []
+      let buildings: Polygon[] = []
       for (let half of halves) {
-        if (
-          half.square <
-          minBlockSq * Math.pow(2, this.model.random.normal() * 2 - 1)
-        ) {
-          if (this.model.random.bool(fill)) buildings.push(half)
+        if (half.square < minBlockSq * Math.pow(2, random.normal() * 2 - 1)) {
+          if (random.bool(fill)) buildings.push(half)
         } else {
           buildings = buildings.concat(slice(half, c1, c2))
         }
@@ -241,13 +239,14 @@ export class Ward {
       return buildings
     }
 
+    console.log({ square: poly.square, minBlockSq })
     if (poly.square < minBlockSq) {
       return [poly]
     } else {
-      const c1 = poly.vector(this.findLongestEdge(poly))
-      const c2 = rotate90(c1)
+      const c1 = poly.vector(Ward.findLongestEdge(poly))
+      const c2 = perpendicular(c1)
       while (true) {
-        const blocks = slice(poly, c1, c2)
+        const blocks = slice(poly.clone(), c1, c2)
         if (blocks.length > 0) {
           return blocks
         }

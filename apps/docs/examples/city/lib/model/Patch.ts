@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { Polygon } from "../math/Polgygon"
+import { Polygon } from "../math/Polygon"
 import { Region } from "../math/Region"
 import { Ward } from "../ward/Ward"
 

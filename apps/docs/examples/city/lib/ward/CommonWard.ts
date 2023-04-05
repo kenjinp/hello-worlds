@@ -16,13 +16,13 @@ export class CommonWard extends Ward {
 
   public override createGeometry() {
     let block = this.getCityBlock()
-    // this.geometry = Ward.createAlleys(
-    //   block,
-    //   this.minSq,
-    //   this.gridChaos,
-    //   this.sizeChaos,
-    //   this.emptyProb,
-    // )
+    this.geometry = Ward.createAlleys(
+      block,
+      this.minSq,
+      this.gridChaos,
+      this.sizeChaos,
+      this.emptyProb,
+    )
     // if (!this.model.isEnclosed(this.patch)) {
     //   this.filterOutskirts()
     // }

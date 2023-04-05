@@ -1,7 +1,7 @@
 import { sample } from "@hello-worlds/core"
 import { Vector3 } from "three"
 import { sign } from "../math/helpers"
-import { Polygon } from "../math/Polgygon"
+import { Polygon } from "../math/Polygon"
 import { Random } from "../math/Random"
 import { Segment } from "../math/Segment"
 import { Topology } from "../math/Topology"
@@ -64,14 +64,16 @@ export class CityModel {
     // errors can sometimes happen when building the city
     // so we just try again until it works
 
-    // let success = false;
-    // do try {
-    // 	this.build();
-    // 	success = true;
-    // } catch (error) {
-    // 	console.error(error)
-    // 	success = false
-    // } while (!success);
+    // let success = false
+    // do
+    //   try {
+    //     this.build()
+    //     success = true
+    //   } catch (error) {
+    //     console.error(error)
+    //     success = false
+    //   }
+    // while (!success)
   }
 
   build() {

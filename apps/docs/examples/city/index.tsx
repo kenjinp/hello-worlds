@@ -2,10 +2,12 @@ import { Button } from "@components/button/Button"
 import { SafeHydrate } from "@components/safe-render/SafeRender"
 import * as React from "react"
 import { Color, Vector3 } from "three"
-import { Polygon } from "./lib/math/Polgygon"
+import { Polygon } from "./lib/math/Polygon"
+import { Random } from "./lib/math/Random"
 import { Voronoi } from "./lib/math/Voronoi"
 import { CityModel } from "./lib/model/Model"
 import { Patch } from "./lib/model/Patch"
+import { Ward } from "./lib/ward/Ward"
 
 function CityCircumference({ city }: { city: CityModel }) {
   // const [first, ...rest] = city.patches
@@ -154,6 +156,7 @@ function StreetDebug({ city }: { city: CityModel }) {
 }
 
 function WardDebug({ city }: { city: CityModel }) {
+  const random = new Random()
   return(
     <>
       {city.border ? city.patches.map((patch) => {
@@ -172,6 +175,21 @@ function WardDebug({ city }: { city: CityModel }) {
           </>
            : null
       }) : null}
+      {city?.inner.map(i => i?.ward?.geometry.map((building, buildingIndex) => {
+    const points = building.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
+    const hue = random.float()
+    const color = new Color().setHSL(hue, 0.5, 0.5)
+    return (
+      <polyline
+        points={points}
+        style={{
+          fill: color.getStyle(),
+          stroke: color.setHSL(hue, 0.5, 0.2).getStyle()
+        }}
+        key={buildingIndex}
+      />
+    )
+  }))}
     </>,
   );
 }
@@ -273,15 +291,15 @@ export function PolygonPlayground () {
     if (cutting) {
       if (cuttingPoints.length === 2) {
         setCutting(false)
-        setCuttingPoints([])
-        setPolygons(polygons[0].cut(cuttingPoints[0], cuttingPoints[1]))
-        
+        setPolygons(polygons[0].cut(cuttingPoints[0], cuttingPoints[1], 20))
       } else {
         const rect = e.currentTarget.getBoundingClientRect()
         const x = e.clientX - rect.left
         const y = e.clientY - rect.top
         setCuttingPoints([...cuttingPoints, new Vector3(x, y, 0)])
       }
+    } else {
+      setCuttingPoints([])
     }
   }
 
@@ -308,22 +326,63 @@ export function PolygonPlayground () {
   onClick={handleCanvasClick}
   style={{ width: "100vw", height: "100vh" }}
 >
-  {polygons.map((polygon, i) => {
+  {polygons.map((polygon, polygonIndex) => {
+    const random = new Random()
     const points = polygon.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
+    const minSq = polygon.square / 4 * random.float() * random.float()
+    const gridChaos = 0.6 + random.float() * 0.4;
+    const sizeChaos = 0.8;
+    const buildings = Ward.createAlleys(polygon, minSq, gridChaos, sizeChaos)
+    // const peel = polygon.peel(polygon.vertices[0], 20)
+    console.log({ buildings })
     return (
       <>
+      
       <polyline
         points={points}
-        className="triangle"
         style={{
-          fill: polygon.isConvex() ?  i === 0 ? "green": "palegreen" : "red",
+          fill: polygon.isConvex() ?  polygonIndex === 0 ? "green": "palegreen" : "red",
           stroke: "blue",
         }}
       />
-      {polygon.vertices.map(({ x, y }, i) => {
-        return <circle cx={x} cy={y} r={5} fill="blue" key={i} />
+      {buildings.map((building, buildingIndex) => {
+        const points = building.vertices.map(({ x, y }) => `${x},${y}`).join(" ")
+        const hue = random.float()
+        const color = new Color().setHSL(hue, 0.5, 0.5)
+        return (
+          <polyline
+            points={points}
+            style={{
+              fill: color.getStyle(),
+              stroke: color.setHSL(hue, 0.5, 0.2).getStyle()
+            }}
+            key={buildingIndex}
+          />
+        )
       })}
+
+      {/* <polyline
+        points={peel.vertices.map(({ x, y }) => `${x},${y}`).join(" ")}
+        style={{
+          fill: "purple",
+        }}
+      /> */}
+      {polygon.vertices.map(({ x, y }, i) => {
+        return (<>
+        <text x={x} y={y}>{x}, {y} (polygon-{polygonIndex})</text>
+        <circle cx={x} cy={y} r={5} fill="blue" key={i} />
+        </>)
+      })}
+      {/* <polyline
+        points={`${peel.start.x},${peel.start.y} ${peel.end.x},${peel.end.y}`}
+        style={{
+          fill: "none",
+          stroke: "purple",
+          strokeWidth: 2
+        }}
+      /> */}
       </>
+      
       )
   })}
   {points.map(({ x, y }, i) => {
@@ -332,6 +391,13 @@ export function PolygonPlayground () {
   {cuttingPoints.map(({ x, y }, i) => {
     return <circle cx={x} cy={y} r={5} fill="red" key={i} />
   })}
+  {cuttingPoints.length === 2 && (<polyline 
+    points={`${cuttingPoints[0].x},${cuttingPoints[0].y} ${cuttingPoints[1].x},${cuttingPoints[1].y}`}
+    style={{
+      fill: "none",
+      stroke: "red",
+    }}
+  ></polyline>)}
 </svg>
 </>
 }
@@ -381,8 +447,8 @@ export const ExampleInner: React.FC = () => {
           </Canvas>
         </ExampleLayout>
       )} */}
-      {/* <CityDebug /> */}
-      <PolygonPlayground />
+      <CityDebug />
+      {/* <PolygonPlayground /> */}
     </SafeHydrate>
   )
 }

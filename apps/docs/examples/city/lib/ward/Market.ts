@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { Polygon } from "../math/Polgygon"
+import { Polygon } from "../math/Polygon"
 import { Random } from "../math/Random"
 import { CityModel } from "../model/Model"
 import { Patch } from "../model/Patch"

@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { Polygon } from "./Polgygon"
+import { Polygon } from "./Polygon"
 
 export function bisect(
   poly: Polygon,
@@ -10,8 +10,8 @@ export function bisect(
 ): Array<Polygon> {
   let next = poly.next(vertex)
 
-  let p1 = vertex.lerp(next, ratio)
-  let d = next.sub(vertex)
+  let p1 = vertex.clone().lerp(next, ratio)
+  let d = next.clone().sub(vertex)
 
   let cosB = Math.cos(angle)
   let sinB = Math.sin(angle)
