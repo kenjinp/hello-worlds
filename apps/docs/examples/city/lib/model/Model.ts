@@ -1,19 +1,93 @@
 import { sample } from "@hello-worlds/core"
 import { Vector3 } from "three"
-import { sign } from "../math/helpers"
-import { Polygon } from "../math/Polygon"
+import { Polygon, normalize } from "../math/Polygon"
 import { Random } from "../math/Random"
 import { Segment } from "../math/Segment"
 import { Topology } from "../math/Topology"
 import { Voronoi } from "../math/Voronoi"
+import { sign } from "../math/helpers"
+import { AdministrationWard } from "../ward/AdministrationWard"
 import { Castle } from "../ward/Castle"
+import { Cathedral } from "../ward/Cathedral"
+import { CraftsmenWard } from "../ward/CraftsmanWard"
+import { Farm } from "../ward/Farm"
 import { GateWard } from "../ward/GateWard"
 import { Market } from "../ward/Market"
+import { MerchantWard } from "../ward/MerchantWard"
+import { MilitaryWard } from "../ward/MilitaryWard"
+import { Park } from "../ward/Park"
+import { PatriciateWard } from "../ward/PatriciateWard"
 import { Slum } from "../ward/Slum"
+import { Ward } from "../ward/Ward"
 import { Patch } from "./Patch"
 import { CityWall } from "./Wall"
 
+const minArray = <T>(arr: T[], predicate: (t: T) => number) => {
+  let min = Infinity
+  let minT: T
+  for (let t of arr) {
+    const value = predicate(t)
+    // less than or equal so that if the score is Infinity then it will match the last poor score
+    if (value <= min) {
+      min = value
+      minT = t
+    }
+  }
+  return minT
+}
+
 export type Street = Polygon
+
+const WARDS_DECK = [
+  CraftsmenWard,
+  CraftsmenWard,
+  MerchantWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  Cathedral,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  AdministrationWard,
+  CraftsmenWard,
+  Slum,
+  CraftsmenWard,
+  Slum,
+  PatriciateWard,
+  Market,
+  Slum,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  Slum,
+  CraftsmenWard,
+  CraftsmenWard,
+  CraftsmenWard,
+  MilitaryWard,
+  Slum,
+  CraftsmenWard,
+  Park,
+  PatriciateWard,
+  Market,
+  MerchantWard,
+]
+
+const tryCatchRepeatFunction = (fn: () => void, maxTries = 10) => {
+  let tries = 0
+  while (tries < maxTries) {
+    try {
+      fn()
+      return
+    } catch (e) {
+      tries++
+    }
+  }
+}
 
 export class CityModel {
   random: Random
@@ -55,10 +129,10 @@ export class CityModel {
   ) {
     this.random = new Random(seed)
 
-    this.plazaNeeded = this.random.bool()
+    this.plazaNeeded = true //this.random.bool()
     // citadel stuff is a bit borked atm
     this.citadelNeeded = false //this.random.bool()
-    this.wallsNeeded = false //this.random.bool()
+    this.wallsNeeded = true //this.random.bool()
     this.build()
 
     // errors can sometimes happen when building the city
@@ -87,11 +161,11 @@ export class CityModel {
     console.timeEnd("optimizeJunctions")
 
     console.time("buildWalls")
-    this.buildWalls()
+    tryCatchRepeatFunction(() => this.buildWalls())
     console.timeEnd("buildWalls")
 
     console.time("buildStreets")
-    this.buildStreets()
+    tryCatchRepeatFunction(() => this.buildStreets())
     console.timeEnd("buildStreets")
 
     console.time("createWards")
@@ -99,7 +173,8 @@ export class CityModel {
     console.timeEnd("createWards")
 
     console.time("buildGeometry")
-    this.buildGeometry()
+    // this has a bug to morph the stuff a little strange
+    // this.buildGeometry()
     console.timeEnd("buildGeometry")
   }
 
@@ -107,17 +182,10 @@ export class CityModel {
     const sa = this.random.float() * 2 * Math.PI
 
     const points = new Array(this.nPatches * 8).fill(0).map((_, i) => {
-      // if (i <= this.nPatches) {
-      //   // create a square shape around the center
-      //   const x = (i % 2) * 5 - 2 + this.offset.x
-      //   const y = Math.floor(i / 2) * 5 - 2 + this.offset.y
-      //   const v = new Vector3(x, y, 0)
-      //   return v
-      // }
       let a = sa + Math.sqrt(i) * 5
       let r = i == 0 ? 0 : 10 + i * (2 + this.random.float())
-      const x = Math.cos(a) * r + this.offset.x
-      const y = Math.sin(a) * r + this.offset.y
+      const x = Math.cos(a) * r
+      const y = Math.sin(a) * r
       return new Vector3(x, y, 0)
     })
 
@@ -212,7 +280,7 @@ export class CityModel {
       let castle = new Castle(this, this.citadel)
       castle.wall.buildTowers()
       this.citadel.ward = castle
-      if (this.citadel.shape.compactness < 0.75)
+      if (this.citadel.shape.compactness < 0.76)
         throw new Error("Bad citadel shape!")
       this.gates = this.gates.concat(castle.wall.gates)
     }
@@ -318,7 +386,17 @@ export class CityModel {
     function smoothStreet(street: Street) {
       let smoothed = street.smoothVertexEq(3)
       for (let i = 1; i < street.length - 1; i++) {
-        street.vertices[i].copy(smoothed[i])
+        const v = street.vertices[i]
+        if (!v) {
+          console.log(street, v, i)
+          throw new Error("v is null")
+        }
+        try {
+          street.vertices[i].copy(smoothed.vertices[i])
+        } catch (e) {
+          console.log(street, v, i)
+          console.error("something terrible happend")
+        }
       }
     }
 
@@ -340,27 +418,27 @@ export class CityModel {
         this.streets.push(new Polygon(street))
         // TODO build roads that lead outwards to the countryside
 
-        // if (this.border.gates.includes(gate)) {
-        //   let dir = gate.normalize().multiplyScalar(1000)
-        //   let start = null
-        //   let dist = Infinity
-        //   for (let point of this.topology.nodeToVector3.values()) {
-        //     let d = point.distanceTo(dir)
-        //     if (d < dist) {
-        //       dist = d
-        //       start = point
-        //     }
-        //   }
+        if (this.border.gates.includes(gate)) {
+          let dir = normalize(gate, 1000)
+          let start = null
+          let dist = Infinity
+          for (let point of this.topology.nodeToVector3.values()) {
+            let d = point.distanceTo(dir)
+            if (d < dist) {
+              dist = d
+              start = point
+            }
+          }
 
-        //   let road = this.topology.buildPath(
-        //     start,
-        //     gate,
-        //     Array.from(this.topology.inner.values()),
-        //   )
-        //   if (road) {
-        //     this.roads.push(new Polygon(road))
-        //   }
-        // }
+          let road = this.topology.buildPath(
+            start,
+            gate,
+            Array.from(this.topology.inner.values()),
+          )
+          if (road) {
+            this.roads.push(new Polygon(road))
+          }
+        }
       } else {
         throw new Error("Unable to build a street!")
       }
@@ -368,7 +446,11 @@ export class CityModel {
 
     this.tidyUpRoads()
 
-    for (let a of this.arteries) {
+    for (let a of this.streets) {
+      smoothStreet(a)
+    }
+
+    for (let a of this.roads) {
       smoothStreet(a)
     }
   }
@@ -453,58 +535,78 @@ export class CityModel {
       }
     }
 
-    // let wards = WARDS.copy();
-    // // some shuffling
-    // for (i in 0...Std.int(wards.length / 10)) {
-    // 	let index = Random.int( 0, (wards.length - 1) );
-    // 	let tmp = wards[index];
-    // 	wards[index] = wards[index + 1];
-    // 	wards[index+1] = tmp;
-    // }
+    let wards = [...WARDS_DECK]
+    // some shuffling
+    for (let i = 0; i < Math.floor(wards.length / 10); i++) {
+      let index = this.random.int(0, wards.length - 1)
+      let tmp = wards[index]
+      wards[index] = wards[index + 1]
+      wards[index + 1] = tmp
+    }
+
+    console.log({ wards })
 
     // // Assigning inner city wards
     while (unassigned.length > 0) {
-      // 	let bestPatch:Patch = null;
+      let bestPatch: Patch = null
 
-      // 	let wardClass = wards.length > 0 ? wards.shift() : Slum;
-      // 	let rateFunc = Reflect.field( wardClass, "rateLocation" );
+      let wardClass = wards.length > 0 ? wards.shift() : Slum
+      let rateFunc =
+        typeof wardClass["rateLocation"] === "function"
+          ? // @ts-ignore
+            wardClass.rateLocation
+          : null
 
-      // 	if (rateFunc == null)
-      // 		do
-      // 			bestPatch = unassigned.random()
-      // 		while (bestPatch.ward != null);
-      // 	else
-      // 		bestPatch = unassigned.min( function( patch:Patch ) {
-      // 			return patch.ward == null ? Reflect.callMethod( wardClass, rateFunc, [this, patch] ) : Math.POSITIVE_INFINITY;
-      // 		} );
+      if (!rateFunc) {
+        bestPatch = sample(unassigned)[0]
+      } else {
+        bestPatch = minArray(unassigned, patch => {
+          const rating = !patch.ward
+            ? // @ts-ignore
+              wardClass.rateLocation(this, patch)
+            : Infinity
+          return rating
+        })
+      }
 
-      // 	bestPatch.ward = Type.createInstance( wardClass, [this, bestPatch] );
-      const bestPatch = sample(unassigned)[0]
-      bestPatch.ward = new Slum(this, bestPatch)
+      console.log({ bestPatch })
+
+      bestPatch.ward = new wardClass(this, bestPatch)
       removeUnassignedPatch(bestPatch)
     }
 
-    // // Outskirts
-    // if (wall != null)
-    // 	for (gate in wall.gates) if (!Random.bool( 1 / (nPatches - 5) )) {
+    // Outskirts (create some gate wards around the gates)
+    // if (this.wall) {
+    // 	for (let gate of this.wall.gates) if (!Random.bool( 1 / (nPatches - 5) )) {
     // 		for (patch in patchByVertex( gate ))
     // 			if (patch.ward == null) {
     // 				patch.withinCity = true;
     // 				patch.ward = new GateWard( this, patch );
     // 			}
     // 	}
+    // }
 
-    // // Calculating radius and processing countryside
-    // cityRadius = 0;
-    // for (patch in patches)
-    // 	if (patch.withinCity)
-    // 		// Radius of the city is the farthest point of all wards from the center
-    // 		for (v in patch.shape)
-    // 			cityRadius = Math.max( cityRadius, v.length );
-    // 	else if (patch.ward == null)
-    // 		patch.ward = Random.bool( 0.2 ) && patch.shape.compactness >= 0.7 ?
-    // 			new Farm( this, patch ) :
-    // 			new Ward( this, patch );
+    // Calculating radius and processing countryside
+    let cityRadius = 0
+    for (let patch of this.patches) {
+      if (patch.withinCity) {
+        // Radius of the city is the farthest point of all wards from the center
+        for (let v of patch.shape.vertices) {
+          cityRadius = Math.max(cityRadius, v.length())
+        }
+      } else if (!patch.ward) {
+        patch.ward =
+          this.random.bool(0.2) && patch.shape.compactness >= 0.7
+            ? new Farm(this, patch)
+            : new Ward(this, patch)
+      }
+    }
+
+    this.patches.forEach(p => {
+      if (!p.ward) {
+        p.ward = new GateWard(this, p)
+      }
+    })
   }
 
   private buildGeometry() {

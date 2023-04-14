@@ -32,6 +32,7 @@ export class Ward {
 
     const isInnerPatch = !this.model.wall || this.patch.withinWalls
     this.patch.shape.forEdge((v0, v1) => {
+      // insetDist.push(Ward.MAIN_STREET / 2)
       const bordersWall =
         !!this.model.wall && this.model.wall.bordersBy(this.patch, v0, v1)
       if (bordersWall) {
@@ -43,29 +44,27 @@ export class Ward {
           !!this.model.plaza &&
           this.model.plaza.shape.hasEdge(v1, v0)
         if (!isOnStreet) {
-          for (let street of this.model.arteries) {
+          for (let street of this.model.streets) {
             if (street.contains(v0) && street.contains(v1)) {
               isOnStreet = true
               break
             }
           }
         }
+        const notOnStreetInsetSize = isInnerPatch
+          ? Ward.REGULAR_STREET
+          : Ward.ALLEY
         insetDist.push(
-          (isOnStreet
-            ? Ward.MAIN_STREET
-            : isInnerPatch
-            ? Ward.REGULAR_STREET
-            : Ward.ALLEY) / 2,
+          (isOnStreet ? Ward.MAIN_STREET : notOnStreetInsetSize) / 2,
         )
       }
     })
 
-    console.log(insetDist, this.patch.shape.isConvex(), this.getLabel())
+    const isConvex = this.patch.shape.copy().isConvex()
 
-    return this.patch.shape
-    // return this.patch.shape.isConvex()
-    //   ? this.patch.shape.shrink(insetDist)
-    //   : this.patch.shape.insetAllEdgesByDistances(insetDist)
+    return isConvex
+      ? this.patch.shape.shrink(insetDist)
+      : this.patch.shape.insetAllEdgesByDistances(insetDist)
   }
 
   public filterOutskirts() {
@@ -94,7 +93,7 @@ export class Ward {
 
     this.patch.shape.forEdge((v1, v2) => {
       let isOnRoad = false
-      for (let street of this.model.arteries) {
+      for (let street of this.model.roads) {
         if (street.contains(v1) && street.contains(v2)) {
           isOnRoad = true
           break
@@ -149,10 +148,6 @@ export class Ward {
     })
   }
 
-  private static findLongestEdge(poly: Polygon): Vector3 {
-    return poly.minPredicate(v => -poly.vector(v).length())
-  }
-
   public static createAlleys(
     polygon: Polygon,
     minSq: number,
@@ -161,60 +156,87 @@ export class Ward {
     emptyProb = 0.04,
     split = true,
   ): Array<Polygon> {
-    // Looking for the longest edge to cut it
-    const longestEdgeVector = polygon.minPredicate(
-      v => -polygon.vector(v).length(),
-    )
+    const maxIterations = 500
 
-    const spread = 0.8 * gridChaos
-    const ratio = (1 - spread) / 2 + random.float() * spread
-
-    // Trying to keep buildings rectangular even in chaotic wards
-    const angleSpread =
-      (Math.PI / 6) * gridChaos * (polygon.square < minSq * 4 ? 0.0 : 1)
-    const b = (random.float() - 0.5) * angleSpread
-
-    const halves = bisect(
-      polygon,
-      longestEdgeVector,
-      ratio,
-      b,
-      split ? Ward.ALLEY : 0.0,
-    )
-
-    let buildings = []
-    for (let half of halves) {
-      if (
-        half.square <
-        minSq * Math.pow(2, 4 * sizeChaos * (random.float() - 0.5))
-      ) {
-        if (!random.bool(emptyProb)) {
-          buildings.push(half)
-        }
-      } else {
-        buildings = buildings.concat(
-          Ward.createAlleys(
-            half,
-            minSq,
-            gridChaos,
-            sizeChaos,
-            emptyProb,
-            half.square > minSq / (random.float() * random.float()),
-          ),
-        )
+    let iterations = 0
+    const createAlleysHelper = (
+      polygon: Polygon,
+      minSq: number,
+      gridChaos: number,
+      sizeChaos: number,
+      emptyProb = 0.04,
+      split = true,
+    ) => {
+      if (iterations++ > maxIterations) {
+        return []
       }
+
+      // Looking for the longest edge to cut it
+      const longestEdgeVector = polygon.minPredicate(
+        v => -polygon.vector(v).length(),
+      )
+
+      const spread = 0.8 * gridChaos
+      const ratio = (1 - spread) / 2 + random.float() * spread
+
+      // Trying to keep buildings rectangular even in chaotic wards
+      const angleSpread =
+        (Math.PI / 6) * gridChaos * (polygon.square < minSq * 4 ? 0.0 : 1)
+      const b = (random.float() - 0.5) * angleSpread
+
+      const halves = bisect(
+        polygon,
+        longestEdgeVector,
+        ratio,
+        b,
+        split ? Ward.ALLEY : 0.0,
+      )
+
+      let buildings = []
+      for (let half of halves) {
+        if (
+          half.square <
+          minSq * Math.pow(2, 4 * sizeChaos * (random.float() - 0.5))
+        ) {
+          if (!random.bool(emptyProb)) {
+            buildings.push(half)
+          }
+        } else {
+          buildings = buildings.concat(
+            createAlleysHelper(
+              half,
+              minSq,
+              gridChaos,
+              sizeChaos,
+              emptyProb,
+              half.square > minSq / (random.float() * random.float()),
+            ),
+          )
+        }
+      }
+
+      return buildings
     }
 
-    return buildings
+    return createAlleysHelper(
+      polygon,
+      minSq,
+      gridChaos,
+      sizeChaos,
+      emptyProb,
+      split,
+    )
   }
 
-  public static createOrthoBuilding(
-    poly: Polygon,
-    minBlockSq: number,
-    fill: number,
-  ) {
+  public createOrthoBuilding(poly: Polygon, minBlockSq: number, fill: number) {
+    let maxSlice = 3000
+    let that = this
     function slice(poly: Polygon, c1: Vector3, c2: Vector3) {
-      let v0 = Ward.findLongestEdge(poly)
+      if (maxSlice-- < 0) {
+        console.warn("max slice", poly, that)
+        return [poly]
+      }
+      let v0 = poly.getLongestEdge()
       let v1 = poly.next(v0)
       let v = v1.clone().sub(v0)
 
@@ -239,18 +261,21 @@ export class Ward {
       return buildings
     }
 
-    console.log({ square: poly.square, minBlockSq })
     if (poly.square < minBlockSq) {
       return [poly]
     } else {
-      const c1 = poly.vector(Ward.findLongestEdge(poly))
+      const c1 = poly.vector(poly.getLongestEdge())
       const c2 = perpendicular(c1)
-      while (true) {
-        const blocks = slice(poly.clone(), c1, c2)
-        if (blocks.length > 0) {
-          return blocks
+      let blocks: Polygon[] = []
+      let maxIterations = 30
+      while (!blocks.length) {
+        if (maxIterations-- < 0) {
+          console.log("max iterations reached")
+          return [poly]
         }
+        blocks = slice(poly.clone(), c1, c2)
       }
+      return blocks
     }
   }
 }

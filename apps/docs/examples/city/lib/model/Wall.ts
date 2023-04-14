@@ -23,6 +23,7 @@ export class CityWall {
     public patches: Patch[],
     public reserved: Vector3[],
   ) {
+    console.log("building wall", patches, real, model, reserved)
     if (patches.length === 1) {
       this.shape = patches[0].shape
     } else {
@@ -31,16 +32,27 @@ export class CityWall {
       if (real) {
         const smoothFactor = Math.min(1, 40 / patches.length)
         this.shape.set(
-          this.shape.vertices.map(v =>
-            reserved.some(r => r.equals(v))
-              ? v
-              : this.shape.smoothVertex(v, smoothFactor),
-          ),
+          this.shape.vertices.map(v => {
+            const isReserved = reserved.some(r => r.equals(v))
+            if (isReserved) {
+              return v
+            }
+            const smoothed = this.shape.smoothVertex(v, smoothFactor)
+            for (let patch of this.model.patches) {
+              const i = patch.shape.vertices.indexOf(v)
+              if (i !== -1) {
+                patch.shape.vertices[i] = smoothed
+              }
+            }
+            return smoothed
+          }),
         )
       }
     }
 
     this.segments = [...this.shape.vertices].map(() => true)
+
+    console.log("wall stuff", this)
 
     this.buildGates(real, model, reserved)
   }
@@ -51,23 +63,20 @@ export class CityWall {
     // so that a street could connect it to the city center
     console.log("building gates", this.patches, real, model, reserved)
     const entrances: Array<Vector3> =
-      // this.patches.length > 1
-      //   ? this.shape.vertices.filter(v => {
-      //       const notReservered = !reserved.some(v3 => v3.equals(v))
-      //       const numAdjactentPatches =
-      //         this.patches.filter(p => p.shape.contains(v)).length > 1
-      //       console.log({ notReservered, numAdjactentPatches })
-      //       return notReservered && numAdjactentPatches
-      //     })
-      //   :
-
-      this.shape.vertices.filter(v => !reserved.some(v3 => v3.equals(v)))
-
-    console.log({ entrances })
+      this.patches.length > 1
+        ? this.shape.vertices.filter(v => {
+            const notReservered = !reserved.some(v3 => v3.equals(v))
+            const hasMoreThanOneAdjacentPatch =
+              this.patches.filter(p => p.shape.contains(v)).length > 1
+            console.log({ notReservered, hasMoreThanOneAdjacentPatch })
+            return notReservered && hasMoreThanOneAdjacentPatch
+          })
+        : this.shape.vertices.filter(v => !reserved.some(v3 => v3.equals(v)))
 
     if (!entrances.length) {
       console.warn("bad walled area shape")
-      throw new Error("Bad walled area shape!")
+      // throw new Error("Bad walled area shape!")
+      return
     }
 
     do {
@@ -82,31 +91,31 @@ export class CityWall {
             .patchByVertex(gate)
             .filter(ward => !this.patches.includes(ward))
           console.log({ outerWards, o: model.patchByVertex(gate) })
-          if (outerWards.length == 1) {
-            // If there is no road leading from the walled patches,
-            // we should make one by splitting an outer ward
-            let outer = outerWards[0]
-            if (outer.shape.length > 3) {
-              let wall = this.shape.next(gate).sub(this.shape.prev(gate))
-              let out = new Vector3(wall.y, -wall.x, 0)
+          // if (outerWards.length == 1) {
+          //   // If there is no road leading from the walled patches,
+          //   // we should make one by splitting an outer ward
+          //   let outer = outerWards[0]
+          //   if (outer.shape.length > 3) {
+          //     let wall = this.shape.next(gate).sub(this.shape.prev(gate))
+          //     let out = new Vector3(wall.y, -wall.x, 0)
 
-              let farthest = outer.shape.maxPredicate(v => {
-                if (this.shape.contains(v) || reserved.some(v3 => v3.equals(v)))
-                  return -Infinity
-                else {
-                  let dir = v.sub(gate)
-                  return dir.dot(out) / dir.length()
-                }
-              })
+          //     let farthest = outer.shape.maxPredicate(v => {
+          //       if (this.shape.contains(v) || reserved.some(v3 => v3.equals(v)))
+          //         return -Infinity
+          //       else {
+          //         let dir = v.sub(gate)
+          //         return dir.dot(out) / dir.length()
+          //       }
+          //     })
 
-              let newPatches = outer.shape
-                .split(gate, farthest)
-                .map(half => new Patch(half.vertices))
+          //     let newPatches = outer.shape
+          //       .split(gate, farthest)
+          //       .map(half => new Patch(half.vertices))
 
-              console.log({ newPatches })
-              model.patches = replaceInArray(model.patches, outer, newPatches)
-            }
-          }
+          //     console.log({ newPatches })
+          //     model.patches = replaceInArray(model.patches, outer, newPatches)
+          //   }
+          // }
         } catch (error) {
           console.warn("failed to do outer ward stuff ")
           console.error(error)
@@ -128,7 +137,7 @@ export class CityWall {
 
     console.log({ gates: this.gates })
 
-    // // Smooth further sections of the wall with gates
+    // Smooth further sections of the wall with gates
     if (real) {
       for (let gate of this.gates) {
         console.log({ gate })
@@ -174,20 +183,21 @@ export class CityWall {
     return false
   }
 
-  // public function borders( p:Patch ):Bool {
-  // 	let withinWalls = patches.contains( p );
-  // 	let length = shape.length;
+  public bordersPatch(p: Patch): boolean {
+    let withinWalls = this.patches.includes(p)
+    let length = this.shape.length
 
-  // 	for (i in 0...length) if (segments[i]) {
-  // 		let v0 = shape[i];
-  // 		let v1 = shape[(i + 1) % length];
-  // 		let index = withinWalls ?
-  // 			p.shape.findEdge( v0, v1 ) :
-  // 			p.shape.findEdge( v1, v0 );
-  // 		if (index != -1)
-  // 			return true;
-  // 	}
+    for (let i = 0; i < length; i++) {
+      if (this.segments[i]) {
+        let v0 = this.shape[i]
+        let v1 = this.shape[(i + 1) % length]
+        let index = withinWalls
+          ? p.shape.findEdge(v0, v1)
+          : p.shape.findEdge(v1, v0)
+        if (index != -1) return true
+      }
+    }
 
-  // 	return false;
-  // }
+    return false
+  }
 }

@@ -75,7 +75,7 @@ function splitPolygon(
   // Find all intersection points between the polygon and the line segment
   for (let i = 0; i < polygon.vertices.length; i++) {
     const currentPoint = polygon.vertices[i]
-    const nextPoint = polygon.vertices[(i + 1) % polygon.vertices.length]
+    const nextPoint = polygon.next(currentPoint)
     const polygonEdge: LineSegment = {
       start: currentPoint,
       end: nextPoint,
@@ -89,49 +89,10 @@ function splitPolygon(
     }
   }
 
-  // Sort intersection points by their distance to the first point of the line segment
-  // const sortedPoints = intersectionPoints.sort((a, b) => {
-  //   const distanceA = lineSegment.start.distanceTo(a)
-  //   const distanceB = lineSegment.start.distanceTo(b)
-  //   return distanceA - distanceB
-  // })
-
   if (intersectionPoints.length !== 2) {
     // The polygon is either not intersecting the line segment, or is intersecting it at more than two points
     return [polygon]
   }
-
-  // Split the polygon into multiple parts using the intersection points
-  // const polygons: Polygon[] = []
-  // let currentPolygonPoints: Vector3[] = []
-  // for (let i = 0; i < polygon.vertices.length; i++) {
-  //   const currentPoint = polygon.vertices[i]
-  //   currentPolygonPoints.push(currentPoint)
-
-  //   // Check if the next intersection point is on this edge of the polygon
-  //   const nextPoint = polygon.vertices[(i + 1) % polygon.vertices.length]
-  //   const nextIntersectionIndex = intersectionPoints.findIndex(p =>
-  //     isPointOnLineSegment(p, currentPoint, nextPoint),
-  //   )
-
-  //   console.log({ nextIntersectionIndex, currentPoint, nextPoint })
-  //   if (nextIntersectionIndex !== -1) {
-  //     // Add the intersection point and create a new polygon
-  //     currentPolygonPoints.push(intersectionPoints[nextIntersectionIndex])
-  //     console.log({ currentPolygonPoints })
-  //     polygons.push(new Polygon(currentPolygonPoints))
-  //     currentPolygonPoints = [intersectionPoints[nextIntersectionIndex]]
-  //   }
-  // }
-
-  // let d1 = new Vector3().subVectors(p1, p2)
-  // // .multiplyScalar(ratio1) //  p1.add(p2.sub(p1).multiplyScalar(ratio1))
-  // let d2 = new Vector3().subVectors(p2, p1)
-  // // .multiplyScalar(ratio2) // p1.add(p2.sub(p1).multiplyScalar(ratio2))
-  // const point1 = p1 // p1.add(d1.multiplyScalar(ratio1))
-  // const point2 = p2 //.add(d2.multiplyScalar(ratio2))
-
-  // console.log({ point1, point2 })
 
   const point1 = intersectionPoints[0]
   const point2 = intersectionPoints[1]
@@ -152,8 +113,6 @@ function splitPolygon(
   half2.vertices.splice(1, 1)
 
   if (gap > 0) {
-    // @ts-ignore
-    point2.point.data = "half"
     half1 = half1.peel(point2.point, gap / 2)
     half2 = half2.peel(point1.point, gap / 2)
   }
@@ -162,10 +121,6 @@ function splitPolygon(
   let dx1 = lineSegment.end.x - lineSegment.start.x
   let dy1 = lineSegment.end.y - lineSegment.start.y
   return cross(dx1, dy1, v.x, v.y) > 0 ? [half1, half2] : [half2, half1]
-
-  // Add the final polygon
-  // polygons.push(new Polygon(currentPolygonPoints))
-  // return [half1, half2]
 }
 
 export const perpendicular = (v: Vector3) => new Vector3(-v.y, v.x, v.z)
@@ -381,11 +336,14 @@ export class Polygon {
   public smoothVertex(v: Vector3, f = 1.0): Vector3 {
     let prev = this.prev(v)
     let next = this.next(v)
-    return new Vector3(
-      prev.x + v.x * f + next.x,
-      prev.y + v.y * f + next.y,
-      prev.z + v.z * f + next.z,
-    ).multiplyScalar(1 / (2 + f)) // might not be multiply, but add, not sure
+    return v
+      .clone()
+      .set(
+        prev.x + v.x * f + next.x,
+        prev.y + v.y * f + next.y,
+        prev.z + v.z * f + next.z,
+      )
+      .multiplyScalar(1 / (2 + f)) // might not be multiply, but add, not sure
   }
 
   public set(vs: Vector3[]) {
@@ -485,9 +443,12 @@ export class Polygon {
     return len
   }
 
+  public getLongestEdge() {
+    return this.minPredicate(v => -this.vector(v).length())
+  }
+
   // for circle	= 1.00
   // for square	= 0.79
-
   // for triangle	= 0.60
   public get compactness() {
     let p = this.perimeter
@@ -523,17 +484,20 @@ export class Polygon {
   // not so much concave ones. It produces a convex polygon.
   // It does change the number vertices
   public shrink(d: Array<number>): Polygon {
-    let q = new Polygon(this.vertices)
-    let i = 0
-    this.forEdge((v1, v2) => {
-      let dd = d[i++]
+    const newVertices = []
+    this.forEdge((v1, v2, index) => {
+      let dd = d[index]
       if (dd > 0) {
-        let v = v2.sub(v1)
+        let v = v2.clone().sub(v1)
         let n = normalize(perpendicular(v), dd)
-        q = q.cut(v1.add(n), v2.add(n), 0)[0]
+        const p1 = v1.clone().add(n)
+        const p2 = v2.clone().add(n)
+        // console.log(v, n, dd, p1, p2)
+        // q = q.cut(p1, p2, 0)[0]
+        newVertices.push(p1, p2)
       }
     })
-    return q
+    return new Polygon(newVertices)
   }
 
   public shrinkEq(d: number): Polygon {
@@ -571,8 +535,9 @@ export class Polygon {
   public offset(p: Vector3) {
     let dx = p.x
     let dy = p.y
+    const offset = new Vector3(dx, dy, 0)
     for (let v of this.vertices) {
-      v.add(new Vector3(dx, dy, 0))
+      v.add(offset)
     }
   }
 
@@ -689,10 +654,10 @@ export class Polygon {
         q.vertices.push(v1)
       } else {
         // here we may want to do something fancier for nicer joints
-        let v = v1.sub(v0)
+        let v = v1.clone().sub(v0)
         let n = normalize(perpendicular(v), dd)
-        q.vertices.push(v0.add(n))
-        q.vertices.push(v1.add(n))
+        q.vertices.push(v0.clone().add(n))
+        q.vertices.push(v1.clone().add(n))
       }
     })
 
@@ -811,5 +776,22 @@ export class Polygon {
 
   public static circle(r = 1.0): Polygon {
     return Polygon.regular(16, r)
+  }
+
+  public static boundingBoxFromPolygons(polygons: Array<Polygon>): Polygon {
+    let min = new Vector3(Infinity, Infinity, Infinity)
+    let max = new Vector3(-Infinity, -Infinity, -Infinity)
+    polygons.forEach(p => {
+      p.vertices.forEach(v => {
+        min.min(v)
+        max.max(v)
+      })
+    })
+    return new Polygon([
+      new Vector3(min.x, min.y, 0),
+      new Vector3(max.x, min.y, 0),
+      new Vector3(max.x, max.y, 0),
+      new Vector3(min.x, max.y, 0),
+    ])
   }
 }

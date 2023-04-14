@@ -21,7 +21,7 @@ export class Castle extends Ward {
 
   public override createGeometry() {
     let block = this.patch.shape.shrinkEq(Ward.MAIN_STREET * 2)
-    this.geometry = Ward.createOrthoBuilding(
+    this.geometry = this.createOrthoBuilding(
       block,
       Math.sqrt(block.square) * 4,
       0.6,

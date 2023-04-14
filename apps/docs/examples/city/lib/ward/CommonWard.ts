@@ -23,8 +23,10 @@ export class CommonWard extends Ward {
       this.sizeChaos,
       this.emptyProb,
     )
-    // if (!this.model.isEnclosed(this.patch)) {
-    //   this.filterOutskirts()
-    // }
+
+    if (!this.model.isEnclosed(this.patch)) {
+      console.log("filtering outskirts")
+      this.filterOutskirts()
+    }
   }
 }
