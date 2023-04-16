@@ -152,7 +152,6 @@ export class CityModel {
 
   build() {
     console.time("buildPatches")
-    console.log("Building patches...")
     this.buildPatches()
     console.timeEnd("buildPatches")
 
@@ -189,11 +188,9 @@ export class CityModel {
       return new Vector3(x, y, 0)
     })
 
-    console.log("points", points)
     console.time("building voronoi")
     let voronoi = Voronoi.build(points)
     this.voronoi = voronoi
-    console.log({ voronoi })
     console.timeEnd("building voronoi")
 
     // Relaxing central wards
@@ -216,7 +213,6 @@ export class CityModel {
       return sign(p1.length() - p2.length())
     })
     let regions = voronoi.partioning()
-    console.log({ regions })
 
     this.patches = []
 
@@ -244,8 +240,6 @@ export class CityModel {
       count++
     }
 
-    console.log({ patches: this.patches })
-
     console.timeEnd("generating patches")
   }
 
@@ -260,8 +254,6 @@ export class CityModel {
       this.inner,
       reservedShape.vertices,
     )
-
-    console.log({ border: this.border })
 
     // let's place towers along the wall
     if (this.wallsNeeded) {
@@ -332,7 +324,6 @@ export class CityModel {
   }
 
   public static findCircumference(patch: Patch[]): Polygon {
-    console.log("findCircumference", patch)
     if (patch.length == 0) {
       return new Polygon()
     } else if (patch.length == 1) {
@@ -388,13 +379,11 @@ export class CityModel {
       for (let i = 1; i < street.length - 1; i++) {
         const v = street.vertices[i]
         if (!v) {
-          console.log(street, v, i)
           throw new Error("v is null")
         }
         try {
           street.vertices[i].copy(smoothed.vertices[i])
         } catch (e) {
-          console.log(street, v, i)
           console.error("something terrible happend")
         }
       }
@@ -413,7 +402,6 @@ export class CityModel {
         end,
         Array.from(this.topology.outer.values()),
       )
-      console.log("street", street)
       if (street) {
         this.streets.push(new Polygon(street))
         // TODO build roads that lead outwards to the countryside
@@ -544,8 +532,6 @@ export class CityModel {
       wards[index + 1] = tmp
     }
 
-    console.log({ wards })
-
     // // Assigning inner city wards
     while (unassigned.length > 0) {
       let bestPatch: Patch = null
@@ -569,22 +555,22 @@ export class CityModel {
         })
       }
 
-      console.log({ bestPatch })
-
       bestPatch.ward = new wardClass(this, bestPatch)
       removeUnassignedPatch(bestPatch)
     }
 
     // Outskirts (create some gate wards around the gates)
-    // if (this.wall) {
-    // 	for (let gate of this.wall.gates) if (!Random.bool( 1 / (nPatches - 5) )) {
-    // 		for (patch in patchByVertex( gate ))
-    // 			if (patch.ward == null) {
-    // 				patch.withinCity = true;
-    // 				patch.ward = new GateWard( this, patch );
-    // 			}
-    // 	}
-    // }
+    if (this.wall) {
+      for (let gate of this.wall.gates) {
+        if (!this.random.bool(1 / (this.nPatches - 5))) {
+          for (let patch of this.patchByVertex(gate))
+            if (!patch.ward) {
+              patch.withinCity = true
+              patch.ward = new GateWard(this, patch)
+            }
+        }
+      }
+    }
 
     // Calculating radius and processing countryside
     let cityRadius = 0

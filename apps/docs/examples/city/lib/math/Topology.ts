@@ -28,8 +28,6 @@ export class Topology {
     }
     this.blocked = differenceVector3(this.blocked, this.model.gates)
 
-    console.log("topology", this.model)
-
     const border = this.model.border.shape
 
     for (let patch of this.model.patches) {
@@ -77,23 +75,10 @@ export class Topology {
     to: Vector3,
     exclude: Array<Node> = null,
   ): Array<Vector3> {
-    console.log({
-      from,
-      to,
-      exclude,
-      blah: this.vector3ToNode.get(from),
-      blah2to: this.vector3ToNode.get(to),
-      map: this.vector3ToNode,
-    })
     const path = this.graph.aStar(
       this.vector3ToNode.get(from),
       this.vector3ToNode.get(to),
       exclude,
-    )
-    console.log(
-      "path",
-      path,
-      path?.map(n => this.nodeToVector3.get(n)),
     )
     return !path ? null : path.map(n => this.nodeToVector3.get(n))
   }

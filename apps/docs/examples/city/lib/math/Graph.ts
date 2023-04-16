@@ -32,11 +32,8 @@ export class Graph {
     const gScore: Map<Node, number> = new Map()
     gScore.set(start, 0)
 
-    console.log({ start, closedSet, openset: [...openSet], cameFrom, gScore })
-
     while (openSet.length > 0) {
       let current = openSet.shift()
-      console.log("while openset", openSet, current)
       if (current === goal) {
         return this.buildPath(cameFrom, current)
       }
@@ -44,7 +41,6 @@ export class Graph {
       openSet = openSet.filter(n => n !== current)
       closedSet.push(current)
       if (!current) {
-        console.log({ current })
         throw new Error("current is null")
       }
 

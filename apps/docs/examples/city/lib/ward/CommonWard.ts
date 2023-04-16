@@ -25,7 +25,6 @@ export class CommonWard extends Ward {
     )
 
     if (!this.model.isEnclosed(this.patch)) {
-      console.log("filtering outskirts")
       this.filterOutskirts()
     }
   }

@@ -270,7 +270,7 @@ export class Ward {
       let maxIterations = 30
       while (!blocks.length) {
         if (maxIterations-- < 0) {
-          console.log("max iterations reached")
+          console.warn("max iterations reached")
           return [poly]
         }
         blocks = slice(poly.clone(), c1, c2)

@@ -27,7 +27,6 @@ function CityCircumference({ city }: { city: CityModel }) {
   // const center = triangle.c
   // const blah = triangle.midpoint()
   // const points =
-  console.log({ points })
   return (
     <React.Fragment>
       {polygon.vertices.map(({ x, y }, i) => {
@@ -103,13 +102,13 @@ function ShowCircumference({ city }: { city: CityModel }) {
 
 
   const smoothPolygon = (polygon: Polygon) => {
-    const smoothFactor = Math.min(1, 40 / city.inner.length)
-    polygon.set(
-      polygon.vertices.map(v => {
+    // const smoothFactor = Math.min(1, 40 / city.inner.length)
+    // polygon.set(
+    //   polygon.vertices.map(v => {
          
-            return polygon.smoothVertex(v, smoothFactor)
-          }),
-        )
+    //         return polygon.smoothVertex(v, smoothFactor)
+    //       }),
+    //     )
         return polygon
   }
 
@@ -427,10 +426,8 @@ function CityDebug() {
 
 
   React.useLayoutEffect(() => {
-    console.log({ svg })
     if (svg) {
       const rect = svg.getBoundingClientRect()
-      console.log({ svg, rect })
       setVoronoi(new Voronoi(0, 0, rect.width, rect.height))
     }
   }, [svg])
@@ -446,9 +443,6 @@ function CityDebug() {
       }
     }
     const scrollListener = (e: WheelEvent) => {
-      console.log(e)
-
-
       setScale(scale + e.deltaY * 0.001)
     }
     window.addEventListener('keypress', enterKeyPressListener)
@@ -458,7 +452,6 @@ function CityDebug() {
       window.removeEventListener('wheel', scrollListener)
     }
   })
-
   console.log({ city })
 
   const scaledCenter = center.clone().multiplyScalar(scale)
@@ -577,8 +570,6 @@ export function PolygonPlayground () {
     setSvg(node)
   }, [])
 
-  console.log({ polygons })
-
   return <>
     <header style={{ position: "fixed", top:0}}>
       <Button
@@ -604,7 +595,6 @@ export function PolygonPlayground () {
     const sizeChaos = 0.8;
     const buildings = Ward.createAlleys(polygon, minSq, gridChaos, sizeChaos)
     // const peel = polygon.peel(polygon.vertices[0], 20)
-    console.log({ buildings })
     return (
       <>
       

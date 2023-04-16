@@ -23,7 +23,6 @@ export class CityWall {
     public patches: Patch[],
     public reserved: Vector3[],
   ) {
-    console.log("building wall", patches, real, model, reserved)
     if (patches.length === 1) {
       this.shape = patches[0].shape
     } else {
@@ -52,8 +51,6 @@ export class CityWall {
 
     this.segments = [...this.shape.vertices].map(() => true)
 
-    console.log("wall stuff", this)
-
     this.buildGates(real, model, reserved)
   }
 
@@ -61,14 +58,12 @@ export class CityWall {
     this.gates = []
     // Entrances are vertices of the walls with more than 1 adjacent inner ward
     // so that a street could connect it to the city center
-    console.log("building gates", this.patches, real, model, reserved)
     const entrances: Array<Vector3> =
       this.patches.length > 1
         ? this.shape.vertices.filter(v => {
             const notReservered = !reserved.some(v3 => v3.equals(v))
             const hasMoreThanOneAdjacentPatch =
               this.patches.filter(p => p.shape.contains(v)).length > 1
-            console.log({ notReservered, hasMoreThanOneAdjacentPatch })
             return notReservered && hasMoreThanOneAdjacentPatch
           })
         : this.shape.vertices.filter(v => !reserved.some(v3 => v3.equals(v)))
@@ -85,40 +80,33 @@ export class CityWall {
       this.gates.push(gate)
 
       if (real) {
-        try {
-          console.log("doing outer ward stuff", gate)
-          let outerWards = model
-            .patchByVertex(gate)
-            .filter(ward => !this.patches.includes(ward))
-          console.log({ outerWards, o: model.patchByVertex(gate) })
-          // if (outerWards.length == 1) {
-          //   // If there is no road leading from the walled patches,
-          //   // we should make one by splitting an outer ward
-          //   let outer = outerWards[0]
-          //   if (outer.shape.length > 3) {
-          //     let wall = this.shape.next(gate).sub(this.shape.prev(gate))
-          //     let out = new Vector3(wall.y, -wall.x, 0)
+        let outerWards = model
+          .patchByVertex(gate)
+          .filter(ward => !this.patches.includes(ward))
+        if (outerWards.length == 1) {
+          // If there is no road leading from the walled patches,
+          // we should make one by splitting an outer ward
+          let outer = outerWards[0]
+          // its a true polygon
+          if (outer.shape.length > 3) {
+            let wall = this.shape.next(gate).clone().sub(this.shape.prev(gate))
+            let out = new Vector3(wall.y, -wall.x, 0)
 
-          //     let farthest = outer.shape.maxPredicate(v => {
-          //       if (this.shape.contains(v) || reserved.some(v3 => v3.equals(v)))
-          //         return -Infinity
-          //       else {
-          //         let dir = v.sub(gate)
-          //         return dir.dot(out) / dir.length()
-          //       }
-          //     })
+            let farthest = outer.shape.maxPredicate(v => {
+              if (this.shape.contains(v) || reserved.some(v3 => v3.equals(v)))
+                return -Infinity
+              else {
+                let dir = v.clone().sub(gate)
+                return dir.dot(out) / dir.length()
+              }
+            })
 
-          //     let newPatches = outer.shape
-          //       .split(gate, farthest)
-          //       .map(half => new Patch(half.vertices))
+            let newPatches = outer.shape
+              .split(gate, farthest)
+              .map(half => new Patch(half.vertices))
 
-          //     console.log({ newPatches })
-          //     model.patches = replaceInArray(model.patches, outer, newPatches)
-          //   }
-          // }
-        } catch (error) {
-          console.warn("failed to do outer ward stuff ")
-          console.error(error)
+            model.patches = replaceInArray(model.patches, outer, newPatches)
+          }
         }
       }
 
@@ -135,14 +123,10 @@ export class CityWall {
 
     if (!this.gates.length) throw new Error("Bad walled area shape!")
 
-    console.log({ gates: this.gates })
-
     // Smooth further sections of the wall with gates
     if (real) {
       for (let gate of this.gates) {
-        console.log({ gate })
         if (!gate) {
-          console.log("no gate", gate)
           throw new Error("no gate")
         }
         gate.copy(this.shape.smoothVertex(gate))

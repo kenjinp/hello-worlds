@@ -197,7 +197,6 @@ export class Voronoi {
     }
     for (let r of regions) {
       if (toRelax.includes(r.seed)) {
-        console.log("includes", r.seed, r)
         points = points.filter(v => v !== r.seed)
         points.push(r.center())
       }

@@ -11,7 +11,6 @@ export class Farm extends Ward {
     )
     housing.rotate(this.model.random.float() * Math.PI)
     housing.offset(pos)
-    console.log({ housing })
     this.geometry = this.createOrthoBuilding(housing, 8, 1)
   }
 

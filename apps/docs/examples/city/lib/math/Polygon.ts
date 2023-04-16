@@ -492,8 +492,6 @@ export class Polygon {
         let n = normalize(perpendicular(v), dd)
         const p1 = v1.clone().add(n)
         const p2 = v2.clone().add(n)
-        // console.log(v, n, dd, p1, p2)
-        // q = q.cut(p1, p2, 0)[0]
         newVertices.push(p1, p2)
       }
     })
