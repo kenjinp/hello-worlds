@@ -333,6 +333,9 @@ importers:
       esbuild:
         specifier: ^0.18.10
         version: 0.18.10
+      esbuild-plugin-glsl:
+        specifier: ^1.2.1
+        version: 1.2.1(esbuild@0.18.10)
       postprocessing:
         specifier: ^6.32.1
         version: 6.32.1(three@0.143.0)
@@ -3499,6 +3502,15 @@ packages:
       is-callable: 1.2.7
       is-date-object: 1.0.5
       is-symbol: 1.0.4
+
+  /esbuild-plugin-glsl@1.2.1(esbuild@0.18.10):
+    resolution: {integrity: sha512-xqJTEpAbQg4omoi/tqe6kEr3JjkhzwodPkqHpzAfn9rmBAEpqrQZiUmV5N3yojwBqGo+Aq7ONsvNwz+J41Qm6Q==}
+    engines: {node: '>= 0.10.18'}
+    peerDependencies:
+      esbuild: 0.x.x
+    dependencies:
+      esbuild: 0.18.10
+    dev: true
 
   /esbuild@0.18.10:
     resolution: {integrity: sha512-33WKo67auOXzZHBY/9DTJRo7kIvfU12S+D4sp2wIz39N88MDIaCGyCwbW01RR70pK6Iya0I74lHEpyLfFqOHPA==}

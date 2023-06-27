@@ -28,7 +28,7 @@ struct AtmosphereSun {
 uniform Planet uPlanets[<planetsLength>];
 uniform AtmosphereSun uSuns[<sunsLength>];
 
-#include ./Atmosphere.scatter.glsl;
+#include "./Atmosphere.scatter.glsl"
 
 vec3 _ScreenToWorld(vec3 posS) {
   vec2 uv = posS.xy;

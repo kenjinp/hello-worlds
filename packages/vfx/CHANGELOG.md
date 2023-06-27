@@ -1,5 +1,11 @@
 # @hello-worlds/vfx
 
+## 0.0.3
+
+### Patch Changes
+
+- Atmosphere: fix shader include directive
+
 ## 0.0.2
 
 ### Patch Changes

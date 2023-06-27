@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/vfx",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -20,6 +20,7 @@
     "@types/react": "^18.0.0",
     "@types/three": "^0.141.0",
     "esbuild": "^0.18.10",
+    "esbuild-plugin-glsl": "^1.2.1",
     "postprocessing": "^6.32.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

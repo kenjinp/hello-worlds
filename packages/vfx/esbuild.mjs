@@ -1,5 +1,5 @@
 import * as esbuild from "esbuild"
-
+import { glsl } from "esbuild-plugin-glsl"
 await esbuild.build({
   entryPoints: ["src/index.ts"],
   bundle: true,
@@ -9,7 +9,12 @@ await esbuild.build({
   sourcemap: true,
   target: "esnext",
   format: "esm",
-  loader: { ".glsl": "text" },
+  plugins: [
+    glsl({
+      minify: true,
+      resolveIncludes: true,
+    }),
+  ],
 })
 
 await esbuild.build({
@@ -21,5 +26,10 @@ await esbuild.build({
   sourcemap: true,
   target: "esnext",
   format: "cjs",
-  loader: { ".glsl": "text" },
+  plugins: [
+    glsl({
+      minify: true,
+      resolveIncludes: true,
+    }),
+  ],
 })
