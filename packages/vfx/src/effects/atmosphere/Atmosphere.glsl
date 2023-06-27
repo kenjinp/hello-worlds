@@ -14,6 +14,7 @@ struct Planet {
   vec3 origin;
   float radius;
   float atmosphereRadius;
+  float atmosphereDensity;
 };
 
 struct AtmosphereSun {
@@ -27,13 +28,7 @@ struct AtmosphereSun {
 uniform Planet uPlanets[<planetsLength>];
 uniform AtmosphereSun uSuns[<sunsLength>];
 
-@import ./Math;
-@import ./Scatter;
-
-// float logDepthBufFC () {
-//   float logDepthBufFC = 2.0 / ( log( cameraFar + 1.0 ) / log(2.0) );
-//   return logDepthBufFC;
-// }
+#include ./Atmosphere.scatter.glsl;
 
 vec3 _ScreenToWorld(vec3 posS) {
   vec2 uv = posS.xy;
@@ -41,9 +36,9 @@ vec3 _ScreenToWorld(vec3 posS) {
   float nearZ = 0.01;
   float farZ = cameraFar;
   float depth = pow(2.0, z * log2(farZ + 1.0)) - 1.0;
-    vec3 direction = (uProjectionMatrixInverse * vec4(vUv * 2.0 - 1.0, 0.0, 1.0)).xyz;
-    direction = (uViewMatrixInverse * vec4(direction, 0.0)).xyz;
-    direction = normalize(direction);
+  vec3 direction = (uProjectionMatrixInverse * vec4(vUv * 2.0 - 1.0, 0.0, 1.0)).xyz;
+  direction = (uViewMatrixInverse * vec4(direction, 0.0)).xyz;
+  direction = normalize(direction);
   direction /= dot(direction, uCameraWorldDirection);
   return uCameraPosition + direction * depth;
 }
@@ -59,22 +54,20 @@ float A_logDepthBufFC () {
 
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth, out vec4 outputColor) {
-    float depthValue = getViewZ(depth);
-    float d = readDepth(texture2D(depthBuffer, uv).x);
-    float v_depth = pow(2.0, d / (A_logDepthBufFC() * 0.5));
-    float z_view = v_depth - 1.0;
-    
-    // straight depth
-    float z = texture2D(depthBuffer, uv).x;
-    float depthZ = (exp2(z / (A_logDepthBufFC() * 0.5)) - 1.0);
-    // float sceneDepth = depthZ - 1.0;
+  float depthValue = getViewZ(depth);
+  float d = readDepth(texture2D(depthBuffer, uv).x);
+  float v_depth = pow(2.0, d / (A_logDepthBufFC() * 0.5));
+  float z_view = v_depth - 1.0;
+  
+  // straight depth
+  float z = texture2D(depthBuffer, uv).x;
+  float depthZ = (exp2(z / (A_logDepthBufFC() * 0.5)) - 1.0);
 
-
-    vec3 posWS = _ScreenToWorld(vec3(uv, z));
-    vec3 rayOrigin = uCameraPosition;
-    vec3 rayDirection = normalize(posWS - uCameraPosition);
-    float sceneDepth = length(posWS.xyz - uCameraPosition);
-    vec3 addColor = inputColor.xyz;
+  vec3 posWS = _ScreenToWorld(vec3(uv, z));
+  vec3 rayOrigin = uCameraPosition;
+  vec3 rayDirection = normalize(posWS - uCameraPosition);
+  float sceneDepth = length(posWS.xyz - uCameraPosition);
+  vec3 addColor = inputColor.xyz;
 
   for (int i = 0; i < PLANETS_LENGTH; i++) {
     Planet currentPlanet = uPlanets[i];
@@ -95,11 +88,12 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
         currentPlanet.origin,
         currentPlanet.radius,
         currentPlanet.atmosphereRadius,
+        currentPlanet.atmosphereDensity,
         uPrimarySteps,
         uLightSteps
       );
     }
   }
 
-  outputColor = vec4(addColor * 2.0, 1.0);
+  outputColor = vec4(addColor, 1.0);
 }

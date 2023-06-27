@@ -25,6 +25,7 @@ vec3 hello_calculate_scattering(
     vec3 planet_position, 		// the position of the planet
     float planet_radius, 		// the radius of the planet
     float atmo_radius, 			// the radius of the atmosphere
+    float atmo_density,
     int PRIMARY_STEPS,
     int LIGHT_STEPS
 ) {
@@ -56,20 +57,10 @@ vec3 hello_calculate_scattering(
         max((-b - sqrt(d)) / (2.0 * a), 0.0),
         min((-b + sqrt(d)) / (2.0 * a), max_dist)
     );
-    // float t0;
-    // float t1;
-    // float r0 = (-b - sqrt(d)) / (2.0 * a);
-    // float r1 = (-b + sqrt(d)) / (2.0 * a);
-    // t0 = min(r0, r1);
-    // t1 = max(r0, r1);
-    
-    // vec2 ray_length = vec2(t0,t1);
 
     // if the ray did not hit the atmosphere, return the scene color
    if (ray_length.x > ray_length.y) return scene_color;
-    // if (!(ray_length.y >= 0.0)) {
-    //   return scene_color;
-    // }
+
     // prevent the mie glow from appearing if there's an object in front of the camera
     bool allow_mie = max_dist > ray_length.y;
     // make sure the ray is no longer than allowed
@@ -92,7 +83,7 @@ vec3 hello_calculate_scattering(
     vec3 opt_i = vec3(0.0);
 
     // modulate the atmoshpere's density by this value
-    float densityMultiplier = 1.0;
+    float densityMultiplier = atmo_density;
     
     // also init the scale height, avoids some vec2's later on
     vec2 scale_height = vec2(height_ray * densityMultiplier, height_mie * densityMultiplier);
