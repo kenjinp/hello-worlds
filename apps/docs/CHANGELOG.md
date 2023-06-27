@@ -1,5 +1,15 @@
 # docs
 
+## 1.0.1
+
+### Patch Changes
+
+- Add vfx library
+- Updated dependencies
+  - @hello-worlds/planets@0.0.17
+  - @hello-worlds/vfx@0.0.2
+  - @hello-worlds/react@0.0.18
+
 ## 1.0.0
 
 ### Major Changes

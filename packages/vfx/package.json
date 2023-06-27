@@ -1,13 +1,13 @@
 {
   "name": "@hello-worlds/vfx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
     "clean": "rm -f *.tsbuildinfo && rm -rf dist",
-    "build": "tsc -b tsconfig.json && tsc -b tsconfig.commonjs.json",
+    "build": "tsc -d && node esbuild.mjs",
     "prebuild": "npm run clean"
   },
   "files": [
@@ -16,9 +16,10 @@
   "sideEffects": false,
   "devDependencies": {
     "@react-three/fiber": "8.8.2",
+    "@react-three/postprocessing": "^2.14.11",
     "@types/react": "^18.0.0",
     "@types/three": "^0.141.0",
-    "@react-three/postprocessing": "^2.14.11",
+    "esbuild": "^0.18.10",
     "postprocessing": "^6.32.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -27,11 +28,11 @@
   },
   "peerDependencies": {
     "@react-three/fiber": "^8.8.2",
+    "@react-three/postprocessing": ">=2.0.0",
+    "postprocessing": ">=6.32.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "three": ">=0.133",
-    "@react-three/postprocessing": ">=2.0.0",
-    "postprocessing": ">=6.32.1"
+    "three": ">=0.133"
   },
   "keywords": [
     "game",

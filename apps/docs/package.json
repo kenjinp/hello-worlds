@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,6 +20,7 @@
     "@hello-worlds/planets": "workspace:*",
     "@hello-worlds/react": "workspace:*",
     "@hello-worlds/tongues": "workspace:*",
+    "@hello-worlds/vfx": "workspace:^",
     "@liveblocks/client": "^0.17.11",
     "@liveblocks/react": "^0.17.11",
     "@react-three/drei": "9.52.4",

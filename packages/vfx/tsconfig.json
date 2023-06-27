@@ -3,9 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist/esm",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "emitDeclarationOnly": true
   },
-  "include": ["src"],
-  "exclude": ["**/*.spec.ts", "**/__mocks__/**/*"],
-  "references": [{ "path": "../core" }, { "path": "../planets" }]
+  "include": ["src", "./types.d.ts"],
+  "exclude": ["**/*.spec.ts", "**/__mocks__/**/*"]
 }
