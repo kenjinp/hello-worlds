@@ -24,9 +24,6 @@ export interface AtmosphereEffectProps {
   lightSteps?: number
 }
 
-export const km = 1_000
-export const EARTH_RADIUS = 6_357 * km
-
 // tempValues
 const _cameraDirection = new Vector3()
 const _position = new Vector3()
@@ -42,8 +39,8 @@ export class AtmosphereEffect extends Effect {
     camera,
     suns,
     planets,
-    primarySteps = 12,
-    lightSteps = 8,
+    primarySteps = 32,
+    lightSteps = 12,
   }: AtmosphereEffectProps) {
     // Let's not compile a meaningful shader if there's nothing to show
     // Mainly because I'm not sure how to skip over defining a uniform that's an array of 0 length

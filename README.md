@@ -40,9 +40,11 @@ Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](htt
 There are a couple solutions allow you to create beautiful terrain for the web:
 
 #### Heightmap-based
+
 These require high resoluion sample data generated offline, and don't generate them procedurally
--  [three-landscape](https://github.com/nwpointer/three-landscape)
--  [terra](https://github.com/fintelia/terra) 
+
+- [three-landscape](https://github.com/nwpointer/three-landscape)
+- [terra](https://github.com/fintelia/terra)
 
 <!-- ## Support ☕
 

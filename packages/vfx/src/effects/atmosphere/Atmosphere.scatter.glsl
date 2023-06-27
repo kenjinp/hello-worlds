@@ -11,8 +11,6 @@
 // and the steps (more looks better, but is slower)
 // the primary step has the most effect on looks
 // and these on desktop
-// #define PRIMARY_STEPS 32 /* primary steps, affects quality the most */
-// #define LIGHT_STEPS 12 /* light steps, how much steps in the light direction are taken */
 
 vec3 hello_calculate_scattering(
     vec3 start, 				// the start of the ray (the camera position)
