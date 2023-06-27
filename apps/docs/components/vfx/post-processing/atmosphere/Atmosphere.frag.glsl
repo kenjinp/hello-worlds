@@ -101,5 +101,5 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
     }
   }
 
-  outputColor = vec4(addColor, 1.0);
+  outputColor = vec4(addColor * 2.0, 1.0);
 }

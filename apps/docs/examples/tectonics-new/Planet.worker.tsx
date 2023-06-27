@@ -5,7 +5,7 @@ import {
   createThreadedPlanetWorker,
   Noise,
   NOISE_TYPES,
-  remap,
+  remap
 } from "@hello-worlds/planets"
 import { latLngToCell } from "h3-js"
 import { Color, Line3, MathUtils, Vector3 } from "three"
@@ -67,7 +67,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
 
     const plate = Tectonics.getPlateFromVector3(tectonics, input)
     const wplate = Tectonics.getPlateFromVector3(tectonics, warpedVector)
-    const [min, max] = Plate.getDistancesToPlateEdge(plate, warpedVector)
+    const [min, max] = Plate.getDistancesToPlateEdge(plate, input)
     // const [wmin,wmax] = Plate.getDistancesToPlateEdge(plate, warpedVector)
     // const influence = remap(distance, 0, radius / 2, 0, 1)
     const arbitraryMaxDistanceValue = 80_000
@@ -77,7 +77,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
 
     // remap(distance, 0, 1000, 0, 1)
 
-    return wplate.data.oceanic ? 0 : distance
+    return plate.data.oceanic ? 0 : distance
   }
 }
 

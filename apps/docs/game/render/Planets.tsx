@@ -1,15 +1,17 @@
 import { ECS, world } from "@game/ECS"
 import { archetypes } from "@game/Entity"
 import { CERES_RADIUS } from "@game/Math"
+import { TerrainScatter } from "@game/terrain-scatter/Scatter"
 import { Chunk as HelloChunk } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
   PlanetChunks,
-  usePlanet
+  usePlanet,
 } from "@hello-worlds/react"
 import { Html } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
 import { Attractor, RigidBody } from "@react-three/rapier"
+import { ALTITUDE_RAYCAST_LAYER } from "hooks/useAltitude"
 import * as React from "react"
 import { Mesh, Object3D } from "three"
 
@@ -26,17 +28,14 @@ export const EntityPlanetWrapper: React.FC = () => {
   return null
 }
 
-export const CorrectedChunkTranslation: React.FC<{
-  chunk: HelloChunk
-}> = ({ chunk, children }) => {
+export const CorrectedChunkTranslation: React.FC<
+  React.PropsWithChildren<{
+    chunk: HelloChunk
+  }>
+> = ({ chunk, children }) => {
   const pos = React.useMemo(() => {
     chunk.geometry.computeBoundingBox()
-    return (
-      chunk.position
-        .clone()
-        // .add(chunk.offset)
-        .applyMatrix4(chunk.group.matrixWorld)
-    )
+    return chunk.position.clone().applyMatrix4(chunk.group.matrixWorld)
   }, [chunk.uuid])
 
   const rot = React.useMemo(() => {
@@ -48,16 +47,6 @@ export const CorrectedChunkTranslation: React.FC<{
 
   return (
     <group key={chunk.uuid} position={pos} rotation={rot}>
-      {/* <RigidBody colliders="trimesh"></RigidBody> */}
-      {/* <Html>chunk: {chunk.uuid}</Html> */}
-      {/* <box3Helper
-      position={position}
-      rotation={chunk.rotation}
-      args={[
-        chunk.geometry.boundingBox,
-        new Color(Math.random() * 0xffffff),
-      ]}
-    /> */}
       {children}
     </group>
   )
@@ -68,8 +57,8 @@ export const CorrectedChunkTranslation: React.FC<{
 //     <RigidBody key={chunk.uuid} mass={0}>
 //       {/* <MeshCollider type="trimesh"> */}
 //       <CorrectedChunkTranslation chunk={chunk}>
-//         <bufferGeometry attach="geometry" {...chunk.geometry} />
-//         <meshBasicMaterial wireframe color="red" />
+// <bufferGeometry attach="geometry" {...chunk.geometry} />
+// <meshBasicMaterial wireframe color="red" />
 //       </CorrectedChunkTranslation>
 //       {/* </MeshCollider> */}
 //     </RigidBody>
@@ -77,6 +66,20 @@ export const CorrectedChunkTranslation: React.FC<{
 // </PlanetChunks>
 //   */
 //  }
+
+function UpdateChunks() {
+  return (
+    <PlanetChunks>
+      {chunk => {
+        const geometry = chunk.geometry
+        if (geometry) {
+          geometry.attributes.uv2 = geometry.attributes.uv.clone()
+        }
+        return null
+      }}
+    </PlanetChunks>
+  )
+}
 
 const PlanetChunkColliders = () => {
   return (
@@ -150,7 +153,12 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
     return (
       <ECS.Component name="sceneObject">
         <HelloPlanet
-          ref={ref}
+          ref={p => {
+            p?.layers.enable(ALTITUDE_RAYCAST_LAYER)
+            if (ref) {
+              ref.current = p
+            }
+          }}
           position={position}
           radius={radius}
           minCellSize={32 * 8}
@@ -171,6 +179,8 @@ export const PlanetRender = React.forwardRef<Mesh, React.PropsWithChildren<{}>>(
               metalness={0}
               reflectivity={0.01}
             />
+            {/* <PlanetTexture /> */}
+
             {children}
           </React.Suspense>
         </HelloPlanet>
@@ -187,10 +197,13 @@ export const Planets: React.FC = () => {
           <>
             <ECS.Entity key={entity.id} entity={entity}>
               <PlanetRender>
+                <TerrainScatter />
                 {entity.children.map(moonEntity => (
                   <ECS.Entity key={moonEntity.id} entity={moonEntity}>
                     <mesh key={moonEntity.id} position={entity.position}>
-                      <PlanetRender />
+                      <PlanetRender>
+                        <TerrainScatter />
+                      </PlanetRender>
                     </mesh>
                   </ECS.Entity>
                 ))}

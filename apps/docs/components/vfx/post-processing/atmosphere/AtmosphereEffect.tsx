@@ -101,6 +101,7 @@ export const AtmosphereEffect: React.FC<
   const camera = useThree(store => store.camera)
 
   usePostProcessingEffect(() => {
+    console.log("creating atmosphere effect", props)
     return new AtmosphereEffectImpl({
       camera,
       ...props,

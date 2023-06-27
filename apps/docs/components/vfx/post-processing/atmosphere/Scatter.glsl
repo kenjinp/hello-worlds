@@ -28,7 +28,6 @@ vec3 hello_calculate_scattering(
     int PRIMARY_STEPS,
     int LIGHT_STEPS
 ) {
-
     vec3 beta_ray = RAY_BETA; 				// the amount rayleigh scattering scatters the colors (for earth: causes the blue atmosphere)
     vec3 beta_mie = MIE_BETA; 				// the amount mie scattering scatters colors
     vec3 beta_absorption = ABSORPTION_BETA;   	// how much air is absorbed

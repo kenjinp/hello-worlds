@@ -3,7 +3,10 @@ import { Planet, RingWorld, WORLD_TYPES } from "@hello-worlds/planets"
 import { Object3D, Raycaster } from "three"
 import { match } from "ts-pattern"
 
+export const ALTITUDE_RAYCAST_LAYER = 1
+
 const raycaster = new Raycaster()
+raycaster.layers.set(ALTITUDE_RAYCAST_LAYER)
 
 const getApproximateAltitudeOfSpheroid = (
   object: Object3D,
