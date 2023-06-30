@@ -4,4 +4,4 @@ A Typescript [ConLang](https://en.wikipedia.org/wiki/Constructed_language) Libra
 
 ## Docs
 
-Visit [https://worlds.kenny.wtf](worlds.kenny.wtf) for documentation, examples, and external resources.
+Visit [https://worlds.kenny.wtf](https://worlds.kenny.wtf/intro) for documentation, examples, and external resources.

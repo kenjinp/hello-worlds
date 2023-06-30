@@ -4,4 +4,4 @@ A React library to add `@hello-worlds/planets` to your [`@react-three/fiber`](ht
 
 ## Docs
 
-Visit [https://worlds.kenny.wtf](worlds.kenny.wtf) for documentation, examples, and external resources.
+Visit [https://worlds.kenny.wtf](https://worlds.kenny.wtf/intro) for documentation, examples, and external resources.

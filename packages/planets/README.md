@@ -4,4 +4,4 @@ A Typescript library to add vast planets to your [`three.js`](threejs.org/) scen
 
 ## Docs
 
-Visit [https://worlds.kenny.wtf](worlds.kenny.wtf) for documentation, examples, and external resources.
+Visit [https://worlds.kenny.wtf](https://worlds.kenny.wtf/intro) for documentation, examples, and external resources.

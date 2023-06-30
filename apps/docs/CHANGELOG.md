@@ -1,5 +1,17 @@
 # docs
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @hello-worlds/core@0.0.9
+  - @hello-worlds/cultures@0.0.10
+  - @hello-worlds/planets@0.0.18
+  - @hello-worlds/react@0.0.19
+  - @hello-worlds/tongues@0.0.10
+  - @hello-worlds/vfx@0.0.4
+
 ## 1.0.2
 
 ### Patch Changes

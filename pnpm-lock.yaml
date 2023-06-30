@@ -225,14 +225,14 @@ importers:
   packages/cultures:
     dependencies:
       '@hello-worlds/tongues':
-        specifier: 0.0.9
+        specifier: 0.0.10
         version: link:../tongues
       roll:
         specifier: ^1.3.1
         version: 1.3.1
     devDependencies:
       '@hello-worlds/core':
-        specifier: 0.0.8
+        specifier: 0.0.9
         version: link:../core
       '@types/roll':
         specifier: ^1.2.0
@@ -248,7 +248,7 @@ importers:
         version: 3.0.1
     devDependencies:
       '@hello-worlds/core':
-        specifier: 0.0.8
+        specifier: 0.0.9
         version: link:../core
       '@types/three':
         specifier: ^0.141.0
@@ -270,10 +270,10 @@ importers:
         version: 2.19.0(three@0.143.0)
     devDependencies:
       '@hello-worlds/core':
-        specifier: 0.0.8
+        specifier: 0.0.9
         version: link:../core
       '@hello-worlds/planets':
-        specifier: 0.0.17
+        specifier: 0.0.18
         version: link:../planets
       '@react-three/drei':
         specifier: 9.30.1
@@ -303,7 +303,7 @@ importers:
   packages/tongues:
     devDependencies:
       '@hello-worlds/core':
-        specifier: 0.0.8
+        specifier: 0.0.9
         version: link:../core
       typescript:
         specifier: ^4.7.4

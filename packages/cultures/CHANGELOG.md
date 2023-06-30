@@ -1,5 +1,14 @@
 # @hello-worlds/cultures
 
+## 0.0.10
+
+### Patch Changes
+
+- Update docs link in npm
+- Updated dependencies
+  - @hello-worlds/core@0.0.9
+  - @hello-worlds/tongues@0.0.10
+
 ## 0.0.9
 
 ### Patch Changes

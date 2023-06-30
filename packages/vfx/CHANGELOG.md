@@ -1,5 +1,11 @@
 # @hello-worlds/vfx
 
+## 0.0.4
+
+### Patch Changes
+
+- Update docs link in npm
+
 ## 0.0.3
 
 ### Patch Changes

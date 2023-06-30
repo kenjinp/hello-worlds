@@ -1,5 +1,11 @@
 # @hello-worlds/core
 
+## 0.0.9
+
+### Patch Changes
+
+- Update docs link in npm
+
 ## 0.0.8
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @hello-worlds/planets
 
+## 0.0.18
+
+### Patch Changes
+
+- Update docs link in npm
+- Updated dependencies
+  - @hello-worlds/core@0.0.9
+
 ## 0.0.17
 
 ### Patch Changes
