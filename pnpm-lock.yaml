@@ -104,6 +104,9 @@ importers:
       nextra-theme-docs:
         specifier: 2.0.1
         version: 2.0.1(next@13.0.7)(react-dom@18.2.0)(react@18.2.0)
+      poisson-disk-sampling:
+        specifier: ^2.3.1
+        version: 2.3.1
       r3f-perf:
         specifier: ^6.6.3
         version: 6.6.3(@react-three/drei@9.52.4)(@react-three/fiber@8.8.2)(react-dom@18.2.0)(react@18.2.0)(three-stdlib@2.19.0)(three@0.143.0)
@@ -5426,6 +5429,10 @@ packages:
     resolution: {integrity: sha512-ySViT69/76t8VhE1xXHK6Ch4NcDd26gx0MzKXLO+F7NOtnqH68d9zF94nT8ZWSxXh8ELOERsnJO/sWt1xZYw5A==}
     dev: false
 
+  /moore@1.0.0:
+    resolution: {integrity: sha512-xcsFo/jgtMuVaGePHod5TdSzxnRAQQ4wFpDmFuu34lHvx5sNMsioA84NW7iBWYZ10jHR/nyGaDkhunMJxqAzkw==}
+    dev: false
+
   /mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
     engines: {node: '>=4'}
@@ -5856,6 +5863,12 @@ packages:
     dependencies:
       find-up: 4.1.0
     dev: true
+
+  /poisson-disk-sampling@2.3.1:
+    resolution: {integrity: sha512-O3TzHR8IA+Do5zC7EgPdHLOYOpUJ6DikiTwqRqXdSPUhx1ZqfeH6PqAD86KKi+8Nq8vnL2navErsgURKTe089w==}
+    dependencies:
+      moore: 1.0.0
+    dev: false
 
   /postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}

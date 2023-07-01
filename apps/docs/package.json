@@ -38,6 +38,7 @@
     "next": "^13.0.6",
     "nextra": "2.0.1",
     "nextra-theme-docs": "2.0.1",
+    "poisson-disk-sampling": "^2.3.1",
     "r3f-perf": "^6.6.3",
     "rand-seed": "^1.0.1",
     "react": "^18.2.0",
