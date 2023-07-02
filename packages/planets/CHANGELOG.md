@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.19
+
+### Patch Changes
+
+- Add LODLevel and maxLOD getters to Chunk class
+
 ## 0.0.18
 
 ### Patch Changes

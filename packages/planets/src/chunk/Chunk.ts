@@ -84,6 +84,10 @@ export class Chunk extends Mesh {
     return LODIndex < 0 ? LODRatios.length + 1 : LODIndex
   }
 
+  get maxLOD() {
+    return Object.values(this.lodTable).length
+  }
+
   dispose() {
     this.dispatchEvent(new ChunkWillBeDisposedEvent(this))
     // we have to dispose of all the attributes associated with this mesh

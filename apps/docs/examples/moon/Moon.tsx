@@ -134,9 +134,9 @@ const MoonChunkDebugger: React.FC = () => {
         }
 
         return (
-          chunk.LODLevel <= 6 && (
+          chunk.LODLevel <= 20 && (
             <CorrectedChunkTranslation key={chunk.uuid} chunk={chunk}>
-              <RigidBody type="fixed" includeInvisible colliders="hull">
+              <RigidBody type="fixed" includeInvisible colliders="trimesh">
                 <mesh>
                   <bufferGeometry attach="geometry" {...chunk.geometry} />
                   <meshBasicMaterial wireframe color="red" visible={false} />

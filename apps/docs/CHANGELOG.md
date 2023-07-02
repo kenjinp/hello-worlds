@@ -1,5 +1,14 @@
 # docs
 
+## 1.0.4
+
+### Patch Changes
+
+- Add LODLevel and maxLOD getters to Chunk class
+- Updated dependencies
+  - @hello-worlds/planets@0.0.19
+  - @hello-worlds/react@0.0.20
+
 ## 1.0.3
 
 ### Patch Changes
