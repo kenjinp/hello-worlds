@@ -30,7 +30,7 @@ export const craterHeight = (
 
     // crazy snaky terrace stuff
     const radialDistanceNoise = Math.sin(
-      dist * (1 / (remap(radius, 1000, 100_000, 1000, 10000) * n)),
+      dist * (1 / (remap(radius, 1000, 200_000, 1000, 10000) * n)),
     )
 
     const cavity = x * x - 1

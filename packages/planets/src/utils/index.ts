@@ -21,6 +21,18 @@ export const dictDifference = <T = Record<string, any>>(dictA: T, dictB: T) => {
 export const tempVector3 = new Vector3()
 export const tempColor = new Color()
 
+export const getLODTable = (radius: number, minCellSize: number) => {
+  let LODRatio = 0
+  let chunkWidth = radius
+  const LODValuesIndex: Record<number, number> = {}
+  while (LODRatio < 1) {
+    LODRatio = minCellSize / chunkWidth
+    LODValuesIndex[chunkWidth] = LODRatio
+    chunkWidth /= 2
+  }
+  return LODValuesIndex
+}
+
 export const NOOP = () => {
   // noop, required sometimes by TS
 }

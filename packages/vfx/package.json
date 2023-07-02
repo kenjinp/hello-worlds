@@ -15,7 +15,7 @@
   ],
   "sideEffects": false,
   "devDependencies": {
-    "@react-three/fiber": "8.8.2",
+    "@react-three/fiber": "8.13.4",
     "@react-three/postprocessing": "^2.14.11",
     "@types/react": "^18.0.0",
     "@types/three": "^0.141.0",
@@ -24,7 +24,7 @@
     "postprocessing": "^6.32.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "three": "0.143.0",
+    "three": "0.154.0",
     "typescript": "^4.7.4"
   },
   "peerDependencies": {

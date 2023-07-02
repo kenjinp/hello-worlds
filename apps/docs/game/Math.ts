@@ -6,6 +6,7 @@ export const SUN_RADIUS = 696_000 * km
 export const EARTH_RADIUS = 6_357 * km
 export const MARS_RADIUS = 3_389.5 * km
 export const MOON_RADIUS = 1_737.4 * km
+export const TITAN_RADIUS = 2574.7 * km
 export const CERES_RADIUS = 469.73 * km
 export const C = 299_792_458
 

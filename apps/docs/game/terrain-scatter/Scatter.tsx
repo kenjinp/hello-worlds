@@ -2,12 +2,7 @@ import { CorrectedChunkTranslation } from "@game/render/Planets"
 import { Chunk } from "@hello-worlds/planets"
 import { PlanetChunks, usePlanet } from "@hello-worlds/react"
 import { useLayoutEffect, useState } from "react"
-import {
-  Color, InstancedMesh,
-  MathUtils,
-  Object3D,
-  Vector3
-} from "three"
+import { Color, InstancedMesh, MathUtils, Object3D, Vector3 } from "three"
 import { MeshSurfaceSampler } from "three-stdlib"
 
 function TerrainSampler({ chunk, color }: { chunk: Chunk; color: Color }) {

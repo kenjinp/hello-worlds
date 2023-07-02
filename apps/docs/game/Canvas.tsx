@@ -2,6 +2,8 @@ import { SafeHydrate } from "@components/safe-render/SafeRender"
 import { Canvas as R3fCanvas } from "@react-three/fiber"
 import * as React from "react"
 import * as RC from "render-composer"
+import { Vector3 } from "three"
+import { MOON_RADIUS } from "./Math"
 
 export const Canvas: React.FC<
   React.PropsWithChildren<{ style?: React.CSSProperties }>
@@ -44,6 +46,7 @@ export const NormalCanvas: React.FC<
         camera={{
           near: 0.01,
           far: Number.MAX_SAFE_INTEGER,
+          position: new Vector3(1, 0, 1).multiplyScalar(MOON_RADIUS * 2),
         }}
         shadows
         style={style || { position: "absolute", top: 0, left: 0, zIndex: 1 }}

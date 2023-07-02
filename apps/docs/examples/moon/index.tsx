@@ -2,17 +2,52 @@ import ExampleLayout from "@components/layouts/example/Example"
 import { SafeHydrate } from "@components/safe-render/SafeRender"
 import { SpaceBox } from "@components/space-box/SpaceBox"
 import { NormalCanvas } from "@game/Canvas"
-import { AU, MOON_RADIUS } from "@game/Math"
+import { AU, MARS_RADIUS } from "@game/Math"
 import { KeyboardController } from "@game/player/KeyboardController"
 import { Atmosphere } from "@hello-worlds/vfx"
 import { Stars as FarStars } from "@react-three/drei"
 import { EffectComposer } from "@react-three/postprocessing"
-import { Debug, Physics } from "@react-three/rapier"
+import { Physics } from "@react-three/rapier"
 import * as React from "react"
 import { Color, Vector3 } from "three"
 import { Moon } from "./Moon"
 
+const generateSuns = () => {
+  // return new Array(randInt(1, 3)).fill(0).map(() => {
+  //   return {
+  //     color: new Color(Math.random() * 0xffffff),
+  //     position: new Vector3()
+  //       .randomDirection()
+  //       .multiply(new Vector3(1, 0, 1))
+  //       .multiplyScalar(AU),
+  //     intensity: randFloat(4, 40),
+  //   }
+  // })
+  return new Array(1).fill(0).map(() => {
+    return {
+      color: new Color(0xffffff),
+      position: new Vector3(1, 0, 1).multiplyScalar(AU),
+      intensity: 10,
+    }
+  })
+}
+
 export const ExampleInner: React.FC = () => {
+  const [suns, setSuns] = React.useState(generateSuns())
+
+  React.useEffect(() => {
+    const changeSuns = (ev: KeyboardEvent) => {
+      if (ev.key === "Enter") {
+        setSuns(generateSuns())
+      }
+    }
+    document.addEventListener("onKeyPress", changeSuns)
+
+    return () => {
+      document.removeEventListener("onKeyPress", changeSuns)
+    }
+  }, [])
+
   return (
     <SafeHydrate>
       <ExampleLayout middle={<>Moon</>}>
@@ -21,7 +56,6 @@ export const ExampleInner: React.FC = () => {
             <KeyboardController>
               <Physics timeStep="vary" gravity={[0, 0, 0]}>
                 <group>
-                  <Debug />
                   <group
                     scale={new Vector3(1, 1, 1)
                       .multiplyScalar(AU)
@@ -31,33 +65,37 @@ export const ExampleInner: React.FC = () => {
                   </group>
 
                   <SpaceBox />
-                  <directionalLight
-                    color={new Color("white")}
-                    intensity={0.4}
-                    position={new Vector3(1, 1, 1).multiplyScalar(AU)}
-                  />
+                  {suns.map(({ color, intensity, position }, index) => {
+                    return (
+                      <directionalLight
+                        key={`sun-${index}`}
+                        color={color}
+                        intensity={intensity / 10}
+                        position={position}
+                      />
+                    )
+                  })}
                   <group>
-                    <Moon />
+                    <Moon radius={MARS_RADIUS} />
                   </group>
                   <EffectComposer>
                     <Atmosphere
                       planets={[
                         {
-                          radius: MOON_RADIUS,
+                          radius: MARS_RADIUS - 2_000,
                           origin: new Vector3(),
-                          atmosphereRadius: MOON_RADIUS * 2,
+                          atmosphereRadius: MARS_RADIUS * 2,
+                          // limited from 0 to 1.0
                           atmosphereDensity: 0.5,
                         },
                       ]}
-                      suns={[
-                        {
-                          origin: new Vector3(1, 1, 1).multiplyScalar(AU),
-                          color: new Vector3().fromArray(
-                            new Color(0xffffff).toArray(),
-                          ),
-                          intensity: 1,
-                        },
-                      ]}
+                      suns={suns.map(({ color, intensity, position }) => {
+                        return {
+                          origin: position,
+                          color: new Vector3().fromArray(color.toArray()),
+                          intensity,
+                        }
+                      })}
                     />
                   </EffectComposer>
                 </group>

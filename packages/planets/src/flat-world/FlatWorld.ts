@@ -154,6 +154,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
         height: parentChunkProps.size,
         radius: this.size / 2,
         resolution: this.minCellResolution,
+        minCellSize: this.minCellSize,
         inverted: !!this.inverted,
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {

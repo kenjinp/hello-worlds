@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import { Material, Mesh, Object3D, ShaderMaterial, Vector3 } from "three"
+import { getLODTable } from "../utils"
 import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "./Events"
 
 export interface ChunkProps {
@@ -9,6 +10,7 @@ export interface ChunkProps {
   height: number
   radius: number
   resolution: number
+  minCellSize: number
   offset: Vector3
   lodOrigin: Vector3
   inverted: boolean
@@ -37,6 +39,8 @@ export class Chunk extends Mesh {
   lodOrigin: Vector3
   origin: Vector3
   inverted: boolean
+  minCellSize: number
+  lodTable: ReturnType<typeof getLODTable>
   constructor(props: ChunkProps) {
     // let's build ourselves a mesh with the base material
     super(new THREE.BufferGeometry(), props.material)
@@ -57,6 +61,7 @@ export class Chunk extends Mesh {
     this.height = props.height
     this.radius = props.radius
     this.resolution = props.resolution
+    this.minCellSize = props.minCellSize
     this.offset = props.offset
     this.lodOrigin = props.lodOrigin
     this.origin = props.origin
@@ -65,7 +70,18 @@ export class Chunk extends Mesh {
     this.receiveShadow = true
     // add ourselves to the parent group
     this.group.add(this)
+    this.lodTable = getLODTable(this.radius, this.minCellSize)
     // this.dispatchEvent(new ChunkPendingEvent(this))
+  }
+
+  get LODLevel() {
+    // 0 is the highest res
+    const LODratio = this.minCellSize / this.width
+    const LODRatios = Array.from(Object.values(this.lodTable)).sort(
+      (a, b) => b - a,
+    )
+    const LODIndex = LODRatios.indexOf(LODratio)
+    return LODIndex < 0 ? LODRatios.length + 1 : LODIndex
   }
 
   dispose() {

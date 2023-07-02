@@ -18,25 +18,27 @@ export interface Node {
   root?: boolean
 }
 
+const tempVector3 = new THREE.Vector3()
+
 export class QuadTree {
   private root: Node
   private origin: Vector3
   constructor(private params: QuadTreeParams) {
     const s = params.size
     const b = new THREE.Box3(
-      new THREE.Vector3(-s, -s, 0),
-      new THREE.Vector3(s, s, 0),
+      tempVector3.clone().set(-s, -s, 0),
+      tempVector3.clone().set(s, s, 0),
     )
     if (params.comparatorValue <= 0) {
-      throw new Error("Quadtree Comparison Value must be greater than 0");
+      throw new Error("Quadtree Comparison Value must be greater than 0")
     }
     this.origin = params.origin
     this.root = {
       bounds: b,
       children: [],
-      center: b.getCenter(new THREE.Vector3()),
-      sphereCenter: b.getCenter(new THREE.Vector3()),
-      size: b.getSize(new THREE.Vector3()),
+      center: b.getCenter(tempVector3.clone()),
+      sphereCenter: b.getCenter(tempVector3.clone()),
+      size: b.getSize(tempVector3.clone()),
       root: true,
     }
     this.root.sphereCenter = this.root.center.clone()
@@ -108,8 +110,8 @@ export class QuadTree {
     const b4 = new THREE.Box3(midpoint, child.bounds.max)
 
     const children = [b1, b2, b3, b4].map(b => {
-      const center = b.getCenter(new THREE.Vector3())
-      const sphereCenter = center.clone()
+      const center = b.getCenter(tempVector3.clone())
+      const sphereCenter = center
       sphereCenter.applyMatrix4(this.params.localToWorld)
       sphereCenter.normalize()
       sphereCenter.multiplyScalar(this.params.size)
@@ -117,7 +119,7 @@ export class QuadTree {
       return {
         bounds: b,
         children: [],
-        size: b.getSize(new THREE.Vector3()),
+        size: b.getSize(tempVector3.clone()),
         sphereCenter,
         center,
       }

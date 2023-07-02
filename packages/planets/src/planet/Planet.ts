@@ -166,6 +166,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
         radius: this.radius,
         resolution: this.minCellResolution,
         inverted: !!this.inverted,
+        minCellSize: this.minCellSize
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
         const { chunk } = e as unknown as ChunkGeneratedEvent

@@ -150,6 +150,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
         width: parentChunkProps.width,
         radius: this.radius,
         resolution: this.minCellResolution,
+        minCellSize: this.minCellSize,
         inverted: !!this.inverted,
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {

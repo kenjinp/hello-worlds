@@ -48,6 +48,7 @@ export const OrbitCamera: React.FC<
 
   return (
     <OrbitControls
+      // @ts-ignore
       ref={orbitControls}
       enablePan={false}
       enableZoom
