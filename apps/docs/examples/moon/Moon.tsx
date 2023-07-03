@@ -1,4 +1,5 @@
 import { ChunkDebugger } from "@components/ChunkDebugger"
+import { Controls } from "@game/player/KeyboardController"
 import { CorrectedChunkTranslation } from "@game/render/Planets"
 import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
 import {
@@ -6,7 +7,7 @@ import {
   PlanetChunks,
   usePlanet,
 } from "@hello-worlds/react"
-import { FlyControls } from "@react-three/drei"
+import { FlyControls, useKeyboardControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import { RigidBody } from "@react-three/rapier"
 import { Attractor } from "@react-three/rapier-addons"
@@ -78,31 +79,42 @@ export const ShootBoxes: React.FC = () => {
     }[]
   >([])
   const camera = useThree(s => s.camera)
+
+  const [subscribeKeys] = useKeyboardControls()
+
   React.useEffect(() => {
-    const listener = (e: KeyboardEvent) => {
-      if (e.key === "t") {
-        setBoxes([
-          ...boxes,
-          {
-            position: camera.position,
-            size: randFloat(2, 20),
-            mass: randFloat(2, 20),
-            color: new Color(Math.random() * 0xffffff),
-          },
-        ])
-      }
+    const createBox = () => {
+      const size = randFloat(100, 1000)
+      setBoxes([
+        ...boxes,
+        {
+          position: camera.position,
+          size: size,
+          mass: size,
+          color: new Color(Math.random() * 0xffffff),
+        },
+      ])
     }
-    document.addEventListener("keydown", listener)
-    return () => {
-      document.removeEventListener("keydown", listener)
-    }
+
+    return subscribeKeys(
+      state => state[Controls.special],
+      pressed => {
+        pressed && createBox()
+        console.log("forwardspecial")
+      },
+    )
   }, [boxes])
 
   return (
     <>
-      {boxes.map(({ position, size, mass, color }) => {
+      {boxes.map(({ position, size, mass, color }, index) => {
         return (
-          <RigidBody colliders="cuboid" position={position} mass={mass}>
+          <RigidBody
+            colliders="cuboid"
+            position={position}
+            mass={mass}
+            key={`box-${index}`}
+          >
             <mesh>
               <boxGeometry args={[size, size, size]} />
               <meshStandardMaterial color={color} />

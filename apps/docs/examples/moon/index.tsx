@@ -8,6 +8,7 @@ import { Atmosphere } from "@hello-worlds/vfx"
 import { Stars as FarStars } from "@react-three/drei"
 import { EffectComposer } from "@react-three/postprocessing"
 import { Physics } from "@react-three/rapier"
+import { Perf } from "r3f-perf"
 import * as React from "react"
 import { Color, Vector3 } from "three"
 import { Moon } from "./Moon"
@@ -52,6 +53,7 @@ export const ExampleInner: React.FC = () => {
     <SafeHydrate>
       <ExampleLayout middle={<>Moon</>}>
         <NormalCanvas>
+          <Perf />
           <React.Suspense fallback={null}>
             <KeyboardController>
               <Physics timeStep="vary" gravity={[0, 0, 0]}>

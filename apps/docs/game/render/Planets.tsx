@@ -51,21 +51,6 @@ export const CorrectedChunkTranslation: React.FC<
     </group>
   )
 }
-//     {/*
-// <PlanetChunks>
-//   {chunk => (
-//     <RigidBody key={chunk.uuid} mass={0}>
-//       {/* <MeshCollider type="trimesh"> */}
-//       <CorrectedChunkTranslation chunk={chunk}>
-// <bufferGeometry attach="geometry" {...chunk.geometry} />
-// <meshBasicMaterial wireframe color="red" />
-//       </CorrectedChunkTranslation>
-//       {/* </MeshCollider> */}
-//     </RigidBody>
-//   )}
-// </PlanetChunks>
-//   */
-//  }
 
 function UpdateChunks() {
   return (

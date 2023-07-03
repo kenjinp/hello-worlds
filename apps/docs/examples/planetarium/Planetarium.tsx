@@ -16,9 +16,8 @@ import { Stars } from "@game/render/Stars"
 import { RenderMinimizedWindows, RenderWindows } from "@game/render/Window"
 import { WorldSystems } from "@game/WorldSystems"
 import { Stars as FarStars } from "@react-three/drei"
-import { Debug, Physics } from "@react-three/rapier"
+import { Physics } from "@react-three/rapier"
 import { Leva } from "leva"
-import { Perf } from "r3f-perf"
 import * as React from "react"
 import { Vector3 } from "three"
 
@@ -47,12 +46,10 @@ export const PlanetariumInner: React.FC = () => {
       >
         <Leva hidden />
         <Canvas>
-          <Perf />
           <React.Suspense fallback={null}>
             <KeyboardController>
               <Physics timeStep="vary" gravity={[0, 0, 0]}>
                 <group>
-                  <Debug />
                   <group
                     scale={new Vector3(1, 1, 1)
                       .multiplyScalar(AU)

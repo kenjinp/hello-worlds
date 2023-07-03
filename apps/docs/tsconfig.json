@@ -21,6 +21,7 @@
       "@game/*": ["game/*"],
       "@pages/*": ["pages/*"],
       "@examples/*": ["examples/*"],
+      "@hooks/*": ["hooks/*"],
       "@public/*": ["public/*"],
       "@constants": ["constants.ts"],
       "@theme": ["theme.ts"]

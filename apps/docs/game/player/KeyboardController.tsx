@@ -10,6 +10,7 @@ export enum Controls {
   run = "run",
   camera = "camera",
   use = "use",
+  special = "special",
 }
 
 export const KeyboardController: React.FC<React.PropsWithChildren<{}>> = ({
@@ -25,6 +26,7 @@ export const KeyboardController: React.FC<React.PropsWithChildren<{}>> = ({
       { name: Controls.run, keys: ["Shift", "Control"] },
       { name: Controls.camera, keys: ["C", "c"] },
       { name: Controls.use, keys: ["F", "f"] },
+      { name: Controls.special, keys: ["T", "t"] },
     ],
     [],
   )
