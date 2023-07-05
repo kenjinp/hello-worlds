@@ -23,6 +23,11 @@ const config: DocsThemeConfig = {
       <meta name="twitter:site:domain" content="worlds.kenny.wtf" />
       <meta name="twitter:url" content="https://worlds.kenny.wtf" />
       <link rel="icon" type="image/png" href={favicon.src}></link>
+      <script
+        defer
+        data-domain="worlds.kenny.wtf"
+        src="https://plausible.io/js/script.js"
+      ></script>
     </>
   ),
   logo: (
