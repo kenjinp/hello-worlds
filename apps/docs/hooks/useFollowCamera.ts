@@ -1,14 +1,14 @@
 import { useThree } from "@react-three/fiber"
 import { useEffect, useMemo } from "react"
-import * as THREE from "three"
+import { Object3D } from "three"
 
 export default function useFollowCamera() {
   const { scene, camera } = useThree()
 
-  const pivot = useMemo(() => new THREE.Object3D(), [])
+  const pivot = useMemo(() => new Object3D(), [])
   const followCam = useMemo(() => {
-    const o = new THREE.Object3D()
-    o.position.set(0, 1, -5)
+    const o = new Object3D()
+    o.position.copy(camera.position)
     return o
   }, [])
 

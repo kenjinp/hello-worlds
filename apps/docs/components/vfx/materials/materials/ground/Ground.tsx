@@ -1,18 +1,18 @@
 // @ts-nocheck
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { patchShaders } from "gl-noise"
 import * as React from "react"
 import { MeshStandardMaterial, NearestFilter, RepeatWrapping } from "three"
-import CustomShaderMaterial from "three-custom-shader-material"
-import frag from "./Ground.frag.glsl"
-import vert from "./Ground.vert.glsl"
 import dirt from "./textures/dirt_albedo.png"
 import dirtN from "./textures/dirt_normal.png"
 import grass from "./textures/grass_albedo.png"
 import rock from "./textures/rock_albedo.png"
 // import normalMap from "./textures/rock_normal.png"
 import { usePlanet } from "@hello-worlds/react"
+import { patchShaders } from "gl-noise/build/glNoise.m"
+import CustomShaderMaterial from "three-custom-shader-material"
+import frag from "./Ground.frag.glsl"
+import vert from "./Ground.vert.glsl"
 import noiseMap from "./textures/noise.png"
 import uvTest from "./textures/uv-test.png"
 import { useLoadTextureArray } from "./useLoadTextureArray"
@@ -24,9 +24,9 @@ export const Ground: React.FC = () => {
 
   const materialRef = React.useRef()
   const props = useTexture({
-    map: rock,
-    uvTest,
-    noiseMap,
+    map: rock.src,
+    uvTest: uvTest.src,
+    noiseMap: noiseMap.src,
     // normalMap,
     // displacementMap: 'PavingStones092_1K_Displacement.jpg',
     // normalMap: 'PavingStones092_1K_Normal.jpg',
@@ -34,9 +34,12 @@ export const Ground: React.FC = () => {
     // aoMap: 'PavingStones092_1K_AmbientOcclusion.jpg',
   })
 
-  const whatever = useLoadTextureArray([rock, grass, dirt, dirtN], {
-    dimensions: 64,
-  })
+  const whatever = useLoadTextureArray(
+    [rock.src, grass.src, dirt.src, dirtN.src],
+    {
+      dimensions: 64,
+    },
+  )
 
   props.map.magFilter = NearestFilter
   props.map.wrapS = RepeatWrapping
@@ -57,10 +60,16 @@ export const Ground: React.FC = () => {
     }
   })
 
+  // React.useEffect(() => {
+  //   if (planet && materialRef.current) {
+  //     planet.material = materialRef.current
+  //   }
+  // }, [materialRef, planet])
+
   return (
     <CustomShaderMaterial
       ref={materialRef}
-      baseMaterial={MeshStandardMaterial}
+      baseMaterial={new MeshStandardMaterial()}
       vertexShader={patchShaders(vert)}
       fragmentShader={frag}
       uniforms={{

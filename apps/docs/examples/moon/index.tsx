@@ -49,14 +49,18 @@ export const ExampleInner: React.FC = () => {
     }
   }, [])
 
+  const showAtmo = true
+  const showPerf = false
+  const radius = MARS_RADIUS
+
   return (
     <SafeHydrate>
       <ExampleLayout middle={<>Moon</>}>
         <NormalCanvas>
-          <Perf />
+          {showPerf && <Perf />}
           <React.Suspense fallback={null}>
             <KeyboardController>
-              <Physics timeStep="vary" gravity={[0, 0, 0]}>
+              <Physics gravity={[0, 0, 0]}>
                 <group>
                   <group
                     scale={new Vector3(1, 1, 1)
@@ -78,27 +82,29 @@ export const ExampleInner: React.FC = () => {
                     )
                   })}
                   <group>
-                    <Moon radius={MARS_RADIUS} />
+                    <Moon radius={radius} />
                   </group>
                   <EffectComposer>
-                    <Atmosphere
-                      planets={[
-                        {
-                          radius: MARS_RADIUS - 2_000,
-                          origin: new Vector3(),
-                          atmosphereRadius: MARS_RADIUS * 2,
-                          // limited from 0 to 1.0
-                          atmosphereDensity: 0.5,
-                        },
-                      ]}
-                      suns={suns.map(({ color, intensity, position }) => {
-                        return {
-                          origin: position,
-                          color: new Vector3().fromArray(color.toArray()),
-                          intensity,
-                        }
-                      })}
-                    />
+                    {showAtmo ? (
+                      <Atmosphere
+                        planets={[
+                          {
+                            radius: radius - radius * 0.01,
+                            origin: new Vector3(),
+                            atmosphereRadius: radius * 2,
+                            // limited from 0 to 1.0
+                            atmosphereDensity: 0.5,
+                          },
+                        ]}
+                        suns={suns.map(({ color, intensity, position }) => {
+                          return {
+                            origin: position,
+                            color: new Vector3().fromArray(color.toArray()),
+                            intensity,
+                          }
+                        })}
+                      />
+                    ) : null}
                   </EffectComposer>
                 </group>
               </Physics>

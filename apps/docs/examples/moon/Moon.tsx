@@ -1,21 +1,15 @@
-import { ChunkDebugger } from "@components/ChunkDebugger"
 import { Controls } from "@game/player/KeyboardController"
-import { CorrectedChunkTranslation } from "@game/render/Planets"
 import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
-import {
-  Planet as HelloPlanet,
-  PlanetChunks,
-  usePlanet,
-} from "@hello-worlds/react"
+import { Planet as HelloPlanet, usePlanet } from "@hello-worlds/react"
 import { FlyControls, useKeyboardControls } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { RigidBody } from "@react-three/rapier"
-import { Attractor } from "@react-three/rapier-addons"
 import Poisson from "poisson-disk-sampling"
 import React, { useMemo } from "react"
-import { Color, Vector3 } from "three"
+import { Vector3 } from "three"
 import { FlyControls as FlyControlsImpl } from "three-stdlib"
 import { randFloat } from "three/src/math/MathUtils"
+import { Character } from "./Character"
+import { ShootBoxes } from "./Moon.boxes"
 const worker = () => new Worker(new URL("./Moon.worker", import.meta.url))
 
 const position = new Vector3()
@@ -39,11 +33,6 @@ const FlyCamera = () => {
   const flyControls = React.useRef<FlyControlsImpl>()
   const camera = useThree(s => s.camera)
 
-  React.useEffect(() => {
-    camera.position.copy(new Vector3(1, 1, 1).multiplyScalar(planet.radius * 2))
-    camera.lookAt(planet.position)
-  }, [camera])
-
   useFrame(() => {
     if (!flyControls.current) {
       return
@@ -54,116 +43,29 @@ const FlyCamera = () => {
     flyControls.current.rollSpeed = 0.2
   })
 
-  return <FlyControls ref={flyControls} />
-}
-
-const getLODTable = (radius: number, minCellSize: number) => {
-  let LODRatio = 0
-  let chunkWidth = radius
-  const LODValuesIndex: Record<number, number> = {}
-  while (LODRatio < 1) {
-    LODRatio = minCellSize / chunkWidth
-    LODValuesIndex[chunkWidth] = LODRatio
-    chunkWidth /= 2
-  }
-  return LODValuesIndex
-}
-
-export const ShootBoxes: React.FC = () => {
-  const [boxes, setBoxes] = React.useState<
-    {
-      position: Vector3
-      size: number
-      mass: number
-      color: Color
-    }[]
-  >([])
-  const camera = useThree(s => s.camera)
-
-  const [subscribeKeys] = useKeyboardControls()
-
-  React.useEffect(() => {
-    const createBox = () => {
-      const size = randFloat(100, 1000)
-      setBoxes([
-        ...boxes,
-        {
-          position: camera.position,
-          size: size,
-          mass: size,
-          color: new Color(Math.random() * 0xffffff),
-        },
-      ])
-    }
-
-    return subscribeKeys(
-      state => state[Controls.special],
-      pressed => {
-        pressed && createBox()
-        console.log("forwardspecial")
-      },
-    )
-  }, [boxes])
-
-  return (
-    <>
-      {boxes.map(({ position, size, mass, color }, index) => {
-        return (
-          <RigidBody
-            colliders="cuboid"
-            position={position}
-            mass={mass}
-            key={`box-${index}`}
-          >
-            <mesh>
-              <boxGeometry args={[size, size, size]} />
-              <meshStandardMaterial color={color} />
-            </mesh>
-          </RigidBody>
-        )
-      })}
-    </>
-  )
-}
-
-const MoonChunkDebugger: React.FC = () => {
-  const planet = usePlanet()
-
-  React.useEffect(() => {
-    console.log({ radius: planet.radius })
-    const LODTable = getLODTable(planet.radius, planet.minCellSize)
-    console.log(Object.keys(LODTable).length)
-    console.table(LODTable)
-  }, [planet])
-
-  return (
-    <PlanetChunks>
-      {chunk => {
-        // defensive programming
-        const indices = chunk.geometry.getIndex()
-        if (!indices?.count) {
-          return null
-        }
-
-        return (
-          chunk.LODLevel <= 20 && (
-            <CorrectedChunkTranslation key={chunk.uuid} chunk={chunk}>
-              <RigidBody type="fixed" includeInvisible colliders="trimesh">
-                <mesh>
-                  <bufferGeometry attach="geometry" {...chunk.geometry} />
-                  <meshBasicMaterial wireframe color="red" visible={false} />
-                </mesh>
-              </RigidBody>
-            </CorrectedChunkTranslation>
-          )
-        )
-      }}
-    </PlanetChunks>
-  )
+  return <FlyControls ref={flyControls} dragToLook />
 }
 
 export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
   const camera = useThree(store => store.camera)
+  const [isWalking, setIsWalking] = React.useState(false)
+  const [subscribeKeys] = useKeyboardControls()
+
+  React.useEffect(() => {
+    return subscribeKeys(
+      state => state[Controls.use],
+      pressed => {
+        pressed && setIsWalking(!isWalking)
+      },
+    )
+  }, [isWalking])
+
+  React.useEffect(() => {
+    const initialPosition = new Vector3(1, 1, 1).multiplyScalar(radius * 2)
+    camera.position.copy(initialPosition)
+    camera.lookAt(new Vector3())
+  }, [camera])
+
   const initialData = useMemo(() => {
     const pNoise = new Noise({
       seed: "RimWorld",
@@ -198,7 +100,7 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
 
     return {
       seed: "hello world",
-      craters: getRandomSubarray(centers, 500).map(center => {
+      craters: getRandomSubarray(centers, 0).map(center => {
         return {
           floorHeight: randFloat(-0.01, 0),
           radius: getRandomBias(1000, 100_000, 1_000, 0.8),
@@ -216,6 +118,7 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
   return (
     <>
       <HelloPlanet
+        key="cool-mars"
         position={position}
         radius={radius}
         minCellSize={32 * 8}
@@ -225,18 +128,16 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
         data={initialData}
       >
         {/* <OrbitCamera /> */}
-        <FlyCamera />
-        <ChunkDebugger />
-        <MoonChunkDebugger />
-        <meshPhysicalMaterial vertexColors metalness={0} reflectivity={0.01} />
+        {/* <ChunkDebugger /> */}
+        {isWalking ? (
+          <Character originalPosition={camera.position} />
+        ) : (
+          <FlyCamera />
+        )}
+        <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
+        {/* <Ground /> */}
       </HelloPlanet>
       <ShootBoxes />
-      <Attractor
-        range={radius * 10}
-        strength={6.39e23}
-        type="newtonian"
-        position={position}
-      />
     </>
   )
 }

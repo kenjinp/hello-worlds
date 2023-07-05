@@ -1,12 +1,18 @@
-import useFollowCamera from "@hooks/useFollowCamera"
 import { useKeyboardControls } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
-import { CapsuleCollider, RigidBody, RigidBodyApi, useRapier } from "@react-three/rapier"
+import {
+  CapsuleCollider,
+  RigidBody,
+  RigidBodyApi,
+  useRapier,
+} from "@react-three/rapier"
 import { useControls } from "leva"
 import { FC, useEffect, useMemo, useRef, useState } from "react"
 import * as THREE from "three"
 
-export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPosition})  => {
+export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({
+  originalPosition,
+}) => {
   const characterRigidBodyRef = useRef<RigidBodyApi>()
   const characterModelRef = useRef()
 
@@ -150,7 +156,8 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
    */
   const [subscribeKeys, getKeys] = useKeyboardControls()
   const { rapier, world } = useRapier()
-  const rapierWorld = world.raw()
+  console.log({ rapier, world })
+  const rapierWorld = world
 
   // can jump setup
   const [canJump, setCanJump] = useState(false)
@@ -179,7 +186,7 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
   /**
    * Load camera pivot and character move preset
    */
-  const { pivot, followCam } = useFollowCamera()
+  // const { pivot, followCam } = useFollowCamera()
   const pivotPosition = useMemo(() => new THREE.Vector3(), [])
   const modelEuler = useMemo(() => new THREE.Euler(), [])
   const modelQuat = useMemo(() => new THREE.Quaternion(), [])
@@ -332,16 +339,19 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
   }, [])
 
   useFrame((state, delta) => {
+    if (!characterRigidBodyRef.current) {
+      return
+    }
     /**
      * Apply character position to directional light
      */
-    const dirLight = state.scene.children.find(item => {
-      return item.type === "DirectionalLight"
-    })
-    dirLight.position.x = characterRigidBodyRef.current!.translation().x + 20
-    dirLight.position.y = characterRigidBodyRef.current!.translation().y + 30
-    dirLight.position.z = characterRigidBodyRef.current!.translation().z + 10
-    dirLight.target.position.copy(characterRigidBodyRef.current!.translation())
+    // const dirLight = state.scene.children.find(item => {
+    //   return item.type === "DirectionalLight"
+    // })
+    // dirLight.position.x = characterRigidBodyRef.current!.translation().x + 20
+    // dirLight.position.y = characterRigidBodyRef.current!.translation().y + 30
+    // dirLight.position.z = characterRigidBodyRef.current!.translation().z + 10
+    // dirLight.target.position.copy(characterRigidBodyRef.current!.translation())
 
     /**
      * Getting all the useful keys from useKeyboardControls
@@ -349,32 +359,32 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
     const { forward, backward, leftward, rightward, jump, run } = getKeys()
 
     // Getting moving directions
-    if (forward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y
-    } else if (backward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI
-    } else if (leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 2
-    } else if (rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 2
-    }
-    if (forward && leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 4
-    } else if (forward && rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 4
-    } else if (backward && leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 4 + Math.PI
-    } else if (backward && rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 4 + Math.PI
-    }
+    // if (forward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y
+    // } else if (backward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y + Math.PI
+    // } else if (leftward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y + Math.PI / 2
+    // } else if (rightward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y - Math.PI / 2
+    // }
+    // if (forward && leftward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y + Math.PI / 4
+    // } else if (forward && rightward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y - Math.PI / 4
+    // } else if (backward && leftward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y - Math.PI / 4 + Math.PI
+    // } else if (backward && rightward) {
+    //   // Apply camera rotation to character model
+    //   modelEuler.y = pivot.rotation.y + Math.PI / 4 + Math.PI
+    // }
 
     // Move character to the moving direction
     if (forward || backward || leftward || rightward)
@@ -386,7 +396,7 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
     // Jump impulse
     if (jump && canJump) {
       // characterRigidBodyRef.current.applyImpulse(jumpDirection.set(0, 0.5, 0), true);
-      characterRigidBodyRef.current!.setLinvel(
+      characterRigidBodyRef.current.setLinvel(
         {
           x: currentVel.x,
           y: run ? sprintJumpMult * jumpVel : jumpVel,
@@ -398,7 +408,8 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
 
     // Rotate character model
     modelQuat.setFromEuler(modelEuler)
-    characterModelRef.current!.quaternion.rotateTowards(
+    characterModelRef.current.lookAt(new THREE.Vector3())
+    characterModelRef.current.quaternion.rotateTowards(
       modelQuat,
       delta * turnSpeed,
     )
@@ -407,12 +418,12 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
      *  Camera movement
      */
     pivotPosition.set(
-      characterRigidBodyRef.current!translation().x,
+      characterRigidBodyRef.current!.translation().x,
       characterRigidBodyRef.current!.translation().y + 0.5,
       characterRigidBodyRef.current!.translation().z,
     )
-    pivot.position.lerp(pivotPosition, 0.2)
-    state.camera.lookAt(pivot.position)
+    // pivot.position.lerp(pivotPosition, 0.2)
+    // state.camera.lookAt(pivot.position)
 
     /**
      * Ray casting detect if on ground
@@ -504,12 +515,15 @@ export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPos
         const floatingForce =
           springK * (floatingDis - rayHit.toi) -
           characterRigidBodyRef.current.linvel().y * dampingC
-        characterRigidBodyRef.current.applyImpulse(springDirVec.set(0, floatingForce, 0))
+        characterRigidBodyRef.current.applyImpulse(
+          springDirVec.set(0, floatingForce, 0),
+        )
 
         // Apply opposite force to standing object
         characterMassForce.set(
           0,
-          -characterRigidBodyRef.current.mass() * characterRigidBodyRef.current.gravityScale(),
+          -characterRigidBodyRef.current.mass() *
+            characterRigidBodyRef.current.gravityScale(),
           0,
         )
         rayHit.collider

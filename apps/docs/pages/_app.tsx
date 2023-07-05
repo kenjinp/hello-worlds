@@ -22,7 +22,7 @@ function mouseEventToSphericalCoordinates(mouseEvent: MouseEvent): {
   return { phi, theta }
 }
 
-const MouseWiggler: React.FC = () => {
+export const MouseWiggler: React.FC = () => {
   const context = useThemeUI()
 
   React.useEffect(() => {
@@ -52,7 +52,7 @@ export default function Nextra({
   return (
     <>
       {/* <ThemeProvider theme={theme}> */}
-      <MouseWiggler />
+      {/* <MouseWiggler /> */}
       <Component {...pageProps} />
       {/* </ThemeProvider> */}
     </>
