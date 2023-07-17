@@ -1,5 +1,5 @@
 import { Noise, remap, smoothMax, smoothMin } from "@hello-worlds/planets"
-import { Vector3 } from "three"
+import { Color, Vector3 } from "three"
 
 export type Crater = {
   floorHeight: number
@@ -8,6 +8,7 @@ export type Crater = {
   rimWidth: number
   rimSteepness: number
   smoothness: number
+  debugColor: Color
 }
 
 export const craterHeight = (
@@ -44,6 +45,27 @@ export const craterHeight = (
       smoothness,
     )
     craterHeight += craterShape * radius
+  }
+  return craterHeight
+}
+
+export const pyramidHeight = (
+  input: Vector3,
+  craters: Crater[],
+  noise?: Noise,
+) => {
+  let craterHeight = 0
+  // const n = noise ? noise.getFromVector(input) : 0
+  for (let i = 0; i < craters.length; i++) {
+    const crater = craters[i]
+
+    const v = input.distanceTo(crater.center) - crater.radius
+    // const p = input.clone().sub(crater.center)
+    // p.y -= clamp(p.y, 0.0, crater.radius / 2)
+    // const v = p.length() - crater.radius
+
+    // sdBox(input.clone(), crater)
+    craterHeight = Math.max(craterHeight, v < 0 ? Math.abs(v) : 0)
   }
   return craterHeight
 }

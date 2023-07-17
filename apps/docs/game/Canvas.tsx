@@ -46,6 +46,8 @@ export const NormalCanvas: React.FC<
         camera={{
           near: 0.01,
           far: Number.MAX_SAFE_INTEGER,
+          // place camera very far away so that we don't trigger
+          // the planet to resolve down to LOD if we start at 0,0,0
           position: new Vector3(1, 1, 1).multiplyScalar(AU),
         }}
         shadows

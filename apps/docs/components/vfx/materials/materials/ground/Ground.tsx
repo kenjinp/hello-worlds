@@ -1,20 +1,13 @@
 // @ts-nocheck
+import { usePlanet } from "@hello-worlds/react"
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
+import { patchShaders } from "gl-noise/build/glNoise.m"
 import * as React from "react"
 import { MeshStandardMaterial, NearestFilter, RepeatWrapping } from "three"
-import dirt from "./textures/dirt_albedo.png"
-import dirtN from "./textures/dirt_normal.png"
-import grass from "./textures/grass_albedo.png"
-import rock from "./textures/rock_albedo.png"
-// import normalMap from "./textures/rock_normal.png"
-import { usePlanet } from "@hello-worlds/react"
-import { patchShaders } from "gl-noise/build/glNoise.m"
 import CustomShaderMaterial from "three-custom-shader-material"
 import frag from "./Ground.frag.glsl"
 import vert from "./Ground.vert.glsl"
-import noiseMap from "./textures/noise.png"
-import uvTest from "./textures/uv-test.png"
 import { useLoadTextureArray } from "./useLoadTextureArray"
 
 export const Ground: React.FC = () => {
@@ -24,9 +17,9 @@ export const Ground: React.FC = () => {
 
   const materialRef = React.useRef()
   const props = useTexture({
-    map: rock.src,
-    uvTest: uvTest.src,
-    noiseMap: noiseMap.src,
+    map: "/img/textures/rock_albedo.png",
+    uvTest: "/img/textures/uv-test.png",
+    noiseMap: "/img/textures/noise.png",
     // normalMap,
     // displacementMap: 'PavingStones092_1K_Displacement.jpg',
     // normalMap: 'PavingStones092_1K_Normal.jpg',
@@ -35,7 +28,12 @@ export const Ground: React.FC = () => {
   })
 
   const whatever = useLoadTextureArray(
-    [rock.src, grass.src, dirt.src, dirtN.src],
+    [
+      "/img/textures/rock_albedo.png",
+      "/img/textures/grass_albedo.png",
+      "img/textures/dirt_albedo.png",
+      "/img/textures/dirt_normal.png",
+    ],
     {
       dimensions: 64,
     },
@@ -44,8 +42,7 @@ export const Ground: React.FC = () => {
   props.map.magFilter = NearestFilter
   props.map.wrapS = RepeatWrapping
   props.map.wrapT = RepeatWrapping
-
-  props.noiseMap.wrapS = RepeatWrapping
+  props.map.type = props.noiseMap.wrapS = RepeatWrapping
   props.noiseMap.wrapT = RepeatWrapping
 
   // props.normalMap.magFilter = NearestFilter
@@ -94,7 +91,7 @@ export const Ground: React.FC = () => {
           value: camera.position,
         },
       }}
-      // vertexColors
+      vertexColors
       // {...props}
     />
   )

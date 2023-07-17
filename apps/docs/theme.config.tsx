@@ -89,16 +89,16 @@ const config: DocsThemeConfig = {
   search: { placeholder: "Search" },
   sidebar: { defaultMenuCollapseLevel: 0 },
   docsRepositoryBase: `${socials.github}/apps/docs`,
-  // footer: {
-  //   text: (
-  //     <div>
-  //       Copyright © {new Date().getFullYear()}{" "}
-  //       <Link href={socials.twitter} target="_blank">
-  //         Kenneth Pirman
-  //       </Link>{" "}
-  //     </div>
-  //   ),
-  // },
+  footer: {
+    text: (
+      <div>
+        Copyright © {new Date().getFullYear()}{" "}
+        <a href={socials.twitter} target="_blank">
+          Kenneth Pirman
+        </a>{" "}
+      </div>
+    ),
+  },
   useNextSeoProps() {
     const { route } = useRouter()
     if (route !== "/") {
