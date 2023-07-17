@@ -23,7 +23,7 @@ export const heightGenerator: ChunkGenerator3Initializer<
 > = ({ radius, data: { craters, seed } }) => {
   const latLong = new LatLong()
   setRandomSeed(seed)
-  const sizeConst = 40
+  const sizeConst = 12
   const scaleConst = 15
   const glacierHeightConstant = 10
 

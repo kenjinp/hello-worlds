@@ -181,7 +181,7 @@ export const Character: FC<{
     targetPosition.set(0, 0, 0)
     const movement = new Vector2()
     const movementDistance = 0.5
-    const sprintMultiplier = 1.5
+    const sprintMultiplier = 1.8
     if (forward) {
       movement.x += 1
     }
@@ -204,11 +204,11 @@ export const Character: FC<{
     characterCapsuleRef.current.getWorldDirection(movingDirection)
 
     const isGrounded = groundCheck()
-    const gravityVelocity = gravity
-      .copy(characterModelRef.current.position)
-      .sub(planet.position)
-      .normalize()
-      .multiplyScalar(9.8 * delta)
+    // const gravityVelocity = gravity
+    //   .copy(characterModelRef.current.position)
+    //   .sub(planet.position)
+    //   .normalize()
+    //   .multiplyScalar(9.8 * delta)
 
     if (isGrounded) {
       // get targetPosition
@@ -228,7 +228,8 @@ export const Character: FC<{
       characterModelRef.current.position.lerp(targetPosition, 0.2)
     }
 
-    isGrounded && placeCharacterOnPlanetFromMeshRaycast()
+    // isGrounded &&
+    placeCharacterOnPlanetFromMeshRaycast()
     orientCharacterToPlanetNormal()
   }
 

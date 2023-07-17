@@ -53,7 +53,7 @@ export const ExampleInner: React.FC = () => {
 
   const showAtmo = true
   const showPerf = false
-  const radius = 1000 // MARS_RADIUS
+  const radius = 500 // MARS_RADIUS
 
   return (
     <SafeHydrate>
