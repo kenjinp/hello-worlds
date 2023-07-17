@@ -1,5 +1,11 @@
 # @hello-worlds/vfx
 
+## 0.0.5
+
+### Patch Changes
+
+- Update VFX to use world camera coordinates, React PlanetChunks will adjust children to local chunk space automatically
+
 ## 0.0.4
 
 ### Patch Changes
