@@ -48,7 +48,7 @@ export class AtmosphereEffect extends Effect {
 
     // camera gets added after construction in effect-composer
     if (camera) {
-      _position.copy(camera.position)
+      camera.getWorldPosition(_position)
       camera.getWorldDirection(_cameraDirection)
     }
 
@@ -97,9 +97,10 @@ export class AtmosphereEffect extends Effect {
   }
 
   update() {
+    this.camera?.getWorldPosition(_position)
     this.camera?.getWorldDirection(_cameraDirection)
     this.uniforms.get("uCameraWorldDirection")!.value = _cameraDirection
-    this.uniforms.get("uCameraPosition")!.value = this.camera?.position
+    this.uniforms.get("uCameraPosition")!.value = _position
     this.uniforms.get("uViewMatrixInverse")!.value = this.camera?.matrixWorld
     this.uniforms.get("uProjectionMatrixInverse")!.value =
       this.camera?.projectionMatrixInverse

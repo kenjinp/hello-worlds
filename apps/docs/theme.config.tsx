@@ -4,14 +4,13 @@ import { Sponsor } from "@components/sponsor/Sponsor"
 import { helloWorldsPink, socials } from "@constants"
 import favicon from "@public/img/favicon.png"
 import Preview from "@public/img/preview.png"
-import Link from "next/link"
 import { useRouter } from "next/router"
 import { DocsThemeConfig } from "nextra-theme-docs"
 
 const tagline = "Virtual javascript worlds at planetary scales"
 
 const config: DocsThemeConfig = {
-  gitTimestamp: false,
+  // gitTimestamp: false,
   head: (
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -88,7 +87,7 @@ const config: DocsThemeConfig = {
   //     </p>
   //   ),
   // },
-  project: null,
+  project: {},
   chat: {
     link: socials.discord,
   },
@@ -99,9 +98,9 @@ const config: DocsThemeConfig = {
     text: (
       <div>
         Copyright © {new Date().getFullYear()}{" "}
-        <Link href={socials.twitter} target="_blank">
+        <a href={socials.twitter} target="_blank">
           Kenneth Pirman
-        </Link>{" "}
+        </a>{" "}
       </div>
     ),
   },

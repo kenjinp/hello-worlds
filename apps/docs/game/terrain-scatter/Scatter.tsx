@@ -1,34 +1,8 @@
-import { CorrectedChunkTranslation } from "@game/render/Planets"
 import { Chunk } from "@hello-worlds/planets"
-import { PlanetChunks, usePlanet } from "@hello-worlds/react"
+import { usePlanet } from "@hello-worlds/react"
 import { useLayoutEffect, useState } from "react"
-import { Color, InstancedMesh, MathUtils, Object3D, Vector3 } from "three"
+import { InstancedMesh, MathUtils, Object3D, Vector3 } from "three"
 import { MeshSurfaceSampler } from "three-stdlib"
-
-function TerrainSampler({ chunk, color }: { chunk: Chunk; color: Color }) {
-  return (
-    <CorrectedChunkTranslation chunk={chunk}>
-      <bufferGeometry attach="geometry" {...chunk.geometry} />
-      <meshBasicMaterial wireframe color="red" />
-    </CorrectedChunkTranslation>
-  )
-}
-
-const tempColor = new Color()
-export function TerrainScatter() {
-  return (
-    <>
-      <PlanetChunks>
-        {chunk => {
-          tempColor.set(Math.random() * 0xffffff)
-          return chunk && chunk.geometry.getAttribute("position") ? (
-            <TerrainSampler key={chunk.id} chunk={chunk} color={tempColor} />
-          ) : null
-        }}
-      </PlanetChunks>
-    </>
-  )
-}
 
 export interface ChunkScatterProps {
   chunk: Chunk

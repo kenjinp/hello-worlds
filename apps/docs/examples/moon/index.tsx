@@ -2,7 +2,7 @@ import ExampleLayout from "@components/layouts/example/Example"
 import { SafeHydrate } from "@components/safe-render/SafeRender"
 import { SpaceBox } from "@components/space-box/SpaceBox"
 import { NormalCanvas } from "@game/Canvas"
-import { AU, MARS_RADIUS } from "@game/Math"
+import { AU } from "@game/Math"
 import { KeyboardController } from "@game/player/KeyboardController"
 import { Atmosphere } from "@hello-worlds/vfx"
 import { Stars as FarStars } from "@react-three/drei"
@@ -12,7 +12,9 @@ import { Perf } from "r3f-perf"
 import * as React from "react"
 import { Color, Vector3 } from "three"
 import { Moon } from "./Moon"
+import { UITunnel } from "./UI.tunnel"
 
+const sunDistance = 10000
 const generateSuns = () => {
   // return new Array(randInt(1, 3)).fill(0).map(() => {
   //   return {
@@ -27,7 +29,7 @@ const generateSuns = () => {
   return new Array(1).fill(0).map(() => {
     return {
       color: new Color(0xffffff),
-      position: new Vector3(1, 0, 1).multiplyScalar(AU),
+      position: new Vector3(1, 0, 1).multiplyScalar(sunDistance),
       intensity: 10,
     }
   })
@@ -49,14 +51,24 @@ export const ExampleInner: React.FC = () => {
     }
   }, [])
 
+  const showAtmo = true
+  const showPerf = false
+  const radius = 1000 // MARS_RADIUS
+
   return (
     <SafeHydrate>
-      <ExampleLayout middle={<>Moon</>}>
+      <ExampleLayout
+        middle={
+          <div>
+            <div>Moon: Terrain Features</div>|<UITunnel.Out />
+          </div>
+        }
+      >
         <NormalCanvas>
-          <Perf />
+          {showPerf && <Perf />}
           <React.Suspense fallback={null}>
             <KeyboardController>
-              <Physics timeStep="vary" gravity={[0, 0, 0]}>
+              <Physics gravity={[0, 0, 0]}>
                 <group>
                   <group
                     scale={new Vector3(1, 1, 1)
@@ -68,37 +80,50 @@ export const ExampleInner: React.FC = () => {
 
                   <SpaceBox />
                   {suns.map(({ color, intensity, position }, index) => {
+                    console.log({ SUN: position })
                     return (
-                      <directionalLight
-                        key={`sun-${index}`}
-                        color={color}
-                        intensity={intensity / 10}
-                        position={position}
-                      />
+                      <group position={position}>
+                        <directionalLight
+                          key={`sun-${index}`}
+                          color={color}
+                          intensity={intensity / 10}
+                          castShadow
+                        />
+                        <mesh>
+                          <sphereGeometry args={[500]}></sphereGeometry>
+                          <meshStandardMaterial
+                            color={color}
+                            emissive={color}
+                            emissiveIntensity={10}
+                          ></meshStandardMaterial>
+                        </mesh>
+                      </group>
                     )
                   })}
                   <group>
-                    <Moon radius={MARS_RADIUS} />
+                    <Moon radius={radius} />
                   </group>
                   <EffectComposer>
-                    <Atmosphere
-                      planets={[
-                        {
-                          radius: MARS_RADIUS - 2_000,
-                          origin: new Vector3(),
-                          atmosphereRadius: MARS_RADIUS * 2,
-                          // limited from 0 to 1.0
-                          atmosphereDensity: 0.5,
-                        },
-                      ]}
-                      suns={suns.map(({ color, intensity, position }) => {
-                        return {
-                          origin: position,
-                          color: new Vector3().fromArray(color.toArray()),
-                          intensity,
-                        }
-                      })}
-                    />
+                    {showAtmo ? (
+                      <Atmosphere
+                        planets={[
+                          {
+                            radius: radius - radius * 0.001,
+                            origin: new Vector3(),
+                            atmosphereRadius: radius * 2,
+                            // limited from 0 to 1.0
+                            atmosphereDensity: 0.06,
+                          },
+                        ]}
+                        suns={suns.map(({ color, intensity, position }) => {
+                          return {
+                            origin: position,
+                            color: new Vector3().fromArray(color.toArray()),
+                            intensity,
+                          }
+                        })}
+                      />
+                    ) : null}
                   </EffectComposer>
                 </group>
               </Physics>

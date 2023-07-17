@@ -3,7 +3,7 @@ import { Canvas as R3fCanvas } from "@react-three/fiber"
 import * as React from "react"
 import * as RC from "render-composer"
 import { Vector3 } from "three"
-import { MOON_RADIUS } from "./Math"
+import { AU } from "./Math"
 
 export const Canvas: React.FC<
   React.PropsWithChildren<{ style?: React.CSSProperties }>
@@ -46,11 +46,12 @@ export const NormalCanvas: React.FC<
         camera={{
           near: 0.01,
           far: Number.MAX_SAFE_INTEGER,
-          position: new Vector3(1, 0, 1).multiplyScalar(MOON_RADIUS * 2),
+          // place camera very far away so that we don't trigger
+          // the planet to resolve down to LOD if we start at 0,0,0
+          position: new Vector3(1, 1, 1).multiplyScalar(AU),
         }}
         shadows
         style={style || { position: "absolute", top: 0, left: 0, zIndex: 1 }}
-        flat
       >
         <React.Suspense fallback={null}>{children}</React.Suspense>
       </R3fCanvas>

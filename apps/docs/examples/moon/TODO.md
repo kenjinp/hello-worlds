@@ -1,9 +1,19 @@
-# Physics on the planet
+## Physics on the planet
 
-- Needs to probably generated via a trimesh
-- Probably we want to limit the amount of rigid bodies / colliders, therefore we should render only
-  rigid bodies on higher level-of-detail chunks
-- We need to eliminate the Skirts of the terrain chunks as these will probably not be useful.
-- Investigate whether or not use other Collider types (heightmap)
-  - heightmap has to be distorted towrds the center of the planet
-  - heightmap up direction will change for each chunk to be the vector pointing outwards of the center of the planet
+- Physics LOD - what level should it be at?
+- "Sleep" objects of a certain size or distance away from player or 'anchors'
+
+## Scattering
+
+- Choose a LOD
+- Place them on vertices?
+
+## Character
+
+- non physical terrain walking around (for now)
+
+## Terms
+
+- Altitude - height of an object above a reference
+- Elevation - height of a point of the terrain above datum
+- AGL (Above Ground Level) - altitude of an object above ground level

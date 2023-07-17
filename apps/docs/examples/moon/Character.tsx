@@ -1,585 +1,326 @@
+import { usePlanet } from "@hello-worlds/react"
 import useFollowCamera from "@hooks/useFollowCamera"
 import { useKeyboardControls } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import { CapsuleCollider, RigidBody, RigidBodyApi, useRapier } from "@react-three/rapier"
-import { useControls } from "leva"
+import { useFrame, useThree } from "@react-three/fiber"
 import { FC, useEffect, useMemo, useRef, useState } from "react"
-import * as THREE from "three"
+import {
+  Euler,
+  Group,
+  MathUtils,
+  Quaternion,
+  Raycaster,
+  Vector2,
+  Vector3,
+} from "three"
+import { Light } from "./Light"
+import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
 
-export const Character: FC<{ originalPosition: THREE.Vector3 }> = ({ originalPosition})  => {
-  const characterRigidBodyRef = useRef<RigidBodyApi>()
-  const characterModelRef = useRef()
+// steps
+// donezo 1. place character model on planet
+// donezo 2. orient character upwards
+// 3. follow camera - oriented to normal of sphere or character
+// 4. forward / backwards walking
+// 5. rotation left / right
 
-  /**
-   * Debug settings
-   */
-  const {
-    maxVelLimit,
-    turnVelMultiplier,
-    turnSpeed,
-    sprintMult,
-    jumpVel,
-    sprintJumpMult,
-    airDragMultiplier,
-    dragDampingC,
-    accDeltaTime,
-  } = useControls("Character controls", {
-    maxVelLimit: {
-      value: 5,
-      min: 0,
-      max: 10,
-      step: 0.01,
-    },
-    turnVelMultiplier: {
-      value: 0.1,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-    turnSpeed: {
-      value: 18,
-      min: 5,
-      max: 30,
-      step: 0.1,
-    },
-    sprintMult: {
-      value: 1.5,
-      min: 1,
-      max: 3,
-      step: 0.01,
-    },
-    jumpVel: {
-      value: 4,
-      min: 0,
-      max: 10,
-      step: 0.01,
-    },
-    sprintJumpMult: {
-      value: 1.2,
-      min: 1,
-      max: 3,
-      step: 0.01,
-    },
-    airDragMultiplier: {
-      value: 0.01,
-      min: 0,
-      max: 1,
-      step: 0.01,
-    },
-    dragDampingC: {
-      value: 0.05,
-      min: 0,
-      max: 0.5,
-      step: 0.01,
-    },
-    accDeltaTime: {
-      value: 8,
-      min: 0,
-      max: 50,
-      step: 1,
-    },
-  })
+// DIR is normalized vector
+// VEC is un-normalized whole value vector
 
-  const { rayLength, rayDir, floatingDis, springK, dampingC } = useControls(
-    "Floating Ray",
-    {
-      rayLength: {
-        value: 1.5,
-        min: 0,
-        max: 3,
-        step: 0.01,
-      },
-      rayDir: { x: 0, y: -1, z: 0 },
-      floatingDis: {
-        value: 0.8,
-        min: 0,
-        max: 2,
-        step: 0.01,
-      },
-      springK: {
-        value: 3,
-        min: 0,
-        max: 5,
-        step: 0.01,
-      },
-      dampingC: {
-        value: 0.2,
-        min: 0,
-        max: 3,
-        step: 0.01,
-      },
-    },
-  )
+function computeTangentAndBitangent(normal) {
+  // Define a helper vector that is not aligned with the normal
+  const helperVec = new Vector3(1, 0, 0)
 
-  const {
-    slopeRayOriginOffest,
-    slopeRayLength,
-    slopeRayDir,
-    slopeUpExtraForce,
-    slopeDownExtraForce,
-  } = useControls("Slope Ray", {
-    slopeRayOriginOffest: {
-      value: 0.28,
-      min: 0,
-      max: 3,
-      step: 0.01,
-    },
-    slopeRayLength: {
-      value: 1.5,
-      min: 0,
-      max: 3,
-      step: 0.01,
-    },
-    slopeRayDir: { x: 0, y: -1, z: 0 },
-    slopeUpExtraForce: {
-      value: 1.5,
-      min: 0,
-      max: 5,
-      step: 0.01,
-    },
-    slopeDownExtraForce: {
-      value: 4,
-      min: 0,
-      max: 5,
-      step: 0.01,
-    },
-  })
-
-  /**
-   * keyboard controls setup
-   */
-  const [subscribeKeys, getKeys] = useKeyboardControls()
-  const { rapier, world } = useRapier()
-  const rapierWorld = world.raw()
-
-  // can jump setup
-  const [canJump, setCanJump] = useState(false)
-
-  // on moving object state
-  const [isOnMovingObject, setIsOnMovingObject] = useState(false)
-  const movingObjectVelocity = useMemo(() => new THREE.Vector3(), [])
-  const movingObjectVelocityInCharacterDir = useMemo(
-    () => new THREE.Vector3(),
-    [],
-  )
-  const distanceFromCharacterToObject = useMemo(() => new THREE.Vector3(), [])
-  const objectAngvelToLinvel = useMemo(() => new THREE.Vector3(), [])
-
-  /**
-   * Initial setup
-   */
-  // const turnVelMultiplier = 0.04;
-  // const maxVelLimit = 5;
-  // const jumpVel = 4;
-  // const sprintMult = 1.5;
-  // const sprintJumpMult = 1.2;
-  // const dragDampingC = 0.05;
-  // const airDragMultiplier = 0.03;
-
-  /**
-   * Load camera pivot and character move preset
-   */
-  const { pivot, followCam } = useFollowCamera()
-  const pivotPosition = useMemo(() => new THREE.Vector3(), [])
-  const modelEuler = useMemo(() => new THREE.Euler(), [])
-  const modelQuat = useMemo(() => new THREE.Quaternion(), [])
-  const moveImpulse = useMemo(() => new THREE.Vector3(), [])
-  const movingDirection = useMemo(() => new THREE.Vector3(), [])
-  const moveAccNeeded = useMemo(() => new THREE.Vector3(), [])
-  // const jumpDirection = useMemo(() => new THREE.Vector3(), [])
-  const currentVel = useMemo(() => new THREE.Vector3(), [])
-  const dragForce = useMemo(() => new THREE.Vector3(), [])
-  // const wantToMoveVel = useMemo(() => new THREE.Vector3(), [])
-
-  /**
-   * Floating Ray setup
-   */
-  // const rayLength = 1.5;
-  // const rayDir = { x: 0, y: -1, z: 0 };
-  const springDirVec = useMemo(() => new THREE.Vector3(), [])
-  const characterMassForce = useMemo(() => new THREE.Vector3(), [])
-  // const floatingDis = 0.8;
-  // const springK = 3;
-  // const dampingC = 0.2;
-
-  /**
-   * Slope detection ray setup
-   */
-  let slopeAngle = null
-  // const slopeRayOriginOffest = 0.28;
-  const slopeRayOriginRef = useRef()
-  // const slopeRayLength = 1.5;
-  // const slopeUpExtraForce = 1.5;
-  // const slopeDownExtraForce = 4;
-  // const slopeRayDir = { x: 0, y: -1, z: 0 };
-  const slopeRayorigin = useMemo(() => new THREE.Vector3(), [])
-
-  /**
-   * Character moving function
-   */
-  const moveCharacter = (delta, run, slopeAngle, movingObjectVelocity) => {
-    /**
-     * Setup moving direction
-     */
-    // Only apply slope extra force when slope angle is between 0.2-1
-    if (Math.abs(slopeAngle) > 0.2 && Math.abs(slopeAngle) < 1) {
-      movingDirection.set(0, Math.sin(slopeAngle), Math.cos(slopeAngle))
-    } else {
-      movingDirection.set(0, 0, 1)
-    }
-    // Apply character quaternion to moving direction
-    movingDirection.applyQuaternion(characterModelRef.current!.quaternion)
-    // Calculate moving object velocity direction according to character moving direction
-    movingObjectVelocityInCharacterDir
-      .copy(movingObjectVelocity)
-      .projectOnVector(movingDirection)
-      .multiply(movingDirection)
-    // Calculate angle between moving object velocity direction and character moving direction
-    const angleBetweenCharacterDirAndObjectDir =
-      movingObjectVelocity.angleTo(movingDirection)
-
-    /**
-     * Setup rejection velocity
-     */
-    // const wantToMoveMeg = currentVel.dot(movingDirection);
-    // wantToMoveVel.set(
-    //   movingDirection.x * wantToMoveMeg,
-    //   0,
-    //   movingDirection.z * wantToMoveMeg
-    // );
-    // const rejectVel = new THREE.Vector3().copy(currentVel).sub(wantToMoveVel);
-    // console.log(wantToMoveVel);
-
-    /**
-     * Calculate required accelaration and force: a = Δv/Δt
-     * If it's on a moving/rotating platform, apply platform velocity to Δv accordingly
-     */
-    moveAccNeeded.set(
-      (movingDirection.x *
-        (maxVelLimit + movingObjectVelocityInCharacterDir.x) *
-        (run ? sprintMult : 1) -
-        (currentVel.x -
-          movingObjectVelocity.x *
-            Math.sin(angleBetweenCharacterDirAndObjectDir))) /
-        accDeltaTime,
-      0,
-      (movingDirection.z *
-        (maxVelLimit + movingObjectVelocityInCharacterDir.z) *
-        (run ? sprintMult : 1) -
-        (currentVel.z -
-          movingObjectVelocity.z *
-            Math.sin(angleBetweenCharacterDirAndObjectDir))) /
-        accDeltaTime,
-    )
-
-    // Wanted to move force function: F = ma
-    const moveForceNeeded = moveAccNeeded.multiplyScalar(
-      characterRigidBodyRef.current!.mass(),
-    )
-
-    /**
-     * Check if character complete turned to the wanted direction
-     */
-    const characterRotated =
-      Math.sin(characterModelRef.current!.rotation.y).toFixed(3) ==
-      Math.sin(modelEuler.y).toFixed(3)
-
-    // If character hasn't complete turning, change the impulse quaternion follow characterModelRef quaternion
-    if (!characterRotated) {
-      moveImpulse.set(
-        moveForceNeeded.x *
-          turnVelMultiplier *
-          (canJump ? 1 : airDragMultiplier), // if it's in the air, give it less control
-        // -rejectVel.x * dragDampingC,
-        slopeAngle === null || slopeAngle == 0 // if it's on a slope, apply extra up/down force to the body
-          ? 0
-          : movingDirection.y *
-              turnVelMultiplier *
-              (movingDirection.y > 0 // check it is on slope up or slope down
-                ? slopeUpExtraForce
-                : slopeDownExtraForce) *
-              (run ? sprintMult : 1),
-        moveForceNeeded.z *
-          turnVelMultiplier *
-          (canJump ? 1 : airDragMultiplier), // if it's in the air, give it less control
-        // -rejectVel.z * dragDampingC
-      )
-    }
-    // If character complete turning, change the impulse quaternion default
-    else {
-      moveImpulse.set(
-        moveForceNeeded.x * (canJump ? 1 : airDragMultiplier),
-        // -rejectVel.x * dragDampingC,
-        slopeAngle === null || slopeAngle == 0 // if it's on a slope, apply extra up/down force to the body
-          ? 0
-          : movingDirection.y *
-              (movingDirection.y > 0 // check it is on slope up or slope down
-                ? slopeUpExtraForce
-                : slopeDownExtraForce) *
-              (run ? sprintMult : 1),
-        moveForceNeeded.z * (canJump ? 1 : airDragMultiplier),
-        // -rejectVel.z * dragDampingC
-      )
-    }
-
-    // Move character at proper direction and impulse
-    characterRigidBodyRef.current!.applyImpulse(moveImpulse, true)
+  // If normal is aligned with helperVec, choose a different helperVec
+  if (normal.dot(helperVec) > 0.99) {
+    helperVec.set(0, 1, 0)
   }
 
-  useEffect(() => {
-    // Lock character rotations at any axis
-    characterRigidBodyRef.current!.lockRotations(true)
-  }, [])
+  // Compute the tangent
+  const tangent = new Vector3()
+  tangent.crossVectors(helperVec, normal).normalize()
 
-  useFrame((state, delta) => {
-    /**
-     * Apply character position to directional light
-     */
-    const dirLight = state.scene.children.find(item => {
-      return item.type === "DirectionalLight"
-    })
-    dirLight.position.x = characterRigidBodyRef.current!.translation().x + 20
-    dirLight.position.y = characterRigidBodyRef.current!.translation().y + 30
-    dirLight.position.z = characterRigidBodyRef.current!.translation().z + 10
-    dirLight.target.position.copy(characterRigidBodyRef.current!.translation())
+  // Compute the bitangent
+  const bitangent = new Vector3()
+  bitangent.crossVectors(normal, tangent)
 
-    /**
-     * Getting all the useful keys from useKeyboardControls
-     */
-    const { forward, backward, leftward, rightward, jump, run } = getKeys()
+  return {
+    tangent,
+    bitangent,
+  }
+}
 
-    // Getting moving directions
-    if (forward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y
-    } else if (backward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI
-    } else if (leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 2
-    } else if (rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 2
+export interface CharacterCapsuleDimensions {
+  height: number
+  radius: number
+}
+
+const targetPosition = new Vector3()
+const tempNormal = new Vector3()
+const raycaster = new Raycaster()
+const heightOrbitPosition = new Vector3()
+export const Character: FC<{
+  originalPosition: Vector3
+  characterDimensionHeight?: number
+  characterDimensionRadius?: number
+}> = ({
+  originalPosition,
+  characterDimensionHeight = 1.8,
+  characterDimensionRadius = 0.5,
+}) => {
+  const characterDimensions = {
+    height: characterDimensionHeight,
+    radius: characterDimensionRadius,
+  }
+  const characterCapsuleLength =
+    characterDimensions.height - characterDimensions.radius * 2
+
+  const characterModelRef = useRef<Group>(null)
+  const characterCapsuleRef = useRef<Group>(null)
+  const raycastRef = useRef<Group>(null)
+  const planet = usePlanet()
+  const { pivot, rotation: followCameraRotation } = useFollowCamera()
+  const [, getKeys] = useKeyboardControls()
+  const [pivotPosition] = useState(new Vector3())
+  const [ready, setReady] = useState(false)
+  const modelEuler = useMemo(() => new Euler(), [])
+  const camera = useThree(state => state.camera)
+  const scene = useThree(state => state.scene)
+  const getExactPlanetElevationAtPosition = useGetExactPlanetaryElevation()
+  const sprintModifier = useRef(1)
+  const modelQuat = useMemo(() => new Quaternion(), [])
+  const velocity = useMemo(() => new Vector3(), [])
+  const gravity = useMemo(() => new Vector3(), [])
+  const jumping = useRef(false)
+  const movingDirection = useMemo(() => new Vector3(), [])
+  const turnSpeed = 18
+  const groundCheckDist = 1
+
+  function groundCheck() {
+    if (!characterModelRef.current) {
+      return
     }
-    if (forward && leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 4
-    } else if (forward && rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 4
-    } else if (backward && leftward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y - Math.PI / 4 + Math.PI
-    } else if (backward && rightward) {
-      // Apply camera rotation to character model
-      modelEuler.y = pivot.rotation.y + Math.PI / 4 + Math.PI
-    }
+    raycastRef.current.getWorldPosition(tempNormal)
+    const dirToPlanet = targetPosition
+      .copy(tempNormal)
+      .sub(planet.position)
+      .normalize()
 
-    // Move character to the moving direction
-    if (forward || backward || leftward || rightward)
-      moveCharacter(delta, run, slopeAngle, movingObjectVelocity)
+    const origin = tempNormal
+    const rayDir = dirToPlanet.negate()
+    raycaster.layers.set(1)
+    raycaster.set(origin, rayDir)
+    const intersects = raycaster.intersectObjects(scene.children)
 
-    // Character current velocity
-    currentVel.copy(characterRigidBodyRef.current!.linvel())
+    return !!intersects.length && intersects[0].distance < groundCheckDist
+  }
 
-    // Jump impulse
-    if (jump && canJump) {
-      // characterRigidBodyRef.current.applyImpulse(jumpDirection.set(0, 0.5, 0), true);
-      characterRigidBodyRef.current!.setLinvel(
-        {
-          x: currentVel.x,
-          y: run ? sprintJumpMult * jumpVel : jumpVel,
-          z: currentVel.z,
-        },
-        true,
-      )
-    }
-
-    // Rotate character model
-    modelQuat.setFromEuler(modelEuler)
-    characterModelRef.current!.quaternion.rotateTowards(
-      modelQuat,
-      delta * turnSpeed,
-    )
-
+  function updateCameraPosition() {
     /**
      *  Camera movement
      */
-    pivotPosition.set(
-      characterRigidBodyRef.current!translation().x,
-      characterRigidBodyRef.current!.translation().y + 0.5,
-      characterRigidBodyRef.current!.translation().z,
-    )
+    characterCapsuleRef.current.getWorldPosition(pivotPosition)
     pivot.position.lerp(pivotPosition, 0.2)
-    state.camera.lookAt(pivot.position)
+    camera.lookAt(pivot.position)
+  }
 
-    /**
-     * Ray casting detect if on ground
-     */
-    const origin = characterRigidBodyRef.current!.translation()
-    const rayCast = new rapier.Ray(origin, rayDir)
-    const rayHit = rapierWorld.castRay(
-      rayCast,
-      rayLength,
-      true,
-      null,
-      null,
-      characterRigidBodyRef.current,
+  function placeCharacterOnPlanetFromNoise() {
+    if (!characterModelRef.current) {
+      throw new Error("I'm not sure what happened, no character")
+    }
+    // get current position
+    const position = characterModelRef.current.position
+    // get direction (normalized vector) from core to character
+    // then multiply it by distance
+    const dirToPlayer = position.sub(planet.position).normalize()
+    const { elevation } = getExactPlanetElevationAtPosition(position)
+    const playerAltitude = elevation
+    const playerHeightFromCore = planet.radius + playerAltitude
+    const playerGroundPosition = dirToPlayer
+      .clone()
+      .multiplyScalar(playerHeightFromCore)
+    // place character model at core + radius + character height
+    characterModelRef.current.position.copy(playerGroundPosition)
+  }
+
+  function placeCharacterOnPlanetFromMeshRaycast() {
+    if (!characterModelRef.current) {
+      return
+    }
+    const dirToPlanet = targetPosition
+      .copy(characterModelRef.current.position)
+      .sub(planet.position)
+      .normalize()
+
+    heightOrbitPosition.copy(dirToPlanet.multiplyScalar(planet.radius * 2))
+
+    const origin = heightOrbitPosition
+    const rayDir = dirToPlanet.negate()
+    raycaster.layers.set(1)
+    raycaster.set(origin, rayDir)
+    const intersects = raycaster.intersectObjects(planet.children)
+    if (intersects.length) {
+      characterModelRef.current.position.copy(intersects[0].point)
+    }
+  }
+
+  function orientCharacterToPlanetNormal() {
+    // orient to normal of planet
+    const position = characterModelRef.current.position
+    // get direction (normalized vector) from core to character
+    // then multiply it by distance
+    const dirToPlayer = targetPosition
+      .copy(position)
+      .sub(planet.position)
+      .normalize()
+    characterModelRef.current.lookAt(planet.position)
+    pivot.quaternion.copy(characterModelRef.current.quaternion)
+    camera.up.copy(dirToPlayer)
+  }
+
+  function updateCharacterMovement(delta: number) {
+    const { forward, back, left, right, jump, run } = getKeys()
+    targetPosition.set(0, 0, 0)
+    const movement = new Vector2()
+    const movementDistance = 0.5
+    const sprintMultiplier = 1.5
+    if (forward) {
+      movement.x += 1
+    }
+    if (back) {
+      movement.x -= 1
+    }
+    if (left) {
+      movement.y += 1
+    }
+    if (right) {
+      movement.y += 1
+    }
+    sprintModifier.current = MathUtils.lerp(
+      sprintModifier.current,
+      run ? sprintMultiplier : 1,
+      0.2,
     )
 
-    if (rayHit && rayHit.toi < floatingDis + 0.1) {
-      setCanJump(true)
-    } else {
-      setCanJump(false)
-    }
+    // getCharacterForwardDir
+    characterCapsuleRef.current.getWorldDirection(movingDirection)
 
-    /**
-     * Ray detect if on rigid body or dynamic platform, then apply the linear velocity and angular velocity to character
-     */
-    if (rayHit && canJump) {
-      const rayHitObjectBodyType = rayHit.collider.parent().bodyType()
-      // Body type 0 is rigid body, body type 1 is fixed body, body type 2 is kinematic body
-      if (rayHitObjectBodyType === 0 || rayHitObjectBodyType === 2) {
-        setIsOnMovingObject(true)
-        // Calculate distance between character and moving object
-        distanceFromCharacterToObject
-          .copy(characterRigidBodyRef.current!.translation())
-          .sub(rayHit.collider.parent().translation())
-        // Moving object linear velocity
-        const movingObjectLinvel = rayHit.collider.parent().linvel()
-        // Moving object angular velocity
-        const movingObjectAngvel = rayHit.collider.parent().angvel()
-        // Combine object linear velocity and angular velocity to movingObjectVelocity
-        movingObjectVelocity.set(
-          movingObjectLinvel.x +
-            objectAngvelToLinvel.crossVectors(
-              movingObjectAngvel,
-              distanceFromCharacterToObject,
-            ).x,
-          movingObjectLinvel.y,
-          movingObjectLinvel.z +
-            objectAngvelToLinvel.crossVectors(
-              movingObjectAngvel,
-              distanceFromCharacterToObject,
-            ).z,
-        )
-      } else {
-        setIsOnMovingObject(false)
-        movingObjectVelocity.set(0, 0, 0)
-      }
-    }
+    const isGrounded = groundCheck()
+    const gravityVelocity = gravity
+      .copy(characterModelRef.current.position)
+      .sub(planet.position)
+      .normalize()
+      .multiplyScalar(9.8 * delta)
 
-    /**
-     * Slope ray casting detect if on slope
-     */
-    slopeRayOriginRef.current!.getWorldPosition(slopeRayorigin)
-    const slopeRayCast = new rapier.Ray(slopeRayorigin, slopeRayDir)
-    const slopeRayHit = rapierWorld.castRay(
-      slopeRayCast,
-      slopeRayLength,
-      true,
-      null,
-      null,
-      characterRigidBodyRef.current,
-    )
-
-    // Calculate slope angle
-    if (slopeRayHit && rayHit && slopeRayHit.toi < floatingDis + 0.5) {
-      if (canJump) {
-        slopeAngle = Math.atan(
-          (rayHit.toi - slopeRayHit.toi) / slopeRayOriginOffest,
-        ).toFixed(2)
-      } else {
-        slopeAngle = null
-      }
-    }
-
-    /**
-     * Apply floating force
-     */
-    if (rayHit && !jump && canJump) {
-      if (rayHit != null) {
-        // console.log(rayHit.collider.castRayAndGetNormal(rayCast,rayLength,true).normal);
-        const floatingForce =
-          springK * (floatingDis - rayHit.toi) -
-          characterRigidBodyRef.current.linvel().y * dampingC
-        characterRigidBodyRef.current.applyImpulse(springDirVec.set(0, floatingForce, 0))
-
-        // Apply opposite force to standing object
-        characterMassForce.set(
-          0,
-          -characterRigidBodyRef.current.mass() * characterRigidBodyRef.current.gravityScale(),
-          0,
-        )
-        rayHit.collider
-          .parent()
-          .applyImpulseAtPoint(
-            characterMassForce,
-            characterRigidBodyRef.current.translation(),
-            true,
+    if (isGrounded) {
+      // get targetPosition
+      if (movement.length() && !jump) {
+        targetPosition
+          .copy(
+            movingDirection,
+            // Math.abs(movement.x) > 0 ? movingDirection : movingDirection.negate(),
+          )
+          .multiplyScalar(
+            movementDistance * movement.length() * sprintModifier.current,
           )
       }
     }
 
-    /**
-     * Apply drag force if it's not moving
-     */
-    // not on a moving object
-    if (
-      !forward &&
-      !backward &&
-      !leftward &&
-      !rightward &&
-      canJump &&
-      !isOnMovingObject
-    ) {
-      dragForce.set(
-        -currentVel.x * dragDampingC,
-        0,
-        -currentVel.z * dragDampingC,
-      )
-      characterRigidBodyRef.current.applyImpulse(dragForce)
+    if (targetPosition.length()) {
+      characterModelRef.current.position.lerp(targetPosition, 0.2)
     }
-    // on a moving object
-    else if (
-      !forward &&
-      !backward &&
-      !leftward &&
-      !rightward &&
-      canJump &&
-      isOnMovingObject
-    ) {
-      dragForce.set(
-        (movingObjectVelocity.x - currentVel.x) * dragDampingC * 2,
-        0,
-        (movingObjectVelocity.z - currentVel.z) * dragDampingC * 2,
-      )
-      characterRigidBodyRef.current.applyImpulse(dragForce, true)
+
+    isGrounded && placeCharacterOnPlanetFromMeshRaycast()
+    orientCharacterToPlanetNormal()
+  }
+
+  function updateCharacterRotation(delta: number) {
+    /**
+     * Getting all the useful keys from useKeyboardControls
+     */
+    const { forward, back, left, right, jump, run } = getKeys()
+
+    // Getting moving directions
+    if (forward) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y
+    } else if (back) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y + Math.PI
+    } else if (left) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y + Math.PI / 2
+    } else if (right) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y - Math.PI / 2
+    }
+    if (forward && left) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y + Math.PI / 4
+    } else if (forward && right) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y - Math.PI / 4
+    } else if (back && left) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y - Math.PI / 4 + Math.PI
+    } else if (back && right) {
+      // Apply camera rotation to character model
+      modelEuler.y = followCameraRotation.rotation.y + Math.PI / 4 + Math.PI
+    }
+
+    // Rotate character model
+    modelQuat.setFromEuler(modelEuler)
+    characterCapsuleRef.current.quaternion.rotateTowards(
+      modelQuat,
+      delta * turnSpeed,
+    )
+  }
+
+  useFrame((_state, delta) => {
+    if (ready) {
+      updateCameraPosition()
+      updateCharacterRotation(delta)
+      updateCharacterMovement(delta)
     }
   })
 
+  useEffect(() => {
+    const op = originalPosition.clone()
+    characterModelRef.current.position.copy(originalPosition)
+    placeCharacterOnPlanetFromNoise()
+    orientCharacterToPlanetNormal()
+    pivot.position.copy(op)
+    // set camera offset
+    camera.position.set(0, 0, 0)
+    setReady(true)
+    return () => {
+      camera.position.copy(op)
+      camera.lookAt(planet.position)
+    }
+  }, [])
+
   return (
-    <RigidBody
-      colliders={false}
-      position={originalPosition}
-      friction={-0.5}
-      ref={characterRigidBodyRef}
-    >
-      <CapsuleCollider args={[0.35, 0.3]} />
-      <group ref={characterModelRef}>
-        <mesh position={[0, 0, slopeRayOriginOffest]} ref={slopeRayOriginRef}>
-          <boxGeometry args={[0.1, 0.1, 0.1]} />
-        </mesh>
-        <mesh castShadow>
-          <capsuleGeometry args={[0.3, 0.7]} />
-          <meshStandardMaterial color="mediumpurple" />
-        </mesh>
-        <mesh castShadow position={[0, 0.2, 0.2]}>
-          <boxGeometry args={[0.5, 0.2, 0.3]} />
-          <meshStandardMaterial color="mediumpurple" />
-        </mesh>
+    <group ref={characterModelRef} layers={2}>
+      <group
+        rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
+      >
+        <group position={[0, characterDimensionHeight / 2, 0]} ref={raycastRef}>
+          <group ref={characterCapsuleRef}>
+            <Light />
+            <mesh position={[0, 0, 0]}>
+              <boxGeometry args={[0.1, 0.1, 0.1]} />
+            </mesh>
+            <mesh castShadow>
+              <capsuleGeometry
+                args={[characterDimensions.radius, characterCapsuleLength]}
+              />
+              <meshStandardMaterial color="mediumpurple" />
+            </mesh>
+            <mesh castShadow position={[0, 0.5, 0.5]}>
+              <boxGeometry args={[0.5, 0.2, 0.3]} />
+              <meshStandardMaterial color="mediumpurple" />
+            </mesh>
+          </group>
+        </group>
       </group>
-    </RigidBody>
+    </group>
   )
 }

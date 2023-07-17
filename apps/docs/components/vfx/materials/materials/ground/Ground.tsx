@@ -1,20 +1,13 @@
 // @ts-nocheck
+import { usePlanet } from "@hello-worlds/react"
 import { useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
-import { patchShaders } from "gl-noise"
+import { patchShaders } from "gl-noise/build/glNoise.m"
 import * as React from "react"
 import { MeshStandardMaterial, NearestFilter, RepeatWrapping } from "three"
 import CustomShaderMaterial from "three-custom-shader-material"
 import frag from "./Ground.frag.glsl"
 import vert from "./Ground.vert.glsl"
-import dirt from "./textures/dirt_albedo.png"
-import dirtN from "./textures/dirt_normal.png"
-import grass from "./textures/grass_albedo.png"
-import rock from "./textures/rock_albedo.png"
-// import normalMap from "./textures/rock_normal.png"
-import { usePlanet } from "@hello-worlds/react"
-import noiseMap from "./textures/noise.png"
-import uvTest from "./textures/uv-test.png"
 import { useLoadTextureArray } from "./useLoadTextureArray"
 
 export const Ground: React.FC = () => {
@@ -24,9 +17,9 @@ export const Ground: React.FC = () => {
 
   const materialRef = React.useRef()
   const props = useTexture({
-    map: rock,
-    uvTest,
-    noiseMap,
+    map: "/img/textures/rock_albedo.png",
+    uvTest: "/img/textures/uv-test.png",
+    noiseMap: "/img/textures/noise.png",
     // normalMap,
     // displacementMap: 'PavingStones092_1K_Displacement.jpg',
     // normalMap: 'PavingStones092_1K_Normal.jpg',
@@ -34,15 +27,22 @@ export const Ground: React.FC = () => {
     // aoMap: 'PavingStones092_1K_AmbientOcclusion.jpg',
   })
 
-  const whatever = useLoadTextureArray([rock, grass, dirt, dirtN], {
-    dimensions: 64,
-  })
+  const whatever = useLoadTextureArray(
+    [
+      "/img/textures/rock_albedo.png",
+      "/img/textures/grass_albedo.png",
+      "img/textures/dirt_albedo.png",
+      "/img/textures/dirt_normal.png",
+    ],
+    {
+      dimensions: 64,
+    },
+  )
 
   props.map.magFilter = NearestFilter
   props.map.wrapS = RepeatWrapping
   props.map.wrapT = RepeatWrapping
-
-  props.noiseMap.wrapS = RepeatWrapping
+  props.map.type = props.noiseMap.wrapS = RepeatWrapping
   props.noiseMap.wrapT = RepeatWrapping
 
   // props.normalMap.magFilter = NearestFilter
@@ -57,10 +57,16 @@ export const Ground: React.FC = () => {
     }
   })
 
+  // React.useEffect(() => {
+  //   if (planet && materialRef.current) {
+  //     planet.material = materialRef.current
+  //   }
+  // }, [materialRef, planet])
+
   return (
     <CustomShaderMaterial
       ref={materialRef}
-      baseMaterial={MeshStandardMaterial}
+      baseMaterial={new MeshStandardMaterial()}
       vertexShader={patchShaders(vert)}
       fragmentShader={frag}
       uniforms={{
@@ -85,7 +91,7 @@ export const Ground: React.FC = () => {
           value: camera.position,
         },
       }}
-      // vertexColors
+      vertexColors
       // {...props}
     />
   )

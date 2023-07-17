@@ -4,10 +4,10 @@ import {
   ChunkPendingEvent,
   ChunkWillBeDisposedEvent,
   Planet as HelloPlanet,
-  PlanetProps as HelloPlanetProps
+  PlanetProps as HelloPlanetProps,
 } from "@hello-worlds/planets"
 import { useRerender } from "@hmans/use-rerender"
-import { useFrame } from "@react-three/fiber"
+import { createPortal, useFrame } from "@react-three/fiber"
 import * as React from "react"
 import { Event, Vector3 } from "three"
 import { concurrency } from "../defaults"
@@ -25,7 +25,7 @@ export type PlanetProps<D> = React.PropsWithChildren<
   Omit<HelloPlanetProps<D>, "material" | "workerProps"> &
     PartialBy<HelloPlanetProps<D>["workerProps"], "numWorkers"> & {
       lodOrigin: Vector3
-      autoUpdate?: boolean;
+      autoUpdate?: boolean
     }
 >
 
@@ -75,10 +75,23 @@ export const usePlanetChunks = () => {
 
 export interface PlanetChunksProps {
   children: (chunks: Chunk, index: number) => React.ReactNode
+  asChunkChild?: boolean
 }
-export const PlanetChunks: React.FC<PlanetChunksProps> = ({ children }) => {
+
+export const PlanetChunks: React.FC<PlanetChunksProps> = ({
+  children,
+  asChunkChild = true,
+}) => {
   const chunks = usePlanetChunks()
-  return <>{chunks.map(children)}</>
+  return (
+    <>
+      {chunks.map(function RenderPlanetChunkChildren(chunk) {
+        return asChunkChild
+          ? createPortal(children(chunk, chunk.id), chunk)
+          : children(chunk, chunk.id)
+      })}
+    </>
+  )
 }
 
 function PlanetInner<D>(
@@ -97,7 +110,7 @@ function PlanetInner<D>(
     lodOrigin,
     position,
     worker,
-    autoUpdate = true
+    autoUpdate = true,
   } = props
 
   const workerProps = React.useMemo(
