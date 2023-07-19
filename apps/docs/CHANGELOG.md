@@ -1,5 +1,14 @@
 # docs
 
+## 1.0.6
+
+### Patch Changes
+
+- Add mesh-bvh to Planet type chunk generation
+- Updated dependencies
+  - @hello-worlds/planets@0.0.20
+  - @hello-worlds/react@0.0.22
+
 ## 1.0.5
 
 ### Patch Changes

@@ -255,6 +255,9 @@ importers:
       simplex-noise:
         specifier: ^3.0.1
         version: 3.0.1
+      three-mesh-bvh:
+        specifier: ^0.5.20
+        version: 0.5.20(three@0.154.0)
     devDependencies:
       '@hello-worlds/core':
         specifier: 0.0.9

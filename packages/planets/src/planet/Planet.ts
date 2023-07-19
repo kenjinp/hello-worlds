@@ -1,4 +1,5 @@
 import { Group, Material, Object3D, Sphere, Vector2, Vector3 } from "three"
+import { Chunk } from "../chunk/Chunk"
 import { makeRootChunkKey } from "../chunk/Chunk.helpers"
 import {
   ChunkGeneratedEvent,
@@ -6,6 +7,7 @@ import {
   ChunkWillBeDisposedEvent,
 } from "../chunk/Events"
 import {
+  ChildChunkProps,
   ChunkMap,
   ChunkTypes,
   RootChunkProps,
@@ -166,7 +168,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
         radius: this.radius,
         resolution: this.minCellResolution,
         inverted: !!this.inverted,
-        minCellSize: this.minCellSize
+        minCellSize: this.minCellSize,
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
         const { chunk } = e as unknown as ChunkGeneratedEvent
@@ -190,6 +192,17 @@ export class Planet<D = Record<string, any>> extends Object3D {
     }
 
     this.#chunkMap = newChunkMap
+  }
+
+  get chunks() {
+    let chunks: Chunk[] = []
+    for (let chunkKey in this.#chunkMap) {
+      const c = this.#chunkMap[chunkKey]
+      if ((c as ChildChunkProps<Chunk>).chunk) {
+        chunks.push((c as ChildChunkProps<Chunk>).chunk)
+      }
+    }
+    return chunks
   }
 
   dispose() {

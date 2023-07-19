@@ -50,6 +50,15 @@ vec4 _triplanar(vec3 pos, vec3 normal, sampler2D tex) {
   vec4 dz = texture2D(tex, vec2(pos.xy / _TRI_SCALE));
   vec3 weights = abs(normal.xyz);
   weights = weights / (weights.x + weights.y + weights.z);
+  float maxWeight = max(weights.x, max(weights.y, weights.z));
+
+  if (weights.x == maxWeight) {
+    weights = vec3(1.0, 0.0, 0.0);
+  } else if (weights.y == maxWeight) {
+    weights = vec3(0.0, 1.0, 0.0);
+  } else {
+    weights = vec3(0.0, 0.0, 1.0);
+  }
   return dx * weights.x + dy * weights.y + dz * weights.z;
 }
 

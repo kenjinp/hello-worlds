@@ -5,7 +5,6 @@ import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
 import {
   Planet as HelloPlanet,
   OrbitCamera,
-  PlanetChunks,
   usePlanet,
 } from "@hello-worlds/react"
 import {
@@ -22,6 +21,7 @@ import { randFloat } from "three/src/math/MathUtils"
 import { usePointerLock } from "../../hooks/usePointerLock"
 import { Altimeter } from "./Altimeter"
 import { Character } from "./Character"
+import { MoonChunk } from "./Moon.chunk"
 import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
 const worker = () => new Worker(new URL("./Moon.worker", import.meta.url))
 
@@ -200,15 +200,8 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           // ))
           <OrbitCamera />
         )}
-
         <ReconcileElevationForLOD />
-        <PlanetChunks>
-          {chunk => {
-            // for terrain raycasting!!!
-            chunk.layers.enable(1)
-            return null
-          }}
-        </PlanetChunks>
+        <MoonChunk />
         <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
         <Ground />
         <Altimeter />

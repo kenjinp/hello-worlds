@@ -1,5 +1,6 @@
 import * as THREE from "three"
 import { Material, Mesh, Object3D, ShaderMaterial, Vector3 } from "three"
+import { MeshBVH, SerializedBVH } from "three-mesh-bvh"
 import { getLODTable } from "../utils"
 import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "./Events"
 
@@ -26,6 +27,7 @@ export interface ChunkRebuildProps {
   textureSplatIndices: ArrayBuffer
   textureSplatStrengths: ArrayBuffer
   material?: Material
+  bvh: SerializedBVH
 }
 
 // This represents a single terrain tile
@@ -148,6 +150,8 @@ export class Chunk extends Mesh {
       this.material = data.material
       this.material.needsUpdate = true
     }
+    const deserializedBVH = MeshBVH.deserialize(data.bvh, this.geometry)
+    this.geometry.boundsTree = deserializedBVH
 
     this.geometry.computeBoundingBox()
     this.geometry.computeBoundingSphere()

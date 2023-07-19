@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.20
+
+### Patch Changes
+
+- Add mesh-bvh to Planet type chunk generation
+
 ## 0.0.19
 
 ### Patch Changes

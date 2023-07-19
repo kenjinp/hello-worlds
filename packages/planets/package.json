@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/planets",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -29,6 +29,7 @@
     "graphics"
   ],
   "dependencies": {
-    "simplex-noise": "^3.0.1"
+    "simplex-noise": "^3.0.1",
+    "three-mesh-bvh": "^0.5.20"
   }
 }

@@ -7,6 +7,7 @@ import {
   Euler,
   Group,
   MathUtils,
+  Matrix4,
   Quaternion,
   Raycaster,
   Vector2,
@@ -53,6 +54,8 @@ export interface CharacterCapsuleDimensions {
   radius: number
 }
 
+const tempVec3 = new Vector3()
+const invMat = new Matrix4()
 const targetPosition = new Vector3()
 const tempNormal = new Vector3()
 const raycaster = new Raycaster()
@@ -156,9 +159,49 @@ export const Character: FC<{
     const rayDir = dirToPlanet.negate()
     raycaster.layers.set(1)
     raycaster.set(origin, rayDir)
+    raycaster.firstHitOnly = true
+    // console.time("raycast ground detection")
     const intersects = raycaster.intersectObjects(planet.children)
     if (intersects.length) {
       characterModelRef.current.position.copy(intersects[0].point)
+    }
+    // console.timeEnd("raycast ground detection")
+
+    raycaster.set(origin, rayDir)
+    raycaster.firstHitOnly = true
+
+    planet.chunks.sort((a, b) => {
+      a.getWorldPosition(tempVec3)
+      const aDist = tempVec3.distanceToSquared(
+        characterModelRef.current.position,
+      )
+      b.getWorldPosition(tempVec3)
+      const bDist = tempVec3.distanceToSquared(
+        characterModelRef.current.position,
+      )
+      return bDist - aDist
+    })
+
+    let hit
+    for (let chunk of planet.chunks) {
+      invMat.copy(chunk.matrixWorld).invert()
+
+      // raycasting
+      // ensure the ray is in the local space of the geometry being cast against
+      raycaster.ray.applyMatrix4(invMat)
+      hit = chunk.geometry.boundsTree?.raycastFirst(
+        raycaster.ray,
+        chunk.material,
+      )
+      if (hit && hit.point) {
+        // results are returned in local spac, as well, so they must be transformed into
+        // world space if needed.
+        hit.point.applyMatrix4(chunk.matrixWorld)
+        break
+      }
+    }
+    if (hit && hit.point) {
+      characterModelRef.current.position.copy(hit.point)
     }
   }
 
@@ -219,7 +262,9 @@ export const Character: FC<{
             // Math.abs(movement.x) > 0 ? movingDirection : movingDirection.negate(),
           )
           .multiplyScalar(
-            movementDistance * movement.length() * sprintModifier.current,
+            movementDistance *
+              movement.normalize().length() *
+              sprintModifier.current,
           )
       }
     }
