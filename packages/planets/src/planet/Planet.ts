@@ -7,7 +7,6 @@ import {
   ChunkWillBeDisposedEvent,
 } from "../chunk/Events"
 import {
-  ChildChunkProps,
   ChunkMap,
   ChunkTypes,
   RootChunkProps,
@@ -35,6 +34,8 @@ export class Planet<D = Record<string, any>> extends Object3D {
   #cubeFaceGroups = [...new Array(6)].map(_ => new Group())
   #builder: PlanetBuilder<D>
   #material?: Material
+  #chunkSet = new Set<Chunk>()
+  #chunks: Chunk[] = []
   readonly data: D
   minCellSize: number
   minCellResolution: number
@@ -173,10 +174,22 @@ export class Planet<D = Record<string, any>> extends Object3D {
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
         const { chunk } = e as unknown as ChunkGeneratedEvent
         this.dispatchEvent(new ChunkGeneratedEvent(chunk))
+        this.#chunkSet.add(chunk)
+        this.#chunks = Array.from(this.#chunks.values()).sort((a, b) => {
+          const aDist = a.position.distanceToSquared(lodOrigin)
+          const bDist = a.position.distanceToSquared(lodOrigin)
+          return bDist - aDist
+        })
       })
       allocatedChunk.addEventListener(ChunkWillBeDisposedEvent.type, e => {
         const { chunk } = e as unknown as ChunkWillBeDisposedEvent
         this.dispatchEvent(new ChunkWillBeDisposedEvent(chunk))
+        this.#chunkSet.delete(chunk)
+        this.#chunks = Array.from(this.#chunks.values()).sort((a, b) => {
+          const aDist = a.position.distanceToSquared(lodOrigin)
+          const bDist = a.position.distanceToSquared(lodOrigin)
+          return bDist - aDist
+        })
       })
       allocatedChunk.addEventListener(ChunkPendingEvent.type, e => {
         const { chunk } = e as unknown as ChunkPendingEvent
@@ -195,14 +208,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
   }
 
   get chunks() {
-    let chunks: Chunk[] = []
-    for (let chunkKey in this.#chunkMap) {
-      const c = this.#chunkMap[chunkKey]
-      if ((c as ChildChunkProps<Chunk>).chunk) {
-        chunks.push((c as ChildChunkProps<Chunk>).chunk)
-      }
-    }
-    return chunks
+    return this.#chunks
   }
 
   dispose() {

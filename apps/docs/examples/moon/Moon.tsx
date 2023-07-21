@@ -1,4 +1,3 @@
-import { Ground } from "@components/vfx/materials/materials/ground/Ground"
 import { Controls } from "@game/player/KeyboardController"
 import { random, setRandomSeed } from "@hello-worlds/core"
 import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
@@ -104,6 +103,9 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
     return subscribeKeys(
       state => state[Controls.special],
       pressed => {
+        if (!pressed) {
+          return
+        }
         if (!isWalking) {
           setIsWalking(true)
           requestPointerLock()
@@ -111,7 +113,6 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           setIsWalking(false)
           document.exitPointerLock()
         }
-        // setCharacters([camera.getWorldPosition(new Vector3())])
       },
     )
   }, [isWalking])
@@ -202,8 +203,9 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
         )}
         <ReconcileElevationForLOD />
         <MoonChunk />
+        {/* <MouseCaster /> */}
         <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
-        <Ground />
+        {/* <Ground /> */}
         <Altimeter />
       </HelloPlanet>
     </>

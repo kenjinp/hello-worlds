@@ -17,14 +17,16 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
     const { resolution, origin, width, offset, radius, inverted } = params
 
     // generate the chunk geometry
-    const { positions, colors, coords, up } = generateInitialHeights({
-      ...params,
-      heightGenerator,
-      colorGenerator,
-    })
+    const { positions, positionsWithoutSkirt, colors, coords, up } =
+      generateInitialHeights({
+        ...params,
+        heightGenerator,
+        colorGenerator,
+      })
 
     // Generate indices
     const indices = generateIndices(resolution)
+    const indicesWithoutSkirt = generateIndices(resolution - 2)
     // Get Normals
     const normals = generateNormals(positions, indices)
 
@@ -40,6 +42,9 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
     const positionsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * positions.length),
     )
+    const positionsWithoutSkirtArray = new Float32Array(
+      new SharedArrayBuffer(bytesInFloat32 * positionsWithoutSkirt.length),
+    )
     const colorsArray = new Float32Array(
       new SharedArrayBuffer(bytesInFloat32 * colors.length),
     )
@@ -52,13 +57,18 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
     const indicesArray = new Uint32Array(
       new SharedArrayBuffer(bytesInInt32 * indices.length),
     )
+    const indicesWithoutSkirtArray = new Uint32Array(
+      new SharedArrayBuffer(bytesInInt32 * indicesWithoutSkirt.length),
+    )
 
     // TODO: improve performance by using the typed arrays directly
     positionsArray.set(positions, 0)
+    // positionsWithoutSkirtArray.set(positionsWithoutSkirt, 0)
     colorsArray.set(colors, 0)
     normalsArray.set(normals, 0)
     coordsArray.set(coords, 0)
     indicesArray.set(indices, 0)
+    // indicesWithoutSkirtArray.set(indicesWithoutSkirt, 0)
 
     geo.setAttribute("position", new Float32BufferAttribute(positionsArray, 3))
     geo.setIndex(new BufferAttribute(new Uint32Array(indicesArray), 1))

@@ -82,7 +82,7 @@ export const ExampleInner: React.FC = () => {
                   {suns.map(({ color, intensity, position }, index) => {
                     console.log({ SUN: position })
                     return (
-                      <group position={position}>
+                      <group position={position} key={index}>
                         <directionalLight
                           key={`sun-${index}`}
                           color={color}

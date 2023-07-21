@@ -41,18 +41,21 @@ export const AddRaycaster = ({ grp }) => {
 
     origMesh.current.updateMatrixWorld()
     origVec.setFromMatrixPosition(origMesh.current.matrixWorld)
-    dirVec.copy(origVec).multiplyScalar(-1).normalize()
+    dirVec.copy(origVec).negate().normalize()
 
     raycaster.set(origVec, dirVec)
     raycaster.firstHitOnly = true
 
-    planet.chunks.sort((a, b) => {
-      a.getWorldPosition(tempVec3)
-      const aDist = tempVec3.distanceToSquared(origMesh.current.position)
-      b.getWorldPosition(tempVec3)
-      const bDist = tempVec3.distanceToSquared(origMesh.current.position)
-      return bDist - aDist
-    })
+    // this is actually very slow
+    // console.time("sort")
+    // planet.chunks.sort((a, b) => {
+    //   a.getWorldPosition(tempVec3)
+    //   const aDist = tempVec3.distanceToSquared(origMesh.current.position)
+    //   b.getWorldPosition(tempVec3)
+    //   const bDist = tempVec3.distanceToSquared(origMesh.current.position)
+    //   return bDist - aDist
+    // })
+    // console.timeEnd("sort")
 
     let hit
     for (let chunk of planet.chunks) {
@@ -61,21 +64,23 @@ export const AddRaycaster = ({ grp }) => {
       // raycasting
       // ensure the ray is in the local space of the geometry being cast against
       raycaster.ray.applyMatrix4(invMat)
-      hit = chunk.geometry.boundsTree?.raycastFirst(
+      let currentHit = chunk.geometry.boundsTree?.raycastFirst(
         raycaster.ray,
         chunk.material,
       )
-      if (hit && hit.point) {
-        // results are returned in local spac, as well, so they must be transformed into
-        // world space if needed.
-        hit.point.applyMatrix4(chunk.matrixWorld)
-        break
+      if (currentHit) {
+        currentHit.point.applyMatrix4(chunk.matrixWorld)
+        if (hit && currentHit.distance < hit.distance) {
+          hit = currentHit
+        }
+        if (!hit) {
+          hit = currentHit
+        }
       }
     }
     if (hit && hit.point) {
       // const res = raycaster.intersectObject(grp, true)
-      const length = hit?.distance || pointDist
-
+      const length = hit?.distance
       hitMesh.current.position.set(pointDist - length, 0, 0)
       cylinderMesh.current.position.set(pointDist - length / 2, 0, 0)
       cylinderMesh.current.scale.set(1, length, 1)
@@ -90,11 +95,11 @@ export const AddRaycaster = ({ grp }) => {
         <meshBasicMaterial color={0xffffff} />
       </mesh>
       <mesh ref={hitMesh}>
-        <sphereGeometry args={[100, 20, 20]} />
+        <sphereGeometry args={[20, 20, 20]} />
         <meshBasicMaterial color={"red"} />
       </mesh>
       <mesh ref={cylinderMesh}>
-        <cylinderGeometry args={[10, 10]} />
+        <cylinderGeometry args={[5, 5]} />
         <meshBasicMaterial color={0xffffff} transparent opacity={0.25} />
       </mesh>
     </group>

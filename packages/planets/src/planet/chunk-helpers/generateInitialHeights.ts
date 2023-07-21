@@ -42,7 +42,9 @@ export const generateInitialHeights = <D>(
   const resolution = params.resolution + 2
   const effectiveResolution = resolution - 2
 
+  // TODO preallocate?
   const positions = []
+  const positionsWithoutSkirt = []
   const colors = []
   const coords = []
   const up = []
@@ -105,6 +107,14 @@ export const generateInitialHeights = <D>(
       _P.add(_H)
 
       positions.push(_P.x, _P.y, _P.z)
+      if (
+        x >= 0 &&
+        x <= effectiveResolution &&
+        y >= 0 &&
+        y <= effectiveResolution
+      ) {
+        positionsWithoutSkirt.push(_P.x, _P.y, _P.z)
+      }
 
       _C.copy(_W)
       _C.add(_H)
@@ -115,6 +125,7 @@ export const generateInitialHeights = <D>(
 
   return {
     positions,
+    positionsWithoutSkirt,
     colors,
     coords,
     up,
