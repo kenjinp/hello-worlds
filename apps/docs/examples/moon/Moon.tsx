@@ -1,4 +1,3 @@
-import { Ground } from "@components/vfx/materials/materials/ground/Ground"
 import { Controls } from "@game/player/KeyboardController"
 import { random, setRandomSeed } from "@hello-worlds/core"
 import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
@@ -22,6 +21,7 @@ import { usePointerLock } from "../../hooks/usePointerLock"
 import { Altimeter } from "./Altimeter"
 import { Character } from "./Character"
 import { MoonChunk } from "./Moon.chunk"
+import { MouseCaster } from "./MouseCaster"
 import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
 const worker = () => new Worker(new URL("./Moon.worker", import.meta.url))
 
@@ -104,6 +104,9 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
     return subscribeKeys(
       state => state[Controls.special],
       pressed => {
+        if (!pressed) {
+          return
+        }
         if (!isWalking) {
           setIsWalking(true)
           requestPointerLock()
@@ -111,7 +114,6 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           setIsWalking(false)
           document.exitPointerLock()
         }
-        // setCharacters([camera.getWorldPosition(new Vector3())])
       },
     )
   }, [isWalking])
@@ -158,10 +160,10 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
     setRandomSeed(seed)
     return {
       seed,
-      craters: getRandomSubarray(centers, 0).map(center => {
+      craters: getRandomSubarray(centers, 100).map(center => {
         return {
           floorHeight: randFloat(-0.01, 0),
-          radius: getRandomBias(1000, 100_000, 1_000, 0.8),
+          radius: getRandomBias(1, 100, 10, 0.8), //getRandomBias(1000, 100_000, 1_000, 0.8),
           center,
           rimWidth: randFloat(0.4, 0.8),
           rimSteepness: randFloat(0.2, 1),
@@ -198,12 +200,15 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           </>
         ) : (
           // ))
-          <OrbitCamera />
+          <>
+            <MouseCaster />
+            <OrbitCamera />
+          </>
         )}
         <ReconcileElevationForLOD />
         <MoonChunk />
         <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
-        <Ground />
+        {/* <Ground /> */}
         <Altimeter />
       </HelloPlanet>
     </>

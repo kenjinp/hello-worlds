@@ -42,6 +42,7 @@ export const generateInitialHeights = <D>(
   const resolution = params.resolution + 2
   const effectiveResolution = resolution - 2
 
+  // TODO preallocate?
   const positions = []
   const colors = []
   const coords = []

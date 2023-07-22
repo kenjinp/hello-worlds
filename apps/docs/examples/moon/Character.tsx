@@ -56,6 +56,7 @@ export interface CharacterCapsuleDimensions {
 
 const tempVec3 = new Vector3()
 const invMat = new Matrix4()
+const tempMat4 = new Matrix4()
 const targetPosition = new Vector3()
 const tempNormal = new Vector3()
 const raycaster = new Raycaster()
@@ -96,6 +97,7 @@ export const Character: FC<{
   const movingDirection = useMemo(() => new Vector3(), [])
   const turnSpeed = 18
   const groundCheckDist = 1
+  const fudgeRoom = 0.2
 
   function groundCheck() {
     if (!characterModelRef.current) {
@@ -136,7 +138,7 @@ export const Character: FC<{
     const dirToPlayer = position.sub(planet.position).normalize()
     const { elevation } = getExactPlanetElevationAtPosition(position)
     const playerAltitude = elevation
-    const playerHeightFromCore = planet.radius + playerAltitude
+    const playerHeightFromCore = planet.radius + playerAltitude + fudgeRoom
     const playerGroundPosition = dirToPlayer
       .clone()
       .multiplyScalar(playerHeightFromCore)
@@ -148,11 +150,11 @@ export const Character: FC<{
     if (!characterModelRef.current) {
       return
     }
+    const position = tempVec3.copy(characterModelRef.current.position)
     const dirToPlanet = targetPosition
-      .copy(characterModelRef.current.position)
+      .copy(position)
       .sub(planet.position)
       .normalize()
-
     heightOrbitPosition.copy(dirToPlanet.multiplyScalar(planet.radius * 2))
 
     const origin = heightOrbitPosition
@@ -160,48 +162,9 @@ export const Character: FC<{
     raycaster.layers.set(1)
     raycaster.set(origin, rayDir)
     raycaster.firstHitOnly = true
-    // console.time("raycast ground detection")
     const intersects = raycaster.intersectObjects(planet.children)
     if (intersects.length) {
       characterModelRef.current.position.copy(intersects[0].point)
-    }
-    // console.timeEnd("raycast ground detection")
-
-    raycaster.set(origin, rayDir)
-    raycaster.firstHitOnly = true
-
-    planet.chunks.sort((a, b) => {
-      a.getWorldPosition(tempVec3)
-      const aDist = tempVec3.distanceToSquared(
-        characterModelRef.current.position,
-      )
-      b.getWorldPosition(tempVec3)
-      const bDist = tempVec3.distanceToSquared(
-        characterModelRef.current.position,
-      )
-      return bDist - aDist
-    })
-
-    let hit
-    for (let chunk of planet.chunks) {
-      invMat.copy(chunk.matrixWorld).invert()
-
-      // raycasting
-      // ensure the ray is in the local space of the geometry being cast against
-      raycaster.ray.applyMatrix4(invMat)
-      hit = chunk.geometry.boundsTree?.raycastFirst(
-        raycaster.ray,
-        chunk.material,
-      )
-      if (hit && hit.point) {
-        // results are returned in local spac, as well, so they must be transformed into
-        // world space if needed.
-        hit.point.applyMatrix4(chunk.matrixWorld)
-        break
-      }
-    }
-    if (hit && hit.point) {
-      characterModelRef.current.position.copy(hit.point)
     }
   }
 
@@ -246,27 +209,25 @@ export const Character: FC<{
     // getCharacterForwardDir
     characterCapsuleRef.current.getWorldDirection(movingDirection)
 
-    const isGrounded = groundCheck()
+    // const isGrounded = groundCheck()
     // const gravityVelocity = gravity
     //   .copy(characterModelRef.current.position)
     //   .sub(planet.position)
     //   .normalize()
     //   .multiplyScalar(9.8 * delta)
 
-    if (isGrounded) {
-      // get targetPosition
-      if (movement.length() && !jump) {
-        targetPosition
-          .copy(
-            movingDirection,
-            // Math.abs(movement.x) > 0 ? movingDirection : movingDirection.negate(),
-          )
-          .multiplyScalar(
-            movementDistance *
-              movement.normalize().length() *
-              sprintModifier.current,
-          )
-      }
+    // get targetPosition
+    if (movement.length() && !jump) {
+      targetPosition
+        .copy(
+          movingDirection,
+          // Math.abs(movement.x) > 0 ? movingDirection : movingDirection.negate(),
+        )
+        .multiplyScalar(
+          movementDistance *
+            movement.normalize().length() *
+            sprintModifier.current,
+        )
     }
 
     if (targetPosition.length()) {

@@ -25,6 +25,7 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
 
     // Generate indices
     const indices = generateIndices(resolution)
+    // const indicesWithoutSkirt = generateIndices(resolution - 2)
     // Get Normals
     const normals = generateNormals(positions, indices)
 
@@ -54,6 +55,7 @@ export function buildPlanetChunk<D>(initialParams: BuildChunkInitialParams<D>) {
     )
 
     // TODO: improve performance by using the typed arrays directly
+    // it will save some memory
     positionsArray.set(positions, 0)
     colorsArray.set(colors, 0)
     normalsArray.set(normals, 0)

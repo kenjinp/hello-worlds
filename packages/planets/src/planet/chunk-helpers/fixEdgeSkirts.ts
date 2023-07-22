@@ -23,7 +23,7 @@ export const fixEdgeSkirt = (
 
     // pull skirt down
     // The skirt size is set by the size of the chunk, but experimentally it creates crazy spikes if it's not clamped.
-    const skirtSize = MathUtils.clamp(width, 0, radius / 10)
+    const skirtSize = MathUtils.clamp(width, 0, radius / 5)
     _D.multiplyScalar(inverted ? skirtSize : -skirtSize)
     _P.add(_D)
 

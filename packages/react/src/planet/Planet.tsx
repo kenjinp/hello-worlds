@@ -35,6 +35,7 @@ export const usePlanetChunks = () => {
   const [chunks] = React.useState<Map<number, Chunk & { built: boolean }>>(
     new Map<number, Chunk & { built: boolean }>(),
   )
+  const chunkArrayRef = React.useRef<Array<Chunk & { built: boolean }>>([])
 
   React.useEffect(() => {
     const pendingListener = (e: Event) => {
@@ -42,18 +43,21 @@ export const usePlanetChunks = () => {
       const pendingChunk = chunk as Chunk & { built: boolean }
       pendingChunk.built = false
       chunks.set(chunk.id, pendingChunk)
+      chunkArrayRef.current = Array.from(chunks.values())
       rerender()
     }
     const createdListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkGeneratedEvent
       const builtChunk = chunk as Chunk & { built: boolean }
-      builtChunk.built = false
+      builtChunk.built = true
       chunks.set(chunk.id, builtChunk)
+      chunkArrayRef.current = Array.from(chunks.values())
       rerender()
     }
     const willDisposeListener = (e: Event) => {
       const { chunk } = e as unknown as ChunkWillBeDisposedEvent
       chunks.delete(chunk.id)
+      chunkArrayRef.current = Array.from(chunks.values())
       rerender()
     }
     planet.addEventListener(ChunkPendingEvent.type, pendingListener)
@@ -67,10 +71,11 @@ export const usePlanetChunks = () => {
         willDisposeListener,
       )
       chunks.clear()
+      chunkArrayRef.current = Array.from(chunks.values())
     }
   }, [planet])
 
-  return Array.from(chunks.values())
+  return chunkArrayRef.current
 }
 
 export interface PlanetChunksProps {

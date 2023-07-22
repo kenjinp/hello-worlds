@@ -143,6 +143,7 @@ export class Chunk extends Mesh {
     this.geometry.attributes.position.needsUpdate = true
     this.geometry.attributes.normal.needsUpdate = true
     this.geometry.attributes.color.needsUpdate = true
+    // this.geometry.attributes. .needsUpdate = true
     // this.geometry.attributes.coords.needsUpdate = true;
 
     // swap materials if requested
@@ -156,6 +157,7 @@ export class Chunk extends Mesh {
     this.geometry.computeBoundingBox()
     this.geometry.computeBoundingSphere()
 
+    // TODO for some reason this fires but indices.count is undefined!
     this.dispatchEvent(new ChunkGeneratedEvent(this))
   }
 }
