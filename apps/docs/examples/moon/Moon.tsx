@@ -160,10 +160,10 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
     setRandomSeed(seed)
     return {
       seed,
-      craters: getRandomSubarray(centers, 0).map(center => {
+      craters: getRandomSubarray(centers, 100).map(center => {
         return {
           floorHeight: randFloat(-0.01, 0),
-          radius: getRandomBias(1000, 100_000, 1_000, 0.8),
+          radius: getRandomBias(1, 100, 10, 0.8), //getRandomBias(1000, 100_000, 1_000, 0.8),
           center,
           rimWidth: randFloat(0.4, 0.8),
           rimSteepness: randFloat(0.2, 1),
