@@ -10,9 +10,13 @@ import { EffectComposer } from "@react-three/postprocessing"
 import { Physics } from "@react-three/rapier"
 import { Perf } from "r3f-perf"
 import * as React from "react"
-import { Color, Vector3 } from "three"
+import * as THREE from "three"
+import { acceleratedRaycast } from "three-mesh-bvh"
 import { Moon } from "./Moon"
 import { UITunnel } from "./UI.tunnel"
+const { Color, Vector3 } = THREE
+
+THREE.Mesh.prototype.raycast = acceleratedRaycast
 
 const sunDistance = 10000
 const generateSuns = () => {

@@ -21,6 +21,7 @@ import { usePointerLock } from "../../hooks/usePointerLock"
 import { Altimeter } from "./Altimeter"
 import { Character } from "./Character"
 import { MoonChunk } from "./Moon.chunk"
+import { MouseCaster } from "./MouseCaster"
 import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
 const worker = () => new Worker(new URL("./Moon.worker", import.meta.url))
 
@@ -199,11 +200,13 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           </>
         ) : (
           // ))
-          <OrbitCamera />
+          <>
+            <MouseCaster />
+            <OrbitCamera />
+          </>
         )}
         <ReconcileElevationForLOD />
         <MoonChunk />
-        {/* <MouseCaster /> */}
         <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
         {/* <Ground /> */}
         <Altimeter />

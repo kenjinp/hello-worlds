@@ -56,6 +56,7 @@ export interface CharacterCapsuleDimensions {
 
 const tempVec3 = new Vector3()
 const invMat = new Matrix4()
+const tempMat4 = new Matrix4()
 const targetPosition = new Vector3()
 const tempNormal = new Vector3()
 const raycaster = new Raycaster()
@@ -150,12 +151,10 @@ export const Character: FC<{
       return
     }
     const position = tempVec3.copy(characterModelRef.current.position)
-    position.setFromMatrixPosition(characterModelRef.current.matrixWorld)
     const dirToPlanet = targetPosition
       .copy(position)
       .sub(planet.position)
       .normalize()
-
     heightOrbitPosition.copy(dirToPlanet.multiplyScalar(planet.radius * 2))
 
     const origin = heightOrbitPosition
@@ -163,41 +162,10 @@ export const Character: FC<{
     raycaster.layers.set(1)
     raycaster.set(origin, rayDir)
     raycaster.firstHitOnly = true
-    // console.time("threeraycast ground detection")
-    // const intersects = raycaster.intersectObjects(planet.children)
-    // if (intersects.length) {
-    //   characterModelRef.current.position.copy(intersects[0].point)
-    // } else {
-    //   console.warn("no hit")
-    // }
-    // console.timeEnd("threeraycast ground detection")
-
-    console.time('raycast bvh')
-    let hit
-    for (let chunk of planet.chunks) {
-      invMat.copy(chunk.matrixWorld).invert()
-
-      // raycasting
-      // ensure the ray is in the local space of the geometry being cast against
-      raycaster.ray.applyMatrix4(invMat)
-      let currentHit = chunk.geometry.boundsTree?.raycastFirst(
-        raycaster.ray,
-        chunk.material,
-      )
-      if (currentHit) {
-        currentHit.point.applyMatrix4(chunk.matrixWorld)
-        hit = currentHit
-        break
-      }
+    const intersects = raycaster.intersectObjects(planet.children)
+    if (intersects.length) {
+      characterModelRef.current.position.copy(intersects[0].point)
     }
-    if (hit && hit.point) {
-      characterModelRef.current.position.copy(hit.point)
-      console.warn("WHOOP")
-      console.log(hit)
-    } else {
-      console.warn("oh no")
-    }
-    console.timeEnd('raycast bvh')
   }
 
   function orientCharacterToPlanetNormal() {

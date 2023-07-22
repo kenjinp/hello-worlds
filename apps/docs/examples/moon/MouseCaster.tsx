@@ -14,34 +14,14 @@ export const MouseCaster: FC = () => {
 
   useFrame(() => {
     raycaster.setFromCamera(mousePos, camera)
-
-    let hit
-    for (let chunk of planet.chunks) {
-      invMat.copy(chunk.matrixWorld).invert()
-
-      // raycasting
-      // ensure the ray is in the local space of the geometry being cast against
-      raycaster.ray.applyMatrix4(invMat)
-      let currentHit = chunk.geometry.boundsTree?.raycastFirst(
-        raycaster.ray,
-        chunk.material,
-      )
-      if (currentHit) {
-        currentHit.point.applyMatrix4(chunk.matrixWorld)
-        if (hit && currentHit.distance < hit.distance) {
-          hit = currentHit
-        }
-        if (!hit) {
-          hit = currentHit
-        }
-      }
-    }
-    if (hit) {
-      meshRef.current.position.copy(hit.point)
+    raycaster.firstHitOnly = true
+    raycaster.layers.set(1)
+    const res = raycaster.intersectObjects(planet.children)
+    if (res.length) {
+      meshRef.current.position.copy(res[0].point)
       meshRef.current.visible = true
     } else {
       meshRef.current.visible = false
-      console.warn("no camera hit")
     }
   })
 

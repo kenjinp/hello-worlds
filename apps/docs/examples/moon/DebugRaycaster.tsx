@@ -41,46 +41,15 @@ export const AddRaycaster = ({ grp }) => {
 
     origMesh.current.updateMatrixWorld()
     origVec.setFromMatrixPosition(origMesh.current.matrixWorld)
-    dirVec.copy(origVec).negate().normalize()
+    dirVec.copy(origVec).multiplyScalar(-1).normalize()
 
     raycaster.set(origVec, dirVec)
+    raycaster.layers.set(1)
     raycaster.firstHitOnly = true
+    const res = raycaster.intersectObjects(planet.children)
+    if (res.length) {
+      const length = res.length ? res[0].distance : pointDist
 
-    // this is actually very slow
-    // console.time("sort")
-    // planet.chunks.sort((a, b) => {
-    //   a.getWorldPosition(tempVec3)
-    //   const aDist = tempVec3.distanceToSquared(origMesh.current.position)
-    //   b.getWorldPosition(tempVec3)
-    //   const bDist = tempVec3.distanceToSquared(origMesh.current.position)
-    //   return bDist - aDist
-    // })
-    // console.timeEnd("sort")
-
-    let hit
-    for (let chunk of planet.chunks) {
-      invMat.copy(chunk.matrixWorld).invert()
-
-      // raycasting
-      // ensure the ray is in the local space of the geometry being cast against
-      raycaster.ray.applyMatrix4(invMat)
-      let currentHit = chunk.geometry.boundsTree?.raycastFirst(
-        raycaster.ray,
-        chunk.material,
-      )
-      if (currentHit) {
-        currentHit.point.applyMatrix4(chunk.matrixWorld)
-        if (hit && currentHit.distance < hit.distance) {
-          hit = currentHit
-        }
-        if (!hit) {
-          hit = currentHit
-        }
-      }
-    }
-    if (hit && hit.point) {
-      // const res = raycaster.intersectObject(grp, true)
-      const length = hit?.distance
       hitMesh.current.position.set(pointDist - length, 0, 0)
       cylinderMesh.current.position.set(pointDist - length / 2, 0, 0)
       cylinderMesh.current.scale.set(1, length, 1)
