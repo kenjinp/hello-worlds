@@ -1,5 +1,14 @@
 # docs
 
+## 1.0.7
+
+### Patch Changes
+
+- Speed up chunk list generation
+- Updated dependencies
+  - @hello-worlds/planets@0.0.21
+  - @hello-worlds/react@0.0.23
+
 ## 1.0.6
 
 ### Patch Changes

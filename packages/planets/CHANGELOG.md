@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.21
+
+### Patch Changes
+
+- Speed up chunk list generation
+
 ## 0.0.20
 
 ### Patch Changes

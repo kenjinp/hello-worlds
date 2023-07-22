@@ -1,5 +1,13 @@
 # @hello-worlds/react
 
+## 0.0.23
+
+### Patch Changes
+
+- Speed up chunk list generation
+- Updated dependencies
+  - @hello-worlds/planets@0.0.21
+
 ## 0.0.22
 
 ### Patch Changes
