@@ -114,9 +114,9 @@ export const ExampleInner: React.FC = () => {
                           {
                             radius: radius - radius * 0.001,
                             origin: new Vector3(),
-                            atmosphereRadius: radius * 2,
+                            atmosphereRadius: radius * 4,
                             // limited from 0 to 1.0
-                            atmosphereDensity: 0.06,
+                            atmosphereDensity: 0.08,
                           },
                         ]}
                         suns={suns.map(({ color, intensity, position }) => {

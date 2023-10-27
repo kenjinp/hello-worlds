@@ -8,6 +8,7 @@ import { usePlanet } from "../planet/Planet"
 export interface OrbitCameraProps {
   maxAltitudeOffset?: number
   maxDistanceMultiplier?: number
+  defaultCameraPosition?: Vector3
 }
 
 // TODO put into some easing library / utils
@@ -18,7 +19,12 @@ function easeOutExpo(x: number): number {
 
 export const OrbitCamera: React.FC<
   React.PropsWithChildren<OrbitCameraProps>
-> = ({ maxAltitudeOffset = 100, maxDistanceMultiplier = 10, children }) => {
+> = ({
+  maxAltitudeOffset = 100,
+  maxDistanceMultiplier = 10,
+  defaultCameraPosition,
+  children,
+}) => {
   const planet = usePlanet()
   const orbitControls = React.useRef<OrbitControlsImpl>(null)
   const altitude = React.useRef(0)
@@ -27,7 +33,8 @@ export const OrbitCamera: React.FC<
 
   React.useEffect(() => {
     camera.position.copy(
-      new Vector3(planet.radius * 1.5, 0, planet.radius * 1.5),
+      defaultCameraPosition ||
+        new Vector3(planet.radius * 1.5, 0, planet.radius * 1.5),
     )
   }, [planet.radius])
 

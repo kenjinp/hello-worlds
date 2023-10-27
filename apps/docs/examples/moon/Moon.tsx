@@ -1,28 +1,16 @@
-import { Controls } from "@game/player/KeyboardController"
-import { random, setRandomSeed } from "@hello-worlds/core"
+import { random, randomRangeInt, setRandomSeed } from "@hello-worlds/core"
 import { LatLong, Noise, getRandomBias } from "@hello-worlds/planets"
-import {
-  Planet as HelloPlanet,
-  OrbitCamera,
-  usePlanet,
-} from "@hello-worlds/react"
-import {
-  FlyControls,
-  PointerLockControls,
-  useKeyboardControls,
-} from "@react-three/drei"
+import { Planet as HelloPlanet, usePlanet } from "@hello-worlds/react"
+import { useGetExactPlanetaryElevation } from "@hooks/useGetExactPlanetaryElevation"
+import { Html, useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import Poisson from "poisson-disk-sampling"
 import React, { useMemo } from "react"
-import { Color, Vector3 } from "three"
-import { FlyControls as FlyControlsImpl } from "three-stdlib"
+import { Color, Texture, Vector3 } from "three"
 import { randFloat } from "three/src/math/MathUtils"
-import { usePointerLock } from "../../hooks/usePointerLock"
 import { Altimeter } from "./Altimeter"
-import { Character } from "./Character"
 import { MoonChunk } from "./Moon.chunk"
-import { MouseCaster } from "./MouseCaster"
-import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
+import { MoonControls } from "./Moon.controls"
 const worker = () => new Worker(new URL("./Moon.worker", import.meta.url))
 
 const position = new Vector3()
@@ -41,32 +29,6 @@ function getRandomSubarray(arr, size) {
   return shuffled.slice(0, size)
 }
 
-const FlyCamera = () => {
-  const planet = usePlanet()
-  const flyControls = React.useRef<FlyControlsImpl>()
-  const camera = useThree(s => s.camera)
-  const getElevation = useGetExactPlanetaryElevation()
-  useFrame(() => {
-    if (!flyControls.current) {
-      return
-    }
-    const { elevation, pointOnPlanet } = getElevation(camera.position)
-    const altitude =
-      camera.position.distanceTo(planet.position) - planet.radius - elevation
-
-    const movementSpeed = Math.max(Math.abs(altitude), 100)
-
-    if (altitude < 0) {
-      camera.position.copy(pointOnPlanet)
-    }
-
-    flyControls.current.movementSpeed = movementSpeed
-    flyControls.current.rollSpeed = 0.2
-  })
-
-  return <FlyControls ref={flyControls} dragToLook />
-}
-
 const tempVector3 = new Vector3()
 const ReconcileElevationForLOD: React.FC = () => {
   const planet = usePlanet()
@@ -77,7 +39,11 @@ const ReconcileElevationForLOD: React.FC = () => {
   useFrame(() => {
     // offset position with height of terrain to get true lod resolution
     camera.getWorldPosition(lodPosition)
-    const { elevation } = getElevation(lodPosition)
+    const e = getElevation(camera.position)
+    if (!e) {
+      return
+    }
+    const { elevation } = e
     // Vector3 newSpot = oldSpotVector3 + (directionVector3.normalized * distanceFloat);
     const dirToPlanet = tempVector3
       .copy(planet.position)
@@ -95,28 +61,9 @@ const ReconcileElevationForLOD: React.FC = () => {
 export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
   const camera = useThree(store => store.camera)
   const canvas = useThree(store => store.gl.domElement)
-  const [isWalking, setIsWalking] = React.useState(false)
-  const [subscribeKeys] = useKeyboardControls()
   const [lodPosition] = React.useState(camera.position.clone())
-  const { locked, requestPointerLock } = usePointerLock(canvas)
 
-  React.useEffect(() => {
-    return subscribeKeys(
-      state => state[Controls.special],
-      pressed => {
-        if (!pressed) {
-          return
-        }
-        if (!isWalking) {
-          setIsWalking(true)
-          requestPointerLock()
-        } else {
-          setIsWalking(false)
-          document.exitPointerLock()
-        }
-      },
-    )
-  }, [isWalking])
+  const [mountain] = useTexture(["/img/terrain-stamps/ridged-00.png"])
 
   React.useEffect(() => {
     const initialPosition = new Vector3(1, 1, 1).multiplyScalar(radius * 2)
@@ -158,8 +105,25 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
     }
     const seed = "hello world"
     setRandomSeed(seed)
+
+    function extractImageData(texture: Texture) {
+      const canvas = document.createElement("canvas")
+      const context = canvas.getContext("2d")
+      canvas.width = texture.image.width
+      canvas.height = texture.image.height
+      context.drawImage(texture.image, 0, 0)
+      const myData = context.getImageData(
+        0,
+        0,
+        texture.image.width,
+        texture.image.height,
+      )
+      return myData
+    }
+
     return {
       seed,
+      mountain: extractImageData(mountain),
       craters: getRandomSubarray(centers, 100).map(center => {
         return {
           floorHeight: randFloat(-0.01, 0),
@@ -171,46 +135,44 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           debugColor: new Color(random() * 0xffffff),
         }
       }),
+      canyon: new Array(randomRangeInt(1, 5))
+        .fill(0)
+        .map(() => LatLong.random().toCartesian(radius, new Vector3())),
     }
-  }, [])
+  }, [mountain])
 
-  console.log(initialData)
+  console.log({ initialData, mountain })
 
   return (
     <>
-      <HelloPlanet
-        key="cool-mars"
-        position={position}
-        radius={radius}
-        minCellSize={64}
-        minCellResolution={32 * 2}
-        lodOrigin={lodPosition}
-        worker={worker}
-        data={initialData}
-        autoUpdate={false}
-      >
-        {isWalking ? (
-          // characters.map((c, index) => (
-          <>
-            <Character
-              originalPosition={camera.getWorldPosition(tempVector3).clone()}
-              key={camera.position.toArray().toString()}
-            />
-            <PointerLockControls />
-          </>
-        ) : (
-          // ))
-          <>
-            <MouseCaster />
-            <OrbitCamera />
-          </>
-        )}
-        <ReconcileElevationForLOD />
-        <MoonChunk />
-        <meshPhysicalMaterial metalness={0} reflectivity={0.01} vertexColors />
-        {/* <Ground /> */}
-        <Altimeter />
-      </HelloPlanet>
+      {!!mountain ? (
+        <HelloPlanet
+          key="cool-mars"
+          position={position}
+          radius={radius}
+          minCellSize={64}
+          minCellResolution={32 * 2}
+          lodOrigin={lodPosition}
+          worker={worker}
+          data={initialData}
+          autoUpdate={false}
+        >
+          <MoonControls />
+          <ReconcileElevationForLOD />
+          <MoonChunk />
+          <meshPhysicalMaterial
+            metalness={0}
+            reflectivity={0.01}
+            vertexColors
+          />
+          {/* <Ground /> */}
+          <Altimeter />
+        </HelloPlanet>
+      ) : (
+        <Html>
+          <h1>Loading...</h1>
+        </Html>
+      )}
     </>
   )
 }

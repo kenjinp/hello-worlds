@@ -15,12 +15,13 @@ export function createThreadedPlanetWorker<D>({
 }) {
   let builder: ReturnType<typeof buildPlanetChunk<D>>
   let id: string | null
-  self.onmessage = msg => {
+  self.onmessage = async msg => {
     if (msg.data.subject == ChunkBuilderThreadedMessageTypes.INITIAL_DATA) {
       builder = buildPlanetChunk<D>({
-        heightGenerator: heightGenerator(msg.data.buildChunkInitialProps),
+        heightGenerator: await heightGenerator(msg.data.buildChunkInitialProps),
         colorGenerator:
-          colorGenerator && colorGenerator(msg.data.buildChunkInitialProps),
+          colorGenerator &&
+          (await colorGenerator(msg.data.buildChunkInitialProps)),
       })
       id = msg.data.id
       return

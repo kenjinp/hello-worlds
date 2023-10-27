@@ -8,19 +8,210 @@ import {
   LinearSpline,
   NOISE_TYPES,
   Noise,
+  Vector3Pool,
   remap,
 } from "@hello-worlds/planets"
-import { Color } from "three"
+import { Color, Line3, Sphere, Vector2, Vector3 } from "three"
+import { projectSquareOntoSphere } from "./Moon.math"
 export type ThreadParams = {
   seed: string
   seaLevel?: number
+  mountain: ImageData
   craters: Crater[]
+  canyon: Vector3[]
 }
 
-export const heightGenerator: ChunkGenerator3Initializer<
-  ThreadParams,
-  number
-> = ({ radius, data: { craters, seed } }) => {
+function calculateUVCoordinates(
+  center: Vector3,
+  target: Vector3,
+  squareSize: number,
+  sphereRadius: number,
+  orientationAngle: number, // Angle in degrees
+): Vector2 | null {
+  const { x: centerX, y: centerY, z: centerZ } = center
+  const { x: targetX, y: targetY, z: targetZ } = target
+  // Calculate the distance from the sphere's center to the center of the square
+  const distanceToCenter = Math.sqrt(
+    centerX * centerX + centerY * centerY + centerZ * centerZ,
+  )
+
+  // Check if the center point is on the sphere's surface
+  if (Math.abs(distanceToCenter - sphereRadius) > 1e-6) {
+    return null
+  }
+
+  // Calculate the corner displacements based on the square size and orientation
+  const halfSquareSize = squareSize / 2
+  const orientationAngleRad = (orientationAngle * Math.PI) / 180
+  const cosAngle = Math.cos(orientationAngleRad)
+  const sinAngle = Math.sin(orientationAngleRad)
+
+  // const cornerDisplacements = [
+  //   { x: halfSquareSize, y: halfSquareSize },
+  //   { x: -halfSquareSize, y: halfSquareSize },
+  //   { x: -halfSquareSize, y: -halfSquareSize },
+  //   { x: halfSquareSize, y: -halfSquareSize },
+  // ].map(({ x, y }) => ({
+  //   x: x * cosAngle - y * sinAngle,
+  //   y: y * cosAngle + x * sinAngle,
+  //   z: 0, // The square is on the sphere's surface, so the z-coordinate is zero
+  // }))
+
+  // Calculate the corner positions by applying the displacements to the center position
+  // const squareCorners = cornerDisplacements.map(({ x, y, z }) => ({
+  //   x: centerX + x,
+  //   y: centerY + y,
+  //   z: centerZ + z,
+  // }))
+
+  // Check if the target point is inside the square
+  const scaleFactor = squareSize / (2 * sphereRadius)
+  const targetXProjected = (targetX - centerX) * scaleFactor
+  const targetYProjected = (targetY - centerY) * scaleFactor
+
+  if (
+    Math.abs(targetXProjected) <= squareSize / 2 &&
+    Math.abs(targetYProjected) <= squareSize / 2
+  ) {
+    // Calculate the UV coordinates based on the target position relative to the square's corners
+    const uvU = (targetXProjected + squareSize / 2) / squareSize
+    const uvV = (targetYProjected + squareSize / 2) / squareSize
+    return new Vector2(uvU, uvV)
+  } else {
+    return null
+  }
+}
+
+const pool = new Vector3Pool(500)
+function calculateSquareCorners(
+  center: Vector3,
+  squareSize: number,
+  sphereRadius: number,
+  orientationAngle: number, // Angle in degrees
+): Vector3[] | null {
+  const { x: centerX, y: centerY, z: centerZ } = center
+  // Calculate the distance from the sphere's center to the center of the square
+  const distanceToCenter = Math.sqrt(
+    centerX * centerX + centerY * centerY + centerZ * centerZ,
+  )
+
+  // Check if the center point is on the sphere's surface
+  if (Math.abs(distanceToCenter - sphereRadius) > 1e-6) {
+    return null
+  }
+
+  // Calculate the corner displacements based on the square size and orientation
+  const halfSquareSize = squareSize / 2
+  const orientationAngleRad = (orientationAngle * Math.PI) / 180
+  const cosAngle = Math.cos(orientationAngleRad)
+  const sinAngle = Math.sin(orientationAngleRad)
+
+  const cornerDisplacements = [
+    { x: halfSquareSize, y: halfSquareSize },
+    { x: -halfSquareSize, y: halfSquareSize },
+    { x: -halfSquareSize, y: -halfSquareSize },
+    { x: halfSquareSize, y: -halfSquareSize },
+  ].map(({ x, y }) => ({
+    x: x * cosAngle - y * sinAngle,
+    y: y * cosAngle + x * sinAngle,
+    z: 0, // The square is on the sphere's surface, so the z-coordinate is zero
+  }))
+
+  // Calculate the corner positions by applying the displacements to the center position
+  const squareCorners: Vector3[] = cornerDisplacements.map(({ x, y, z }) => {
+    return pool.get().set(centerX + x, centerY + y, centerZ + z)
+  })
+
+  return squareCorners
+}
+
+// function insideProjectedSquare () {
+//   var box = <Your non-aligned box>
+// var point = <Your point>
+
+// box.geometry.computeBoundingBox(); // This is only necessary if not allready computed
+// box.updateMatrixWorld(true); // This might be necessary if box is moved
+
+// var boxMatrixInverse = new THREE.Matrix4().getInverse(box.matrixWorld);
+
+// var inverseBox = box.clone();
+// var inversePoint = point.clone();
+
+// inverseBox.applyMatrix(boxMatrixInverse);
+// inversePoint.applyMatrix4(boxMatrixInverse);
+
+// var bb = new THREE.Box3().setFromObject(inverseBox);
+
+// var isInside = bb.containsPoint(inversePoint);
+// }
+
+function isTargetPositionInsideSquare(
+  center: Vector3,
+  target: Vector3,
+  squareSize: number,
+  sphereRadius: number,
+  orientationAngle: number, // Angle in degrees
+): boolean {
+  const { x: centerX, y: centerY, z: centerZ } = center
+  const { x: targetX, y: targetY, z: targetZ } = target
+
+  // Calculate the distance between the target position and the center of the square
+  const distanceX = targetX - centerX
+  const distanceY = targetY - centerY
+  const distanceZ = targetZ - centerZ
+  const distanceToTarget = target.distanceTo(center)
+
+  // Calculate the projection of the target point onto the square
+  const scaleFactor = squareSize / (2 * sphereRadius)
+  const targetXProjected = distanceX * scaleFactor
+  const targetYProjected = distanceY * scaleFactor
+
+  // Check if the projected target point is inside the square
+  return (
+    Math.abs(targetXProjected) <= squareSize / 2 &&
+    Math.abs(targetYProjected) <= squareSize / 2
+  )
+}
+
+async function applyTerrainStamp(bmp: ImageBitmap, radius: number) {
+  const { width, height } = bmp
+  const scaleFromRadius = radius * 2
+  // Calculate the scaling ratio to maintain the aspect ratio
+  const scaleX = scaleFromRadius / width
+  const scaleY = scaleFromRadius / height
+  const scale = Math.min(scaleX, scaleY)
+
+  // Calculate the new scaled dimensions
+  const newWidth = width * scale
+  const newHeight = height * scale
+
+  // Set the canvas size to the new dimensions
+  const canvas = new OffscreenCanvas(width, height)
+
+  const ctx = canvas.getContext("2d")
+  ctx.drawImage(bmp, 0, 0)
+  bmp.close()
+  const imgData = ctx.getImageData(0, 0, newWidth, newHeight)
+  return imgData
+}
+
+export const heightGenerator: Promise<
+  ChunkGenerator3Initializer<ThreadParams, number>
+> = async ({ radius, data: { craters, seed, canyon, mountain } }) => {
+  // const loadStuff = async () => {
+  //   const resp = await fetch("/img/terrain-stamps/ridged-00.png")
+  //   if (!resp.ok) {
+  //     throw "network error"
+  //   }
+  //   const blob = await resp.blob()
+  //   const bmp = await createImageBitmap(blob)
+  //   return bmp
+  // }
+  // const bmp = await loadStuff()
+  // const blah = craters.map(async ({ radius }) => {
+  //   return await applyTerrainStamp(await createImageBitmap(mountain), radius)
+  // })
+
   const latLong = new LatLong()
   setRandomSeed(seed)
   const sizeConst = 12
@@ -194,12 +385,53 @@ export const colorGenerator: ColorGeneratorInitializer<ThreadParams> = ({
     height: 1000.0,
     scale: radius / 2,
   })
-
+  const tempLatLong1 = new LatLong()
+  const tempLatLong2 = new LatLong()
+  const tempV = new Vector3()
+  const tempV2 = new Vector3()
+  const lines = [new Line3(), new Line3(), new Line3(), new Line3()]
+  const sphere = new Sphere(new Vector3(), radius)
   return ({ height, input, worldPosition }) => {
     for (let i = 0; i < craters.length; i++) {
       const crater = craters[i]
       if (worldPosition.distanceTo(crater.center) <= crater.radius) {
-        return crater.debugColor
+        const blah = projectSquareOntoSphere(
+          tempV.copy(worldPosition),
+          Math.sqrt(2 * crater.radius),
+          sphere,
+          tempV2.copy(crater.center),
+        )
+        if (blah) {
+          return crater.debugColor
+        }
+        // const center = LatLong.cartesianToLatLong(crater.center, tempLatLong1)
+        // const target = LatLong.cartesianToLatLong(worldPosition, tempLatLong2)
+        // const blah = calculateSquareCorners(
+        //   tempV.copy(crater.center),
+        //   Math.sqrt(2 * crater.radius),
+        //   radius,
+        //   45,
+        // )
+
+        // if (blah) {
+        //   // get lines from corners
+        //   // for (let i = 0; i <= blah.length; i++) {
+        //   //   let a = blah[i]
+        //   //   let b = blah[i + 1]
+        //   //   if (!b) {
+        //   //     b = blah[0]
+        //   //   }
+        //   //   lines[i].set(a, b)
+        //   // }
+
+        //   for (const v of blah) {
+        //     if (worldPosition.distanceTo(v) <= crater.radius / 10) {
+        //       return crater.debugColor
+        //     }
+
+        //     // const p = v.closestPointToPoint(worldPosition, false, tempV2)
+        //   }
+        // }
       }
     }
     // take inputPosition

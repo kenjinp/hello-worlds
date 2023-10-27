@@ -13,8 +13,8 @@ import {
   Vector2,
   Vector3,
 } from "three"
+import { useGetExactPlanetaryElevation } from "../../hooks/useGetExactPlanetaryElevation"
 import { Light } from "./Light"
-import { useGetExactPlanetaryElevation } from "./useGetExactPlanetaryElevation"
 
 // steps
 // donezo 1. place character model on planet
@@ -136,8 +136,11 @@ export const Character: FC<{
     // get direction (normalized vector) from core to character
     // then multiply it by distance
     const dirToPlayer = position.sub(planet.position).normalize()
-    const { elevation } = getExactPlanetElevationAtPosition(position)
-    const playerAltitude = elevation
+    const e = getExactPlanetElevationAtPosition(position)
+    if (!e) {
+      return
+    }
+    const playerAltitude = e.elevation
     const playerHeightFromCore = planet.radius + playerAltitude + fudgeRoom
     const playerGroundPosition = dirToPlayer
       .clone()
