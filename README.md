@@ -4,7 +4,7 @@ https://user-images.githubusercontent.com/5485824/196038523-2ff806cd-6d75-4d7e-8
 
 ## Overview
 
-**Virtual javascript worlds at planetary scales.**
+**CPU-based terrain generation for three.js or react three fiber**
 
 > **Warning**
 > These libraries are a work in progress. APIs may change unexpectedly until they reach version 1.0.

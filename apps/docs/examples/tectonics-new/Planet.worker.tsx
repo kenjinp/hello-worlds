@@ -19,6 +19,7 @@ import Plate from "./tectonics/Plate"
 export type ThreadParams = {
   size: number
   tectonics: Tectonics
+  vertexUserData: Map<Vector3,any>
 }
 const tempLine3 = new Line3()
 const tempVector3 = new Vector3()
@@ -37,9 +38,10 @@ const distanceToSegment = (position: Vector3, a: Vector3, b: Vector3) => {
 }
 
 const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
-  data: { size = 4, tectonics, seed },
+  data,
   radius,
 }) => {
+  const { size = 4, tectonics, seed } = data;
   tectonics.plates.forEach(plate => {
     Plate.generatePolygon(plate)
   })
@@ -66,32 +68,45 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
     const warpedVector = _tempVector3.copy(input).addScalar(m)
 
     const plate = Tectonics.getPlateFromVector3(tectonics, input)
-    const wplate = Tectonics.getPlateFromVector3(tectonics, warpedVector)
     const [min, max] = Plate.getDistancesToPlateEdge(plate, input)
+    // const min = realMin + m
     // const [wmin,wmax] = Plate.getDistancesToPlateEdge(plate, warpedVector)
     // const influence = remap(distance, 0, radius / 2, 0, 1)
-    const arbitraryMaxDistanceValue = 80_000
+    const arbitraryMaxDistanceValue = 50_000
     const distance = remap(min, 0, radius / 6, 0, arbitraryMaxDistanceValue)
+  
     const alpha = remap(min, 80_000, 0, 1, 0)
     const biasedDistance = MathUtils.lerp(distance + m, distance, alpha)
 
-    // remap(distance, 0, 1000, 0, 1)
+    // vertexUserData.set(input, {
+    //   oceanic: plate.data.oceanic
+    // })
 
-    return plate.data.oceanic ? 0 : distance
+    // remap(distance, 0, 1000, 0, 1)
+    return plate.data.oceanic ? -distance : distance
   }
 }
 
 const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
-> = ({ data: { size = 4, tectonics } }) => {
+> = ({ data: { size = 4, tectonics, seed }, radius }) => {
   const color = new Color(0x000000)
   const regionColor = new Color(0x000000)
   const oceanColor = new Color(0x07bbfc)
   const groundColor = new Color(0x9fc164)
   const tempLatLong = new LatLong()
-  return ({ worldPosition, height }) => {
-    const plate = Tectonics.getPlateFromVector3(tectonics, worldPosition)
+  const warp = new Noise({
+    octaves: 1,
+    seed,
+    height: 5000,
+    scale: radius / 10,
+    noiseType: NOISE_TYPES.BILLOWING,
+  })
+
+  return ({ worldPosition, data, height }) => {
+    // const plate = Tectonics.getPlateFromVector3(tectonics, worldPosition)
+    // const w = warp.getFromVector(worldPosition)
     // const latLong = tempLatLong.cartesianToLatLong(worldPosition)
     // const region = latLngToCell(latLong.lat, latLong.lon, HEX_GRID_RESOLUTION)
     // const isBoundary = plate.internalEdges.has(region)
@@ -105,11 +120,7 @@ const colorGenerator: ChunkGenerator3Initializer<
 
     // setRandomSeed(region)
     // regionColor.set(random() * 0xffffff)
-    // return isBoundary
-    //   ? color.set(0xff6666)
-    //   : plate?.data.color
-    //   ? color.set(plate.data.color).lerp(regionColor, 0.15)
-    //   : color.set(0x000000)
+    // return color.set(plate.data.color).lerp(regionColor, 0.15)
     // const endColor = plate
     //   ? plate.data.oceanic
     //     ? oceanColor
@@ -117,7 +128,8 @@ const colorGenerator: ChunkGenerator3Initializer<
     //   : color
     // return endColor //endColor.lerp(regionColor, 0.15)
 
-    const oceanOffsetColor = plate.data.oceanic ? oceanColor : groundColor
+
+    // const oceanOffsetColor = plate.data.oceanic ? oceanColor : groundColor
 
     // return oceanOffsetColor
 

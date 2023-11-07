@@ -1,14 +1,19 @@
+import { BufferAttribute, BufferGeometry, Float32BufferAttribute } from "three"
 import { BuildChunkInitialParams, ChunkGeneratorProps } from "../chunk/types"
 import { fixEdgeSkirt } from "./chunk-helpers/fixEdgeSkirts"
 import { generateIndices } from "./chunk-helpers/generateIndices"
 import { generateInitialHeights } from "./chunk-helpers/generateInitialHeights"
 import { generateNormals } from "./chunk-helpers/generateNormals"
+import { MeshBVH } from "three-mesh-bvh"
 
 export function buildFlatWorldChunk<D>(
   initialParams: BuildChunkInitialParams<D>,
 ) {
   const { heightGenerator, colorGenerator, terrainSplatGenerator } =
     initialParams
+
+  const geo = new BufferGeometry()
+
   return function runBuildChunk(params: ChunkGeneratorProps<D>) {
     const { resolution, origin, width, offset, radius: size, inverted } = params
 
@@ -53,12 +58,18 @@ export function buildFlatWorldChunk<D>(
     coordsArray.set(coords, 0)
     indicesArray.set(indices, 0)
 
+    geo.setAttribute("position", new Float32BufferAttribute(positionsArray, 3))
+    geo.setIndex(new BufferAttribute(new Uint32Array(indicesArray), 1))
+    const bvh = new MeshBVH(geo)
+    const serializedBVH = MeshBVH.serialize(bvh)
+
     return {
       positions: positionsArray,
       colors: colorsArray,
       normals: normalsArray,
       uvs: coordsArray,
       indices: indicesArray,
+      bvh: serializedBVH,
     }
   }
 }

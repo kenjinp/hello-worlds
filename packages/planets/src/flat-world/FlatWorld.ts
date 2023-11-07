@@ -18,7 +18,7 @@ export interface FlatWorldProps<D> {
   minCellSize: number
   minCellResolution: number
   material?: Material
-  position: Vector3
+  position?: Vector3
   workerProps: FlatWorldBuilderProps<D>["workerProps"]
   data: D
   lodDistanceComparisonValue?: number
@@ -41,7 +41,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     material,
     data,
     workerProps,
-    position,
+    position = new Vector3(),
     size,
     lodDistanceComparisonValue,
     inverted = false,

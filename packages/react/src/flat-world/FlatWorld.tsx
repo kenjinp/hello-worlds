@@ -80,7 +80,7 @@ function FlatWorldInner<D>(
     data,
     numWorkers = concurrency,
     lodOrigin,
-    position,
+    position = new Vector3(),
     worker,
     size,
     lodDistanceComparisonValue,

@@ -33,7 +33,7 @@ export const ExampleInner: React.FC = () => {
                   <SpaceBox />
                   <directionalLight
                     color={new Color("white")}
-                    intensity={0.4}
+                    intensity={2}
                   />
                   <PostProcessing>
                     <group>

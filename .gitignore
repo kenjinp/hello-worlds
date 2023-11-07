@@ -8,3 +8,4 @@ dist-ssr
 .next
 out
 .next
+.turbo

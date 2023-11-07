@@ -25,6 +25,7 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {
+  const vertextUserDataMap = new Map();
   const {
     radius,
     worldMatrix,
