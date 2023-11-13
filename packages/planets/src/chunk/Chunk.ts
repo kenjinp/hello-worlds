@@ -23,11 +23,15 @@ export interface ChunkRebuildProps {
   colors: ArrayBuffer
   normals: ArrayBuffer
   uvs: ArrayBuffer
+  localUvs: ArrayBuffer
   indices: ArrayBuffer
   textureSplatIndices: ArrayBuffer
   textureSplatStrengths: ArrayBuffer
   material?: Material
   bvh: SerializedBVH
+  heightmap?: ArrayBuffer
+  minHeight: number
+  maxHeight: number
 }
 
 // This represents a single terrain tile
@@ -42,7 +46,11 @@ export class Chunk extends Mesh {
   origin: Vector3
   inverted: boolean
   minCellSize: number
+  minHeight: number = 0
+  maxHeight: number = 0
   lodTable: ReturnType<typeof getLODTable>
+  heightmap?: ArrayBuffer
+
   constructor(props: ChunkProps) {
     // let's build ourselves a mesh with the base material
     super(new THREE.BufferGeometry(), props.material)
@@ -110,6 +118,9 @@ export class Chunk extends Mesh {
   }
 
   rebuildMeshFromData(data: ChunkRebuildProps) {
+    this.minHeight = data.minHeight
+    this.maxHeight = data.maxHeight
+
     this.geometry.setAttribute(
       "position",
       new THREE.Float32BufferAttribute(data.positions, 3),
@@ -126,6 +137,10 @@ export class Chunk extends Mesh {
       "uv",
       new THREE.Float32BufferAttribute(data.uvs, 2),
     )
+    this.geometry.setAttribute(
+      "localUvs",
+      new THREE.Float32BufferAttribute(data.localUvs, 2),
+    )
     this.geometry.setIndex(
       new THREE.BufferAttribute(new Uint32Array(data.indices), 1),
     )
@@ -140,11 +155,13 @@ export class Chunk extends Mesh {
       )
     }
 
+    if (data.heightmap) {
+      this.heightmap = data.heightmap
+    }
+
     this.geometry.attributes.position.needsUpdate = true
     this.geometry.attributes.normal.needsUpdate = true
     this.geometry.attributes.color.needsUpdate = true
-    // this.geometry.attributes. .needsUpdate = true
-    // this.geometry.attributes.coords.needsUpdate = true;
 
     // swap materials if requested
     if (data.material) {

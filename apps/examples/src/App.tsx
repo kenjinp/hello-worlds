@@ -11,6 +11,9 @@ import { Canvas } from "./components/Canvas"
 import { ExampleWrapper } from "./components/ExampleWrapper"
 import Basic from "./examples/basic/Basic"
 import Grass from "./examples/grass/GrassExample"
+import GrassTerrain from "./examples/grass/GrassTerrainExample"
+import Heightmap from "./examples/heightmap/Heightmap"
+import Scatter from "./examples/scatter/Scatter"
 
 interface IRoute {
   name: string
@@ -25,9 +28,24 @@ const routes: IRoute[] = [
     component: Basic,
   },
   {
+    name: "Heightmap output",
+    path: "/heightmap-output",
+    component: Heightmap,
+  },
+  {
     name: "Grass",
     path: "/grass",
     component: Grass,
+  },
+  {
+    name: "Grass w/ Terrain",
+    path: "/grass-terrain",
+    component: GrassTerrain,
+  },
+  {
+    name: "Scatter",
+    path: "/scatter",
+    component: Scatter,
   },
 ]
 

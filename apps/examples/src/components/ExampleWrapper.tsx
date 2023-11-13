@@ -1,12 +1,11 @@
 import { CameraControls } from "@react-three/drei"
 import * as React from "react"
-import { Color } from "three"
 
 export const windowBounds = "window-bounds"
 
 export const ExampleWrapper: React.FC<
   React.PropsWithChildren<{
-    controls: React.ReactNode
+    controls?: React.ReactNode
   }>
 > = ({
   children,
@@ -14,7 +13,7 @@ export const ExampleWrapper: React.FC<
 }) => {
   return (
     <>
-      <directionalLight color={new Color("white")} intensity={10} />
+      <directionalLight intensity={2} />
       {children}
       {controls}
     </>

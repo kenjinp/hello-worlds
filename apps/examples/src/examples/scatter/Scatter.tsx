@@ -4,11 +4,13 @@ import { useThree } from "@react-three/fiber"
 import { DoubleSide, Euler, Vector3 } from "three"
 
 import { useRef } from "react"
-import Worker from "./Basic.worker?worker"
+import Worker from "./Scatter.worker?worker"
 
 const worker = () => new Worker()
 export default () => {
+  const controls = useThree(state => state.controls)
   const camera = useThree(state => state.camera)
+  const scene = useThree(state => state.scene)
   const flatWorld = useRef<HelloFlatWorld<any>>(null)
 
   camera.position.set(-809.4739943418741, 739.46933062522, 651.9329496161308)

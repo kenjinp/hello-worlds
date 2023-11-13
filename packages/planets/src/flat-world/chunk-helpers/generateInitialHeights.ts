@@ -22,6 +22,14 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
   colorGenerator?: ColorGenerator<D>
 }
 
+// function calculateUVCoordinates(x: number, y: numbe, width: number, height: number): [number, number] {
+//   // Normalize the coordinates to range [0, 1]
+//   const u = x / (this.width - 1);
+//   const v = y / (this.height - 1);
+
+//   return { u, v };
+// }
+
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {
@@ -45,7 +53,13 @@ export const generateInitialHeights = <D>(
   const positions = []
   const colors = []
   const coords = []
+  const localCoords = []
   const up = []
+  const heights = []
+  let heightsMax = 0
+  let heightsMin = Infinity
+  let minY = 0
+  let minX = 0
 
   for (let x = -1; x <= effectiveResolution + 1; x++) {
     const xp = (width * x) / effectiveResolution
@@ -54,6 +68,11 @@ export const generateInitialHeights = <D>(
 
       _P.set(xp - half, yp - half, 0)
       _P.add(offset)
+      if (x === -1 && y === -1) {
+        minX = _P.x
+        minY = _P.y
+      }
+
       // Compute a world space position to sample noise
       _W.copy(_P)
       _W.applyMatrix4(localToWorld)
@@ -72,6 +91,10 @@ export const generateInitialHeights = <D>(
         inverted,
         data,
       })
+      heights.push(height)
+      heightsMax = Math.max(heightsMax, height)
+      heightsMin = Math.min(heightsMin, height)
+
       const color = colorGenerator
         ? colorGenerator({
             input: colorInputVector.set(_W.x, _W.y, height).clone(),
@@ -104,9 +127,18 @@ export const generateInitialHeights = <D>(
 
       positions.push(_P.x, _P.y, _P.z)
 
-      _C.copy(_W)
-      _C.add(_H)
-      coords.push(_C.x, _C.y, _C.z)
+      const scale = (2 * radius) / effectiveResolution
+      const uvOffset = radius
+      const ux = (_P.x + uvOffset) / scale
+      const uy = (_P.y + uvOffset) / scale
+
+      const u = 1 - ux / effectiveResolution
+      const v = 1 - uy / effectiveResolution
+      const localU = 1 - x / effectiveResolution
+      const localV = 1 - y / effectiveResolution
+      localCoords.push(localU, localV)
+
+      coords.push(u, v)
       up.push(0, 0, 1)
     }
   }
@@ -116,5 +148,9 @@ export const generateInitialHeights = <D>(
     colors,
     coords,
     up,
+    heights,
+    heightsMax,
+    heightsMin,
+    localCoords,
   }
 }

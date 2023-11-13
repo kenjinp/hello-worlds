@@ -4,7 +4,6 @@ import {
   createThreadedFlatWorldWorker,
   DEFAULT_NOISE_PARAMS,
   Noise,
-  NOISE_TYPES,
 } from "@hello-worlds/planets"
 import { Color } from "three"
 
@@ -18,22 +17,20 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   const terrainNoise = new Noise({
     ...DEFAULT_NOISE_PARAMS,
     seed,
-    height: 100,
-    scale: 1000,
-    noiseType: NOISE_TYPES.BILLOWING,
+    height: 500,
+    scale: 5000,
   })
 
   return ({ input }) => {
-    // return 0
-    return terrainNoise.getFromVector(input.addScalar(10000))
+    return terrainNoise.getFromVector(input)
   }
 }
 
 const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
-> = props => {
-  const color = new Color(Math.random() * 0xffffff)
+> = _ => {
+  const color = new Color().setHSL(Math.random(), 1, 0.5)
   return () => {
     return color
   }

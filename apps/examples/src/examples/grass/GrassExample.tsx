@@ -1,19 +1,8 @@
-import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
-import { FlatWorld } from "@hello-worlds/react"
-import { useThree } from "@react-three/fiber"
-import { DoubleSide, Euler, Vector3 } from "three"
-
 import { useControls } from "leva"
-import { useRef } from "react"
+import { Vector3 } from "three"
 import { Grass } from "./Grass"
-import Worker from "./Grass.worker?worker"
 
-const worker = () => new Worker()
 export default () => {
-  const controls = useThree(state => state.controls)
-  const camera = useThree(state => state.camera)
-  const scene = useThree(state => state.scene)
-  const flatWorld = useRef<HelloFlatWorld<any>>(null)
   const grassProps = useControls({
     totalGrassBlades: {
       value: 1024,
@@ -53,27 +42,14 @@ export default () => {
   })
 
   return (
-    <>
-      <Grass {...grassProps} />
-      <group
-        visible={false}
-        // Rotate World so it's along the x axis
-        rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
-      >
-        <FlatWorld
-          ref={flatWorld}
-          size={1_000}
-          minCellSize={32}
-          minCellResolution={32 * 2}
-          lodOrigin={camera.position}
-          worker={worker}
-          data={{
-            seed: "Basic Example",
-          }}
-        >
-          <meshStandardMaterial vertexColors side={DoubleSide} />
-        </FlatWorld>
-      </group>
-    </>
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial />
+      <mesh position={new Vector3(0, 0, 10)}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial />
+        <Grass {...grassProps} />
+      </mesh>
+    </mesh>
   )
 }
