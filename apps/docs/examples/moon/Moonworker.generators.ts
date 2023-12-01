@@ -287,8 +287,11 @@ export const heightGenerator: Promise<
   })
 
   return ({ input }) => {
+    // const noiseValue = noiseM.getFromVector(input)
+    // const noiseWarpValue = noiseW.getFromVector(input)
+
     // const v = craterHeight(input, craters, craterNoise)
-    const v = pyramidHeight(input, craters, craterNoise)
+    // const v = pyramidHeight(input, craters, craterNoise)
 
     const n = noiseM.getFromVector(input)
     const warp = noiseW.getFromVector(input)
@@ -316,13 +319,13 @@ export const heightGenerator: Promise<
       glacierFactor = glacierHeightConstant
     }
 
-    const craterHeightHeights = v //Math.max(v, -1000)
+    // const craterHeightHeights = v //Math.max(v, -1000)
 
     return (
       rigidLandsHeight * mask +
       dunelandsHeight * maskB +
       Math.abs(absV) * -oceanMaskValue +
-      craterHeightHeights +
+      // craterHeightHeights +
       glacierFactor
     )
   }

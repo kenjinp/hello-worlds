@@ -10,6 +10,7 @@ export const fixEdgeSkirt = (
   normals: number[],
   width: number,
   size: number,
+  skirtDepth: number,
   inverted: boolean,
 ) => {
   const effectiveResolution = resolution + 2
@@ -23,9 +24,16 @@ export const fixEdgeSkirt = (
 
     // pull skirt down
     // The skirt size is set by the size of the chunk, but experimentally it creates crazy spikes if it's not clamped.
-    const skirtSize = MathUtils.clamp(width, 0, size / 10)
-    _D.multiplyScalar(inverted ? skirtSize : -skirtSize)
-    _P.add(_D)
+    if (skirtDepth) {
+      // Pull skirt down to an assigned depth
+      _P.add(_D)
+      _P.setZ(inverted ? skirtDepth : -skirtDepth)
+    } else {
+      // Pull skirt down based on chunk size
+      const skirtSize = MathUtils.clamp(width, 0, size / 10)
+      _D.multiplyScalar(inverted ? skirtSize : -skirtSize)
+      _P.add(_D)
+    }
 
     positions[skirtIndex * 3 + 0] = _P.x
     positions[skirtIndex * 3 + 1] = _P.y

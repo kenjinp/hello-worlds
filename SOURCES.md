@@ -9,6 +9,7 @@ If you want to write your own procgen utilities, you might try starting from the
 - [Simon's planet generation series](https://www.youtube.com/watch?v=hHGshzIXFWY&list=PLRL3Z3lpLmH3PNGZuDNf2WXnLTHpN9hXy)
 - [generating naming languages](http://mewo2.com/notes/naming-language/)
 - [Donjon Medieval Demographics Calculator](https://donjon.bin.sh/fantasy/demographics/)
+- [Manual depth testing w volumetrics via Cody](https://codesandbox.io/s/three-js-manual-depth-testing-w-volumetrics-lf67su?file=/src/index.js)
 
 ## Special Thanks
 
@@ -19,4 +20,5 @@ For being supportive and inspirational
 - [Javelin Discord](https://discord.gg/9qvBurTQwb)
 
 ## Attributions
+
 - Intro video music by Polar Nights - ["A Hole in My Roof"](https://www.epidemicsound.com/track/IvPmHEB0UY/); licensed from epidemic sounds.

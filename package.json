@@ -3,12 +3,14 @@
   "author": "Kenneth Pirman <github@kenny.wtf>",
   "description": "Monorepo for Hello-Worlds – Your Virtual Worldbuilding toolkit",
   "version": "0.0.0",
-  "private": "true",
+  "private": true,
   "license": "MIT",
   "repository": "git@github.com:kenjinp/hello-worlds",
   "scripts": {
-    "start": "pnpm --filter=docs dev",
-    "build-deps": "pnpm --filter=@hello-worlds/* build",
+    "start": "pnpm dev",
+    "dev": "turbo run dev --filter=examples",
+    "docs": "turbo run dev --filter=docs",
+    "build": "turbo run build --filter=./packages/*",
     "preinstall": "npx only-allow pnpm",
     "test": "jest --passWithNoTests",
     "deliver": "pnpm --filter=!docs build && pnpm -r test",
@@ -16,10 +18,33 @@
     "ci:release": "pnpm deliver && pnpm changeset publish",
     "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
+  "dependencies": {
+    "@hello-worlds/core": "workspace:*",
+    "@hello-worlds/cultures": "workspace:*",
+    "@hello-worlds/planets": "workspace:*",
+    "@hello-worlds/react": "workspace:*",
+    "@hello-worlds/tongues": "workspace:*",
+    "@hello-worlds/vfx": "workspace:^",
+    "@react-three/drei": "9.88.7",
+    "@react-three/fiber": "8.15.8",
+    "@react-three/postprocessing": "^2.15.8",
+    "camera-controls": "^2.7.3",
+    "leva": "^0.9.27",
+    "r3f-perf": "^6.6.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "three": "0.158.0",
+    "three-custom-shader-material": "^4.0.0",
+    "three-stdlib": "^2.23.10"
+  },
   "devDependencies": {
     "@changesets/cli": "^2.23.2",
+    "@types/node": "18.11.10",
+    "@types/react": "^18.0.0",
+    "@types/three": "^0.141.0",
     "prettier": "^2.8.1",
-    "prettier-plugin-glsl": "^0.0.5"
+    "prettier-plugin-glsl": "^0.0.5",
+    "prettier-plugin-organize-imports": "^3.2.3"
   },
   "workspaces": [
     "infra/*",

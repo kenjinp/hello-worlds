@@ -3,6 +3,19 @@
 import { random } from "@hello-worlds/core"
 import { Mesh, Quaternion, Vector3 } from "three"
 import { tempVector3 } from "../utils"
+import { LatLong } from "./LatLong"
+
+export const DAY = 86_400_000
+export const km = 1_000
+export const AU = 149_597_870_700
+export const MOON_DISTANCE = 384_400 * km
+export const SUN_RADIUS = 696_000 * km
+export const EARTH_RADIUS = 6_357 * km
+export const MARS_RADIUS = 3_389.5 * km
+export const MOON_RADIUS = 1_737.4 * km
+export const TITAN_RADIUS = 2574.7 * km
+export const CERES_RADIUS = 469.73 * km
+export const C = 299_792_458
 
 // When k = 0, this behaves identically to min(a, b)
 export function smoothMin(a: number, b: number, k: number) {
@@ -144,4 +157,40 @@ export function clampPointToSphereSurface(
 ) {
   const direction = point.clone().sub(sphereCenter).normalize()
   return direction.multiplyScalar(sphereRadius).add(sphereCenter)
+}
+
+// Generate random points on a sphere
+export function fibonacciSphere(
+  numberOfPoints: number,
+  jitter: number,
+  randFloat: () => number,
+): LatLong[] {
+  const latLong: LatLong[] = []
+  const randomLat = []
+  const randomLong = []
+  // Second algorithm from http://web.archive.org/web/20120421191837/http://www.cgafaq.info/wiki/Evenly_distributed_points_on_sphere
+  const s = 3.6 / Math.sqrt(numberOfPoints)
+  const dlong = Math.PI * (3 - Math.sqrt(5)) /* ~2.39996323 */
+  const dz = 2.0 / numberOfPoints
+  for (
+    let k = 0, long = 0, z = 1 - dz / 2;
+    k !== numberOfPoints;
+    k++, z -= dz
+  ) {
+    const r = Math.sqrt(1 - z * z)
+    let latDeg = (Math.asin(z) * 180) / Math.PI
+    let lonDeg = (long * 180) / Math.PI
+    if (randomLat[k] === undefined) randomLat[k] = randFloat() - randFloat()
+    if (randomLong[k] === undefined) randomLong[k] = randFloat() - randFloat()
+    latDeg +=
+      jitter *
+      randomLat[k] *
+      (latDeg -
+        (Math.asin(Math.max(-1, z - (dz * 2 * Math.PI * r) / s)) * 180) /
+          Math.PI)
+    lonDeg += jitter * randomLong[k] * (((s / r) * 180) / Math.PI)
+    latLong.push(new LatLong(latDeg, lonDeg % 360.0))
+    long += dlong
+  }
+  return latLong
 }

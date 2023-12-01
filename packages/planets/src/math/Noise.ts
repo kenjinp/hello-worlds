@@ -79,7 +79,7 @@ export class Noise {
   }
 }
 
-function calculateNoiseDerivative(
+export function calculateNoiseDerivative(
   noise: Noise,
   position: Vector3,
   stepSize: number,

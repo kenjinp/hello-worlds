@@ -57,6 +57,7 @@ export interface ChunkGeneratorProps<D> {
   resolution: number
   inverted: boolean
   origin: Vector3
+  skirtDepth?: number
   worldMatrix: Object3D["matrix"]
 }
 

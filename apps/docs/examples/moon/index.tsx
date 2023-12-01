@@ -55,7 +55,7 @@ export const ExampleInner: React.FC = () => {
     }
   }, [])
 
-  const showAtmo = true
+  const showAtmo = false
   const showPerf = false
   const radius = 500 // MARS_RADIUS
 
@@ -79,7 +79,7 @@ export const ExampleInner: React.FC = () => {
                       .multiplyScalar(AU)
                       .multiplyScalar(10)}
                   >
-                    <FarStars saturation={1} />
+                    {/* <FarStars saturation={1} /> */}
                   </group>
 
                   <SpaceBox />

@@ -23,7 +23,7 @@ export interface PlanetProps<D> {
   minCellSize: number
   minCellResolution: number
   material?: Material
-  position: Vector3
+  position?: Vector3
   workerProps: PlanetBuilderProps<D>["workerProps"]
   lodDistanceComparisonValue?: number
   data: D
@@ -51,7 +51,7 @@ export class Planet<D = Record<string, any>> extends Object3D {
     material,
     data,
     workerProps,
-    position,
+    position = new Vector3(),
     lodDistanceComparisonValue,
     inverted = false,
   }: PlanetProps<D>) {

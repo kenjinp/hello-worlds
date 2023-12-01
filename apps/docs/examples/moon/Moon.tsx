@@ -6,7 +6,7 @@ import { Html, useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import Poisson from "poisson-disk-sampling"
 import React, { useMemo } from "react"
-import { Color, Texture, Vector3 } from "three"
+import { Color, MeshStandardMaterial, Texture, Vector3 } from "three"
 import { randFloat } from "three/src/math/MathUtils"
 import { Altimeter } from "./Altimeter"
 import { MoonChunk } from "./Moon.chunk"
@@ -160,11 +160,12 @@ export const Moon: React.FC<{ radius: number }> = ({ radius }) => {
           <MoonControls />
           <ReconcileElevationForLOD />
           <MoonChunk />
-          <meshPhysicalMaterial
+          <meshStandardMaterial />
+          {/* <meshPhysicalMaterial
             metalness={0}
             reflectivity={0.01}
             vertexColors
-          />
+          /> */}
           {/* <Ground /> */}
           <Altimeter />
         </HelloPlanet>

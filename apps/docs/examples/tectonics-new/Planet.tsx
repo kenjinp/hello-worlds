@@ -121,6 +121,12 @@ export const ExamplePlanet: React.FC = () => {
     })
   }, [numberOfPlates, resolution])
 
+  const userData = React.useMemo(() => ({
+    seed: "Tectonics",
+    tectonics,
+    vertexUserData: new Map()
+  }), [tectonics])
+
   return (
     <>
       <Planet
@@ -132,10 +138,7 @@ export const ExamplePlanet: React.FC = () => {
         lodOrigin={camera.position}
         lodDistanceComparisonValue={3}
         worker={worker}
-        data={{
-          seed: "Tectonics",
-          tectonics,
-        }}
+        data={userData}
         autoUpdate={false}
       >
         {/* <PlateLabels tectonics={tectonics} /> */}

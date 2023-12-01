@@ -4,7 +4,7 @@ https://user-images.githubusercontent.com/5485824/196038523-2ff806cd-6d75-4d7e-8
 
 ## Overview
 
-**Virtual javascript worlds at planetary scales.**
+**CPU-based terrain generation for three.js or react three fiber**
 
 > **Warning**
 > These libraries are a work in progress. APIs may change unexpectedly until they reach version 1.0.
@@ -37,14 +37,13 @@ Find me on [Twitter](https://twitter.com/KennyPirman), streaming on [Twitch](htt
 
 ## Alternatives 💕
 
-There are a couple solutions allow you to create beautiful terrain for the web:
+There are a couple solutions allow you to create beautiful terrain using web technologies:
 
-#### Heightmap-based
+- [PlanetTechJS](hhttps://github.com/miguelmyers8/PlanetTechJS) - "What sets this library apart is its utilization of the GPU for all tasks. This includes generating textures for each facet, performing displacement, and shaping PlaneGeometries into spherical forms; the entire process occurs on the GPU. Consequently, there is no need for WebWorkers at this stage."
 
-These require high resoluion sample data generated offline, and don't generate them procedurally
+- [terra](https://github.com/fintelia/terra) - rust-based renderer of offline-generated heightmaps
 
-- [three-landscape](https://github.com/nwpointer/three-landscape)
-- [terra](https://github.com/fintelia/terra)
+- [three-landscape](https://github.com/nwpointer/three-landscape) - beautiful terrain material
 
 <!-- ## Support ☕
 
