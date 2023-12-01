@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.22
+
+### Patch Changes
+
+- ca726ad: Various improvements to FlatWorlds
+
 ## 0.0.21
 
 ### Patch Changes
