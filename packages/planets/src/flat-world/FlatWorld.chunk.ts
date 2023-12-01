@@ -16,7 +16,15 @@ export function buildFlatWorldChunk<D>(
   const geo = new BufferGeometry()
 
   return function runBuildChunk(params: ChunkGeneratorProps<D>) {
-    const { resolution, origin, width, offset, radius: size, inverted } = params
+    const {
+      resolution,
+      origin,
+      width,
+      offset,
+      radius: size,
+      inverted,
+      skirtDepth = 0,
+    } = params
 
     // generate the chunk geometry
     const {
@@ -40,7 +48,16 @@ export function buildFlatWorldChunk<D>(
     const normals = generateNormals(positions, indices)
 
     // Pull the skirt vertices down away from the surface
-    fixEdgeSkirt(resolution, positions, up, normals, width, size, inverted)
+    fixEdgeSkirt(
+      resolution,
+      positions,
+      up,
+      normals,
+      width,
+      size,
+      skirtDepth,
+      inverted,
+    )
     const heightmap = generateHeightmapBitmap(heights, heightsMin, heightsMax)
 
     // TODO: allow users to create their own buffers (for terrain splatting or object scattering)

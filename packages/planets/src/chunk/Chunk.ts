@@ -16,6 +16,7 @@ export interface ChunkProps {
   lodOrigin: Vector3
   inverted: boolean
   origin: Vector3
+  skirtDepth?: number
 }
 
 export interface ChunkRebuildProps {
@@ -49,6 +50,7 @@ export class Chunk extends Mesh {
   minHeight: number = 0
   maxHeight: number = 0
   lodTable: ReturnType<typeof getLODTable>
+  lodLength: number
   heightmap?: ArrayBuffer
 
   constructor(props: ChunkProps) {
@@ -81,10 +83,10 @@ export class Chunk extends Mesh {
     // add ourselves to the parent group
     this.group.add(this)
     this.lodTable = getLODTable(this.radius, this.minCellSize)
-    // this.dispatchEvent(new ChunkPendingEvent(this))
+    this.lodLength = Object.values(this.lodTable).length
   }
 
-  get LODLevel() {
+  get lodLevel() {
     // 0 is the highest res
     const LODratio = this.minCellSize / this.width
     const LODRatios = Array.from(Object.values(this.lodTable)).sort(
@@ -92,10 +94,6 @@ export class Chunk extends Mesh {
     )
     const LODIndex = LODRatios.indexOf(LODratio)
     return LODIndex < 0 ? LODRatios.length + 1 : LODIndex
-  }
-
-  get maxLOD() {
-    return Object.values(this.lodTable).length
   }
 
   dispose() {

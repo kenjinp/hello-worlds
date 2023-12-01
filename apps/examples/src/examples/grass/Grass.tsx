@@ -27,8 +27,9 @@ function createGrassPatchOffsets(
     const x = i / numGrassBladesPerSide - 0.5
     for (let j = 0; j < numGrassBladesPerSide; j++) {
       const y = j / numGrassBladesPerSide - 0.5
-      const u = 1 - i / numGrassBladesPerSide
-      const v = j / numGrassBladesPerSide
+      const u = 1 - i / numGrassBladesPerSide || 0.01
+      const v = j / numGrassBladesPerSide || 0.01
+
       grassUVs.push(u, v)
 
       offsets.push(
@@ -115,7 +116,6 @@ export interface GrassProps {
 }
 
 export const Grass: FC<GrassProps> = props => {
-  console.log("grass rerender")
   // const [normalMap, map] = useTexture(["/normal.png", "/grass.png"])
   const {
     totalGrassBlades = 2048,

@@ -64,6 +64,8 @@ export const generateInitialHeights = <D>(
   for (let x = -1; x <= effectiveResolution + 1; x++) {
     const xp = (width * x) / effectiveResolution
     for (let y = -1; y <= effectiveResolution + 1; y++) {
+      const notInSkirt =
+        x >= 0 && x <= effectiveResolution && y >= 0 && y <= effectiveResolution
       const yp = (width * y) / effectiveResolution
 
       _P.set(xp - half, yp - half, 0)
@@ -91,9 +93,11 @@ export const generateInitialHeights = <D>(
         inverted,
         data,
       })
-      heights.push(height)
-      heightsMax = Math.max(heightsMax, height)
-      heightsMin = Math.min(heightsMin, height)
+      if (notInSkirt) {
+        heights.push(height)
+        heightsMax = Math.max(heightsMax, height)
+        heightsMin = Math.min(heightsMin, height)
+      }
 
       const color = colorGenerator
         ? colorGenerator({

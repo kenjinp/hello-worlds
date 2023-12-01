@@ -14,6 +14,7 @@ import Grass from "./examples/grass/GrassExample"
 import GrassTerrain from "./examples/grass/GrassTerrainExample"
 import Heightmap from "./examples/heightmap/Heightmap"
 import Scatter from "./examples/scatter/Scatter"
+import Tectonics from "./examples/tectonics/Tectonics"
 
 interface IRoute {
   name: string
@@ -46,6 +47,11 @@ const routes: IRoute[] = [
     name: "Scatter",
     path: "/scatter",
     component: Scatter,
+  },
+  {
+    name: "Tectonics",
+    path: "/tectonics",
+    component: Tectonics,
   },
 ]
 

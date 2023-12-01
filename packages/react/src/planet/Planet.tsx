@@ -113,7 +113,7 @@ function PlanetInner<D>(
     lodDistanceComparisonValue,
     numWorkers = concurrency,
     lodOrigin,
-    position,
+    position = new Vector3(),
     worker,
     autoUpdate = true,
   } = props

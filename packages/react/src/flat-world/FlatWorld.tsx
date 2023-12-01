@@ -84,6 +84,7 @@ function FlatWorldInner<D>(
     worker,
     size,
     lodDistanceComparisonValue,
+    skirtDepth,
   } = props
 
   const workerProps = React.useMemo(
@@ -103,6 +104,7 @@ function FlatWorldInner<D>(
       workerProps,
       position,
       size,
+      skirtDepth,
     })
   }, [data, workerProps, size])
 

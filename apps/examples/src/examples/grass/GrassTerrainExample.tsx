@@ -6,7 +6,6 @@ import { Euler, RepeatWrapping, Texture, Vector3 } from "three"
 import { useTexture } from "@react-three/drei"
 import { useControls } from "leva"
 import { useEffect, useRef, useState } from "react"
-import { RenderImage } from "../heightmap/Heightmap"
 import { Grass, GrassProps } from "./Grass"
 import Worker from "./Grass.worker?worker"
 
@@ -41,13 +40,13 @@ const GrassWithOffset: React.FC<Omit<GrassProps, "chunk">> = grassProps => {
     // build heightmap offset textures
     chunks.forEach(async chunk => {
       if (!chunk.heightmap) return
-      const u8IntClamped = new Uint8ClampedArray(chunk.heightmap)
-      const l = Math.sqrt(u8IntClamped.length / 4)
-      const heightmapImageData = new ImageData(u8IntClamped, l, l)
-      const heightmap = await imageDataToImage(heightmapImageData)
+      // const u8IntClamped = new Uint8ClampedArray(chunk.heightmap)
+      // const l = Math.sqrt(u8IntClamped.length / 4)
+      // const heightmapImageData = new ImageData(u8IntClamped, l, l)
+      // const heightmap = await imageDataToImage(heightmapImageData)
       const texture = new Texture()
-      texture.image = heightmap
-      texture.needsUpdate = true
+      // texture.image = heightmap
+      // texture.needsUpdate = true
       texture.wrapS = RepeatWrapping
       texture.wrapT = RepeatWrapping
       texture.repeat.set(1, 1)
@@ -56,11 +55,10 @@ const GrassWithOffset: React.FC<Omit<GrassProps, "chunk">> = grassProps => {
   }, [chunkIdList])
 
   return chunks.map(chunk => {
-    const lodNumGrassSteps = lodTable[chunk.LODLevel] || 1
+    const lodNumGrassSteps = lodTable[chunk.lodLevel] || 1
     const chunkGrassBladeAmount = Math.floor(
-      (chunk.width / (chunk.radius * 2)) * 2048 * 4,
+      (chunk.width / (chunk.radius * 2)) * 32,
     )
-    console.log("henlo I rerender")
     const initialPosition = new Vector3().copy(chunk.offset)
     return (
       <mesh
@@ -135,7 +133,7 @@ export default () => {
   })
 
   const [grass, uv] = useTexture(["./grass.png", "./uv.png"])
-  grass.repeat.set(10, 10)
+  grass.repeat.set(100, 100)
   grass.wrapS = RepeatWrapping
   grass.wrapT = RepeatWrapping
 
@@ -159,8 +157,13 @@ export default () => {
           }}
         >
           <GrassWithOffset {...grassProps} />
-          <RenderImage />
-          <meshStandardMaterial transparent opacity={0.5} color="green" />
+          {/* <RenderImage /> */}
+          <meshStandardMaterial
+            transparent
+            // opacity={0.5}
+            // color="green"
+            map={grass}
+          />
         </FlatWorld>
       </group>
     </>

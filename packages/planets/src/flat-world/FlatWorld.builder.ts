@@ -90,6 +90,7 @@ export default class FlatWorldBuilder<D> {
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
       inverted: params.inverted,
+      skirtDepth: params.skirtDepth,
     }
 
     const msg = {

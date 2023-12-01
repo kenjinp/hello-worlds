@@ -1,4 +1,5 @@
 import { Material, Object3D, Vector2, Vector3 } from "three"
+import { Chunk } from "../chunk/Chunk"
 import { makeRootChunkKey } from "../chunk/Chunk.helpers"
 import { ChunkGeneratedEvent, ChunkWillBeDisposedEvent } from "../chunk/Events"
 import {
@@ -8,7 +9,7 @@ import {
   WORLD_TYPES,
 } from "../chunk/types"
 import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
-import { dictDifference, dictIntersection } from "../utils"
+import { dictDifference, dictIntersection, getLODTable } from "../utils"
 import FlatWorldBuilder, { FlatWorldBuilderProps } from "./FlatWorld.builder"
 import { FlatWorldsQuadTree } from "./FlatWorlds.quadtree"
 
@@ -20,12 +21,14 @@ export interface FlatWorldProps<D> {
   material?: Material
   position?: Vector3
   workerProps: FlatWorldBuilderProps<D>["workerProps"]
+  skirtDepth?: number
   data: D
   lodDistanceComparisonValue?: number
 }
 
 export class FlatWorld<D = Record<string, any>> extends Object3D {
   #chunkMap: ChunkMap = {}
+  lodMap: Map<number, Set<Chunk>> = new Map()
   #builder: FlatWorldBuilder<D>
   #material?: Material
   readonly data: D
@@ -34,6 +37,9 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
   size: number
   inverted: boolean
   lodDistanceComparisonValue: number
+  lodTable: ReturnType<typeof getLODTable>
+  lodLength: number
+  skirtDepth: number
   readonly worldType = WORLD_TYPES.FLAT_WORLD
   constructor({
     minCellSize,
@@ -45,6 +51,7 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     size,
     lodDistanceComparisonValue,
     inverted = false,
+    skirtDepth,
   }: FlatWorldProps<D>) {
     super()
     this.size = size
@@ -61,6 +68,9 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
     this.minCellSize = minCellSize
     this.data = data
     this.inverted = !!inverted
+    this.lodTable = getLODTable(size / 2, this.minCellSize)
+    this.lodLength = Object.values(this.lodTable).length
+    this.skirtDepth = skirtDepth || 0
   }
 
   get material(): Material | undefined {
@@ -77,6 +87,26 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
       }
     }
     this.#material = material
+  }
+
+  getClosestChunkLodLevel(position: Vector3, lodLevel: number) {
+    const chunksAtLodLevel = this.lodMap.get(lodLevel)
+    if (!chunksAtLodLevel) {
+      return null
+    }
+    let closestChunk: Chunk | null = null
+    let closestDistance = Infinity
+    for (let chunk of chunksAtLodLevel) {
+      const distance = chunk.position.distanceTo(position)
+      if (distance < closestDistance) {
+        closestChunk = chunk
+        closestDistance = distance
+      }
+    }
+    return {
+      chunk: closestChunk,
+      distance: closestDistance,
+    }
   }
 
   // this will cause all the chunks to reform
@@ -156,13 +186,20 @@ export class FlatWorld<D = Record<string, any>> extends Object3D {
         resolution: this.minCellResolution,
         minCellSize: this.minCellSize,
         inverted: !!this.inverted,
+        skirtDepth: this.skirtDepth,
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
         const { chunk } = e as unknown as ChunkGeneratedEvent
+        const chunksAtLodLevel = this.lodMap.get(chunk.lodLevel) || new Set()
+        chunksAtLodLevel.add(chunk)
+        this.lodMap.set(chunk.lodLevel, chunksAtLodLevel)
         this.dispatchEvent(new ChunkGeneratedEvent(chunk))
       })
       allocatedChunk.addEventListener(ChunkWillBeDisposedEvent.type, e => {
         const { chunk } = e as unknown as ChunkWillBeDisposedEvent
+        const chunksAtLodLevel = this.lodMap.get(chunk.lodLevel) || new Set()
+        chunksAtLodLevel.delete(chunk)
+        this.lodMap.set(chunk.lodLevel, chunksAtLodLevel)
         this.dispatchEvent(new ChunkWillBeDisposedEvent(chunk))
       })
       newChunkMap[key] = {

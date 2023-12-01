@@ -5,10 +5,10 @@ import {
   createThreadedPlanetWorker,
   Noise,
   NOISE_TYPES,
-  remap
+  remap,
 } from "@hello-worlds/planets"
 import { latLngToCell } from "h3-js"
-import { Color, Line3, MathUtils, Vector3 } from "three"
+import { Color, Line3, Vector3 } from "three"
 import { LatLong } from "./tectonics/LatLong"
 
 import { HEX_GRID_RESOLUTION, Tectonics } from "./tectonics/Tectonics"
@@ -19,7 +19,7 @@ import Plate from "./tectonics/Plate"
 export type ThreadParams = {
   size: number
   tectonics: Tectonics
-  vertexUserData: Map<Vector3,any>
+  vertexUserData: Map<Vector3, any>
 }
 const tempLine3 = new Line3()
 const tempVector3 = new Vector3()
@@ -37,11 +37,15 @@ const distanceToSegment = (position: Vector3, a: Vector3, b: Vector3) => {
   return d
 }
 
+function easeInCubic(x) {
+  return x * x * x
+}
+
 const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   data,
   radius,
 }) => {
-  const { size = 4, tectonics, seed } = data;
+  const { size = 4, tectonics, seed } = data
   tectonics.plates.forEach(plate => {
     Plate.generatePolygon(plate)
   })
@@ -62,28 +66,49 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
     scale: radius / 20,
   })
 
+  const jiggle = new Noise({
+    seed: "jiggle",
+    height: radius / 6,
+    scale: radius / 20,
+  })
+
+  const tempV = new Vector3()
+
   return ({ input }) => {
     const w = warp.getFromVector(input)
+    const jiggleOffset = jiggle.getFromVector(input)
     const m = mountains.get(input.x + w, input.y + w, input.z + w)
     const warpedVector = _tempVector3.copy(input).addScalar(m)
+    const jiggledInputPosition = tempV.copy(input)
+    // const jiggledInputPosition = tempV.copy(input).addScalar(jiggleOffset)
 
-    const plate = Tectonics.getPlateFromVector3(tectonics, input)
-    const [min, max] = Plate.getDistancesToPlateEdge(plate, input)
+    const plate = Tectonics.getPlateFromVector3(tectonics, jiggledInputPosition)
+    const [min, max] = Plate.getDistancesToPlateEdge(
+      plate,
+      jiggledInputPosition,
+    )
     // const min = realMin + m
     // const [wmin,wmax] = Plate.getDistancesToPlateEdge(plate, warpedVector)
     // const influence = remap(distance, 0, radius / 2, 0, 1)
+
     const arbitraryMaxDistanceValue = 50_000
-    const distance = remap(min, 0, radius / 6, 0, arbitraryMaxDistanceValue)
-  
-    const alpha = remap(min, 80_000, 0, 1, 0)
-    const biasedDistance = MathUtils.lerp(distance + m, distance, alpha)
+    const distance = remap(
+      easeInCubic(min),
+      0,
+      radius / 6,
+      0,
+      arbitraryMaxDistanceValue,
+    )
+
+    // const alpha = remap(min, 80_000, 0, 1, 0)
+    // const biasedDistance = MathUtils.lerp(distance + m, distance, alpha)
 
     // vertexUserData.set(input, {
     //   oceanic: plate.data.oceanic
     // })
 
     // remap(distance, 0, 1000, 0, 1)
-    return plate.data.oceanic ? -distance : distance
+    return plate.data.oceanic ? 0 : distance
   }
 }
 
@@ -127,7 +152,6 @@ const colorGenerator: ChunkGenerator3Initializer<
     //     : groundColor
     //   : color
     // return endColor //endColor.lerp(regionColor, 0.15)
-
 
     // const oceanOffsetColor = plate.data.oceanic ? oceanColor : groundColor
 
