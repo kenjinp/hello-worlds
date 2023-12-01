@@ -1,5 +1,15 @@
 # docs
 
+## 1.0.8
+
+### Patch Changes
+
+- ca726ad: Various improvements to FlatWorlds
+- Updated dependencies [ca726ad]
+  - @hello-worlds/planets@0.0.22
+  - @hello-worlds/react@0.0.24
+  - @hello-worlds/vfx@0.0.6
+
 ## 1.0.7
 
 ### Patch Changes

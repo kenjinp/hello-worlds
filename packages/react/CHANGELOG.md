@@ -1,5 +1,13 @@
 # @hello-worlds/react
 
+## 0.0.24
+
+### Patch Changes
+
+- ca726ad: Various improvements to FlatWorlds
+- Updated dependencies [ca726ad]
+  - @hello-worlds/planets@0.0.22
+
 ## 0.0.23
 
 ### Patch Changes

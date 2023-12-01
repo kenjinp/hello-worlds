@@ -1,5 +1,11 @@
 # @hello-worlds/vfx
 
+## 0.0.6
+
+### Patch Changes
+
+- ca726ad: Various improvements to FlatWorlds
+
 ## 0.0.5
 
 ### Patch Changes
