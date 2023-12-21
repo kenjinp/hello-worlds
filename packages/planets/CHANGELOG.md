@@ -1,5 +1,12 @@
 # @hello-worlds/planets
 
+## 0.0.23
+
+### Patch Changes
+
+- 32acd09: Change normal calculations for FlatWorlds (broken)
+- 32acd09: Various improvements to FlatWorlds
+
 ## 0.0.22
 
 ### Patch Changes

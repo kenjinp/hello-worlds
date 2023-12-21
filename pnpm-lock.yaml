@@ -382,7 +382,7 @@ importers:
         specifier: 0.0.9
         version: link:../core
       '@hello-worlds/planets':
-        specifier: 0.0.22
+        specifier: 0.0.23
         version: link:../planets
       '@react-three/drei':
         specifier: 9.88.7
@@ -5336,7 +5336,7 @@ packages:
   /jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.11
     dev: true
 
   /katex@0.16.8:
