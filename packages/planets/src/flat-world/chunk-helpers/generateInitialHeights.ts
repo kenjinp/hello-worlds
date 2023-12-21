@@ -30,6 +30,8 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
 //   return { u, v };
 // }
 
+// const skirtDebugColor = new Color("red")
+
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {
@@ -99,7 +101,7 @@ export const generateInitialHeights = <D>(
         heightsMin = Math.min(heightsMin, height)
       }
 
-      const color = colorGenerator
+      let color = colorGenerator
         ? colorGenerator({
             input: colorInputVector.set(_W.x, _W.y, height).clone(),
             worldPosition: _W.clone(),
@@ -114,6 +116,10 @@ export const generateInitialHeights = <D>(
             data: params.data,
           })
         : tempColor.set(0xffffff).clone()
+
+      // if (!notInSkirt) {
+      //   color = skirtDebugColor
+      // }
 
       // Purturb height along z-vector
       _P.z += height * (params.inverted ? -1 : 1)

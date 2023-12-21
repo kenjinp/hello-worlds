@@ -45,7 +45,8 @@ export function buildFlatWorldChunk<D>(
     // Generate indices
     const indices = generateIndices(resolution)
     // Get Normals
-    const normals = generateNormals(positions, indices)
+    let normals = new Array(positions.length).fill(0.0)
+    normals = generateNormals(normals, positions, indices)
 
     // Pull the skirt vertices down away from the surface
     fixEdgeSkirt(
@@ -58,6 +59,7 @@ export function buildFlatWorldChunk<D>(
       skirtDepth,
       inverted,
     )
+
     const heightmap = generateHeightmapBitmap(heights, heightsMin, heightsMax)
 
     // TODO: allow users to create their own buffers (for terrain splatting or object scattering)
