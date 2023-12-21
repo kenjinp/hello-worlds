@@ -92,7 +92,8 @@ export const PlanetChunks: React.FC<PlanetChunksProps> = ({
     <>
       {chunks.map(function RenderPlanetChunkChildren(chunk) {
         return asChunkChild
-          ? createPortal(children(chunk, chunk.id), chunk)
+          ? // @ts-ignore
+            createPortal(children(chunk, chunk.id) as React.ReactNode, chunk)
           : children(chunk, chunk.id)
       })}
     </>

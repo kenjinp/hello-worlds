@@ -54,8 +54,9 @@ export const OrbitCamera: React.FC<
   })
 
   return (
+    // @ts-ignore OrbitControls cannot be used as a React Component
     <OrbitControls
-      // @ts-ignore
+      // @ts-ignore types mismatch, I can't be bothered
       ref={orbitControls}
       enablePan={false}
       enableZoom

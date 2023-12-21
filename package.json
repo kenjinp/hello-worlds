@@ -36,12 +36,12 @@
     "react-dom": "^18.2.0",
     "three": "0.158.0",
     "three-custom-shader-material": "^4.0.0",
-    "three-stdlib": "^2.23.10"
+    "three-stdlib": "^2.28.7"
   },
   "devDependencies": {
     "@changesets/cli": "^2.23.2",
     "@types/node": "18.11.10",
-    "@types/react": "^18.0.0",
+    "@types/react": "^18.2.45",
     "@types/three": "^0.141.0",
     "prettier": "^2.8.1",
     "prettier-plugin-glsl": "^0.0.5",
