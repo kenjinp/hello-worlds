@@ -1,6 +1,6 @@
 VERSION 0.6
 
-build: 
+build-everything: 
   FROM node:18.12-alpine
   ARG PNPM_VERSION=8.6.2
   ARG LIVEBLOCKS_API_KEY
@@ -32,7 +32,7 @@ deploy:
   ARG STACK="dev"
   ARG APP="docs"
   FROM pulumi/pulumi-nodejs
-  COPY +build/out ./_site
+  COPY +build-everything/out ./_site
   RUN ls ./_site
   COPY infra ./infra
   WORKDIR infra
