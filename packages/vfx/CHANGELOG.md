@@ -1,5 +1,12 @@
 # @hello-worlds/vfx
 
+## 0.0.7
+
+### Patch Changes
+
+- 32acd09: Change normal calculations for FlatWorlds (broken)
+- 32acd09: Various improvements to FlatWorlds
+
 ## 0.0.6
 
 ### Patch Changes
