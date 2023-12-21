@@ -7,13 +7,9 @@ import {
 import { tempColor } from "../../utils"
 
 const _D = new Vector3()
-
 const _P = new Vector3()
-
 const _H = new Vector3()
 const _W = new Vector3()
-// const _S = new Vector3()
-const _C = new Vector3()
 
 const colorInputVector = new Vector3()
 
@@ -21,14 +17,6 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
   heightGenerator: HeightGenerator<D>
   colorGenerator?: ColorGenerator<D>
 }
-
-// function calculateUVCoordinates(x: number, y: numbe, width: number, height: number): [number, number] {
-//   // Normalize the coordinates to range [0, 1]
-//   const u = x / (this.width - 1);
-//   const v = y / (this.height - 1);
-
-//   return { u, v };
-// }
 
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
@@ -99,7 +87,7 @@ export const generateInitialHeights = <D>(
         heightsMin = Math.min(heightsMin, height)
       }
 
-      const color = colorGenerator
+      let color = colorGenerator
         ? colorGenerator({
             input: colorInputVector.set(_W.x, _W.y, height).clone(),
             worldPosition: _W.clone(),
@@ -114,6 +102,10 @@ export const generateInitialHeights = <D>(
             data: params.data,
           })
         : tempColor.set(0xffffff).clone()
+
+      // if (!notInSkirt) {
+      //   color = skirtDebugColor
+      // }
 
       // Purturb height along z-vector
       _P.z += height * (params.inverted ? -1 : 1)

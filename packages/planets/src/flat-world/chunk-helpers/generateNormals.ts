@@ -8,10 +8,10 @@ const _D1 = new Vector3()
 const _D2 = new Vector3()
 
 export const generateNormals = (
+  normals: number[],
   positions: number[],
   indices: number[],
 ): number[] => {
-  const normals = new Array(positions.length).fill(0.0)
   for (let i = 0, n = indices.length; i < n; i += 3) {
     const i1 = indices[i] * 3
     const i2 = indices[i + 1] * 3
