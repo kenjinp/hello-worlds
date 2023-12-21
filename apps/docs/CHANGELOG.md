@@ -1,5 +1,17 @@
 # docs
 
+## 1.0.9
+
+### Patch Changes
+
+- 32acd09: Change normal calculations for FlatWorlds (broken)
+- 32acd09: Various improvements to FlatWorlds
+- Updated dependencies [32acd09]
+- Updated dependencies [32acd09]
+  - @hello-worlds/planets@0.0.23
+  - @hello-worlds/react@0.0.25
+  - @hello-worlds/vfx@0.0.7
+
 ## 1.0.8
 
 ### Patch Changes
