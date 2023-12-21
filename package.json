@@ -13,9 +13,9 @@
     "build": "turbo run build --filter=./packages/*",
     "preinstall": "npx only-allow pnpm",
     "test": "jest --passWithNoTests",
-    "deliver": "pnpm --filter=!docs build && pnpm -r test",
+    "build:deliver": "pnpm --filter='./packages/**' build && pnpm -r test",
     "ci:version": "changeset version && pnpm install --no-frozen-lockfile",
-    "ci:release": "pnpm deliver && pnpm changeset publish",
+    "ci:release": "pnpm build:deliver && pnpm changeset publish",
     "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
   "dependencies": {
