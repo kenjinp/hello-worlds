@@ -141,9 +141,9 @@ function PlanetInner<D>(
 
   React.useEffect(() => {
     return () => {
-      helloPlanet.dispose()
+      helloPlanet?.dispose()
     }
-  }, [])
+  }, [helloPlanet])
 
   React.useEffect(() => {
     if (helloPlanet) {
