@@ -1,5 +1,11 @@
 # @hello-worlds/react
 
+## 0.0.26
+
+### Patch Changes
+
+- 6cc5227: Dispose old planets when new planets are created
+
 ## 0.0.25
 
 ### Patch Changes

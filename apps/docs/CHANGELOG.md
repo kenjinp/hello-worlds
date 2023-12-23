@@ -1,5 +1,12 @@
 # docs
 
+## 1.0.10
+
+### Patch Changes
+
+- Updated dependencies [6cc5227]
+  - @hello-worlds/react@0.0.26
+
 ## 1.0.9
 
 ### Patch Changes
