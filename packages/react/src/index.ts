@@ -1,4 +1,5 @@
 export * from "./cameras/OrbitCamera"
+export * from "./doughnut-world/DoughnutWorld"
 export * from "./flat-world/FlatWorld"
 export * from "./hooks/useFrameEffect"
 export * from "./planet/Planet"

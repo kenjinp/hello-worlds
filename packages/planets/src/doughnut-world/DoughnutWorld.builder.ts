@@ -12,7 +12,7 @@ import {
 import { NOOP } from "../utils"
 import WorkerThreadPool from "../worker/WorkerThreadPool"
 
-export interface RingWorldBuilderProps<D> {
+export interface DoughnutWorldBuilderProps<D> {
   workerProps: {
     worker: () => Worker
     numWorkers: number
@@ -23,7 +23,7 @@ export interface RingWorldBuilderProps<D> {
   data: D
 }
 
-export default class RingWorldBuilder<D> {
+export default class DoughnutWorldBuilder<D> {
   // we keep the chunks stored with key of width, length
   #pool: Record<string, Chunk[]> = {}
   #old: (RingWorldRootChunkProps | ChildChunkProps<Chunk>)[] = []
@@ -33,7 +33,7 @@ export default class RingWorldBuilder<D> {
   constructor({
     workerProps: { numWorkers, worker },
     ...buildChunkInitialProps
-  }: RingWorldBuilderProps<D>) {
+  }: DoughnutWorldBuilderProps<D>) {
     this.#workerPool = new WorkerThreadPool(numWorkers, worker)
     this.#workerPool.workers.forEach(worker => {
       const msg = {
@@ -94,7 +94,6 @@ export default class RingWorldBuilder<D> {
       resolution: params.resolution,
       worldMatrix: params.group.matrix,
       inverted: params.inverted,
-      skirtDepth: params.skirtDepth,
     }
 
     const msg = {

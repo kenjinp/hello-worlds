@@ -2,8 +2,8 @@ import {
   Chunk,
   ChunkGeneratedEvent,
   ChunkWillBeDisposedEvent,
-  RingWorld as HelloRingWorld,
-  RingWorldProps as HelloRingWorldProps,
+  DoughnutWorld as HelloDoughnutWorld,
+  DoughnutWorldProps as HelloDoughnutWorldProps,
 } from "@hello-worlds/planets"
 import { useRerender } from "@hmans/use-rerender"
 import { useFrame } from "@react-three/fiber"
@@ -12,16 +12,16 @@ import { Event, Vector3 } from "three"
 import { concurrency } from "../defaults"
 import { PartialBy } from "../utils/types"
 
-export const RingWorldContext = React.createContext<HelloRingWorld<any>>(
-  {} as HelloRingWorld<any>,
-)
+export const DoughnutWorldContext = React.createContext<
+  HelloDoughnutWorld<any>
+>({} as HelloDoughnutWorld<any>)
 
-export const useRingWorld = () => {
-  return React.useContext(RingWorldContext)
+export const useDoughnutWorld = () => {
+  return React.useContext(DoughnutWorldContext)
 }
 
-export const useRingWorldChunks = () => {
-  const ringWorld = useRingWorld()
+export const useDoughnutWorldChunks = () => {
+  const ringWorld = useDoughnutWorld()
   const rerender = useRerender()
   const [chunks] = React.useState<Map<number, Chunk>>(new Map<number, Chunk>())
 
@@ -54,26 +54,26 @@ export const useRingWorldChunks = () => {
   return Array.from(chunks.values())
 }
 
-export interface RingWorldChunksProps {
+export interface DoughnutWorldChunksProps {
   children: (chunks: Chunk, index: number) => React.ReactNode
 }
-export const RingWorldChunks: React.FC<RingWorldChunksProps> = ({
+export const DoughnutWorldChunks: React.FC<DoughnutWorldChunksProps> = ({
   children,
 }) => {
-  const chunks = useRingWorldChunks()
+  const chunks = useDoughnutWorldChunks()
   return <>{chunks.map(children)}</>
 }
 
-export type RingWorldProps<D> = React.PropsWithChildren<
-  Omit<HelloRingWorldProps<D>, "material" | "workerProps"> &
-    PartialBy<HelloRingWorldProps<D>["workerProps"], "numWorkers"> & {
+export type DoughnutWorldProps<D> = React.PropsWithChildren<
+  Omit<HelloDoughnutWorldProps<D>, "material" | "workerProps"> &
+    PartialBy<HelloDoughnutWorldProps<D>["workerProps"], "numWorkers"> & {
       lodOrigin: Vector3
     }
 >
 
-function RingWorldInner<D>(
-  props: RingWorldProps<D>,
-  forwardedRef: React.ForwardedRef<HelloRingWorld<D>>,
+function DoughnutWorldInner<D>(
+  props: DoughnutWorldProps<D>,
+  forwardedRef: React.ForwardedRef<HelloDoughnutWorld<D>>,
 ) {
   const {
     children,
@@ -86,7 +86,6 @@ function RingWorldInner<D>(
     lodOrigin,
     length,
     position,
-    skirtDepth,
     worker,
     lodDistanceComparisonValue,
   } = props
@@ -99,8 +98,8 @@ function RingWorldInner<D>(
     [worker, numWorkers],
   )
 
-  const helloRingWorld = React.useMemo(() => {
-    return new HelloRingWorld<D>({
+  const helloDoughnutWorld = React.useMemo(() => {
+    return new HelloDoughnutWorld<D>({
       radius,
       inverted,
       minCellSize,
@@ -109,26 +108,26 @@ function RingWorldInner<D>(
       workerProps,
       position,
       length,
-      skirtDepth,
     })
-  }, [data, workerProps, radius, length, skirtDepth])
+  }, [data, workerProps, radius, length])
 
   React.useEffect(() => {
     return () => {
-      helloRingWorld.dispose()
+      helloDoughnutWorld.dispose()
     }
   }, [])
 
   React.useEffect(() => {
-    if (helloRingWorld) {
-      helloRingWorld.inverted = !!inverted
-      helloRingWorld.minCellSize = minCellSize
-      helloRingWorld.minCellResolution = minCellResolution
-      helloRingWorld.position.copy(position)
+    if (helloDoughnutWorld) {
+      helloDoughnutWorld.inverted = !!inverted
+      helloDoughnutWorld.minCellSize = minCellSize
+      helloDoughnutWorld.minCellResolution = minCellResolution
+      helloDoughnutWorld.position.copy(position)
       if (lodDistanceComparisonValue) {
-        helloRingWorld.lodDistanceComparisonValue = lodDistanceComparisonValue
+        helloDoughnutWorld.lodDistanceComparisonValue =
+          lodDistanceComparisonValue
       }
-      helloRingWorld.rebuild()
+      helloDoughnutWorld.rebuild()
     }
   }, [
     inverted,
@@ -139,20 +138,20 @@ function RingWorldInner<D>(
   ])
 
   useFrame(() => {
-    helloRingWorld.update(lodOrigin)
+    helloDoughnutWorld.update(lodOrigin)
   })
 
   return (
-    <RingWorldContext.Provider value={helloRingWorld}>
-      <primitive ref={forwardedRef} object={helloRingWorld}>
+    <DoughnutWorldContext.Provider value={helloDoughnutWorld}>
+      <primitive ref={forwardedRef} object={helloDoughnutWorld}>
         {children}
       </primitive>
-    </RingWorldContext.Provider>
+    </DoughnutWorldContext.Provider>
   )
 }
 
-export const RingWorld = React.forwardRef(RingWorldInner) as <D>(
-  props: RingWorldProps<D> & {
-    ref?: React.ForwardedRef<HelloRingWorld<D>>
+export const DoughnutWorld = React.forwardRef(DoughnutWorldInner) as <D>(
+  props: DoughnutWorldProps<D> & {
+    ref?: React.ForwardedRef<HelloDoughnutWorld<D>>
   },
-) => ReturnType<typeof RingWorldInner<D>>
+) => ReturnType<typeof DoughnutWorldInner<D>>

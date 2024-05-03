@@ -19,13 +19,14 @@ const Example1: React.FC = () => {
         inverted
         position={new Vector3()}
         radius={20_000}
-        length={100}
+        length={1000}
         minCellSize={32}
         minCellResolution={32 * 2}
         lodOrigin={camera.position}
         worker={worker}
+        skirtDepth={100}
         data={{
-          seed: "Flat Worlds Example",
+          seed: "Ring Worlds Example",
         }}
       >
         <meshStandardMaterial vertexColors side={2} />
@@ -50,8 +51,9 @@ const Example2: React.FC = () => {
         minCellResolution={32 * 2}
         lodOrigin={camera.position}
         worker={worker}
+        skirtDepth={100}
         data={{
-          seed: "Flat Worlds Example",
+          seed: "Ring Worlds Example",
         }}
       >
         <meshStandardMaterial vertexColors side={2} />

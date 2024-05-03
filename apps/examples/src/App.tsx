@@ -13,6 +13,7 @@ import Basic from "./examples/basic/Basic"
 import Grass from "./examples/grass/GrassExample"
 import GrassTerrain from "./examples/grass/GrassTerrainExample"
 import Heightmap from "./examples/heightmap/Heightmap"
+import RingWorld from "./examples/ring-world/RingWorld"
 import Scatter from "./examples/scatter/Scatter"
 import Tectonics from "./examples/tectonics/Tectonics"
 
@@ -52,6 +53,11 @@ const routes: IRoute[] = [
     name: "Tectonics",
     path: "/tectonics",
     component: Tectonics,
+  },
+  {
+    name: "RingWorld",
+    path: "/ring-world",
+    component: RingWorld,
   },
 ]
 

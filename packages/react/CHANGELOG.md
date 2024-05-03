@@ -1,5 +1,13 @@
 # @hello-worlds/react
 
+## 0.0.27
+
+### Patch Changes
+
+- Fix RingWorlds and add terrain skirts to them
+- Updated dependencies
+  - @hello-worlds/planets@0.0.24
+
 ## 0.0.26
 
 ### Patch Changes
