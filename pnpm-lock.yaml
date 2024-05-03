@@ -382,7 +382,7 @@ importers:
         specifier: 0.0.9
         version: link:../core
       '@hello-worlds/planets':
-        specifier: 0.0.23
+        specifier: 0.0.24
         version: link:../planets
       '@react-three/drei':
         specifier: 9.88.7

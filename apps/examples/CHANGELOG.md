@@ -1,5 +1,11 @@
 # examples
 
+## 0.0.2
+
+### Patch Changes
+
+- Fix RingWorlds and add terrain skirts to them
+
 ## 0.0.1
 
 ### Patch Changes
