@@ -7,7 +7,7 @@ import { generateInitialHeights } from "./chunk-helpers/generateInitialHeights"
 import { generateNormals } from "./chunk-helpers/generateNormals"
 import { normalizeNormals } from "./chunk-helpers/normalizeNormals"
 
-export function buildRingWorldChunk<D>(
+export function buildDoughnutWorldChunk<D>(
   initialParams: BuildChunkInitialParams<D>,
 ) {
   const { heightGenerator, colorGenerator, terrainSplatGenerator } =
@@ -18,16 +18,7 @@ export function buildRingWorldChunk<D>(
   return function runBuildChunk(
     params: ChunkGeneratorProps<D> & { height: number },
   ) {
-    const {
-      resolution,
-      origin,
-      width,
-      height,
-      offset,
-      radius,
-      inverted,
-      skirtDepth = 0,
-    } = params
+    const { resolution, origin, width, offset, radius, inverted } = params
 
     // generate the chunk geometry
     const { positions, colors, coords, up } = generateInitialHeights({
@@ -39,19 +30,10 @@ export function buildRingWorldChunk<D>(
     // Generate indices
     const indices = generateIndices(resolution)
     // Get Normals
-    const normals = generateNormals(positions, indices, inverted)
+    const normals = generateNormals(positions, indices)
 
     // Pull the skirt vertices down away from the surface
-    fixEdgeSkirt(
-      resolution,
-      positions,
-      up,
-      normals,
-      width,
-      radius,
-      skirtDepth,
-      inverted,
-    )
+    fixEdgeSkirt(resolution, positions, up, normals, width, radius, inverted)
 
     // fix the normals
     normalizeNormals(normals)

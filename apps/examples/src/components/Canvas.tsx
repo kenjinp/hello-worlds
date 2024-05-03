@@ -13,7 +13,7 @@ export const Canvas: React.FC<
         depth: true,
       }}
       camera={{
-        near: 0.01,
+        near: 0.001,
         far: Number.MAX_SAFE_INTEGER,
       }}
       shadows

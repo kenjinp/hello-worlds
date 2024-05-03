@@ -4,8 +4,8 @@ import { useThree } from "@react-three/fiber"
 import { DoubleSide } from "three"
 
 import { useMemo, useRef } from "react"
-import { VoronoiSphere } from "./math/Voronoi"
 import Worker from "./Tectonics.worker?worker"
+import { VoronoiSphere } from "./math/Voronoi"
 
 const worker = () => new Worker()
 export default () => {

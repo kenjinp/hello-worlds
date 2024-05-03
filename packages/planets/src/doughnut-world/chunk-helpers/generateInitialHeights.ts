@@ -46,7 +46,6 @@ export const generateInitialHeights = <D>(
     origin,
     data,
     inverted,
-    height,
     heightGenerator,
     colorGenerator,
   } = params
@@ -60,17 +59,17 @@ export const generateInitialHeights = <D>(
   const colors = []
   const coords = []
   const up = []
+  const height = params.height
   const halfW = width / 2
   const halfH = height / 2
 
   for (let x = -1; x <= effectiveResolution + 1; x++) {
     const xp = (width * x) / effectiveResolution
     for (let y = -1; y <= effectiveResolution + 1; y++) {
-      const yp = (height * y) / effectiveResolution
+      const yp = (width * y) / effectiveResolution
 
       // Compute position
       _P.set(xp - halfW, yp - halfH, radius)
-
       _P.add(offset)
 
       // bend cube into cylinder

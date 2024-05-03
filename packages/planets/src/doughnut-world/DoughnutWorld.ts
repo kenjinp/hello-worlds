@@ -10,10 +10,10 @@ import {
 import { DEFAULT_LOD_DISTANCE_COMPARISON_VALUE } from "../defaults"
 import { PlanetBuilderProps } from "../planet/Planet.builder"
 import { dictDifference, dictIntersection, tempVector3 } from "../utils"
-import RingWorldBuilder from "./RingWorld.builder"
-import { RingWorldQuadTree } from "./RingWorld.cylinder"
+import DoughnutWorldBuilder from "./DoughnutWorld.builder"
+import { DoughnutWorldQuadTree } from "./DoughnutWorld.cylinder"
 
-export interface RingWorldProps<D> {
+export interface DoughnutWorldProps<D> {
   radius: number
   length: number
   inverted?: boolean
@@ -23,24 +23,21 @@ export interface RingWorldProps<D> {
   position: Vector3
   workerProps: PlanetBuilderProps<D>["workerProps"]
   data: D
-  skirtDepth?: number
   lodDistanceComparisonValue?: number
 }
 
-export class RingWorld<D = Record<string, any>> extends Object3D {
+export class DoughnutWorld<D = Record<string, any>> extends Object3D {
   #chunkMap: ChunkMap<RingWorldRootChunkProps> = {}
   #segmentGroups = [...new Array(4)].map(_ => new Group())
-  #builder: RingWorldBuilder<D>
+  #builder: DoughnutWorldBuilder<D>
   readonly data: D
   material?: Material
   minCellSize: number
   minCellResolution: number
   radius: number
   length: number
-  skirtDepth: number
   inverted: boolean
   lodDistanceComparisonValue: number
-  quadTree?: RingWorldQuadTree
   readonly worldType = WORLD_TYPES.RING_WORLD
   constructor({
     radius,
@@ -52,10 +49,12 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
     data,
     position,
     lodDistanceComparisonValue,
-    skirtDepth,
     inverted = false,
-  }: RingWorldProps<D>) {
+  }: DoughnutWorldProps<D>) {
     super()
+
+    throw new Error("Not implemented")
+
     this.position.copy(position)
     this.data = data
     this.length = length
@@ -63,7 +62,7 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
     this.material = material
     this.minCellResolution = minCellResolution
     this.minCellSize = minCellSize
-    this.#builder = new RingWorldBuilder<D>({
+    this.#builder = new DoughnutWorldBuilder<D>({
       workerProps,
       data,
       radius,
@@ -71,7 +70,6 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
       length,
     })
     this.inverted = !!inverted
-    this.skirtDepth = skirtDepth || 0
     this.lodDistanceComparisonValue =
       lodDistanceComparisonValue || DEFAULT_LOD_DISTANCE_COMPARISON_VALUE
     this.add(...this.#segmentGroups)
@@ -92,14 +90,13 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
     const origin = this.position
 
     // update visible chunks quadtree
-    const q = new RingWorldQuadTree({
+    const q = new DoughnutWorldQuadTree({
       radius: this.radius,
       minNodeSize: this.minCellSize,
       origin,
       height: this.length,
       comparatorValue: this.lodDistanceComparisonValue,
     })
-    this.quadTree = q
 
     // collapse the quadtree recursively at this position
     q.insert(lodOrigin)
@@ -158,7 +155,6 @@ export class RingWorld<D = Record<string, any>> extends Object3D {
         resolution: this.minCellResolution,
         minCellSize: this.minCellSize,
         inverted: !!this.inverted,
-        skirtDepth: this.skirtDepth,
       })
       allocatedChunk.addEventListener(ChunkGeneratedEvent.type, e => {
         const { chunk } = e as unknown as ChunkGeneratedEvent

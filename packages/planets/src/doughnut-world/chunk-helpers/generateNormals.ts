@@ -10,7 +10,6 @@ const _D2 = new Vector3()
 export const generateNormals = (
   positions: number[],
   indices: number[],
-  inverted: boolean = false,
 ): number[] => {
   const normals = new Array(positions.length).fill(0.0)
   for (let i = 0, n = indices.length; i < n; i += 3) {
@@ -25,10 +24,6 @@ export const generateNormals = (
     _D1.subVectors(_N3, _N2)
     _D2.subVectors(_N1, _N2)
     _D1.cross(_D2)
-
-    // if (inverted) {
-    //   _D1.multiplyScalar(-1)
-    // }
 
     normals[i1] += _D1.x
     normals[i2] += _D1.x
