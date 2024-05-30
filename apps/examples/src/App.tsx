@@ -10,12 +10,6 @@ import {
 import { Canvas } from "./components/Canvas"
 import { ExampleWrapper } from "./components/ExampleWrapper"
 import Basic from "./examples/basic/Basic"
-import Grass from "./examples/grass/GrassExample"
-import GrassTerrain from "./examples/grass/GrassTerrainExample"
-import Heightmap from "./examples/heightmap/Heightmap"
-import RingWorld from "./examples/ring-world/RingWorld"
-import Scatter from "./examples/scatter/Scatter"
-import Tectonics from "./examples/tectonics/Tectonics"
 
 interface IRoute {
   name: string
@@ -28,36 +22,6 @@ const routes: IRoute[] = [
     name: "Basic",
     path: "/",
     component: Basic,
-  },
-  {
-    name: "Heightmap output",
-    path: "/heightmap-output",
-    component: Heightmap,
-  },
-  {
-    name: "Grass",
-    path: "/grass",
-    component: Grass,
-  },
-  {
-    name: "Grass w/ Terrain",
-    path: "/grass-terrain",
-    component: GrassTerrain,
-  },
-  {
-    name: "Scatter",
-    path: "/scatter",
-    component: Scatter,
-  },
-  {
-    name: "Tectonics",
-    path: "/tectonics",
-    component: Tectonics,
-  },
-  {
-    name: "RingWorld",
-    path: "/ring-world",
-    component: RingWorld,
   },
 ]
 
