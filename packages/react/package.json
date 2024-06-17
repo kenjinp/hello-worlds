@@ -1,6 +1,6 @@
 {
   "name": "@hello-worlds/react",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -15,7 +15,7 @@
   ],
   "devDependencies": {
     "@hello-worlds/core": "0.0.9",
-    "@hello-worlds/planets": "0.0.24",
+    "@hello-worlds/planets": "0.0.25",
     "@react-three/drei": "9.88.7",
     "@react-three/fiber": "8.15.8",
     "@types/react": "^18.2.45",
@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "@hello-worlds/core": "^0.0.9",
-    "@hello-worlds/planets": "^0.0.24",
+    "@hello-worlds/planets": "^0.0.25",
     "@react-three/drei": "^9.30.1",
     "@react-three/fiber": "^8.8.2",
     "react": "^18.0.0",
