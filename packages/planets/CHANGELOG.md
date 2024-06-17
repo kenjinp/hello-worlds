@@ -1,5 +1,11 @@
 # @hello-worlds/planets
 
+## 0.0.25
+
+### Patch Changes
+
+- 178714d: Add local-space XY values to generator functions
+
 ## 0.0.24
 
 ### Patch Changes
