@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector2, Vector3 } from "three"
 import {
   ChunkGeneratorProps,
   ColorGenerator,
@@ -12,8 +12,8 @@ const _P = new Vector3()
 
 const _H = new Vector3()
 const _W = new Vector3()
-// const _S = new Vector3()
 const _C = new Vector3()
+const xy = new Vector2()
 
 const colorInputVector = new Vector3()
 
@@ -25,7 +25,7 @@ export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
 export const generateInitialHeights = <D>(
   params: GenerateInitialHeightsProps<D>,
 ) => {
-  const vertextUserDataMap = new Map();
+  const vertextUserDataMap = new Map()
   const {
     radius,
     worldMatrix,
@@ -78,6 +78,7 @@ export const generateInitialHeights = <D>(
         origin,
         inverted,
         data,
+        xy: xy.set(x, y),
       })
       const color = colorGenerator
         ? colorGenerator({
@@ -92,6 +93,7 @@ export const generateInitialHeights = <D>(
             origin: params.origin,
             height,
             data: params.data,
+            xy: xy.set(x, y),
           })
         : tempColor.set(0xffffff)
 

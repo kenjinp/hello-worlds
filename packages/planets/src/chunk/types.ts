@@ -1,4 +1,4 @@
-import THREE, { Box3, Color, Matrix4, Object3D, Vector3 } from "three"
+import THREE, { Box3, Color, Matrix4, Object3D, Vector2, Vector3 } from "three"
 import { Chunk } from "./Chunk"
 
 export enum ChunkTypes {
@@ -53,6 +53,7 @@ export interface ChunkGeneratorProps<D> {
   worldPosition: Vector3
   width: number
   offset: Vector3
+  xy: Vector2
   radius: number
   resolution: number
   inverted: boolean

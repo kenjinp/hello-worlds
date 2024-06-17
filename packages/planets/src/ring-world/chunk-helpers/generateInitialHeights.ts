@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector2, Vector3 } from "three"
 import {
   ChunkGeneratorProps,
   ColorGenerator,
@@ -18,6 +18,7 @@ const _C = new Vector3()
 const colorInputVector = new Vector3()
 const _U = new Vector3()
 const _Center = new Vector3()
+const xy = new Vector2()
 
 function getUpDirectionOnCylinder(
   position: Vector3,
@@ -102,6 +103,7 @@ export const generateInitialHeights = <D>(
         origin,
         inverted,
         data,
+        xy: xy.set(x, y),
       })
       const color = colorGenerator
         ? colorGenerator({
@@ -116,6 +118,7 @@ export const generateInitialHeights = <D>(
             origin: params.origin,
             height: terrainHeightOffset,
             data: params.data,
+            xy: xy.set(x, y),
           })
         : tempColor.set(0xffffff)
 
