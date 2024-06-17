@@ -1,4 +1,4 @@
-import { Vector3 } from "three"
+import { Vector2, Vector3 } from "three"
 import {
   ChunkGeneratorProps,
   ColorGenerator,
@@ -10,7 +10,7 @@ const _D = new Vector3()
 const _P = new Vector3()
 const _H = new Vector3()
 const _W = new Vector3()
-
+const xy = new Vector2()
 const colorInputVector = new Vector3()
 
 export interface GenerateInitialHeightsProps<D> extends ChunkGeneratorProps<D> {
@@ -80,6 +80,7 @@ export const generateInitialHeights = <D>(
         origin,
         inverted,
         data,
+        xy: xy.set(x, y),
       })
       if (notInSkirt) {
         heights.push(height)
@@ -100,6 +101,7 @@ export const generateInitialHeights = <D>(
             origin: params.origin,
             height,
             data: params.data,
+            xy: xy.set(x, y),
           })
         : tempColor.set(0xffffff).clone()
 
