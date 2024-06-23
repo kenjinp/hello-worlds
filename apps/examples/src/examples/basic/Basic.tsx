@@ -19,6 +19,8 @@ export default function BasicTerrain() {
     return {
       diffuse,
       normal: norm,
+      repeat: 300,
+      saturation: 0.65,
     }
   })
 
@@ -43,6 +45,7 @@ export default function BasicTerrain() {
           far={500}
           splats={[splat1, splat2]}
           surfaces={surfaces}
+          surfaceSamples={4}
           displacementMap={heightmap}
           displacementBias={1.0}
           normalMap={norm}
